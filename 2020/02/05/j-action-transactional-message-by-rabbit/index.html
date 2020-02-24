@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>一个基于RabbitMQ的可复用的事务消息方案 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2020/02/05/j-action-transactional-message-by-rabbit/">
+        一个基于RabbitMQ的可复用的事务消息方案
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/In-Action/Distributed-Transaction/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>In Action&nbsp;/&nbsp;Distributed Transaction</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2020年2月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-02-05T21:39:07+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年2月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：4.3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：18分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>分布式事务是微服务实践中一个比较棘手的问题，在笔者所实施的微服务实践方案中，都采用了折中或者规避强一致性的方案。参考<code>Ebay</code>多年前提出的本地消息表方案，基于<code>RabbitMQ</code>和<code>MySQL</code>（<code>JDBC</code>）做了轻量级的封装，实现了低入侵性的事务消息模块。本文的内容就是详细分析整个方案的设计思路和实施。环境依赖如下：</p>
+<ul>
+<li><code>JDK1.8+</code></li>
+<li><code>spring-boot-start-web:2.x.x</code>、<code>spring-boot-start-jdbc:2.x.x</code>、<code>spring-boot-start-amqp:2.x.x</code></li>
+<li><code>HikariCP:3.x.x</code>（<code>spring-boot-start-jdbc</code>自带）、<code>mysql-connector-java:5.1.48</code></li>
+<li><code>redisson:3.12.1</code></li>
+</ul>
+<a id="more"></a>
+<h2 id="方案设计思路">方案设计思路</h2>
+<p>事务消息原则上只适合弱一致性（或者说<strong>最终一致性</strong>）的场景，常见的弱一致性场景如：</p>
+<ul>
+<li>用户服务完成了注册动作，向短信服务推送一条营销相关的消息。</li>
+<li>信贷体系中，订单服务保存订单完毕，向审批服务推送一条待审批的订单记录信息。</li>
+<li>…</li>
+</ul>
+<p><strong>强一致性的场景一般不应该选用事务消息</strong>。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-3.png" alt=""></p>
+<p>一般情况下，要求强一致性说明要严格同步，也就是所有操作必须同时成功或者同时失败，这样就会引入同步带来的额外消耗。如果一个事务消息模块设计合理，补偿、查询、监控等等功能都完毕，由于系统交互是异步的，整体吞吐要比严格同步高。在笔者负责的业务系统中基于事务消息使用还定制了一条基本原则：<strong>消息内容正确的前提下，消费方出现异常需要自理</strong>。</p>
+<blockquote>
+<p>简单来说就是：上游保证了自身的业务正确性，成功推送了正确的消息到RabbitMQ就认为上游义务已经结束。</p>
+</blockquote>
+<p>为了降低代码的入侵性，事务消息需要借助<code>Spring</code>的<strong>编程式事务</strong>或者<strong>声明式事务</strong>。编程式事务一般依赖于<code>TransactionTemplate</code>，而声明式事务依托于<code>AOP</code>模块，依赖于注解<code>@Transactional</code>。</p>
+<p>接着需要自定义一个事务消息功能模块，新增一个事务消息记录表（其实就是<strong>本地消息表</strong>），用于保存每一条需要发送的消息记录。事务消息功能模块的主要功能是：</p>
+<ul>
+<li>保存消息记录。</li>
+<li>推送消息到<code>RabbitMQ</code>服务端。</li>
+<li>消息记录的查询、补偿推送等等。</li>
+</ul>
+<h3 id="事务执行的逻辑单元">事务执行的逻辑单元</h3>
+<p>在事务执行的逻辑单元里面，需要进行待推送的事务消息记录的保存，也就是：<strong>本地（业务）逻辑和事务消息记录保存操作绑定在同一个事务</strong>。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-1.png" alt=""></p>
+<p>发送消息到<code>RabbitMQ</code>服务端这一步需要延后到<strong>事务提交之后</strong>，这样才能保证事务提交成功和消息成功发送到<code>RabbitMQ</code>服务端这两个操作是一致的。为了把<strong>保存待发送的事务消息</strong>和<strong>发送消息到RabbitMQ</strong>两个动作从使用者感知角度合并为一个动作，这里需要用到<code>Spring</code>特有的事务同步器<code>TransactionSynchronization</code>，这里分析一下事务同步器的主要方法的回调位置，主要参考<code>AbstractPlatformTransactionManager#commit()</code>或者<code>AbstractPlatformTransactionManager#processCommit()</code>方法：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-2.png" alt=""></p>
+<p>上图仅仅演示了事务正确提交的场景（不包含异常的场景）。这里可以明确知道，事务同步器<code>TransactionSynchronization</code>的<code>afterCommit()</code>和<code>afterCompletion(int status)</code>方法都在真正的事务提交点<code>AbstractPlatformTransactionManager#doCommit()</code>之后回调，因此可以选用这两个方法其中之一用于执行推送消息到<code>RabbitMQ</code>服务端，整体的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Dto <span class="title">businessMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">    business transaction code block ...</span><br><span class="line">    <span class="comment">// 保存事务消息</span></span><br><span class="line">    [saveTransactionMessageRecord()]</span><br><span class="line">    <span class="comment">// 注册事务同步器 - 在afterCommit()方法中推送消息到RabbitMQ</span></span><br><span class="line">    [register TransactionSynchronization,<span class="function">send message in method <span class="title">afterCommit</span><span class="params">()</span>]</span></span><br><span class="line"><span class="function">    business transaction code block ...</span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>上面伪代码中，<strong>保存事务消息</strong>和<strong>注册事务同步器</strong>两个步骤可以安插在事务方法中的任意位置，也就是说与执行顺序无关。</p>
+<h3 id="事务消息的补偿">事务消息的补偿</h3>
+<p>虽然之前提到笔者建议下游服务自理自身服务消费异常的场景，但是有些时候迫于无奈还是需要上游把对应的消息重新推送，这个算是特殊的场景。另外还有一个场景需要考虑：事务提交之后触发事务同步器<code>TransactionSynchronization</code>的<code>afterCommit()</code>方法失败。这是一个低概率的场景，但是在生产中一定会出现，一个比较典型的原因就是：<strong>事务提交完成后尚未来得及触发<code>TransactionSynchronization#afterCommit()</code>方法进行推送服务实例就被重启</strong>。如下图所示：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-5.png" alt=""></p>
+<p>为了统一处理补偿推送的问题，使用了有限状态判断消息是否已经推送成功：</p>
+<ul>
+<li>在事务方法内，保存事务消息的时候，标记消息记录推送状态为<strong>处理中</strong>。</li>
+<li>事务同步器接口<code>TransactionSynchronization</code>的<code>afterCommit()</code>方法的实现中，推送对应的消息到<code>RabbitMQ</code>，然后更变事务消息记录的状态为<strong>推送成功</strong>。</li>
+</ul>
+<p>还有一种极为特殊的情况是<code>RabbitMQ</code>服务端本身出现故障导致消息推送异常，这种情况下需要进行重试（补偿推送），<strong>经验证明短时间内的反复重试是没有意义的</strong>，故障的服务一般不会瞬时恢复，所以可以考虑使用<strong>指数退避算法</strong>进行重试，同时需要限制最大重试次数。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-6.png" alt=""></p>
+<p>指数值、间隔值和最大重试次数上限需要根据实际情况设定，否则容易出现消息延时过大或者重试过于频繁等问题。</p>
+<h2 id="方案实施">方案实施</h2>
+<p>引入核心依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">spring.boot.version</span>&gt;</span>2.2.4.RELEASE<span class="tag">&lt;/<span class="name">spring.boot.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">redisson.version</span>&gt;</span>3.12.1<span class="tag">&lt;/<span class="name">redisson.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mysql.connector.version</span>&gt;</span>5.1.48<span class="tag">&lt;/<span class="name">mysql.connector.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring.boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mysql.connector.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.redisson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>redisson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;redisson.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>spring-boot-starter-jdbc</code>、<code>mysql-connector-java</code>和<code>spring-boot-starter-aop</code>是<code>MySQL</code>事务相关，而<code>spring-boot-starter-amqp</code>是<code>RabbitMQ</code>客户端的封装，<code>redisson</code>主要使用其分布式锁，用于补偿定时任务的加锁执行（以防止服务多个节点并发执行补偿推送）。</p>
+<h3 id="表设计">表设计</h3>
+<p>事务消息模块主要涉及两张表，以<code>MySQL</code>为例，建表<code>DDL</code>如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_transactional_message`</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">id</span>                  <span class="built_in">BIGINT</span> <span class="keyword">UNSIGNED</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    create_time         DATETIME        <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span>,</span><br><span class="line">    edit_time           DATETIME        <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="keyword">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="keyword">CURRENT_TIMESTAMP</span>,</span><br><span class="line">    creator             <span class="built_in">VARCHAR</span>(<span class="number">20</span>)     <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'admin'</span>,</span><br><span class="line">    editor              <span class="built_in">VARCHAR</span>(<span class="number">20</span>)     <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'admin'</span>,</span><br><span class="line">    deleted             <span class="built_in">TINYINT</span>         <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>,</span><br><span class="line">    current_retry_times <span class="built_in">TINYINT</span>         <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'当前重试次数'</span>,</span><br><span class="line">    max_retry_times     <span class="built_in">TINYINT</span>         <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">5</span> <span class="keyword">COMMENT</span> <span class="string">'最大重试次数'</span>,</span><br><span class="line">    queue_name          <span class="built_in">VARCHAR</span>(<span class="number">255</span>)    <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'队列名'</span>,</span><br><span class="line">    exchange_name       <span class="built_in">VARCHAR</span>(<span class="number">255</span>)    <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'交换器名'</span>,</span><br><span class="line">    exchange_type       <span class="built_in">VARCHAR</span>(<span class="number">8</span>)      <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'交换类型'</span>,</span><br><span class="line">    routing_key         <span class="built_in">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">COMMENT</span> <span class="string">'路由键'</span>,</span><br><span class="line">    business_module     <span class="built_in">VARCHAR</span>(<span class="number">32</span>)     <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'业务模块'</span>,</span><br><span class="line">    business_key        <span class="built_in">VARCHAR</span>(<span class="number">255</span>)    <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'业务键'</span>,</span><br><span class="line">    next_schedule_time  DATETIME        <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'下一次调度时间'</span>,</span><br><span class="line">    message_status      <span class="built_in">TINYINT</span>         <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">0</span> <span class="keyword">COMMENT</span> <span class="string">'消息状态'</span>,</span><br><span class="line">    init_backoff        <span class="built_in">BIGINT</span> <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">10</span> <span class="keyword">COMMENT</span> <span class="string">'退避初始化值,单位为秒'</span>,</span><br><span class="line">    backoff_factor      <span class="built_in">TINYINT</span>         <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">2</span> <span class="keyword">COMMENT</span> <span class="string">'退避因子(也就是指数)'</span>,</span><br><span class="line">    <span class="keyword">INDEX</span> idx_queue_name (queue_name),</span><br><span class="line">    <span class="keyword">INDEX</span> idx_create_time (create_time),</span><br><span class="line">    <span class="keyword">INDEX</span> idx_next_schedule_time (next_schedule_time),</span><br><span class="line">    <span class="keyword">INDEX</span> idx_business_key (business_key)</span><br><span class="line">) <span class="keyword">COMMENT</span> <span class="string">'事务消息表'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`t_transactional_message_content`</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">id</span>         <span class="built_in">BIGINT</span> <span class="keyword">UNSIGNED</span> AUTO_INCREMENT PRIMARY <span class="keyword">KEY</span>,</span><br><span class="line">    message_id <span class="built_in">BIGINT</span> <span class="keyword">UNSIGNED</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">COMMENT</span> <span class="string">'事务消息记录ID'</span>,</span><br><span class="line">    <span class="keyword">content</span>    <span class="built_in">TEXT</span> <span class="keyword">COMMENT</span> <span class="string">'消息内容'</span></span><br><span class="line">) <span class="keyword">COMMENT</span> <span class="string">'事务消息内容表'</span>;</span><br></pre></td></tr></table></figure>
+<p>因为此模块有可能扩展出一个后台管理模块，所以要把消息的管理和状态相关字段和大体积的消息内容分别存放在两个表，从而避免大批量查询消息记录的时候<code>MySQL</code>服务<code>IO</code>使用率过高的问题（这是和上一个公司的<code>DBA</code>团队商讨后得到的一个比较合理的方案）。预留了两个业务字段<code>business_module</code>和<code>business_key</code>用于标识业务模块和业务键（一般是唯一识别号，例如订单号）。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-4.png" alt=""></p>
+<p>一般情况下，如果服务通过配置自行提前声明队列和交换器的绑定关系，那么发送<code>RabbitMQ</code>消息的时候其实只依赖于<code>exchangeName</code>和<code>routingKey</code>两个字段（<code>header</code>类型的交换器是特殊的，也比较少用，这里暂时不用考虑），考虑到服务可能会遗漏声明操作，发送消息的时候会基于队列进行首次绑定声明并且缓存相关的信息（<code>RabbitMQ</code>中的队列-交换器绑定声明只要每次声明绑定关系的参数一致，则不会抛出异常）。</p>
+<h3 id="方案代码设计">方案代码设计</h3>
+<p>下面的方案设计描述中，暂时忽略了消息事务管理后台的<code>API</code>设计，这些可以在后期补充。</p>
+<p>定义贫血模型实体类<code>TransactionalMessage</code>和<code>TransactionalMessageContent</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionalMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime createTime;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime editTime;</span><br><span class="line">    <span class="keyword">private</span> String creator;</span><br><span class="line">    <span class="keyword">private</span> String editor;</span><br><span class="line">    <span class="keyword">private</span> Integer deleted;</span><br><span class="line">    <span class="keyword">private</span> Integer currentRetryTimes;</span><br><span class="line">    <span class="keyword">private</span> Integer maxRetryTimes;</span><br><span class="line">    <span class="keyword">private</span> String queueName;</span><br><span class="line">    <span class="keyword">private</span> String exchangeName;</span><br><span class="line">    <span class="keyword">private</span> String exchangeType;</span><br><span class="line">    <span class="keyword">private</span> String routingKey;</span><br><span class="line">    <span class="keyword">private</span> String businessModule;</span><br><span class="line">    <span class="keyword">private</span> String businessKey;</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime nextScheduleTime;</span><br><span class="line">    <span class="keyword">private</span> Integer messageStatus;</span><br><span class="line">    <span class="keyword">private</span> Long initBackoff;</span><br><span class="line">    <span class="keyword">private</span> Integer backoffFactor;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionalMessageContent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> Long messageId;</span><br><span class="line">    <span class="keyword">private</span> String content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后定义<code>dao</code>接口（这里暂时不展开实现的细节代码，存储使用<code>MySQL</code>，如果要替换为其他类型的数据库，只需要使用不同的实现即可）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TransactionalMessageDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insertSelective</span><span class="params">(TransactionalMessage record)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">updateStatusSelective</span><span class="params">(TransactionalMessage record)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;TransactionalMessage&gt; <span class="title">queryPendingCompensationRecords</span><span class="params">(LocalDateTime minScheduleTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                               LocalDateTime maxScheduleTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                               <span class="keyword">int</span> limit)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TransactionalMessageContentDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(TransactionalMessageContent record)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;TransactionalMessageContent&gt; <span class="title">queryByMessageIds</span><span class="params">(String messageIds)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着定义事务消息服务接口<code>TransactionalMessageService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对外提供的服务类接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TransactionalMessageService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendTransactionalMessage</span><span class="params">(Destination destination, TxMessage message)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Getter</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> ExchangeType &#123;</span><br><span class="line"></span><br><span class="line">    FANOUT(<span class="string">"fanout"</span>),</span><br><span class="line"></span><br><span class="line">    DIRECT(<span class="string">"direct"</span>),</span><br><span class="line"></span><br><span class="line">    TOPIC(<span class="string">"topic"</span>),</span><br><span class="line"></span><br><span class="line">    DEFAULT(<span class="string">""</span>),</span><br><span class="line"></span><br><span class="line">    ;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String type;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送消息的目的地</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Destination</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">ExchangeType <span class="title">exchangeType</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">queueName</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">exchangeName</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">routingKey</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultDestination</span> <span class="keyword">implements</span> <span class="title">Destination</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ExchangeType exchangeType;</span><br><span class="line">    <span class="keyword">private</span> String queueName;</span><br><span class="line">    <span class="keyword">private</span> String exchangeName;</span><br><span class="line">    <span class="keyword">private</span> String routingKey;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ExchangeType <span class="title">exchangeType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> exchangeType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">queueName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> queueName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">exchangeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> exchangeName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">routingKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> routingKey;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 事务消息</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">TxMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">businessModule</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">businessKey</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">content</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultTxMessage</span> <span class="keyword">implements</span> <span class="title">TxMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String businessModule;</span><br><span class="line">    <span class="keyword">private</span> String businessKey;</span><br><span class="line">    <span class="keyword">private</span> String content;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">businessModule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> businessModule;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">businessKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> businessKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">content</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> content;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 消息状态</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> TxMessageStatus &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    SUCCESS(<span class="number">1</span>),</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 待处理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    PENDING(<span class="number">0</span>),</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理失败</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    FAIL(-<span class="number">1</span>),</span><br><span class="line"></span><br><span class="line">    ;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Integer status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>TransactionalMessageService</code>的实现类是事务消息的核心功能实现，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RabbitTransactionalMessageService</span> <span class="keyword">implements</span> <span class="title">TransactionalMessageService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AmqpAdmin amqpAdmin;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionalMessageManagementService managementService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ConcurrentMap&lt;String, Boolean&gt; QUEUE_ALREADY_DECLARE = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendTransactionalMessage</span><span class="params">(Destination destination, TxMessage message)</span> </span>&#123;</span><br><span class="line">        String queueName = destination.queueName();</span><br><span class="line">        String exchangeName = destination.exchangeName();</span><br><span class="line">        String routingKey = destination.routingKey();</span><br><span class="line">        ExchangeType exchangeType = destination.exchangeType();</span><br><span class="line">        <span class="comment">// 原子性的预声明</span></span><br><span class="line">        QUEUE_ALREADY_DECLARE.computeIfAbsent(queueName, k -&gt; &#123;</span><br><span class="line">            Queue queue = <span class="keyword">new</span> Queue(queueName);</span><br><span class="line">            amqpAdmin.declareQueue(queue);</span><br><span class="line">            Exchange exchange = <span class="keyword">new</span> CustomExchange(exchangeName, exchangeType.getType());</span><br><span class="line">            amqpAdmin.declareExchange(exchange);</span><br><span class="line">            Binding binding = BindingBuilder.bind(queue).to(exchange).with(routingKey).noargs();</span><br><span class="line">            amqpAdmin.declareBinding(binding);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        TransactionalMessage record = <span class="keyword">new</span> TransactionalMessage();</span><br><span class="line">        record.setQueueName(queueName);</span><br><span class="line">        record.setExchangeName(exchangeName);</span><br><span class="line">        record.setExchangeType(exchangeType.getType());</span><br><span class="line">        record.setRoutingKey(routingKey);</span><br><span class="line">        record.setBusinessModule(message.businessModule());</span><br><span class="line">        record.setBusinessKey(message.businessKey());</span><br><span class="line">        String content = message.content();</span><br><span class="line">        <span class="comment">// 保存事务消息记录</span></span><br><span class="line">        managementService.saveTransactionalMessageRecord(record, content);</span><br><span class="line">        <span class="comment">// 注册事务同步器</span></span><br><span class="line">        TransactionSynchronizationManager.registerSynchronization(<span class="keyword">new</span> TransactionSynchronizationAdapter() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterCommit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                managementService.sendMessageSync(record, content);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息记录状态和内容持久化的管理统一放在<code>TransactionalMessageManagementService</code>中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransactionalMessageManagementService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionalMessageDao messageDao;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionalMessageContentDao contentDao;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RabbitTemplate rabbitTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDateTime END = LocalDateTime.of(<span class="number">2999</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> DEFAULT_INIT_BACKOFF = <span class="number">10L</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_BACKOFF_FACTOR = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_MAX_RETRY_TIMES = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> LIMIT = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveTransactionalMessageRecord</span><span class="params">(TransactionalMessage record, String content)</span> </span>&#123;</span><br><span class="line">        record.setMessageStatus(TxMessageStatus.PENDING.getStatus());</span><br><span class="line">        record.setNextScheduleTime(calculateNextScheduleTime(LocalDateTime.now(), DEFAULT_INIT_BACKOFF,</span><br><span class="line">                DEFAULT_BACKOFF_FACTOR, <span class="number">0</span>));</span><br><span class="line">        record.setCurrentRetryTimes(<span class="number">0</span>);</span><br><span class="line">        record.setInitBackoff(DEFAULT_INIT_BACKOFF);</span><br><span class="line">        record.setBackoffFactor(DEFAULT_BACKOFF_FACTOR);</span><br><span class="line">        record.setMaxRetryTimes(DEFAULT_MAX_RETRY_TIMES);</span><br><span class="line">        messageDao.insertSelective(record);</span><br><span class="line">        TransactionalMessageContent messageContent = <span class="keyword">new</span> TransactionalMessageContent();</span><br><span class="line">        messageContent.setContent(content);</span><br><span class="line">        messageContent.setMessageId(record.getId());</span><br><span class="line">        contentDao.insert(messageContent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessageSync</span><span class="params">(TransactionalMessage record, String content)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            rabbitTemplate.convertAndSend(record.getExchangeName(), record.getRoutingKey(), content);</span><br><span class="line">            <span class="keyword">if</span> (log.isDebugEnabled()) &#123;</span><br><span class="line">                log.debug(<span class="string">"发送消息成功,目标队列:&#123;&#125;,消息内容:&#123;&#125;"</span>, record.getQueueName(), content);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 标记成功</span></span><br><span class="line">            markSuccess(record);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// 标记失败</span></span><br><span class="line">            markFail(record, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">markSuccess</span><span class="params">(TransactionalMessage record)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 标记下一次执行时间为最大值</span></span><br><span class="line">        record.setNextScheduleTime(END);</span><br><span class="line">        record.setCurrentRetryTimes(record.getCurrentRetryTimes().compareTo(record.getMaxRetryTimes()) &gt;= <span class="number">0</span> ?</span><br><span class="line">                record.getMaxRetryTimes() : record.getCurrentRetryTimes() + <span class="number">1</span>);</span><br><span class="line">        record.setMessageStatus(TxMessageStatus.SUCCESS.getStatus());</span><br><span class="line">        record.setEditTime(LocalDateTime.now());</span><br><span class="line">        messageDao.updateStatusSelective(record);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">markFail</span><span class="params">(TransactionalMessage record, Exception e)</span> </span>&#123;</span><br><span class="line">        log.error(<span class="string">"发送消息失败,目标队列:&#123;&#125;"</span>, record.getQueueName(), e);</span><br><span class="line">        record.setCurrentRetryTimes(record.getCurrentRetryTimes().compareTo(record.getMaxRetryTimes()) &gt;= <span class="number">0</span> ?</span><br><span class="line">                record.getMaxRetryTimes() : record.getCurrentRetryTimes() + <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 计算下一次的执行时间</span></span><br><span class="line">        LocalDateTime nextScheduleTime = calculateNextScheduleTime(</span><br><span class="line">                record.getNextScheduleTime(),</span><br><span class="line">                record.getInitBackoff(),</span><br><span class="line">                record.getBackoffFactor(),</span><br><span class="line">                record.getCurrentRetryTimes()</span><br><span class="line">        );</span><br><span class="line">        record.setNextScheduleTime(nextScheduleTime);</span><br><span class="line">        record.setMessageStatus(TxMessageStatus.FAIL.getStatus());</span><br><span class="line">        record.setEditTime(LocalDateTime.now());</span><br><span class="line">        messageDao.updateStatusSelective(record);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 计算下一次执行时间</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> base          基础时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> initBackoff   退避基准值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> backoffFactor 退避指数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> round         轮数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> LocalDateTime</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> LocalDateTime <span class="title">calculateNextScheduleTime</span><span class="params">(LocalDateTime base,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                    <span class="keyword">long</span> initBackoff,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                    <span class="keyword">long</span> backoffFactor,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                    <span class="keyword">long</span> round)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> delta = initBackoff * Math.pow(backoffFactor, round);</span><br><span class="line">        <span class="keyword">return</span> base.plusSeconds((<span class="keyword">long</span>) delta);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 推送补偿 - 里面的参数应该根据实际场景定制</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processPendingCompensationRecords</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 时间的右值为当前时间减去退避初始值，这里预防把刚保存的消息也推送了</span></span><br><span class="line">        LocalDateTime max = LocalDateTime.now().plusSeconds(-DEFAULT_INIT_BACKOFF);</span><br><span class="line">        <span class="comment">// 时间的左值为右值减去1小时</span></span><br><span class="line">        LocalDateTime min = max.plusHours(-<span class="number">1</span>);</span><br><span class="line">        Map&lt;Long, TransactionalMessage&gt; collect = messageDao.queryPendingCompensationRecords(min, max, LIMIT)</span><br><span class="line">                .stream()</span><br><span class="line">                .collect(Collectors.toMap(TransactionalMessage::getId, x -&gt; x));</span><br><span class="line">        <span class="keyword">if</span> (!collect.isEmpty()) &#123;</span><br><span class="line">            StringJoiner joiner = <span class="keyword">new</span> StringJoiner(<span class="string">","</span>, <span class="string">"("</span>, <span class="string">")"</span>);</span><br><span class="line">            collect.keySet().forEach(x -&gt; joiner.add(x.toString()));</span><br><span class="line">            contentDao.queryByMessageIds(joiner.toString())</span><br><span class="line">                    .forEach(item -&gt; &#123;</span><br><span class="line">                        TransactionalMessage message = collect.get(item.getMessageId());</span><br><span class="line">                        sendMessageSync(message, item.getContent());</span><br><span class="line">                    &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有一点尚待优化：更新事务消息记录状态的方法可以优化为批量更新，在<code>limit</code>比较大的时候，批量更新的效率会更高。</p>
+<p>最后是定时任务的配置类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScheduleJobAutoConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionalMessageManagementService managementService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 这里用的是本地的Redis,实际上要做成配置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RedissonClient redisson = Redisson.create();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled</span>(fixedDelay = <span class="number">10000</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">transactionalMessageCompensationTask</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        RLock lock = redisson.getLock(<span class="string">"transactionalMessageCompensationTask"</span>);</span><br><span class="line">        <span class="comment">// 等待时间5秒,预期300秒执行完毕,这两个值需要按照实际场景定制</span></span><br><span class="line">        <span class="keyword">boolean</span> tryLock = lock.tryLock(<span class="number">5</span>, <span class="number">300</span>, TimeUnit.SECONDS);</span><br><span class="line">        <span class="keyword">if</span> (tryLock) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">                log.info(<span class="string">"开始执行事务消息推送补偿定时任务..."</span>);</span><br><span class="line">                managementService.processPendingCompensationRecords();</span><br><span class="line">                <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">                <span class="keyword">long</span> delta = end - start;</span><br><span class="line">                <span class="comment">// 以防锁过早释放</span></span><br><span class="line">                <span class="keyword">if</span> (delta &lt; <span class="number">5000</span>) &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">5000</span> - delta);</span><br><span class="line">                &#125;</span><br><span class="line">                log.info(<span class="string">"执行事务消息推送补偿定时任务完毕,耗时:&#123;&#125; ms..."</span>, end - start);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本代码编写完，整个项目的结构如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-7.png" alt=""></p>
+<p>最后添加两个测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MockBusinessRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MockBusinessService mockBusinessService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        mockBusinessService.saveOrder();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MockBusinessService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> JdbcTemplate jdbcTemplate;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> TransactionalMessageService transactionalMessageService;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span>(rollbackFor = Exception<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">void</span> <span class="title">saveOrder</span>() <span class="title">throws</span> <span class="title">Exception</span> </span>&#123;</span><br><span class="line">        String orderId = UUID.randomUUID().toString();</span><br><span class="line">        BigDecimal amount = BigDecimal.valueOf(<span class="number">100L</span>);</span><br><span class="line">        Map&lt;String, Object&gt; message = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        message.put(<span class="string">"orderId"</span>, orderId);</span><br><span class="line">        message.put(<span class="string">"amount"</span>, amount);</span><br><span class="line">        jdbcTemplate.update(<span class="string">"INSERT INTO t_order(order_id,amount) VALUES (?,?)"</span>, p -&gt; &#123;</span><br><span class="line">            p.setString(<span class="number">1</span>, orderId);</span><br><span class="line">            p.setBigDecimal(<span class="number">2</span>, amount);</span><br><span class="line">        &#125;);</span><br><span class="line">        String content = objectMapper.writeValueAsString(message);</span><br><span class="line">        transactionalMessageService.sendTransactionalMessage(</span><br><span class="line">                DefaultDestination.builder()</span><br><span class="line">                        .exchangeName(<span class="string">"tm.test.exchange"</span>)</span><br><span class="line">                        .queueName(<span class="string">"tm.test.queue"</span>)</span><br><span class="line">                        .routingKey(<span class="string">"tm.test.key"</span>)</span><br><span class="line">                        .exchangeType(ExchangeType.DIRECT)</span><br><span class="line">                        .build(),</span><br><span class="line">                DefaultTxMessage.builder()</span><br><span class="line">                        .businessKey(orderId)</span><br><span class="line">                        .businessModule(<span class="string">"SAVE_ORDER"</span>)</span><br><span class="line">                        .content(content)</span><br><span class="line">                        .build()</span><br><span class="line">        );</span><br><span class="line">        log.info(<span class="string">"保存订单:&#123;&#125;成功..."</span>, orderId);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>某次测试结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2020-02-05 21:10:13.287  INFO 49556 --- [           main] club.throwable.cm.MockBusinessService    : 保存订单:07a75323-460b-42cb-aa63-1a0a45ce19bf成功...</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/r-r-t-m-8.png" alt=""></p>
+<p>模拟订单数据成功保存，而且<code>RabbitMQ</code>消息在事务成功提交后正常发送到<code>RabbitMQ</code>服务端中，如<code>RabbitMQ</code>控制台数据所示。</p>
+<h2 id="小结">小结</h2>
+<p>事务消息模块的设计仅仅是使异步消息推送这个功能实现趋向于完备，其实一个合理的异步消息交互系统，一定会提供同步查询接口，这一点是基于异步消息没有回调或者没有响应的特性导致的。一般而言，一个系统的吞吐量和系统的异步化处理占比成正相关（这一点可以参考<code>Amdahl's Law</code>），所以在系统架构设计实际中应该尽可能使用异步交互，提高系统吞吐量同时减少同步阻塞带来的无谓等待。事务消息模块可以扩展出一个后台管理，甚至可以配合<code>Micrometer</code>、<code>Prometheus</code>和<code>Grafana</code>体系做实时数据监控。</p>
+<p>本文<code>demo</code>项目仓库：<a href="https://github.com/zjcscut/framework-mesh/tree/master/rabbit-transactional-message" target="_blank" rel="noopener">rabbit-transactional-message</a></p>
+<p><code>demo</code>必须本地安装<code>MySQL</code>、<code>Redis</code>和<code>RabbitMQ</code>才能正常启动，本地必须新建一个数据库命名<code>local</code>。</p>
+<p>（本文完 c-5-d e-a-20200202 疫情严重，马上要开始在家办公，少出门多看书）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2020/02/05/j-action-transactional-message-by-rabbit/>http://throwable.club/2020/02/05/j-action-transactional-message-by-rabbit/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/In-Action/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>In Action</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Distributed-Transaction/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Distributed Transaction</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2020/02/05/j-action-transactional-message-by-rabbit/&title=一个基于RabbitMQ的可复用的事务消息方案 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+分布式事务是微服务实践中一个比较棘手的问题，在笔者所实施的微服务实践方案中，都采用了折中或者规避强一致性的方案。参考Ebay多年前提出的本地消息表方案，基于RabbitMQ和MySQL（JDBC）做了轻量级的封装，实现了低入侵性的事务消息模块。本文的内容就是详细分析整个方案的设计思路和实施。环境依赖如下：
+
+JDK1.8+
+spring-boot-start-web:2.x.x、spring-boot-start-jdbc:2.x.x、spring-boot-start-amqp:2.x.x
+HikariCP:3.x.x（spring-boot-start-jdbc自带）、mysql-connector-java:5.1.48
+redisson:3.12.1
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2020/02/05/j-action-transactional-message-by-rabbit/&title=一个基于RabbitMQ的可复用的事务消息方案 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+分布式事务是微服务实践中一个比较棘手的问题，在笔者所实施的微服务实践方案中，都采用了折中或者规避强一致性的方案。参考Ebay多年前提出的本地消息表方案，基于RabbitMQ和MySQL（JDBC）做了轻量级的封装，实现了低入侵性的事务消息模块。本文的内容就是详细分析整个方案的设计思路和实施。环境依赖如下：
+
+JDK1.8+
+spring-boot-start-web:2.x.x、spring-boot-start-jdbc:2.x.x、spring-boot-start-amqp:2.x.x
+HikariCP:3.x.x（spring-boot-start-jdbc自带）、mysql-connector-java:5.1.48
+redisson:3.12.1
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aS04DMRAFwNz/0rBFgkxefzyJUM0KhTB2GcluPffjET9fP57fnz/75u/fVkd59vPyg4eHhzeY+rPJJZ8kk/iKn2d/m88ZDw8P7zQveV3y/S1wPp8XY+Hh4eF9DC8/ThJSPiIeHh7e/+AlacAkPXjzwYCHh4c3CCMmUe91nHFdiCd/u5C14OHh4dUy0ke+uX/Cz0fu9/Dw8PDGt+rJxp03E/TaBUazxcPDwzvA65XLecC6FctWgw88PDy807xJZFAOVYvfmS8lHh4e3i5vXkb3wtbe1l9eejw8PLwDvGQSySe9EGHy/oX/IR4eHt64S6ra0tSbdN5W1VvK8g0eHh4eXouXDFD9bbWhKi+yy61XeHh4eKu8XiybZ8NbLQi9QwUPDw/vHK8azk4urqpXYtXS/I+DAQ8PD2+V18wtBkdIHl5cj1LuicDDw8M7xksOgElou7sE0aGFh4eHd+yWfxK8TmKF6rImB0nUeoWHh4fX4lUHnlzz5yu9Vabj4eHhvYuXTzEpiLeux6IDAw8PD+8YLy+m84HzCeXFfd64gIeHh3cnr/miVoiQPNWC+8w64eHh4b3ejqslb/Kerauy3kGFh4eHt8u7JuWhQzVcmAe7hSMBDw8P7xgvZ+RLM2kmmI+Oh4eHdycvjxiScnmrcM+DZjw8PLx7ePkF/6RFoHr8VOeDh4eHdz+vt+kX2qFaDVXNBw8PD2+VtxvITsriXu764g14eHh4B3j37LF5DJEnCQvnIR4eHt6A17tqyrf46iZevuK6ngkeHh7eMd5kU87jjF6RPYlX8PDw8D6B14trqwdDXmovHwx4eHh4t/ASat5ulV+bRcEuHh4e3jFedZitdoFqEFy+GMPDw8M7wDu93VffUA2Cl9MLPDw8vKvnG5EsxTpGtH9uAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2020/02/05/j-action-transactional-message-by-rabbit/&title=一个基于RabbitMQ的可复用的事务消息方案 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+分布式事务是微服务实践中一个比较棘手的问题，在笔者所实施的微服务实践方案中，都采用了折中或者规避强一致性的方案。参考Ebay多年前提出的本地消息表方案，基于RabbitMQ和MySQL（JDBC）做了轻量级的封装，实现了低入侵性的事务消息模块。本文的内容就是详细分析整个方案的设计思路和实施。环境依赖如下：
+
+JDK1.8+
+spring-boot-start-web:2.x.x、spring-boot-start-jdbc:2.x.x、spring-boot-start-amqp:2.x.x
+HikariCP:3.x.x（spring-boot-start-jdbc自带）、mysql-connector-java:5.1.48
+redisson:3.12.1
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aS04DMRAFwNz/0rBFgkxefzyJUM0KhTB2GcluPffjET9fP57fnz/75u/fVkd59vPyg4eHhzeY+rPJJZ8kk/iKn2d/m88ZDw8P7zQveV3y/S1wPp8XY+Hh4eF9DC8/ThJSPiIeHh7e/+AlacAkPXjzwYCHh4c3CCMmUe91nHFdiCd/u5C14OHh4dUy0ke+uX/Cz0fu9/Dw8PDGt+rJxp03E/TaBUazxcPDwzvA65XLecC6FctWgw88PDy807xJZFAOVYvfmS8lHh4e3i5vXkb3wtbe1l9eejw8PLwDvGQSySe9EGHy/oX/IR4eHt64S6ra0tSbdN5W1VvK8g0eHh4eXouXDFD9bbWhKi+yy61XeHh4eKu8XiybZ8NbLQi9QwUPDw/vHK8azk4urqpXYtXS/I+DAQ8PD2+V18wtBkdIHl5cj1LuicDDw8M7xksOgElou7sE0aGFh4eHd+yWfxK8TmKF6rImB0nUeoWHh4fX4lUHnlzz5yu9Vabj4eHhvYuXTzEpiLeux6IDAw8PD+8YLy+m84HzCeXFfd64gIeHh3cnr/miVoiQPNWC+8w64eHh4b3ejqslb/Kerauy3kGFh4eHt8u7JuWhQzVcmAe7hSMBDw8P7xgvZ+RLM2kmmI+Oh4eHdycvjxiScnmrcM+DZjw8PLx7ePkF/6RFoHr8VOeDh4eHdz+vt+kX2qFaDVXNBw8PD2+VtxvITsriXu764g14eHh4B3j37LF5DJEnCQvnIR4eHt6A17tqyrf46iZevuK6ngkeHh7eMd5kU87jjF6RPYlX8PDw8D6B14trqwdDXmovHwx4eHh4t/ASat5ulV+bRcEuHh4e3jFedZitdoFqEFy+GMPDw8M7wDu93VffUA2Cl9MLPDw8vKvnG5EsxTpGtH9uAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2020/02/09/java-understand-and-use-lambda/" rel="prev" title="理解和运用Java中的Lambda">
+                                  
+                                      理解和运用Java中的Lambda
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Lambda/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Lambda</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2020/01/23/netty-common-promise-source-code-usage/" rel="prev" title="从源码上理解Netty并发工具-Promise">
+                                    
+                                        从源码上理解Netty并发工具-Promise
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Netty/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Netty</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '一个基于RabbitMQ的可复用的事务消息方案',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案设计思路"><span class="toc-text">方案设计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#事务执行的逻辑单元"><span class="toc-text">事务执行的逻辑单元</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务消息的补偿"><span class="toc-text">事务消息的补偿</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方案实施"><span class="toc-text">方案实施</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#表设计"><span class="toc-text">表设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方案代码设计"><span class="toc-text">方案代码设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

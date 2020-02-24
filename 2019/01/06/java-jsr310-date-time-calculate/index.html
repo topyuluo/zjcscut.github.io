@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JSR310新日期API(四)-日期时间常用计算工具 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/01/06/java-jsr310-date-time-calculate/">
+        JSR310新日期API(四)-日期时间常用计算工具
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年1月6日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-01-06T16:25:10+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年1月6日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：6分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>JSR310新日期API(四)-日期时间常用计算工具</h1>
+<h2 id="前提">前提</h2>
+<p>这篇文章主要介绍JSR-310中日期时间类的常用计算工具，包括常规的两个日期时间实例之间的前后比较、间隔的时间量等等。</p>
+<h2 id="日期时间的基准类">日期时间的基准类</h2>
+<p>日期时间类库中提供了几个常用的计算或者度量基准类，分别是：</p>
+<ul>
+<li>表示取值范围的<code>ValueRange</code>：内部持有四个主要的成员变量minSmallest、minLargest、maxSmallest和maxLargest，可以表示的值范围是<code>[minSmallest/maxSmallest,minLargest/maxLargest]</code>。</li>
+<li>表示秒和纳秒级别的时间量<code>Duration</code>：<code>TemporalAmount</code>的实现类，内部持有一个长整型的成员seconds代表秒和一个整型的成员nanos代表纳秒，由秒和纳秒组成时间量。</li>
+<li>表示年月日级别的时间量<code>Period</code>：<code>TemporalAmount</code>的实现类，内部持有三个整型的成员years、months和days分别代表年、月、日，由年月日组成时间量。</li>
+<li>日期时间的基本单位<code>TemporalUnit</code>：主要实现类是枚举类型<code>ChronoUnit</code>，一个<code>ChronoUnit</code>成员会维护一个字符串名字属性name和一个<code>Duration</code>类型的实例。</li>
+<li>日期时间的属性(field)表示<code>TemporalField</code>：主要实现是枚举类型<code>ChronoField</code>，一个<code>ChronoField</code>成员会维护一个字符串名字属性name、一个<code>TemporalUnit</code>的基础单位baseUnit、一个<code>TemporalUnit</code>的表示范围的单位rangeUnit和一个<code>ValueRange</code>类型的range用于表示当前属性的范围。</li>
+</ul>
+<p>举一些简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ValueRangeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ValueRange valueRange = ValueRange.of(<span class="number">1L</span>, <span class="number">10000L</span>);</span><br><span class="line">		System.out.println(valueRange);</span><br><span class="line">		valueRange = ValueRange.of(<span class="number">1L</span>, <span class="number">5L</span>, <span class="number">10000L</span>, <span class="number">50000L</span>);</span><br><span class="line">		System.out.println(valueRange);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">1</span> - <span class="number">10000</span></span><br><span class="line"><span class="number">1</span>/<span class="number">5</span> - <span class="number">10000</span>/<span class="number">50000</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DurationMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Duration duration = Duration.of(<span class="number">1L</span>, ChronoUnit.HOURS);</span><br><span class="line">		System.out.println(duration);</span><br><span class="line">		duration = Duration.from(duration);</span><br><span class="line">		System.out.println(duration);</span><br><span class="line">		duration = Duration.ofSeconds(<span class="number">1L</span>, <span class="number">999_999_999</span>);</span><br><span class="line">		System.out.println(duration.get(ChronoUnit.SECONDS));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出结果 - toString方法重写了，有特定的格式</span></span><br><span class="line">PT1H</span><br><span class="line">PT1H</span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PeriodMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Period period = Period.of(<span class="number">10</span>, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		System.out.println(period);</span><br><span class="line">		period = Period.from(period);</span><br><span class="line">		System.out.println(period.getYears());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//输出结果</span></span><br><span class="line">P10Y10M10D</span><br><span class="line"><span class="number">10</span></span><br></pre></td></tr></table></figure>
+<h2 id="常用计算工具">常用计算工具</h2>
+<h3 id="判断是否闰年">判断是否闰年</h3>
+<p>判断是否闰年这个功能是由年表<code>Chronology</code>提供的，因为不同的年表中的闰年规则可能不一致。一般情况下，我们都是使用ISO规范下的年表，对应的是<code>IsoChronology</code>，可以看一下<code>IsoChronology</code>判断闰年方法的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isLeapYear</span><span class="params">(<span class="keyword">long</span> prolepticYear)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((prolepticYear &amp; <span class="number">3</span>) == <span class="number">0</span>) &amp;&amp; ((prolepticYear % <span class="number">100</span>) != <span class="number">0</span> || (prolepticYear % <span class="number">400</span>) == <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个也是最常见的Java基础面试题之一，可以记下来怎么实现。静态方法<code>java.time.Year#isLeap()</code>也是同样的实现。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IsLeapYearMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> year = <span class="number">2016</span>;</span><br><span class="line">		System.out.println(Year.isLeap(year));</span><br><span class="line">		System.out.println(IsoChronology.INSTANCE.isLeapYear(year));</span><br><span class="line">		<span class="comment">// 2018年</span></span><br><span class="line">		LocalDate localDate = LocalDate.now();</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">		System.out.println(localDate.isLeapYear());</span><br><span class="line">		System.out.println(localDateTime.toLocalDate().isLeapYear());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="keyword">false</span></span><br><span class="line"><span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="比较日期时间的先后">比较日期时间的先后</h3>
+<p>所有的日期时间、日期、时间类都具备三个比较方法：<code>isBefore()</code>、<code>isAfter()</code>和<code>isEqual()或者equals()</code>，对于<code>ChronoLocalDateTime</code>或者<code>ChronoZonedDateTime</code>，底层总是先转化为新纪元天数再基于天数进行比较。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateTimeCompareMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		System.out.println(LocalDateTime.now().isBefore(LocalDateTime.now().plus(<span class="number">1</span>, ChronoUnit.SECONDS)));</span><br><span class="line">		System.out.println(LocalDate.now().isBefore(LocalDate.now().plus(<span class="number">1</span>, ChronoUnit.DAYS)));</span><br><span class="line">		System.out.println(LocalTime.now().equals(LocalTime.now().plus(<span class="number">1</span>, ChronoUnit.SECONDS)));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="keyword">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="计算日期时间的间隔">计算日期时间的间隔</h3>
+<p>计算日期时间的间隔主要通过<code>Duration</code>或者<code>Period</code>的静态方法，主要是通过两个类的<code>between()</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Duration中</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Duration</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Duration <span class="title">between</span><span class="params">(Temporal startInclusive, Temporal endExclusive)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// Period中</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> class Period</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ChronoPeriod <span class="title">between</span><span class="params">(ChronoLocalDate startDateInclusive, ChronoLocalDate endDateExclusive)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">static</span> Period <span class="title">between</span><span class="params">(LocalDate startDateInclusive, LocalDate endDateExclusive)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>对于日期时间类来说，计算时间间隔底层是基于<code>TemporalUnit#between()</code>方法，入口方法一般是<code>long until(Temporal endExclusive, TemporalUnit unit)</code>方法。</p>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DurationPeriodMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LocalTime start = LocalTime.of(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">		LocalTime end = LocalTime.of(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">		Duration duration = Duration.between(start, end);</span><br><span class="line">		<span class="keyword">long</span> until = start.until(end, ChronoUnit.SECONDS);</span><br><span class="line">		System.out.println(duration.getSeconds());</span><br><span class="line">		System.out.println(until);</span><br><span class="line">		LocalDateTime startDt = LocalDateTime.of(<span class="number">2017</span>, <span class="number">9</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">		LocalDateTime endDt = LocalDateTime.of(<span class="number">2018</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>);</span><br><span class="line">		duration = Duration.between(startDt, endDt);</span><br><span class="line">		until = startDt.until(endDt, ChronoUnit.SECONDS);</span><br><span class="line">		System.out.println(duration.getSeconds());</span><br><span class="line">		System.out.println(until);</span><br><span class="line">		LocalDate startD = LocalDate.of(<span class="number">2018</span>, <span class="number">2</span>, <span class="number">1</span>);</span><br><span class="line">		LocalDate endD = LocalDate.of(<span class="number">2019</span>, <span class="number">1</span>, <span class="number">6</span>);</span><br><span class="line">		Period period = Period.between(startD, endD);</span><br><span class="line">		Period untilPeriod = startD.until(endD);</span><br><span class="line">		System.out.println(period);</span><br><span class="line">		System.out.println(untilPeriod);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">3661</span></span><br><span class="line"><span class="number">3661</span></span><br><span class="line"><span class="number">10581009</span></span><br><span class="line"><span class="number">10581009</span></span><br><span class="line">P11M5D</span><br><span class="line">P11M5D</span><br></pre></td></tr></table></figure>
+<p>只要通过计算得到<code>Duration</code>或者<code>Period</code>实例，那么可以通过<code>get(TemporalUnit unit)</code>方法转换为对应单位的时间量，但是要注意的是对于此方法<code>Duration</code>只支持<code>ChronoUnit.SECONDS</code>和<code>ChronoUnit.NANOS</code>，而<code>Period</code>只支持<code>ChronoUnit.YEARS</code>、<code>ChronoUnit.MONTHS</code>和<code>ChronoUnit.DAYS</code>。一般情况下，我们更希望得知两个日期时间之间相差多少年，多少个月等，这个时候，可以使用<code>Duration</code>或者<code>Period</code>提供的实例方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Period中</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Period</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 相差的总月数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toTotalMonths</span><span class="params">()</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// Period中</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> class Period</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 转换为天数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toDays</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为小时数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toHours</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为分钟数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toMinutes</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为秒钟数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toSeconds</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为毫秒数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toMillis</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为纳秒数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toNanos</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确天数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toDaysPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确小时数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">toHoursPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确分钟数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">toMinutesPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确秒钟数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">toSecondsPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确毫秒数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">toMillisPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">    <span class="comment">// 转换为准确纳秒数</span></span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">toNanosPart</span><span class="params">()</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>以上的实例方法都是<strong>基于整数的除法，也就是说会截断尾数</strong>。举个简单使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime start = LocalDateTime.of(<span class="number">2017</span>, <span class="number">9</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">LocalDateTime end = LocalDateTime.of(<span class="number">2018</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>);</span><br><span class="line">Duration duration = Duration.between(start, end);</span><br><span class="line">Period period = Period.between(start.toLocalDate(), end.toLocalDate());</span><br><span class="line">System.out.println(duration.toDays());</span><br><span class="line">System.out.println(period.toTotalMonths());</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>如果不使用<code>Duration</code>或者<code>Period</code>，可以直接使用日期时间类的<code>util()</code>方法，本质是一致的，以<code>LocalDateTime</code>为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LocalDateTime start = LocalDateTime.of(<span class="number">2017</span>, <span class="number">9</span>, <span class="number">6</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line">LocalDateTime end = LocalDateTime.of(<span class="number">2018</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>);</span><br><span class="line"><span class="keyword">long</span> months = start.until(end, ChronoUnit.MONTHS);</span><br><span class="line"><span class="keyword">long</span> days = start.until(end, ChronoUnit.DAYS);</span><br><span class="line">System.out.println(days);</span><br><span class="line">System.out.println(months);</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">122</span></span><br><span class="line"><span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>(本文完 c-1-d e-a-201816)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/01/06/java-jsr310-date-time-calculate/>http://throwable.club/2019/01/06/java-jsr310-date-time-calculate/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/JSR-310/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>JSR-310</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/01/06/java-jsr310-date-time-calculate/&title=JSR310新日期API(四)-日期时间常用计算工具 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/01/06/java-jsr310-date-time-calculate/&title=JSR310新日期API(四)-日期时间常用计算工具 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuUlEQVR42u3aS1LDQAwFQO5/6XAAYvvpMySL9ooKDjNtqjSypJ+f+HpdXMmdf3979cn9KlcrLlx4eHh4S1vPF77f6NWKV3de/eVkP29WxMPDwzvGSzaRM3oBvfpQ7u/Bw8PD+x5eniLnqfNWeo2Hh4f3nbzqJqpFhByPh4eH91leHognS/YOmH+qteDh4eHFvDxYf8/PR/p7eHh4eOOuep4o3y+cjxokh0dht3h4eHgHeHnA7RVS79tjPVK5hYaHh4e3yssHnpICa4KptrXyksSbb+Hh4eEd4BVuuv1k0hLLQ38hjU4yejw8PLwWLw/l1UJDFTA5AB7KEHh4eHjHeLvN+0lqXh0sKE9v4eHh4Q14W8lxtUmWFCB6j6mQXuPh4eG1eJMlq4G+uum8DBF19vDw8PBWeYUvxEWEvNnfGz5oFiPw8PDwlnh5gE7KBNXGVT7wmj8OPDw8vHO8/MuTsmy1ODsfO3j4H+Lh4eENeHmYztPlJP3NG2x5G+yhMo2Hh4e3xEtu7ZVc801PmnCFETE8PDy8A7xJcO8dGJOhq+oLAB4eHt4Wb7Lk5DDIW2ujQS48PDy8Y7x5QXaOz9Pi/NDCw8PDO8FLWlz5VpI7eyOtoyEGPDw8vAO8XvDtpc7VY6BaSl4r4+Lh4eEFvN7Lf17A3Ro1SJL+KLHGw8PDG/B6G+0ttluMKMxE4OHh4R3j5c2wfPipOjKVHyRRco+Hh4d3jNdrgFWLAtWwPh9cwMPDw9vlvYpXtUiRD1T1isgPYDw8PLwDvOrg1FbhIDlUqgl9E4aHh4fX4uWHQf6czo0FVJN7PDw8vHO8JKxXW/i9QsbkujwY8PDw8D7Ky1v+8xrzQjkYDw8P7wt4eeifHCTJWtHRgoeHh3eMl29iDssHtnolZjw8PLzTvOZL/mpBdnkUAA8PD+8U7xc/HgMnAMkY2gAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/01/06/java-jsr310-date-time-calculate/&title=JSR310新日期API(四)-日期时间常用计算工具 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuUlEQVR42u3aS1LDQAwFQO5/6XAAYvvpMySL9ooKDjNtqjSypJ+f+HpdXMmdf3979cn9KlcrLlx4eHh4S1vPF77f6NWKV3de/eVkP29WxMPDwzvGSzaRM3oBvfpQ7u/Bw8PD+x5eniLnqfNWeo2Hh4f3nbzqJqpFhByPh4eH91leHognS/YOmH+qteDh4eHFvDxYf8/PR/p7eHh4eOOuep4o3y+cjxokh0dht3h4eHgHeHnA7RVS79tjPVK5hYaHh4e3yssHnpICa4KptrXyksSbb+Hh4eEd4BVuuv1k0hLLQ38hjU4yejw8PLwWLw/l1UJDFTA5AB7KEHh4eHjHeLvN+0lqXh0sKE9v4eHh4Q14W8lxtUmWFCB6j6mQXuPh4eG1eJMlq4G+uum8DBF19vDw8PBWeYUvxEWEvNnfGz5oFiPw8PDwlnh5gE7KBNXGVT7wmj8OPDw8vHO8/MuTsmy1ODsfO3j4H+Lh4eENeHmYztPlJP3NG2x5G+yhMo2Hh4e3xEtu7ZVc801PmnCFETE8PDy8A7xJcO8dGJOhq+oLAB4eHt4Wb7Lk5DDIW2ujQS48PDy8Y7x5QXaOz9Pi/NDCw8PDO8FLWlz5VpI7eyOtoyEGPDw8vAO8XvDtpc7VY6BaSl4r4+Lh4eEFvN7Lf17A3Ro1SJL+KLHGw8PDG/B6G+0ttluMKMxE4OHh4R3j5c2wfPipOjKVHyRRco+Hh4d3jNdrgFWLAtWwPh9cwMPDw9vlvYpXtUiRD1T1isgPYDw8PLwDvOrg1FbhIDlUqgl9E4aHh4fX4uWHQf6czo0FVJN7PDw8vHO8JKxXW/i9QsbkujwY8PDw8D7Ky1v+8xrzQjkYDw8P7wt4eeifHCTJWtHRgoeHh3eMl29iDssHtnolZjw8PLzTvOZL/mpBdnkUAA8PD+8U7xc/HgMnAMkY2gAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/01/08/java-jsr310-framework-integration/" rel="prev" title="JSR310新日期API(五)-在主流框架中使用新日期时间类">
+                                  
+                                      JSR310新日期API(五)-在主流框架中使用新日期时间类
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/01/05/java-jsr310-date-time-format-parse/" rel="prev" title="JSR310新日期API(三)-日期时间格式化与解析">
+                                    
+                                        JSR310新日期API(三)-日期时间格式化与解析
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JSR310新日期API(四)-日期时间常用计算工具',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日期时间的基准类"><span class="toc-text">日期时间的基准类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用计算工具"><span class="toc-text">常用计算工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#判断是否闰年"><span class="toc-text">判断是否闰年</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#比较日期时间的先后"><span class="toc-text">比较日期时间的先后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算日期时间的间隔"><span class="toc-text">计算日期时间的间隔</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

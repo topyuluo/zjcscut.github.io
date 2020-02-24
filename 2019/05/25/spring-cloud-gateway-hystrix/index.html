@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/05/25/spring-cloud-gateway-hystrix/">
+        Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月25日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T09:53:47+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.1k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：10分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>在微服务架构中，下游依赖出现问题如果上游调用方不做请求降级处理，下游的异常依赖没有被隔离，很有可能出现因为一两个服务或者小到一两个接口异常导致上游所有服务不可用，甚至影响整个业务线。请求降级处理目前比较主流的依然是<code>Netfilx</code>出品的<code>Hystrix</code>。<code>Hystrix</code>的工作原理是：</p>
+<ul>
+<li>把请求基于线程池或者信号量隔离，一旦下游服务在指定配置的超时时间内无法响应会进入预设或者默认的降级实现。</li>
+<li>每个请求的状态都会记录下来，在一个滑动窗口内处理失败的比率超过设定的阈值就会触发熔断器(Circle Breaker)开启，熔断器开启之后所有请求都会直接进入预设或者默认的降级逻辑。</li>
+<li>熔断器打开后，且距离熔断器打开的时间或上一次试探请求放行的时间超过设定值，熔断器器进入半开状态，允许放行一个试探请求。</li>
+<li>请求成功率提高后，基于统计数据确定对熔断器进行关闭，所有请求正常放行。</li>
+</ul>
+<p>这里不对<code>Hystrix</code>的细节做更深入分析，而是接着谈谈<code>Spring Cloud Gateway</code>中如何使用<code>Hystrix</code>，主要包括内置的<code>Hystrix</code>过滤器和定制过滤器结合<code>Hystrix</code>实现我们想要的功能。除了要引入<code>spring-cloud-starter-gateway</code>依赖之外，还需要引入<code>spring-cloud-starter-netflix-hystrix</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="使用内置的Hystrix过滤器">使用内置的Hystrix过滤器</h2>
+<p>内置的<code>Hystrix</code>过滤器是<code>HystrixGatewayFilterFactory</code>，它支持的配置是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果下面的Setter配置为null的时候，name会作为Hystrix的HystrixCommandKey</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="comment">// Hystrix的Setter属性，主要用来配置命令的KEY和其他属性</span></span><br><span class="line">    <span class="keyword">private</span> Setter setter;</span><br><span class="line">    <span class="comment">// 降级的目标URI，必须以forward开头，URI会匹配到网关应用的控制器方法</span></span><br><span class="line">    <span class="keyword">private</span> URI fallbackUri;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Config <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Config <span class="title">setFallbackUri</span><span class="params">(String fallbackUri)</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">if</span> (fallbackUri != <span class="keyword">null</span>) &#123;</span><br><span class="line">			setFallbackUri(URI.create(fallbackUri));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> URI <span class="title">getFallbackUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	    <span class="keyword">return</span> fallbackUri;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 注意这个方法，配置的fallbackUri要以forward开始作为schema，否则会抛异常</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFallbackUri</span><span class="params">(URI fallbackUri)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (fallbackUri != <span class="keyword">null</span> &amp;&amp; !<span class="string">"forward"</span>.equals(fallbackUri.getScheme())) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Hystrix Filter currently only supports 'forward' URIs, found "</span> + fallbackUri);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">this</span>.fallbackUri = fallbackUri;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Config <span class="title">setSetter</span><span class="params">(Setter setter)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.setter = setter;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外，（1）全局的<code>Hystrix</code>配置也会对<code>HystrixGatewayFilterFactory</code>生效；（2）<code>HystrixGatewayFilterFactory</code>可以作为默认过滤器(default-filters)对所有的路由配置作为兜底过滤器并发挥作用。</p>
+<p>对于第（1）点，我们如果在<code>application.yaml</code>中配置如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">//</span> <span class="string">执行超时时间为1秒，会对下面路由order_route绑定的HystrixGatewayFilterFactory生效</span></span><br><span class="line"><span class="attr">hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds:</span> <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">order_route</span></span><br><span class="line">        <span class="attr">uri:</span> <span class="string">http://localhost:9091</span></span><br><span class="line">        <span class="attr">predicates:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">Path=/order/**</span></span><br><span class="line">        <span class="attr">filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Hystrix</span></span><br><span class="line">          <span class="attr">args:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">HystrixCommand</span></span><br><span class="line">            <span class="attr">fallbackUri:</span> <span class="string">forward:/fallback</span></span><br></pre></td></tr></table></figure>
+<p>配置的<code>hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds</code>会对绑定在路由order_route中的<code>HystrixGatewayFilterFactory</code>生效。</p>
+<p>对于第（2）点，我们可以把<code>HystrixGatewayFilterFactory</code>配置为默认过滤器，这样子所有的路由都会关联此过滤器，但是<strong>非必要时建议不要这样做</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">order_route</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">http://localhost:9091</span></span><br><span class="line">          <span class="attr">predicates:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/order/**</span></span><br><span class="line">      <span class="attr">default-filters:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Hystrix</span></span><br><span class="line">          <span class="attr">args:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">HystrixCommand</span></span><br><span class="line">            <span class="attr">fallbackUri:</span> <span class="string">forward:/fallback</span></span><br></pre></td></tr></table></figure>
+<p>笔者在测试的时候，发现上面提到的<code>Setter</code>无法配置，估计是由于<code>Hystrix</code>的<code>Setter</code>对象是经过多重包装，暂时没有办法设置该属性。接着我们要在网关服务加一个控制器方法用于处理重定向的<code>/fallback</code>请求：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FallbackController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/fallback"</span>)</span><br><span class="line">    <span class="meta">@ResponseStatus</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Map&lt;String, Object&gt;&gt; fallback(ServerWebExchange exchange, Throwable throwable) &#123;</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        result.put(<span class="string">"path"</span>, request.getPath().pathWithinApplication().value());</span><br><span class="line">        result.put(<span class="string">"method"</span>, request.getMethodValue());</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != throwable.getCause()) &#123;</span><br><span class="line">            result.put(<span class="string">"message"</span>, throwable.getCause().getMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result.put(<span class="string">"message"</span>, throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制器方法入参会被<code>Spring Cloud Gateway</code>的内部组件处理，可以回调一些有用的类型例如<code>ServerWebExchange</code>实例、具体的异常实例等等。</p>
+<h2 id="使用Hystrix定制过滤器">使用Hystrix定制过滤器</h2>
+<p><code>HystrixGatewayFilterFactory</code>在大多数情况下应该可以满足业务需要，但是这里也做一次定制一个整合<code>Hystrix</code>的过滤器，实现的功能如下：</p>
+<ul>
+<li>基于每个请求URL创建一个新的<code>Hystrix</code>命令实例进行调用。</li>
+<li>每个URL可以指定特有的线程池配置，如果不指定则使用默认的。</li>
+<li>每个URL可以配置单独的<code>Hystrix</code>超时时间。</li>
+</ul>
+<p>也就是通过<code>Hystrix</code>使用线程池对每种不同的外部请求URL进行隔离。当然，这样的过滤器仅仅在外部请求的不同URL的数量有限的情况下才比较合理，否则有可能创建过多的线程池造成系统性能的下降，适得其反。改造如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomHystrixFilter</span> <span class="keyword">extends</span> <span class="title">AbstractGatewayFilterFactory</span>&lt;<span class="title">CustomHystrixFilter</span>.<span class="title">Config</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FORWARD_KEY = <span class="string">"forward"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String NAME = <span class="string">"CustomHystrix"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TIMEOUT_MS = <span class="number">1000</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ObjectProvider&lt;DispatcherHandler&gt; dispatcherHandlerProvider;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> DispatcherHandler dispatcherHandler;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> processConfig = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomHystrixFilter</span><span class="params">(ObjectProvider&lt;DispatcherHandler&gt; dispatcherHandlerProvider)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Config<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">this</span>.dispatcherHandlerProvider = dispatcherHandlerProvider;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> DispatcherHandler <span class="title">getDispatcherHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dispatcherHandler == <span class="keyword">null</span>) &#123;</span><br><span class="line">            dispatcherHandler = dispatcherHandlerProvider.getIfAvailable();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dispatcherHandler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">shortcutFieldOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Collections.singletonList(NAME_KEY);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> GatewayFilter <span class="title">apply</span><span class="params">(Config config)</span> </span>&#123;</span><br><span class="line">        processConfig(config);</span><br><span class="line">        <span class="keyword">return</span> (exchange, chain) -&gt; &#123;</span><br><span class="line">            ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">            String path = request.getPath().pathWithinApplication().value();</span><br><span class="line">            <span class="keyword">int</span> timeout = config.getTimeout().getOrDefault(path, TIMEOUT_MS);</span><br><span class="line">            CustomHystrixCommand command = <span class="keyword">new</span> CustomHystrixCommand(config.getFallbackUri(), exchange, chain, timeout, path);</span><br><span class="line">            <span class="keyword">return</span> Mono.create(s -&gt; &#123;</span><br><span class="line">                Subscription sub = command.toObservable().subscribe(s::success, s::error, s::success);</span><br><span class="line">                s.onCancel(sub::unsubscribe);</span><br><span class="line">            &#125;).onErrorResume((Function&lt;Throwable, Mono&lt;Void&gt;&gt;) throwable -&gt; &#123;</span><br><span class="line">                <span class="keyword">if</span> (throwable <span class="keyword">instanceof</span> HystrixRuntimeException) &#123;</span><br><span class="line">                    HystrixRuntimeException e = (HystrixRuntimeException) throwable;</span><br><span class="line">                    HystrixRuntimeException.FailureType failureType = e.getFailureType();</span><br><span class="line">                    <span class="keyword">switch</span> (failureType) &#123;</span><br><span class="line">                        <span class="keyword">case</span> TIMEOUT:</span><br><span class="line">                            <span class="keyword">return</span> Mono.error(<span class="keyword">new</span> TimeoutException());</span><br><span class="line">                        <span class="keyword">case</span> COMMAND_EXCEPTION: &#123;</span><br><span class="line">                            Throwable cause = e.getCause();</span><br><span class="line">                            <span class="keyword">if</span> (cause <span class="keyword">instanceof</span> ResponseStatusException || AnnotatedElementUtils</span><br><span class="line">                                    .findMergedAnnotation(cause.getClass(), ResponseStatus<span class="class">.<span class="keyword">class</span>) !</span>= <span class="keyword">null</span>) &#123;</span><br><span class="line">                                <span class="keyword">return</span> Mono.error(cause);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">default</span>:</span><br><span class="line">                            <span class="keyword">break</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> Mono.error(throwable);</span><br><span class="line">            &#125;).then();</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * YAML解析的时候MAP的KEY不支持'/'，这里只能用'-'替代</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> config config</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processConfig</span><span class="params">(Config config)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!processConfig) &#123;</span><br><span class="line">            processConfig = <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != config.getTimeout()) &#123;</span><br><span class="line">                Map&lt;String, Integer&gt; timeout = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">                config.getTimeout().forEach((k, v) -&gt; &#123;</span><br><span class="line">                    String key = k.replace(<span class="string">"-"</span>, <span class="string">"/"</span>);</span><br><span class="line">                    <span class="keyword">if</span> (!key.startsWith(<span class="string">"/"</span>)) &#123;</span><br><span class="line">                        key = <span class="string">"/"</span> + key;</span><br><span class="line">                    &#125;</span><br><span class="line">                    timeout.put(key, v);</span><br><span class="line">                &#125;);</span><br><span class="line">                config.setTimeout(timeout);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NAME;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomHystrixCommand</span> <span class="keyword">extends</span> <span class="title">HystrixObservableCommand</span>&lt;<span class="title">Void</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> URI fallbackUri;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> ServerWebExchange exchange;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> GatewayFilterChain chain;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">CustomHystrixCommand</span><span class="params">(URI fallbackUri,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    ServerWebExchange exchange,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    GatewayFilterChain chain,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    <span class="keyword">int</span> timeout,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    String key)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(key))</span><br><span class="line">                    .andCommandKey(HystrixCommandKey.Factory.asKey(key))</span><br><span class="line">                    .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(timeout)));</span><br><span class="line">            <span class="keyword">this</span>.fallbackUri = fallbackUri;</span><br><span class="line">            <span class="keyword">this</span>.exchange = exchange;</span><br><span class="line">            <span class="keyword">this</span>.chain = chain;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Observable&lt;Void&gt; <span class="title">construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> RxReactiveStreams.toObservable(<span class="keyword">this</span>.chain.filter(exchange));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Observable&lt;Void&gt; <span class="title">resumeWithFallback</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> == fallbackUri) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.resumeWithFallback();</span><br><span class="line">            &#125;</span><br><span class="line">            URI uri = exchange.getRequest().getURI();</span><br><span class="line">            <span class="keyword">boolean</span> encoded = containsEncodedParts(uri);</span><br><span class="line">            URI requestUrl = UriComponentsBuilder.fromUri(uri)</span><br><span class="line">                    .host(<span class="keyword">null</span>)</span><br><span class="line">                    .port(<span class="keyword">null</span>)</span><br><span class="line">                    .uri(<span class="keyword">this</span>.fallbackUri)</span><br><span class="line">                    .build(encoded)</span><br><span class="line">                    .toUri();</span><br><span class="line">            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, requestUrl);</span><br><span class="line">            ServerHttpRequest request = <span class="keyword">this</span>.exchange.getRequest().mutate().uri(requestUrl).build();</span><br><span class="line">            ServerWebExchange mutated = exchange.mutate().request(request).build();</span><br><span class="line">            <span class="keyword">return</span> RxReactiveStreams.toObservable(getDispatcherHandler().handle(mutated));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Config</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> String id;</span><br><span class="line">        <span class="keyword">private</span> URI fallbackUri;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * url -&gt; timeout ms</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> Map&lt;String, Integer&gt; timeout;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> id;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Config <span class="title">setId</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.id = id;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> URI <span class="title">getFallbackUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> fallbackUri;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Config <span class="title">setFallbackUri</span><span class="params">(URI fallbackUri)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (fallbackUri != <span class="keyword">null</span> &amp;&amp; !FORWARD_KEY.equals(fallbackUri.getScheme())) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Hystrix Filter currently only supports 'forward' URIs, found "</span> + fallbackUri);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">this</span>.fallbackUri = fallbackUri;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Map&lt;String, Integer&gt; <span class="title">getTimeout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> timeout;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Config <span class="title">setTimeout</span><span class="params">(Map&lt;String, Integer&gt; timeout)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.timeout = timeout;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实大部分代码和内置的<code>Hystrix</code>过滤器差不多，只是改了命令改造函数部分和配置加载处理的部分。配置文件如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">hystrix_route</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">http://localhost:9091</span></span><br><span class="line">          <span class="attr">predicates:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Host=localhost:9090</span></span><br><span class="line">          <span class="attr">filters:</span></span><br><span class="line">            <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CustomHystrix</span></span><br><span class="line">              <span class="attr">args:</span></span><br><span class="line">                <span class="attr">id:</span> <span class="string">CustomHystrix</span></span><br><span class="line">                <span class="attr">fallbackUri:</span> <span class="string">forward:/fallback</span></span><br><span class="line">                <span class="attr">timeout:</span></span><br><span class="line">                  <span class="comment"># 这里暂时用-分隔URL，因为/不支持</span></span><br><span class="line">                  <span class="attr">order-remote:</span> <span class="number">2000</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">route-server</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">9090</span></span><br></pre></td></tr></table></figure>
+<p>网关添加一个<code>/fallback</code>处理控制器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FallbackController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/fallback"</span>)</span><br><span class="line">    <span class="meta">@ResponseStatus</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Map&lt;String, Object&gt;&gt; fallback(ServerWebExchange exchange, Throwable throwable) &#123;</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        result.put(<span class="string">"path"</span>, request.getPath().pathWithinApplication().value());</span><br><span class="line">        result.put(<span class="string">"method"</span>, request.getMethodValue());</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != throwable.getCause()) &#123;</span><br><span class="line">            result.put(<span class="string">"message"</span>, throwable.getCause().getMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result.put(<span class="string">"message"</span>, throwable.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Mono.just(result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>故意在下游服务打断点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:9090/order/remote</span><br><span class="line"></span><br><span class="line">响应结果：</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"path"</span>: <span class="string">"/fallback"</span>,</span><br><span class="line">    <span class="string">"method"</span>: <span class="string">"GET"</span>,</span><br><span class="line">    <span class="string">"message"</span>: null   <span class="comment"># &lt;== 这里由于是超时异常，message就是null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>刚好符合预期结果。</p>
+<h2 id="小结">小结</h2>
+<p>这篇文章仅仅是对<code>Hystrix</code>和过滤器应用提供一个可用的例子和解决问题的思路，具体如何使用还是需要针对真实的场景。</p>
+<p>(本文完 c-2-d e-a-20190522)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/05/25/spring-cloud-gateway-hystrix/>http://throwable.club/2019/05/25/spring-cloud-gateway-hystrix/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud Gateway</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/05/25/spring-cloud-gateway-hystrix/&title=Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+在微服务架构中，下游依赖出现问题如果上游调用方不做请求降级处理，下游的异常依赖没有被隔离，很有可能出现因为一两个服务或者小到一两个接口异常导致上游所有服务不可用，甚至影响整个业务线。请求降级处理目前比较主流的依然是Netfilx出品的Hystrix。Hystrix的工作原理是：
+
+把请求基于线程池或者信号量隔离，一旦下游服务在指定配置的超时时间内无法响应会进入预设或者默认的降级实现。
+每个请求的状态都会记录下来，在一个滑动窗口内处理失败的比率超过设定的阈值就会触发熔断器(Circle Breaker)开启，熔断器开启之后所有请求都会直接进入预设或者默认的降级逻辑。
+熔断器打开后，且距离熔断器打开的时间或上一次试探请求放行的时间超过设定值，熔断器器进入半开状态，允许放行一个试探请求。
+请求成功率提高后，基于统计数据确定对熔断器进行关闭，所有请求正常放行。
+
+这里不对Hystrix的细节做更深入分析，而是接着谈谈Spring Cloud Gateway中如何使用Hystrix，主要包括内置的Hystrix过滤器和定制过滤器结合Hystrix实现我们想要的功能。除了要引入spring-cloud-starter-gateway依赖之外，还需要引入spring-cloud-starter-netflix-hystrix。
+12345678910&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactId&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;    &lt;/dependency&gt;&lt;/dependencies&gt;"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/05/25/spring-cloud-gateway-hystrix/&title=Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+在微服务架构中，下游依赖出现问题如果上游调用方不做请求降级处理，下游的异常依赖没有被隔离，很有可能出现因为一两个服务或者小到一两个接口异常导致上游所有服务不可用，甚至影响整个业务线。请求降级处理目前比较主流的依然是Netfilx出品的Hystrix。Hystrix的工作原理是：
+
+把请求基于线程池或者信号量隔离，一旦下游服务在指定配置的超时时间内无法响应会进入预设或者默认的降级实现。
+每个请求的状态都会记录下来，在一个滑动窗口内处理失败的比率超过设定的阈值就会触发熔断器(Circle Breaker)开启，熔断器开启之后所有请求都会直接进入预设或者默认的降级逻辑。
+熔断器打开后，且距离熔断器打开的时间或上一次试探请求放行的时间超过设定值，熔断器器进入半开状态，允许放行一个试探请求。
+请求成功率提高后，基于统计数据确定对熔断器进行关闭，所有请求正常放行。
+
+这里不对Hystrix的细节做更深入分析，而是接着谈谈Spring Cloud Gateway中如何使用Hystrix，主要包括内置的Hystrix过滤器和定制过滤器结合Hystrix实现我们想要的功能。除了要引入spring-cloud-starter-gateway依赖之外，还需要引入spring-cloud-starter-netflix-hystrix。
+12345678910&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactId&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;    &lt;/dependency&gt;&lt;/dependencies&gt;"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACv0lEQVR42u3awW5jIQwF0Pz/T7fbkdqQew2kGem8VRS9AIcFdmwej/j5+uf5+X3+25/jrMdcv3nswcPDw9tY+noRz5DrkZNvEvB6PU/XhoeHh3eNt15cfny3G9eOlr+Dh4eH98m8ddqdHO5JMo2Hh4f3v/OSNLrdoHX6joeHh/dpvFmxNQkGbRjIf3u41oKHh4cX804d9+/8fKW/h4eHh7fdVU8Kr+sp24sFyTWFYrV4eHh4F3j3FjEr4M4aYy82HQ8PD+8oL/97v9Mkm7W12k35ZRw8PDy8y7w2IZ5twZqRz7jV2cPDw8Pb4LWN/LMLmhUa8iYZHh4e3g1eXlBIgkF+OWAncS+aYXh4eHgXeLOCwk7SnIeWNhhEDTA8PDy8Q7zZ//dZUeNUe2wdhOqAgYeHhxfzZilve6znBYW2gvJiJXh4eHgXeLPrTe2beXniMXrqBBoPDw9vg5cc3+skODnE2yCRzB4VLPDw8PAu8Nq6RZKCt0XYvMCRb/Sj3TM8PDy8shgxKyvMstY8eLSh6MWlKzw8PLyjvHygnSJvvbj44sLT9/Hw8PCu8driwtlCcFsCLorCeHh4eBd4+4fvqTb/fpAoai14eHh4h3jt0byT/ubJehtIngYGPDw8vKO8PPHNj+a21JvPPmue4eHh4Z3lzS4BtIuYLXpWCMbDw8P7W17bvJ9tQb4pbYDBw8PDu8drF9c2sfJEvG10vZgFDw8P7y28vEE1K0/k25S35Z6OiYeHh3eU91U+bVK+3yqbhRk8PDy8e7ydeJK36pM3Z021x6kHDw8Pr+QlwSAvGbQttJ0rCFFIwMPDw7vGmx3KsymT8sd+GMPDw8P7HN7Ocd+GnANtOTw8PLwP4+WT5SHkwBVVPDw8vLfwkmJEmzTPyrjtZYLi0hUeHh7eId5OabUNDO2CblzMwsPDw9vgfQPuks8USP11XwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/05/25/spring-cloud-gateway-hystrix/&title=Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+在微服务架构中，下游依赖出现问题如果上游调用方不做请求降级处理，下游的异常依赖没有被隔离，很有可能出现因为一两个服务或者小到一两个接口异常导致上游所有服务不可用，甚至影响整个业务线。请求降级处理目前比较主流的依然是Netfilx出品的Hystrix。Hystrix的工作原理是：
+
+把请求基于线程池或者信号量隔离，一旦下游服务在指定配置的超时时间内无法响应会进入预设或者默认的降级实现。
+每个请求的状态都会记录下来，在一个滑动窗口内处理失败的比率超过设定的阈值就会触发熔断器(Circle Breaker)开启，熔断器开启之后所有请求都会直接进入预设或者默认的降级逻辑。
+熔断器打开后，且距离熔断器打开的时间或上一次试探请求放行的时间超过设定值，熔断器器进入半开状态，允许放行一个试探请求。
+请求成功率提高后，基于统计数据确定对熔断器进行关闭，所有请求正常放行。
+
+这里不对Hystrix的细节做更深入分析，而是接着谈谈Spring Cloud Gateway中如何使用Hystrix，主要包括内置的Hystrix过滤器和定制过滤器结合Hystrix实现我们想要的功能。除了要引入spring-cloud-starter-gateway依赖之外，还需要引入spring-cloud-starter-netflix-hystrix。
+12345678910&lt;dependencies&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactId&gt;    &lt;/dependency&gt;    &lt;dependency&gt;        &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;        &lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;    &lt;/dependency&gt;&lt;/dependencies&gt;"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACv0lEQVR42u3awW5jIQwF0Pz/T7fbkdqQew2kGem8VRS9AIcFdmwej/j5+uf5+X3+25/jrMdcv3nswcPDw9tY+noRz5DrkZNvEvB6PU/XhoeHh3eNt15cfny3G9eOlr+Dh4eH98m8ddqdHO5JMo2Hh4f3v/OSNLrdoHX6joeHh/dpvFmxNQkGbRjIf3u41oKHh4cX804d9+/8fKW/h4eHh7fdVU8Kr+sp24sFyTWFYrV4eHh4F3j3FjEr4M4aYy82HQ8PD+8oL/97v9Mkm7W12k35ZRw8PDy8y7w2IZ5twZqRz7jV2cPDw8Pb4LWN/LMLmhUa8iYZHh4e3g1eXlBIgkF+OWAncS+aYXh4eHgXeLOCwk7SnIeWNhhEDTA8PDy8Q7zZ//dZUeNUe2wdhOqAgYeHhxfzZilve6znBYW2gvJiJXh4eHgXeLPrTe2beXniMXrqBBoPDw9vg5cc3+skODnE2yCRzB4VLPDw8PAu8Nq6RZKCt0XYvMCRb/Sj3TM8PDy8shgxKyvMstY8eLSh6MWlKzw8PLyjvHygnSJvvbj44sLT9/Hw8PCu8driwtlCcFsCLorCeHh4eBd4+4fvqTb/fpAoai14eHh4h3jt0byT/ubJehtIngYGPDw8vKO8PPHNj+a21JvPPmue4eHh4Z3lzS4BtIuYLXpWCMbDw8P7W17bvJ9tQb4pbYDBw8PDu8drF9c2sfJEvG10vZgFDw8P7y28vEE1K0/k25S35Z6OiYeHh3eU91U+bVK+3yqbhRk8PDy8e7ydeJK36pM3Z021x6kHDw8Pr+QlwSAvGbQttJ0rCFFIwMPDw7vGmx3KsymT8sd+GMPDw8P7HN7Ocd+GnANtOTw8PLwP4+WT5SHkwBVVPDw8vLfwkmJEmzTPyrjtZYLi0hUeHh7eId5OabUNDO2CblzMwsPDw9vgfQPuks8USP11XwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/05/26/in-action-share-talk-about-java-thread-model/" rel="prev" title="内部分享-聊聊常用的线程模型">
+                                  
+                                      内部分享-聊聊常用的线程模型
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/In-Action/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> In Action</a> <a class="tag" href="/blog/tags/Concurrency/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Concurrency</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/20/interview-problem-double-thread-print-odd-even-alternately/" rel="prev" title="经典面试题-两个线程交替打印奇数和偶数">
+                                    
+                                        经典面试题-两个线程交替打印奇数和偶数
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Concurrency/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Concurrency</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用内置的Hystrix过滤器"><span class="toc-text">使用内置的Hystrix过滤器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用Hystrix定制过滤器"><span class="toc-text">使用Hystrix定制过滤器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

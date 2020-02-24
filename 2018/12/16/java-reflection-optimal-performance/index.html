@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>深入分析Java反射(八)-优化反射调用性能 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/12/16/java-reflection-optimal-performance/">
+        深入分析Java反射(八)-优化反射调用性能
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Reflection/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Reflection</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年12月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2018-12-16T12:01:22+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2018年12月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：8分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>深入分析Java反射(八)-优化反射调用性能</h1>
+<p>Java反射的API在JavaSE1.7的时候已经基本完善，<strong>但是本文编写的时候使用的是Oracle JDK11</strong>，因为JDK11对于sun包下的源码也上传了，可以直接通过IDE查看对应的源码和进行Debug。</p>
+<p>前一篇文章已经介绍了反射调用的底层原理，其实在实际中对大多数Java使用者来说更关系的是如何提升反射调用的性能，本文主要提供几个可行的方案。另外，由于方法调用时频率最高的反射操作，会着重介绍方法的反射调用优化。</p>
+<h2 id="方法一：选择合适的API">方法一：选择合适的API</h2>
+<p>选择合适的API主要是在获取反射相关元数据的时候尽量避免使用遍历的方法，例如：</p>
+<ul>
+<li>获取Field实例：尽量避免频繁使用<code>Class#getDeclaredFields()</code>或者<code>Class#getFields()</code>，应该根据Field的名称直接调用<code>Class#getDeclaredField()</code>或者<code>Class#getField()</code>。</li>
+<li>获取Method实例：尽量避免频繁使用<code>Class#getDeclaredMethods()</code>或者<code>Class#getMethods()</code>，应该根据Method的名称和参数类型数组调用<code>Class#getDeclaredMethod()</code>或者<code>Class#getMethod()</code>。</li>
+<li>获取Constructor实例：尽量避免频繁使用<code>Class#getDeclaredConstructors()</code>或者<code>Class#getConstructors()</code>，应该根据Constructor参数类型数组调用<code>Class#getDeclaredConstructor()</code>或者<code>Class#getConstructor()</code>。</li>
+</ul>
+<p>其实思路很简单，除非我们想要获取Class的所有Field、Method或者Constructor，否则应该避免使用返回一个集合或者数组的API，这样子能减少遍历或者判断带来的性能损耗。</p>
+<h2 id="方法二：缓存反射操作相关元数据">方法二：缓存反射操作相关元数据</h2>
+<p>使用缓存机制缓存反射操作相关元数据的原因是因为反射操作相关元数据的实时获取是比较耗时的，这里列举几个相对耗时的场景：</p>
+<ul>
+<li>获取Class实例：<code>Class#forName()</code>，此方法可以查看源码，耗时相对其他方法高得多。</li>
+<li>获取Field实例：<code>Class#getDeclaredField()</code>、<code>Class#getDeclaredFields()</code>、<code>Class#getField()</code>、<code>Class#getFields()</code>。</li>
+<li>获取Method实例：<code>Class#getDeclaredMethod()</code>、<code>Class#getDeclaredMethods()</code>、<code>Class#getMethod()</code>、<code>Class#getMethods()</code>。</li>
+<li>获取Constructor实例：<code>Class#getDeclaredConstructor()</code>、<code>Class#getDeclaredConstructors()</code>、<code>Class#getConstructor()</code>、<code>Class#getConstructors()</code>。</li>
+</ul>
+<p>这里举个简单的例子，需要反射调用一个普通JavaBean的Setter和Getter方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JavaBean</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;Class&lt;?&gt;, List&lt;ReflectionMetadata&gt;&gt; METADATA = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String, Class&lt;?&gt;&gt; CLASSES = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 解析的时候尽量放在&lt;cinit&gt;里面</span></span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		Class&lt;?&gt; clazz = JavaBean<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">		CLASSES.put(clazz.getName(), clazz);</span><br><span class="line">		List&lt;ReflectionMetadata&gt; metadataList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">		METADATA.put(clazz, metadataList);</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> (Field f : clazz.getDeclaredFields()) &#123;</span><br><span class="line">				ReflectionMetadata metadata = <span class="keyword">new</span> ReflectionMetadata();</span><br><span class="line">				metadataList.add(metadata);</span><br><span class="line">				metadata.setTargetClass(clazz);</span><br><span class="line">				metadata.setField(f);</span><br><span class="line">				String name = f.getName();</span><br><span class="line">				Class&lt;?&gt; type = f.getType();</span><br><span class="line">				metadata.setReadMethod(clazz.getDeclaredMethod(String.format(<span class="string">"get%s%s"</span>, Character.toUpperCase(name.charAt(<span class="number">0</span>)), name.substring(<span class="number">1</span>))));</span><br><span class="line">				metadata.setWriteMethod(clazz.getDeclaredMethod(String.format(<span class="string">"set%s%s"</span>, Character.toUpperCase(name.charAt(<span class="number">0</span>)), name.substring(<span class="number">1</span>)), type));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		String fieldName = <span class="string">"name"</span>;</span><br><span class="line">		Class&lt;JavaBean&gt; javaBeanClass = JavaBean<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">		JavaBean javaBean = <span class="keyword">new</span> JavaBean();</span><br><span class="line">		invokeSetter(javaBeanClass, javaBean, fieldName , <span class="string">"Doge"</span>);</span><br><span class="line">		System.out.println(invokeGetter(javaBeanClass,javaBean, fieldName));</span><br><span class="line">		invokeSetter(javaBeanClass.getName(), javaBean, fieldName , <span class="string">"Throwable"</span>);</span><br><span class="line">		System.out.println(invokeGetter(javaBeanClass.getName(),javaBean, fieldName));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">invokeSetter</span><span class="params">(String className, Object target, String fieldName, Object value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		METADATA.get(CLASSES.get(className)).forEach(each -&gt; &#123;</span><br><span class="line">			Field field = each.getField();</span><br><span class="line">			<span class="keyword">if</span> (field.getName().equals(fieldName)) &#123;</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					each.getWriteMethod().invoke(target, value);</span><br><span class="line">				&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">					<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">invokeSetter</span><span class="params">(Class&lt;?&gt; clazz, Object target, String fieldName, Object value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		METADATA.get(clazz).forEach(each -&gt; &#123;</span><br><span class="line">			Field field = each.getField();</span><br><span class="line">			<span class="keyword">if</span> (field.getName().equals(fieldName)) &#123;</span><br><span class="line">				<span class="keyword">try</span> &#123;</span><br><span class="line">					each.getWriteMethod().invoke(target, value);</span><br><span class="line">				&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">					<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Object <span class="title">invokeGetter</span><span class="params">(String className, Object target, String fieldName)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (ReflectionMetadata metadata : METADATA.get(CLASSES.get(className))) &#123;</span><br><span class="line">			<span class="keyword">if</span> (metadata.getField().getName().equals(fieldName)) &#123;</span><br><span class="line">				<span class="keyword">return</span> metadata.getReadMethod().invoke(target);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Object <span class="title">invokeGetter</span><span class="params">(Class&lt;?&gt; clazz, Object target, String fieldName)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">for</span> (ReflectionMetadata metadata : METADATA.get(clazz)) &#123;</span><br><span class="line">			<span class="keyword">if</span> (metadata.getField().getName().equals(fieldName)) &#123;</span><br><span class="line">				<span class="keyword">return</span> metadata.getReadMethod().invoke(target);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Data</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ReflectionMetadata</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> Class&lt;?&gt; targetClass;</span><br><span class="line">		<span class="keyword">private</span> Field field;</span><br><span class="line">		<span class="keyword">private</span> Method readMethod;</span><br><span class="line">		<span class="keyword">private</span> Method writeMethod;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简单来说，解析反射元数据进行缓存的操作最好放在静态代码块或者首次调用的时候(也就是懒加载)，这样能够避免真正调用的时候总是需要重新加载一次反射相关元数据。</p>
+<h2 id="方法三：反射操作转变为直接调用">方法三：反射操作转变为直接调用</h2>
+<p>&quot;反射操作转变为直接调用&quot;并不是完全不依赖于反射的类库，这里的做法是把反射操作相关元数据直接放置在类的成员变量中，这样就能省去从缓存中读取反射相关元数据的消耗，而所谓&quot;直接调用&quot;一般是通过继承或者实现接口实现。有一些高性能的反射类库也会使用一些创新的方法：例如使用成员属性缓存反射相关元数据，并且把方法调用通过数字建立索引[Number-&gt;Method]或者建立索引类(像<code>CGLIB</code>的<code>FastClass</code>)，<strong>这种做法在父类或者接口方法比较少的时候会有一定的性能提升，但是实际上性能评估需要从具体的场景通过测试分析结果而不能盲目使用</strong>，使用这个思想的类库有<code>CGLIB</code>、<code>ReflectASM</code>等。&quot;反射操作转变为直接调用&quot;的最典型的实现就是JDK的动态代理，这里翻出之前动态代理那篇文章的例子来说：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Simple</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 接口实现</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultSimple</span> <span class="keyword">implements</span> <span class="title">Simple</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        System.out.println(String.format(<span class="string">"%s say hello!"</span>, name));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 场景类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Simple simple = <span class="keyword">new</span> DefaultSimple();</span><br><span class="line">        Object target = Proxy.newProxyInstance(Main.class.getClassLoader(), new Class[]&#123;Simple.class&#125;, new InvocationHandler() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">"Before say hello..."</span>);</span><br><span class="line">                method.invoke(simple, args);</span><br><span class="line">                System.out.println(<span class="string">"After say hello..."</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        Simple proxy = (Simple) target;</span><br><span class="line">        proxy.sayHello(<span class="string">"throwable"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> $<span class="title">Proxy0</span> <span class="keyword">extends</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">Simple</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m3;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m0;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> $Proxy0(InvocationHandler var1) <span class="keyword">throws</span>  &#123;</span><br><span class="line">        <span class="keyword">super</span>(var1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object var1)</span> <span class="keyword">throws</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (Boolean)<span class="keyword">super</span>.h.invoke(<span class="keyword">this</span>, m1, <span class="keyword">new</span> Object[]&#123;var1&#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException | Error var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var3;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UndeclaredThrowableException(var4);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String var1)</span> <span class="keyword">throws</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">super</span>.h.invoke(<span class="keyword">this</span>, m3, <span class="keyword">new</span> Object[]&#123;var1&#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException | Error var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var3;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UndeclaredThrowableException(var4);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> String <span class="title">toString</span><span class="params">()</span> <span class="keyword">throws</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (String)<span class="keyword">super</span>.h.invoke(<span class="keyword">this</span>, m2, (Object[])<span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException | Error var2) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var2;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UndeclaredThrowableException(var3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> <span class="keyword">throws</span>  </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (Integer)<span class="keyword">super</span>.h.invoke(<span class="keyword">this</span>, m0, (Object[])<span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException | Error var2) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var2;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> UndeclaredThrowableException(var3);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m1 = Class.forName(<span class="string">"java.lang.Object"</span>).getMethod(<span class="string">"equals"</span>, Class.forName(<span class="string">"java.lang.Object"</span>));</span><br><span class="line">            m3 = Class.forName(<span class="string">"club.throwable.jdk.sample.reflection.proxy.Simple"</span>).getMethod(<span class="string">"sayHello"</span>, Class.forName(<span class="string">"java.lang.String"</span>));</span><br><span class="line">            m2 = Class.forName(<span class="string">"java.lang.Object"</span>).getMethod(<span class="string">"toString"</span>);</span><br><span class="line">            m0 = Class.forName(<span class="string">"java.lang.Object"</span>).getMethod(<span class="string">"hashCode"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException var2) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchMethodError(var2.getMessage());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NoClassDefFoundError(var3.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样做的话<code>Simple</code>接口实例虽然最终是通过反射调用<code>sayHello(String var1)</code>方法，但是相关元数据在静态代码块中创建并且已经缓存在类成员属性中，那么反射调用方法的性能已经优化到极致，剩下的都只是Native方法的耗时，这一点使用者在编码层面已经没有办法优化，只能通过升级JVM(JDK)、使用JIT编译器等非编码层面的手段提升反射性能。</p>
+<h2 id="小结">小结</h2>
+<p>本文主要从编码层面分析反射操作一些性能优化的可行经验或者方案，或许有其他更好的优化方案，具体还是需要看使用场景。</p>
+<p>(本文完 e-a-20181216 c-2-d)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/12/16/java-reflection-optimal-performance/>http://throwable.club/2018/12/16/java-reflection-optimal-performance/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Reflection/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Reflection</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/12/16/java-reflection-optimal-performance/&title=深入分析Java反射(八)-优化反射调用性能 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/12/16/java-reflection-optimal-performance/&title=深入分析Java反射(八)-优化反射调用性能 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3aQW7CUAwEUO5/abpFKiRjO05R9bKqAk3+AynfjP14xMfz5Xg9c/z+4zO/zz8/HMkdRwceHh7eYOnHl07OJ+zqFfL/enN3PDw8vDVe8siuvnq8rOqmkmwSeHh4eN/MS2rXaun86Y54eHh4/4mXYybpQXU9eHh4ePfwropQ8/K6V6AvZi14eHh4Ma+66G/4e6W/h4eHhzfuqucP9N6rk/I9Wi0eHh7eAm8S0fai2OrAwSRKxsPDw9vj9dr2yTurEXDyv/koGB4eHt4eb9SYL0a3vTGsZDs5+cbw8PDwLuL1IoDe2EH1nfOxLTw8PLwNXl5GV8vZJJjIS+r8Y23+SsDDw8OLefPw9KrHem8rOvmY8PDw8NZ4eSurF1JUW2XJR1wII/Dw8PAu5eUN/nyTmAS11aCh0ADDw8PDu4hXSCwG28OoO9cq6+uBDB4eHl4tW8iL114p3Bss6BXihX0PDw8Pb4GXM/JtozqMVb1yOYzAw8PDa/HmcUBegudtrZxxMnSFh4eHdylvErnOF10NastxCR4eHt4aL3mKJpHBZMPoNdJOVouHh4e3xsvDiCojqejzer/cfsPDw8Nb4OU/9ZNiOrnxZEvIS3w8PDy8PV613dULIPK75EuProOHh4e3wMtL3uomUQ0m8o+megYPDw/vHt6EkQxXVdtgvQIdDw8P705e8ljPGXlgkV8tD6Px8PDw9njVcYG9DWZ+4OHh4e3xnsUjb1ZNhgB6tfGbK+Ph4eEt8HqXzveceTNs3jzDw8PD2+BN4tdJIFsdC8g3Kjw8PLx7ePlDuddjyjeJxawFDw8P7494k4d+dRTgglIbDw8P7wt4PWQeE+cDqdF2goeHh7fGS26ZD5Lm8UQ+5pV8GaOsBQ8PD6/fw2petDeStTIKgIeHh7fF+wHouffdgxVuwwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/12/16/java-reflection-optimal-performance/&title=深入分析Java反射(八)-优化反射调用性能 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3aQW7CUAwEUO5/abpFKiRjO05R9bKqAk3+AynfjP14xMfz5Xg9c/z+4zO/zz8/HMkdRwceHh7eYOnHl07OJ+zqFfL/enN3PDw8vDVe8siuvnq8rOqmkmwSeHh4eN/MS2rXaun86Y54eHh4/4mXYybpQXU9eHh4ePfwropQ8/K6V6AvZi14eHh4Ma+66G/4e6W/h4eHhzfuqucP9N6rk/I9Wi0eHh7eAm8S0fai2OrAwSRKxsPDw9vj9dr2yTurEXDyv/koGB4eHt4eb9SYL0a3vTGsZDs5+cbw8PDwLuL1IoDe2EH1nfOxLTw8PLwNXl5GV8vZJJjIS+r8Y23+SsDDw8OLefPw9KrHem8rOvmY8PDw8NZ4eSurF1JUW2XJR1wII/Dw8PAu5eUN/nyTmAS11aCh0ADDw8PDu4hXSCwG28OoO9cq6+uBDB4eHl4tW8iL114p3Bss6BXihX0PDw8Pb4GXM/JtozqMVb1yOYzAw8PDa/HmcUBegudtrZxxMnSFh4eHdylvErnOF10NastxCR4eHt4aL3mKJpHBZMPoNdJOVouHh4e3xsvDiCojqejzer/cfsPDw8Nb4OU/9ZNiOrnxZEvIS3w8PDy8PV613dULIPK75EuProOHh4e3wMtL3uomUQ0m8o+megYPDw/vHt6EkQxXVdtgvQIdDw8P705e8ljPGXlgkV8tD6Px8PDw9njVcYG9DWZ+4OHh4e3xnsUjb1ZNhgB6tfGbK+Ph4eEt8HqXzveceTNs3jzDw8PD2+BN4tdJIFsdC8g3Kjw8PLx7ePlDuddjyjeJxawFDw8P7494k4d+dRTgglIbDw8P7wt4PWQeE+cDqdF2goeHh7fGS26ZD5Lm8UQ+5pV8GaOsBQ8PD6/fw2petDeStTIKgIeHh7fF+wHouffdgxVuwwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/12/16/zookeeper-curator-usage/" rel="prev" title="Zookeeper客户端Curator使用详解">
+                                  
+                                      Zookeeper客户端Curator使用详解
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Zookeeper/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Zookeeper</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/12/16/java-reflection-implementance/" rel="prev" title="深入分析Java反射(七)-简述反射调用的底层实现">
+                                    
+                                        深入分析Java反射(七)-简述反射调用的底层实现
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Reflection/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Reflection</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '深入分析Java反射(八)-优化反射调用性能',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一：选择合适的API"><span class="toc-text">方法一：选择合适的API</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二：缓存反射操作相关元数据"><span class="toc-text">方法二：缓存反射操作相关元数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法三：反射操作转变为直接调用"><span class="toc-text">方法三：反射操作转变为直接调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

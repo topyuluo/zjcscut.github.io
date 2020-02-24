@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>基于SpringBoot的Environment源码理解实现分散配置 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/12/16/spring-boot-environment-configuration-spread/">
+        基于SpringBoot的Environment源码理解实现分散配置
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring/SpringBoot/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring&nbsp;/&nbsp;SpringBoot</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年12月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-01-02T11:22:02+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年1月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：18分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p><code>org.springframework.core.env.Environment</code>是当前应用运行环境的公开接口，主要包括应用程序运行环境的两个关键方面：配置文件(profiles)和属性。<code>Environment</code>继承自接口<code>PropertyResolver</code>，而<code>PropertyResolver</code>提供了属性访问的相关方法。这篇文章从源码的角度分析<code>Environment</code>的存储容器和加载流程，然后基于源码的理解给出一个生产级别的扩展。</p>
+<p>本文较长，请用一个舒服的姿势阅读。</p>
+<a id="more"></a>
+<h2 id="Environment类体系">Environment类体系</h2>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/spe-1.png" alt="spe-1"></p>
+<ul>
+<li><code>PropertyResolver</code>：提供属性访问功能。</li>
+<li><code>ConfigurablePropertyResolver</code>：继承自<code>PropertyResolver</code>，额外主要提供属性类型转换(基于<code>org.springframework.core.convert.ConversionService</code>)功能。</li>
+<li><code>Environment</code>：继承自<code>PropertyResolver</code>，额外提供访问和判断profiles的功能。</li>
+<li><code>ConfigurableEnvironment</code>：继承自<code>ConfigurablePropertyResolver</code>和<code>Environment</code>，并且提供设置激活的profile和默认的profile的功能。</li>
+<li><code>ConfigurableWebEnvironment</code>：继承自<code>ConfigurableEnvironment</code>，并且提供配置<code>Servlet</code>上下文和<code>Servlet</code>参数的功能。</li>
+<li><code>AbstractEnvironment</code>：实现了<code>ConfigurableEnvironment</code>接口，默认属性和存储容器的定义，并且实现了<code>ConfigurableEnvironment</code>种的方法，并且为子类预留可覆盖了扩展方法。</li>
+<li><code>StandardEnvironment</code>：继承自<code>AbstractEnvironment</code>，非<code>Servlet</code>(Web)环境下的标准<code>Environment</code>实现。</li>
+<li><code>StandardServletEnvironment</code>：继承自<code>StandardEnvironment</code>，<code>Servlet</code>(Web)环境下的标准<code>Environment</code>实现。</li>
+</ul>
+<p>reactive相关的暂时不研究。</p>
+<h2 id="Environment提供的方法">Environment提供的方法</h2>
+<p>一般情况下，我们在SpringMVC项目中启用到的是<code>StandardServletEnvironment</code>，它的父接口问<code>ConfigurableWebEnvironment</code>，我们可以查看此接口提供的方法：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/spe-2.png" alt="spe-2"></p>
+<h2 id="Environment的存储容器">Environment的存储容器</h2>
+<p><code>Environment</code>的静态属性和存储容器都是在<code>AbstractEnvironment</code>中定义的，<code>ConfigurableWebEnvironment</code>接口提供的<code>getPropertySources()</code>方法可以获取到返回的<code>MutablePropertySources</code>实例，然后添加额外的<code>PropertySource</code>。实际上，<code>Environment</code>的存储容器就是<code>org.springframework.core.env.PropertySource</code>的子类集合，<code>AbstractEnvironment</code>中使用的实例是<code>org.springframework.core.env.MutablePropertySources</code>，下面看下<code>PropertySource</code>的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">PropertySource</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">final</span> Log logger = LogFactory.getLog(getClass());</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">final</span> String name;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">final</span> T source;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PropertySource</span><span class="params">(String name, T source)</span> </span>&#123;</span><br><span class="line">		Assert.hasText(name, <span class="string">"Property source name must contain at least one character"</span>);</span><br><span class="line">		Assert.notNull(source, <span class="string">"Property source must not be null"</span>);</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">		<span class="keyword">this</span>.source = source;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PropertySource</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>(name, (T) <span class="keyword">new</span> Object());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.source;</span><br><span class="line">	&#125; </span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsProperty</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (getProperty(name) != <span class="keyword">null</span>);</span><br><span class="line">	&#125; </span><br><span class="line"></span><br><span class="line">	<span class="meta">@Nullable</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Object <span class="title">getProperty</span><span class="params">(String name)</span></span>;     </span><br><span class="line"></span><br><span class="line"> 	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> (<span class="keyword">this</span> == obj || (obj <span class="keyword">instanceof</span> PropertySource &amp;&amp;</span><br><span class="line">				ObjectUtils.nullSafeEquals(<span class="keyword">this</span>.name, ((PropertySource&lt;?&gt;) obj).name)));</span><br><span class="line">	&#125;  </span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> ObjectUtils.nullSafeHashCode(<span class="keyword">this</span>.name);</span><br><span class="line">	&#125;  </span><br><span class="line"><span class="comment">//省略其他方法和内部类的源码            </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>源码相对简单，预留了一个<code>getProperty</code>抽象方法给子类实现，<strong>重点需要关注的是覆写了的<code>equals</code>和<code>hashCode</code>方法，实际上只和<code>name</code>属性相关，这一点很重要，说明一个PropertySource实例绑定到一个唯一的name，这个name有点像HashMap里面的key</strong>，部分移除、判断方法都是基于name属性。<code>PropertySource</code>的最常用子类是<code>MapPropertySource</code>、<code>PropertiesPropertySource</code>、<code>ResourcePropertySource</code>、<code>StubPropertySource</code>、<code>ComparisonPropertySource</code>：</p>
+<ul>
+<li><code>MapPropertySource</code>：source指定为Map实例的<code>PropertySource</code>实现。</li>
+<li><code>PropertiesPropertySource</code>：source指定为<code>Map</code>实例的<code>PropertySource</code>实现，内部的<code>Map</code>实例由<code>Properties</code>实例转换而来。</li>
+<li><code>ResourcePropertySource</code>：继承自<code>PropertiesPropertySource</code>，source指定为通过<code>Resource</code>实例转化为<code>Properties</code>再转换为Map实例。</li>
+<li><code>StubPropertySource</code>：<code>PropertySource</code>的一个内部类，source设置为null，实际上就是空实现。</li>
+<li><code>ComparisonPropertySource</code>：继承自<code>ComparisonPropertySource</code>，所有属性访问方法强制抛出异常，作用就是一个不可访问属性的空实现。</li>
+</ul>
+<p><code>AbstractEnvironment</code>中的属性定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String IGNORE_GETENV_PROPERTY_NAME = <span class="string">"spring.getenv.ignore"</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String ACTIVE_PROFILES_PROPERTY_NAME = <span class="string">"spring.profiles.active"</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_PROFILES_PROPERTY_NAME = <span class="string">"spring.profiles.default"</span>;</span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> String RESERVED_DEFAULT_PROFILE_NAME = <span class="string">"default"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;String&gt; activeProfiles = <span class="keyword">new</span> LinkedHashSet&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;String&gt; defaultProfiles = <span class="keyword">new</span> LinkedHashSet&lt;&gt;(getReservedDefaultProfiles());</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MutablePropertySources propertySources = <span class="keyword">new</span> MutablePropertySources(<span class="keyword">this</span>.logger);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ConfigurablePropertyResolver propertyResolver = <span class="keyword">new</span> PropertySourcesPropertyResolver(<span class="keyword">this</span>.propertySources);</span><br></pre></td></tr></table></figure>
+<p>上面的propertySources(<code>MutablePropertySources</code>类型)属性就是用来存放<code>PropertySource</code>列表的，<code>PropertySourcesPropertyResolver</code>是<code>ConfigurablePropertyResolver</code>的实现，默认的profile就是字符串default。<code>MutablePropertySources</code>的内部属性如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> List&lt;PropertySource&lt;?&gt;&gt; propertySourceList = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>没错，这个就是最底层的存储容器，也就是环境属性都是存放在一个<code>CopyOnWriteArrayList&lt;PropertySource&lt;?&gt;&gt;</code>实例中。<code>MutablePropertySources</code>是<code>PropertySources</code>的子类，它提供了<code>get(String name)</code>、<code>addFirst</code>、<code>addLast</code>、<code>addBefore</code>、<code>addAfter</code>、<code>remove</code>、<code>replace</code>等便捷方法，方便操作propertySourceList集合的元素，这里挑选<code>addBefore</code>的源码分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addBefore</span><span class="params">(String relativePropertySourceName, PropertySource&lt;?&gt; propertySource)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Adding PropertySource '"</span> + propertySource.getName() +</span><br><span class="line">					<span class="string">"' with search precedence immediately higher than '"</span> + relativePropertySourceName + <span class="string">"'"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//前一个PropertySource的name指定为relativePropertySourceName时候必须和添加的PropertySource的name属性不相同</span></span><br><span class="line">	assertLegalRelativeAddition(relativePropertySourceName, propertySource);</span><br><span class="line">    <span class="comment">//尝试移除同名的PropertySource</span></span><br><span class="line">	removeIfPresent(propertySource);</span><br><span class="line">    <span class="comment">//获取前一个PropertySource在CopyOnWriteArrayList中的索引</span></span><br><span class="line">	<span class="keyword">int</span> index = assertPresentAndGetIndex(relativePropertySourceName);</span><br><span class="line">    <span class="comment">//添加当前传入的PropertySource到指定前一个PropertySource的索引，相当于relativePropertySourceName对应的PropertySource后移到原来索引值+1的位置</span></span><br><span class="line">	addAtIndex(index, propertySource);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">assertLegalRelativeAddition</span><span class="params">(String relativePropertySourceName, PropertySource&lt;?&gt; propertySource)</span> </span>&#123;</span><br><span class="line">	String newPropertySourceName = propertySource.getName();</span><br><span class="line">	<span class="keyword">if</span> (relativePropertySourceName.equals(newPropertySourceName)) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">					<span class="string">"PropertySource named '"</span> + newPropertySourceName + <span class="string">"' cannot be added relative to itself"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">removeIfPresent</span><span class="params">(PropertySource&lt;?&gt; propertySource)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.propertySourceList.remove(propertySource);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">assertPresentAndGetIndex</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> index = <span class="keyword">this</span>.propertySourceList.indexOf(PropertySource.named(name));</span><br><span class="line">	<span class="keyword">if</span> (index == -<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"PropertySource named '"</span> + name + <span class="string">"' does not exist"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addAtIndex</span><span class="params">(<span class="keyword">int</span> index, PropertySource&lt;?&gt; propertySource)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//注意，这里会再次尝试移除同名的PropertySource</span></span><br><span class="line">	removeIfPresent(propertySource);</span><br><span class="line">	<span class="keyword">this</span>.propertySourceList.add(index, propertySource);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大多数<code>PropertySource</code>子类的修饰符都是public，可以直接使用，这里写个小demo：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MutablePropertySources mutablePropertySources = <span class="keyword">new</span> MutablePropertySources();</span><br><span class="line">Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">map.put(<span class="string">"name"</span>, <span class="string">"throwable"</span>);</span><br><span class="line">map.put(<span class="string">"age"</span>, <span class="number">25</span>);</span><br><span class="line">MapPropertySource mapPropertySource = <span class="keyword">new</span> MapPropertySource(<span class="string">"map"</span>, map);</span><br><span class="line">mutablePropertySources.addLast(mapPropertySource);</span><br><span class="line">Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">PropertiesPropertySource propertiesPropertySource = <span class="keyword">new</span> PropertiesPropertySource(<span class="string">"prop"</span>, properties);</span><br><span class="line">properties.put(<span class="string">"name"</span>, <span class="string">"doge"</span>);</span><br><span class="line">properties.put(<span class="string">"gourp"</span>, <span class="string">"group-a"</span>);</span><br><span class="line">mutablePropertySources.addBefore(<span class="string">"map"</span>, propertiesPropertySource);</span><br><span class="line">System.out.println(mutablePropertySources);</span><br></pre></td></tr></table></figure>
+<h2 id="Environment加载过程源码分析">Environment加载过程源码分析</h2>
+<p>Environment加载的源码位于<code>SpringApplication#prepareEnvironment</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ConfigurableEnvironment <span class="title">prepareEnvironment</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		SpringApplicationRunListeners listeners,</span></span></span><br><span class="line"><span class="function"><span class="params">		ApplicationArguments applicationArguments)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// Create and configure the environment</span></span><br><span class="line">       <span class="comment">//创建ConfigurableEnvironment实例</span></span><br><span class="line">	ConfigurableEnvironment environment = getOrCreateEnvironment();</span><br><span class="line">       <span class="comment">//启动参数绑定到ConfigurableEnvironment中</span></span><br><span class="line">	configureEnvironment(environment, applicationArguments.getSourceArgs());</span><br><span class="line">       <span class="comment">//发布ConfigurableEnvironment准备完毕事件</span></span><br><span class="line">	listeners.environmentPrepared(environment);</span><br><span class="line">       <span class="comment">//绑定ConfigurableEnvironment到当前的SpringApplication实例中</span></span><br><span class="line">	bindToSpringApplication(environment);</span><br><span class="line">       <span class="comment">//这一步是非SpringMVC项目的处理，暂时忽略</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.webApplicationType == WebApplicationType.NONE) &#123;</span><br><span class="line">		environment = <span class="keyword">new</span> EnvironmentConverter(getClassLoader())</span><br><span class="line">				.convertToStandardEnvironmentIfNecessary(environment);</span><br><span class="line">	&#125;</span><br><span class="line">       <span class="comment">//绑定ConfigurationPropertySourcesPropertySource到ConfigurableEnvironment中，name为configurationProperties，实例是SpringConfigurationPropertySources，属性实际是ConfigurableEnvironment中的MutablePropertySources</span></span><br><span class="line">	ConfigurationPropertySources.attach(environment);</span><br><span class="line">	<span class="keyword">return</span> environment;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里重点看下<code>getOrCreateEnvironment</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ConfigurableEnvironment <span class="title">getOrCreateEnvironment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.environment != <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.environment;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//在SpringMVC项目，ConfigurableEnvironment接口的实例就是新建的StandardServletEnvironment实例</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.webApplicationType == WebApplicationType.SERVLET) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> StandardServletEnvironment();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> StandardEnvironment();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//REACTIVE_WEB_ENVIRONMENT_CLASS=org.springframework.web.reactive.DispatcherHandler</span></span><br><span class="line"><span class="comment">//MVC_WEB_ENVIRONMENT_CLASS=org.springframework.web.servlet.DispatcherServlet</span></span><br><span class="line"><span class="comment">//MVC_WEB_ENVIRONMENT_CLASS=&#123;"javax.servlet.Servlet","org.springframework.web.context.ConfigurableWebApplicationContext"&#125;</span></span><br><span class="line"><span class="comment">//这里，默认就是WebApplicationType.SERVLET</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> WebApplicationType <span class="title">deduceWebApplicationType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (ClassUtils.isPresent(REACTIVE_WEB_ENVIRONMENT_CLASS, <span class="keyword">null</span>)</span><br><span class="line">		&amp;&amp; !ClassUtils.isPresent(MVC_WEB_ENVIRONMENT_CLASS, <span class="keyword">null</span>)) &#123;</span><br><span class="line">		<span class="keyword">return</span> WebApplicationType.REACTIVE;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (String className : WEB_ENVIRONMENT_CLASSES) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!ClassUtils.isPresent(className, <span class="keyword">null</span>)) &#123;</span><br><span class="line">			<span class="keyword">return</span> WebApplicationType.NONE;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> WebApplicationType.SERVLET;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>还有一个地方要重点关注：发布<code>ConfigurableEnvironment</code>准备完毕事件<code>listeners.environmentPrepared(environment)</code>，实际上这里用到了同步的EventBus，事件的监听者是<code>ConfigFileApplicationListener</code>，具体处理逻辑是<code>onApplicationEnvironmentPreparedEvent</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onApplicationEnvironmentPreparedEvent</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">			ApplicationEnvironmentPreparedEvent event)</span> </span>&#123;</span><br><span class="line">	List&lt;EnvironmentPostProcessor&gt; postProcessors = loadPostProcessors();</span><br><span class="line">	postProcessors.add(<span class="keyword">this</span>);</span><br><span class="line">	AnnotationAwareOrderComparator.sort(postProcessors);</span><br><span class="line">    <span class="comment">//遍历所有的EnvironmentPostProcessor对Environment实例进行处理</span></span><br><span class="line">	<span class="keyword">for</span> (EnvironmentPostProcessor postProcessor : postProcessors) &#123;</span><br><span class="line">		postProcessor.postProcessEnvironment(event.getEnvironment(),</span><br><span class="line">					event.getSpringApplication());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//从spring.factories文件中加载，一共有四个实例</span></span><br><span class="line"><span class="comment">//ConfigFileApplicationListener</span></span><br><span class="line"><span class="comment">//CloudFoundryVcapEnvironmentPostProcessor</span></span><br><span class="line"><span class="comment">//SpringApplicationJsonEnvironmentPostProcessor</span></span><br><span class="line"><span class="comment">//SystemEnvironmentPropertySourceEnvironmentPostProcessor</span></span><br><span class="line"><span class="function">List&lt;EnvironmentPostProcessor&gt; <span class="title">loadPostProcessors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> SpringFactoriesLoader.loadFactories(EnvironmentPostProcessor<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">				<span class="title">getClass</span>().<span class="title">getClassLoader</span>())</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，处理工作大部分都在ConfigFileApplicationListener中，见它的<code>postProcessEnvironment</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessEnvironment</span><span class="params">(ConfigurableEnvironment environment,</span></span></span><br><span class="line"><span class="function"><span class="params">			SpringApplication application)</span> </span>&#123;</span><br><span class="line">	addPropertySources(environment, application.getResourceLoader());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addPropertySources</span><span class="params">(ConfigurableEnvironment environment,</span></span></span><br><span class="line"><span class="function"><span class="params">			ResourceLoader resourceLoader)</span> </span>&#123;</span><br><span class="line">	RandomValuePropertySource.addToEnvironment(environment);</span><br><span class="line">	<span class="keyword">new</span> Loader(environment, resourceLoader).load();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要的配置环境加载逻辑在内部类<code>Loader</code>，<code>Loader</code>会匹配多个路径下的文件把属性加载到<code>ConfigurableEnvironment</code>中，加载器主要是<code>PropertySourceLoader</code>的实例，例如我们用到application-${profile}.yaml文件做应用主配置文件，使用的是<code>YamlPropertySourceLoader</code>，这个时候activeProfiles也会被设置到<code>ConfigurableEnvironment</code>中。加载完毕之后，<code>ConfigurableEnvironment</code>中基本包含了所有需要加载的属性(activeProfiles是这个时候被写入<code>ConfigurableEnvironment</code>)。值得注意的是，几乎所有属性都是key-value形式存储，如xxx.yyyy.zzzzz=value、xxx.yyyy[0].zzzzz=value-1、xxx.yyyy[1].zzzzz=value-2。<code>Loader</code>中的逻辑相对复杂，有比较多的遍历和过滤条件，这里不做展开。</p>
+<h2 id="Environment属性访问源码分析">Environment属性访问源码分析</h2>
+<p>上文提到过，都是委托到<code>PropertySourcesPropertyResolver</code>，先看它的构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PropertySources propertySources;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PropertySourcesPropertyResolver</span><span class="params">(@Nullable PropertySources propertySources)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.propertySources = propertySources;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只依赖于一个<code>PropertySources</code>实例，在SpringBoot项目中就是<code>MutablePropertySources</code>的实例。重点分析一下最复杂的一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function">T <span class="title">getProperty</span><span class="params">(String key, Class&lt;T&gt; targetValueType, <span class="keyword">boolean</span> resolveNestedPlaceholders)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.propertySources != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">//遍历所有的PropertySource</span></span><br><span class="line">		<span class="keyword">for</span> (PropertySource&lt;?&gt; propertySource : <span class="keyword">this</span>.propertySources) &#123;</span><br><span class="line">			<span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</span><br><span class="line">				logger.trace(<span class="string">"Searching for key '"</span> + key + <span class="string">"' in PropertySource '"</span> +</span><br><span class="line">							propertySource.getName() + <span class="string">"'"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			Object value = propertySource.getProperty(key);</span><br><span class="line">            <span class="comment">//选用第一个不为null的匹配key的属性值</span></span><br><span class="line">			<span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">				<span class="keyword">if</span> (resolveNestedPlaceholders &amp;&amp; value <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">                    <span class="comment">//处理属性占位符，如$&#123;server.port&#125;，底层委托到PropertyPlaceholderHelper完成</span></span><br><span class="line">					value = resolveNestedPlaceholders((String) value);</span><br><span class="line">				&#125;</span><br><span class="line">				logKeyFound(key, propertySource, value);</span><br><span class="line">                <span class="comment">//如果需要的话，进行一次类型转换，底层委托到DefaultConversionService完成</span></span><br><span class="line">				<span class="keyword">return</span> convertValueIfNecessary(value, targetValueType);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Could not find key '"</span> + key + <span class="string">"' in any property source"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的源码告诉我们，如果出现多个<code>PropertySource</code>中存在同名的key，返回的是第一个<code>PropertySource</code>对应key的属性值的处理结果，因此我们如果需要自定义一些环境属性，需要十分清楚各个<code>PropertySource</code>的顺序。</p>
+<h2 id="扩展-实现分散配置">扩展-实现分散配置</h2>
+<p>在不使用SpringCloud配置中心的情况下，一般的SpringBoot项目的配置文件如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- src</span><br><span class="line"> - main</span><br><span class="line">  - resources</span><br><span class="line">   - application-prod.yaml</span><br><span class="line">   - application-dev.yaml</span><br><span class="line">   - application-test.yaml</span><br></pre></td></tr></table></figure>
+<p>随着项目发展，配置项越来越多，导致了application-${profile}.yaml迅速膨胀，大的配置文件甚至超过一千行，为了简化和划分不同功能的配置，可以考虑把配置文件拆分如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- src</span><br><span class="line"> - main</span><br><span class="line">  - resources</span><br><span class="line">   - profiles</span><br><span class="line">     - dev</span><br><span class="line">       - business.yaml</span><br><span class="line">       - mq.json</span><br><span class="line">       - datasource.properties</span><br><span class="line">     - prod</span><br><span class="line">       - business.yaml</span><br><span class="line">       - mq.json</span><br><span class="line">       - datasource.properties</span><br><span class="line">     - test  </span><br><span class="line">       - business.yaml</span><br><span class="line">       - mq.json  </span><br><span class="line">       - datasource.properties</span><br><span class="line">   - application-prod.yaml</span><br><span class="line">   - application-dev.yaml</span><br><span class="line">   - application-test.yaml</span><br></pre></td></tr></table></figure>
+<p>外层的application-${profile}.yaml只留下项目的核心配置如<code>server.port</code>等，其他配置打散放在/profiles/${profile}/各自的配置文件中。实现方式是：依据当前配置的spring.profiles.active属性，读取类路径中指定文件夹下的配置文件中，加载到Environment中，需要注意这一个加载步骤必须在Spring刷新上下文方法最后一步<code>finishRefresh()</code>之前完成，否则有可能会影响到占位符属性的自动装配(例如使用了@Value(&quot;${filed}&quot;))。</p>
+<p>先定义一个属性探索者接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取支持的文件后缀数组</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> String[]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String[] getFileExtensions();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 加载目标文件属性到环境中</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> environment environment</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> name        name</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> resource    resource</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">load</span><span class="params">(ConfigurableEnvironment environment, String name, Resource resource)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后需要一个抽象属性探索者把<code>Resource</code>转换为字符串，额外提供<code>Map</code>的缩进、添加<code>PropertySource</code>到<code>Environment</code>等方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractPropertySourceDetector</span> <span class="keyword">implements</span> <span class="title">PropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SERVLET_ENVIRONMENT_CLASS = <span class="string">"org.springframework.web."</span></span><br><span class="line">            + <span class="string">"context.support.StandardServletEnvironment"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">support</span><span class="params">(String fileExtension)</span> </span>&#123;</span><br><span class="line">        String[] fileExtensions = getFileExtensions();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span> != fileExtensions &amp;&amp;</span><br><span class="line">                Arrays.stream(fileExtensions).anyMatch(extension -&gt; extension.equals(fileExtension));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">findPropertySource</span><span class="params">(MutablePropertySources sources)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (ClassUtils.isPresent(SERVLET_ENVIRONMENT_CLASS, <span class="keyword">null</span>) &amp;&amp; sources</span><br><span class="line">                .contains(StandardServletEnvironment.JNDI_PROPERTY_SOURCE_NAME)) &#123;</span><br><span class="line">            <span class="keyword">return</span> StandardServletEnvironment.JNDI_PROPERTY_SOURCE_NAME;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addPropertySource</span><span class="params">(ConfigurableEnvironment environment, PropertySource&lt;?&gt; source)</span> </span>&#123;</span><br><span class="line">        MutablePropertySources sources = environment.getPropertySources();</span><br><span class="line">        String name = findPropertySource(sources);</span><br><span class="line">        <span class="keyword">if</span> (sources.contains(name)) &#123;</span><br><span class="line">            sources.addBefore(name, source);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            sources.addFirst(source);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Map&lt;String, Object&gt; <span class="title">flatten</span><span class="params">(Map&lt;String, Object&gt; map)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; result = <span class="keyword">new</span> LinkedHashMap&lt;&gt;();</span><br><span class="line">        flatten(<span class="keyword">null</span>, result, map);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">flatten</span><span class="params">(String prefix, Map&lt;String, Object&gt; result, Map&lt;String, Object&gt; map)</span> </span>&#123;</span><br><span class="line">        String namePrefix = (prefix != <span class="keyword">null</span> ? prefix + <span class="string">"."</span> : <span class="string">""</span>);</span><br><span class="line">        map.forEach((key, value) -&gt; extract(namePrefix + key, result, value));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">extract</span><span class="params">(String name, Map&lt;String, Object&gt; result, Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (value <span class="keyword">instanceof</span> Map) &#123;</span><br><span class="line">            flatten(name, result, (Map&lt;String, Object&gt;) value);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value <span class="keyword">instanceof</span> Collection) &#123;</span><br><span class="line">            <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (Object object : (Collection&lt;Object&gt;) value) &#123;</span><br><span class="line">                extract(name + <span class="string">"["</span> + index + <span class="string">"]"</span>, result, object);</span><br><span class="line">                index++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result.put(name, value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">getContentStringFromResource</span><span class="params">(Resource resource)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> StreamUtils.copyToString(resource.getInputStream(), Charset.forName(<span class="string">"UTF-8"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的方法参考<code>SpringApplicationJsonEnvironmentPostProcessor</code>，然后编写各种类型配置属性探索者的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Json</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JsonPropertySourceDetector</span> <span class="keyword">extends</span> <span class="title">AbstractPropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> JsonParser JSON_PARSER = JsonParserFactory.getJsonParser();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] getFileExtensions() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;<span class="string">"json"</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(ConfigurableEnvironment environment, String name, Resource resource)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Map&lt;String, Object&gt; map = JSON_PARSER.parseMap(getContentStringFromResource(resource));</span><br><span class="line">            Map&lt;String, Object&gt; target = flatten(map);</span><br><span class="line">            addPropertySource(environment, <span class="keyword">new</span> MapPropertySource(name, target));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.warn(<span class="string">"加载Json文件属性到环境变量失败,name = &#123;&#125;,resource = &#123;&#125;"</span>, name, resource);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Properties</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PropertiesPropertySourceDetector</span> <span class="keyword">extends</span> <span class="title">AbstractPropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] getFileExtensions() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;<span class="string">"properties"</span>, <span class="string">"conf"</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(ConfigurableEnvironment environment, String name, Resource resource)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Map map = PropertiesLoaderUtils.loadProperties(resource);</span><br><span class="line">        addPropertySource(environment, <span class="keyword">new</span> MapPropertySource(name, map));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//Yaml</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">YamlPropertySourceDetector</span> <span class="keyword">extends</span> <span class="title">AbstractPropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> JsonParser YAML_PARSER = <span class="keyword">new</span> YamlJsonParser();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] getFileExtensions() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;<span class="string">"yaml"</span>, <span class="string">"yml"</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(ConfigurableEnvironment environment, String name, Resource resource)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Map&lt;String, Object&gt; map = YAML_PARSER.parseMap(getContentStringFromResource(resource));</span><br><span class="line">            Map&lt;String, Object&gt; target = flatten(map);</span><br><span class="line">            addPropertySource(environment, <span class="keyword">new</span> MapPropertySource(name, target));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.warn(<span class="string">"加载Yaml文件属性到环境变量失败,name = &#123;&#125;,resource = &#123;&#125;"</span>, name, resource);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>子类的全部<code>PropertySource</code>都是<code>MapPropertySource</code>，name为文件的名称，所有<code>PropertySource</code>都用<code>addBefore()</code>方法插入到<code>systemProperties</code>的<strong>前面</strong>，主要是为了提高匹配属性的优先级。接着需要定义一个属性探索者的合成类用来装载所有的子类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PropertySourceDetectorComposite</span> <span class="keyword">implements</span> <span class="title">PropertySourceDetector</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_SUFFIX = <span class="string">"properties"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;AbstractPropertySourceDetector&gt; propertySourceDetectors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addPropertySourceDetector</span><span class="params">(AbstractPropertySourceDetector sourceDetector)</span> </span>&#123;</span><br><span class="line">        propertySourceDetectors.add(sourceDetector);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addPropertySourceDetectors</span><span class="params">(List&lt;AbstractPropertySourceDetector&gt; sourceDetectors)</span> </span>&#123;</span><br><span class="line">        propertySourceDetectors.addAll(sourceDetectors);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;AbstractPropertySourceDetector&gt; <span class="title">getPropertySourceDetectors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Collections.unmodifiableList(propertySourceDetectors);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] getFileExtensions() &#123;</span><br><span class="line">        List&lt;String&gt; fileExtensions = <span class="keyword">new</span> ArrayList&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">        <span class="keyword">for</span> (AbstractPropertySourceDetector propertySourceDetector : propertySourceDetectors) &#123;</span><br><span class="line">            fileExtensions.addAll(Arrays.asList(propertySourceDetector.getFileExtensions()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> fileExtensions.toArray(<span class="keyword">new</span> String[<span class="number">0</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(ConfigurableEnvironment environment, String name, Resource resource)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (resource.isFile()) &#123;</span><br><span class="line">            String fileName = resource.getFile().getName();</span><br><span class="line">            <span class="keyword">int</span> index = fileName.lastIndexOf(<span class="string">"."</span>);</span><br><span class="line">            String suffix;</span><br><span class="line">            <span class="keyword">if</span> (-<span class="number">1</span> == index) &#123;</span><br><span class="line">                <span class="comment">//如果文件没有后缀,当作properties处理</span></span><br><span class="line">                suffix = DEFAULT_SUFFIX;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                suffix = fileName.substring(index + <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (AbstractPropertySourceDetector propertySourceDetector : propertySourceDetectors) &#123;</span><br><span class="line">                <span class="keyword">if</span> (propertySourceDetector.support(suffix)) &#123;</span><br><span class="line">                    propertySourceDetector.load(environment, name, resource);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后添加一个配置类作为入口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PropertySourceDetectorConfiguration</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PATH_PREFIX = <span class="string">"profiles"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) registry;</span><br><span class="line">        ConfigurableEnvironment environment = beanFactory.getBean(ConfigurableEnvironment<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        List&lt;AbstractPropertySourceDetector&gt; propertySourceDetectors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        configurePropertySourceDetectors(propertySourceDetectors, beanFactory);</span><br><span class="line">        PropertySourceDetectorComposite propertySourceDetectorComposite = <span class="keyword">new</span> PropertySourceDetectorComposite();</span><br><span class="line">        propertySourceDetectorComposite.addPropertySourceDetectors(propertySourceDetectors);</span><br><span class="line">        String[] activeProfiles = environment.getActiveProfiles();</span><br><span class="line">        ResourcePatternResolver resourcePatternResolver = <span class="keyword">new</span> PathMatchingResourcePatternResolver();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (String profile : activeProfiles) &#123;</span><br><span class="line">                String location = PATH_PREFIX + File.separator + profile + File.separator + <span class="string">"*"</span>;</span><br><span class="line">                Resource[] resources = resourcePatternResolver.getResources(location);</span><br><span class="line">                <span class="keyword">for</span> (Resource resource : resources) &#123;</span><br><span class="line">                    propertySourceDetectorComposite.load(environment, resource.getFilename(), resource);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">configurePropertySourceDetectors</span><span class="params">(List&lt;AbstractPropertySourceDetector&gt; propertySourceDetectors,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                  DefaultListableBeanFactory beanFactory)</span> </span>&#123;</span><br><span class="line">        Map&lt;String, AbstractPropertySourceDetector&gt; beansOfType = beanFactory.getBeansOfType(AbstractPropertySourceDetector<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, AbstractPropertySourceDetector&gt; entry : beansOfType.entrySet()) &#123;</span><br><span class="line">            propertySourceDetectors.add(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        propertySourceDetectors.add(<span class="keyword">new</span> JsonPropertySourceDetector());</span><br><span class="line">        propertySourceDetectors.add(<span class="keyword">new</span> YamlPropertySourceDetector());</span><br><span class="line">        propertySourceDetectors.add(<span class="keyword">new</span> PropertiesPropertySourceDetector());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>准备就绪，在示例项目的<code>/resources/profiles/dev</code>目录下面添加两个文件app.json和conf：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//app.json文件内容</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"app"</span>: &#123;</span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"throwable"</span>,</span><br><span class="line">    <span class="string">"age"</span>: <span class="number">25</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//conf文件内容</span></span><br><span class="line">name=doge</span><br></pre></td></tr></table></figure>
+<p>项目的<code>application.yaml</code>添加属性<code>spring.profiles.active: dev</code>，最后添加一个<code>CommandLineRunner</code>的实现用来观察数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommandLineRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;app.name&#125;"</span>)</span><br><span class="line">    String name;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;app.age&#125;"</span>)</span><br><span class="line">    Integer age;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    ConfigurableEnvironment configurableEnvironment;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"name = &#123;&#125;,age = &#123;&#125;"</span>, name, age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/spe-3.png" alt="spe-3"></p>
+<p>自动装配的属性值和<code>Environment</code>实例中的属性和预期一样，改造是成功的。</p>
+<h2 id="小结">小结</h2>
+<p>Spring中的环境属性管理的源码个人认为是最清晰和简单的：从文件中读取数据转化为key-value结构，key-value结构存放在一个<code>PropertySource</code>实例中，然后得到的多个<code>PropertySource</code>实例存放在一个<code>CopyOnWriteArrayList</code>中，属性访问的时候总是遍历<code>CopyOnWriteArrayList</code>中的<code>PropertySource</code>进行匹配。可能相对复杂的就是占位符的解析和参数类型的转换，后者牵连到<code>Converter</code>体系，这些不在本文的讨论范围内。最后附上一张<code>Environment</code>存储容器的示例图：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/spe-4.png" alt="spe-4"></p>
+<p>参考资料：</p>
+<ul>
+<li>spring-boot-starter-web:2.0.3.RELEASE源码。</li>
+</ul>
+<p>(本文完 r-a-20181216)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/12/16/spring-boot-environment-configuration-spread/>http://throwable.club/2018/12/16/spring-boot-environment-configuration-spread/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/SpringBoot/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>SpringBoot</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/12/16/spring-boot-environment-configuration-spread/&title=基于SpringBoot的Environment源码理解实现分散配置 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+org.springframework.core.env.Environment是当前应用运行环境的公开接口，主要包括应用程序运行环境的两个关键方面：配置文件(profiles)和属性。Environment继承自接口PropertyResolver，而PropertyResolver提供了属性访问的相关方法。这篇文章从源码的角度分析Environment的存储容器和加载流程，然后基于源码的理解给出一个生产级别的扩展。
+本文较长，请用一个舒服的姿势阅读。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/12/16/spring-boot-environment-configuration-spread/&title=基于SpringBoot的Environment源码理解实现分散配置 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+org.springframework.core.env.Environment是当前应用运行环境的公开接口，主要包括应用程序运行环境的两个关键方面：配置文件(profiles)和属性。Environment继承自接口PropertyResolver，而PropertyResolver提供了属性访问的相关方法。这篇文章从源码的角度分析Environment的存储容器和加载流程，然后基于源码的理解给出一个生产级别的扩展。
+本文较长，请用一个舒服的姿势阅读。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADK0lEQVR42u3aQW7DMAwEwPz/0+21QOtkl7KLWBmfisaxNcyB0FKPR3x9/biO/v/7+nnPytOStT2uuLCxsbFvws6X3t75e1nt858/IXn+YfmwsbGxt2M/bwxtCWYFyhtS3iwP/4+NjY2NHSx3Rk3aW7JObGxsbOyWnTPyorShEjY2NvYns9tYZ9bY2hIkz7k8S8PGxsZ+e3Y+FX3/vy+Zb2NjY2O/MfvcWL896NO2nLNGFNjY2Ng7sWeD1fzozCwAyt+79ANgY2Njb8F+/rXk0c/joVlR1hvni7JiY2Njb8eeBUlnBfqzEW/7g/3RwLCxsbE3Ys/aRr49WCflJU7WiY2Njb0Tu31NG/GslGZlnBAVBRsbG3sLdrs9mMVJ+beSO9vo6o+VYGNjY2/EzkenK6F/G1Hlra4d8R72bWxsbOybs/Nb6+CmjPJnY4lZ1IWNjY29BzvfMOSMvIG1BU2KUoRK2NjY2FuwZ9F/smlJyndWaZIfrEjUsLGxsW/Lbg/NnLuNaUkr415sbGzs/dj5lmO2YcjHuitx0izSwsbGxr47O6/B+jB4pWR5c4rego2Njb0dux0GJM2pPVhz3dNepGjY2NjYN2fPStBuV/KS5W012bRE2xhsbGzsLdjtFqLdVMy2Me32Iy8KNjY29t7sJOgZDlAXmlbbopYGutjY2Ng3ZLd5S95s2sHt7JDQUqiEjY2NfXN2Hv3Pmkr+rnODpBeNDRsbG3s7dt5UZuz1bUbS0oq3Y2NjY2/EXomNkkX8TxS19C5sbGzsLdiz6Gfl9bONymy7Uv/O2NjY2Fuw28VdjVkv7uHhS2xsbOyt2e2BmPwQ52lBf8A+XDk2Njb2B7CfRzNtSJSXrw28ht/CxsbG3oL9VV4tuB0hXLcdeuT9DRsbG/tW7Ha82h7Nye9fOQA0ew42Njb2Tuz1ptVuQvIQP9m0tM/HxsbG3pXdHuWZBTpXDBiSNRQfY2NjY38Aux0qtG9JSpyvJzqyg42Njf1h7LadJN9dGTAPR8vY2NjY27GTUGk2uD2rgbVFOS1Lw8bGxn57dt4M2uFu8unsQE9b6DyKwsbGxr4V+xudPXLeQ+DJvgAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/12/16/spring-boot-environment-configuration-spread/&title=基于SpringBoot的Environment源码理解实现分散配置 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+org.springframework.core.env.Environment是当前应用运行环境的公开接口，主要包括应用程序运行环境的两个关键方面：配置文件(profiles)和属性。Environment继承自接口PropertyResolver，而PropertyResolver提供了属性访问的相关方法。这篇文章从源码的角度分析Environment的存储容器和加载流程，然后基于源码的理解给出一个生产级别的扩展。
+本文较长，请用一个舒服的姿势阅读。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADK0lEQVR42u3aQW7DMAwEwPz/0+21QOtkl7KLWBmfisaxNcyB0FKPR3x9/biO/v/7+nnPytOStT2uuLCxsbFvws6X3t75e1nt858/IXn+YfmwsbGxt2M/bwxtCWYFyhtS3iwP/4+NjY2NHSx3Rk3aW7JObGxsbOyWnTPyorShEjY2NvYns9tYZ9bY2hIkz7k8S8PGxsZ+e3Y+FX3/vy+Zb2NjY2O/MfvcWL896NO2nLNGFNjY2Ng7sWeD1fzozCwAyt+79ANgY2Njb8F+/rXk0c/joVlR1hvni7JiY2Njb8eeBUlnBfqzEW/7g/3RwLCxsbE3Ys/aRr49WCflJU7WiY2Njb0Tu31NG/GslGZlnBAVBRsbG3sLdrs9mMVJ+beSO9vo6o+VYGNjY2/EzkenK6F/G1Hlra4d8R72bWxsbOybs/Nb6+CmjPJnY4lZ1IWNjY29BzvfMOSMvIG1BU2KUoRK2NjY2FuwZ9F/smlJyndWaZIfrEjUsLGxsW/Lbg/NnLuNaUkr415sbGzs/dj5lmO2YcjHuitx0izSwsbGxr47O6/B+jB4pWR5c4rego2Njb0dux0GJM2pPVhz3dNepGjY2NjYN2fPStBuV/KS5W012bRE2xhsbGzsLdjtFqLdVMy2Me32Iy8KNjY29t7sJOgZDlAXmlbbopYGutjY2Ng3ZLd5S95s2sHt7JDQUqiEjY2NfXN2Hv3Pmkr+rnODpBeNDRsbG3s7dt5UZuz1bUbS0oq3Y2NjY2/EXomNkkX8TxS19C5sbGzsLdiz6Gfl9bONymy7Uv/O2NjY2Fuw28VdjVkv7uHhS2xsbOyt2e2BmPwQ52lBf8A+XDk2Njb2B7CfRzNtSJSXrw28ht/CxsbG3oL9VV4tuB0hXLcdeuT9DRsbG/tW7Ha82h7Nye9fOQA0ew42Njb2Tuz1ptVuQvIQP9m0tM/HxsbG3pXdHuWZBTpXDBiSNRQfY2NjY38Aux0qtG9JSpyvJzqyg42Njf1h7LadJN9dGTAPR8vY2NjY27GTUGk2uD2rgbVFOS1Lw8bGxn57dt4M2uFu8unsQE9b6DyKwsbGxr4V+xudPXLeQ+DJvgAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/12/18/rabbitmq-extension-exchange-binding/" rel="prev" title="RabbitMQ扩展之交换器间的绑定">
+                                  
+                                      RabbitMQ扩展之交换器间的绑定
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/12/16/cglib-dynamic-proxy-analyze/" rel="prev" title="CGLIB动态代理原理分析">
+                                    
+                                        CGLIB动态代理原理分析
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Cglib/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Cglib</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '基于SpringBoot的Environment源码理解实现分散配置',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Environment类体系"><span class="toc-text">Environment类体系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Environment提供的方法"><span class="toc-text">Environment提供的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Environment的存储容器"><span class="toc-text">Environment的存储容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Environment加载过程源码分析"><span class="toc-text">Environment加载过程源码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Environment属性访问源码分析"><span class="toc-text">Environment属性访问源码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展-实现分散配置"><span class="toc-text">扩展-实现分散配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

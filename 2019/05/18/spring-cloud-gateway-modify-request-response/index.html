@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/05/18/spring-cloud-gateway-modify-request-response/">
+        Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月18日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T10:08:24+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：9.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：47分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<ul>
+<li>本文编写的时候使用的<code>Spring Cloud Gateway</code>版本为当时最新的版本<code>Greenwich.SR1</code>。</li>
+</ul>
+<p>我们在使用<code>Spring Cloud Gateway</code>的时候，注意到过滤器（包括<code>GatewayFilter</code>、<code>GlobalFilter</code>和过滤器链<code>GatewayFilterChain</code>），都依赖到<code>ServerWebExchange</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GatewayFilter</span> <span class="keyword">extends</span> <span class="title">ShortcutConfigurable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GatewayFilterChain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的设计和<code>Servlet</code>中的<code>Filter</code>是相似的，当前过滤器可以决定是否执行下一个过滤器的逻辑，由<code>GatewayFilterChain#filter()</code>是否被调用来决定。而<code>ServerWebExchange</code>就相当于当前请求和响应的上下文。<code>ServerWebExchange</code>实例不单存储了<code>Request</code>和<code>Response</code>对象，还提供了一些扩展方法，如果想实现改造请求参数或者响应参数，就必须深入了解<code>ServerWebExchange</code>。</p>
+<a id="more"></a>
+<h2 id="理解ServerWebExchange">理解ServerWebExchange</h2>
+<p>先看<code>ServerWebExchange</code>的注释：</p>
+<blockquote>
+<p>Contract for an HTTP request-response interaction. Provides access to the HTTP request and response and also exposes additional server-side processing related properties and features such as request attributes.</p>
+</blockquote>
+<p>翻译一下大概是：</p>
+<blockquote>
+<p>ServerWebExchange是一个HTTP请求-响应交互的契约。提供对HTTP请求和响应的访问，并公开额外的服务器端处理相关属性和特性，如请求属性。</p>
+</blockquote>
+<p>其实，<code>ServerWebExchange</code>命名为<strong>服务网络交换器</strong>，存放着重要的请求-响应属性、请求实例和响应实例等等，有点像<code>Context</code>的角色。</p>
+<h3 id="ServerWebExchange接口">ServerWebExchange接口</h3>
+<p><code>ServerWebExchange</code>接口的所有方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServerWebExchange</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 日志前缀属性的KEY，值为org.springframework.web.server.ServerWebExchange.LOG_ID</span></span><br><span class="line">    <span class="comment">// 可以理解为 attributes.set("org.springframework.web.server.ServerWebExchange.LOG_ID","日志前缀的具体值");</span></span><br><span class="line">    <span class="comment">// 作用是打印日志的时候会拼接这个KEY对饮的前缀值，默认值为""</span></span><br><span class="line">    String LOG_ID_ATTRIBUTE = ServerWebExchange.class.getName() + ".LOG_ID";</span><br><span class="line">    <span class="function">String <span class="title">getLogPrefix</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取ServerHttpRequest对象</span></span><br><span class="line">    <span class="function">ServerHttpRequest <span class="title">getRequest</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取ServerHttpResponse对象</span></span><br><span class="line">    <span class="function">ServerHttpResponse <span class="title">getResponse</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回当前exchange的请求属性，返回结果是一个可变的Map</span></span><br><span class="line">    <span class="function">Map&lt;String, Object&gt; <span class="title">getAttributes</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 根据KEY获取请求属性</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="keyword">default</span> &lt;T&gt; <span class="function">T <span class="title">getAttribute</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (T) getAttributes().get(name);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 根据KEY获取请求属性，做了非空判断</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="keyword">default</span> &lt;T&gt; <span class="function">T <span class="title">getRequiredAttribute</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        T value = getAttribute(name);</span><br><span class="line">        Assert.notNull(value, () -&gt; <span class="string">"Required attribute '"</span> + name + <span class="string">"' is missing"</span>);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     <span class="comment">// 根据KEY获取请求属性，需要提供默认值</span></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="keyword">default</span> &lt;T&gt; <span class="function">T <span class="title">getAttributeOrDefault</span><span class="params">(String name, T defaultValue)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (T) getAttributes().getOrDefault(name, defaultValue);</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回当前请求的网络会话</span></span><br><span class="line">    <span class="function">Mono&lt;WebSession&gt; <span class="title">getSession</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回当前请求的认证用户，如果存在的话</span></span><br><span class="line">    &lt;T extends Principal&gt; <span class="function">Mono&lt;T&gt; <span class="title">getPrincipal</span><span class="params">()</span></span>;  </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回请求的表单数据或者一个空的Map，只有Content-Type为application/x-www-form-urlencoded的时候这个方法才会返回一个非空的Map -- 这个一般是表单数据提交用到</span></span><br><span class="line">    Mono&lt;MultiValueMap&lt;String, String&gt;&gt; getFormData();   </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回multipart请求的part数据或者一个空的Map，只有Content-Type为multipart/form-data的时候这个方法才会返回一个非空的Map  -- 这个一般是文件上传用到</span></span><br><span class="line">    Mono&lt;MultiValueMap&lt;String, Part&gt;&gt; getMultipartData();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回Spring的上下文</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function">ApplicationContext <span class="title">getApplicationContext</span><span class="params">()</span></span>;   </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这几个方法和lastModified属性相关</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isNotModified</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">checkNotModified</span><span class="params">(Instant lastModified)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">checkNotModified</span><span class="params">(String etag)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">checkNotModified</span><span class="params">(@Nullable String etag, Instant lastModified)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// URL转换</span></span><br><span class="line">    <span class="function">String <span class="title">transformUrl</span><span class="params">(String url)</span></span>;    </span><br><span class="line">   </span><br><span class="line">    <span class="comment">// URL转换映射</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addUrlTransformer</span><span class="params">(Function&lt;String, String&gt; transformer)</span></span>; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注意这个方法，方法名是：改变，这个是修改ServerWebExchange属性的方法，返回的是一个Builder实例，Builder是ServerWebExchange的内部类</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> Builder <span class="title">mutate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	     <span class="keyword">return</span> <span class="keyword">new</span> DefaultServerWebExchangeBuilder(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Builder</span> </span>&#123;      </span><br><span class="line">         </span><br><span class="line">        <span class="comment">// 覆盖ServerHttpRequest</span></span><br><span class="line">        <span class="function">Builder <span class="title">request</span><span class="params">(Consumer&lt;ServerHttpRequest.Builder&gt; requestBuilderConsumer)</span></span>;</span><br><span class="line">        <span class="function">Builder <span class="title">request</span><span class="params">(ServerHttpRequest request)</span></span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 覆盖ServerHttpResponse</span></span><br><span class="line">        <span class="function">Builder <span class="title">response</span><span class="params">(ServerHttpResponse response)</span></span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 覆盖当前请求的认证用户</span></span><br><span class="line">        <span class="function">Builder <span class="title">principal</span><span class="params">(Mono&lt;Principal&gt; principalMono)</span></span>;</span><br><span class="line">    </span><br><span class="line">        <span class="comment">// 构建新的ServerWebExchange实例</span></span><br><span class="line">        <span class="function">ServerWebExchange <span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到<code>ServerWebExchange#mutate()</code>方法，<code>ServerWebExchange</code>实例可以理解为不可变实例，如果我们想要修改它，需要通过<code>mutate()</code>方法生成一个新的实例，例如这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        <span class="comment">// 这里可以修改ServerHttpRequest实例</span></span><br><span class="line">        ServerHttpRequest newRequest = ...</span><br><span class="line">        ServerHttpResponse response = exchange.getResponse();</span><br><span class="line">        <span class="comment">// 这里可以修改ServerHttpResponse实例</span></span><br><span class="line">        ServerHttpResponse newResponse = ...</span><br><span class="line">        <span class="comment">// 构建新的ServerWebExchange实例</span></span><br><span class="line">        ServerWebExchange newExchange = exchange.mutate().request(newRequest).response(newResponse).build();</span><br><span class="line">        <span class="keyword">return</span> chain.filter(newExchange);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ServerHttpRequest接口">ServerHttpRequest接口</h3>
+<p><code>ServerHttpRequest</code>实例是用于承载请求相关的属性和请求体，<code>Spring Cloud Gateway</code>中底层使用<code>Netty</code>处理网络请求，通过追溯源码，可以从<code>ReactorHttpHandlerAdapter</code>中得知<code>ServerWebExchange</code>实例中持有的<code>ServerHttpRequest</code>实例的具体实现是<code>ReactorServerHttpRequest</code>。之所以列出这些实例之间的关系，是因为这样比较容易理清一些隐含的问题，例如：</p>
+<ul>
+<li><code>ReactorServerHttpRequest</code>的父类<code>AbstractServerHttpRequest</code>中初始化内部属性headers的时候把请求的HTTP头部封装为只读的实例：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractServerHttpRequest</span><span class="params">(URI uri, @Nullable String contextPath, HttpHeaders headers)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">this</span>.uri = uri;</span><br><span class="line">	<span class="keyword">this</span>.path = RequestPath.parse(uri, contextPath);</span><br><span class="line">	<span class="keyword">this</span>.headers = HttpHeaders.readOnlyHttpHeaders(headers);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// HttpHeaders类中的readOnlyHttpHeaders方法，其中ReadOnlyHttpHeaders屏蔽了所有修改请求头的方法，直接抛出UnsupportedOperationException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HttpHeaders <span class="title">readOnlyHttpHeaders</span><span class="params">(HttpHeaders headers)</span> </span>&#123;</span><br><span class="line">	Assert.notNull(headers, <span class="string">"HttpHeaders must not be null"</span>);</span><br><span class="line">	<span class="keyword">if</span> (headers <span class="keyword">instanceof</span> ReadOnlyHttpHeaders) &#123;</span><br><span class="line">		<span class="keyword">return</span> headers;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ReadOnlyHttpHeaders(headers);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以不能直接从<code>ServerHttpRequest</code>实例中直接获取请求头<code>HttpHeaders</code>实例并且进行修改。</p>
+<p><code>ServerHttpRequest</code>接口如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HttpMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取请求头，目前的实现中返回的是ReadOnlyHttpHeaders实例，只读</span></span><br><span class="line">    <span class="function">HttpHeaders <span class="title">getHeaders</span><span class="params">()</span></span>;</span><br><span class="line">&#125;    </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ReactiveHttpInputMessage</span> <span class="keyword">extends</span> <span class="title">HttpMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回请求体的Flux封装</span></span><br><span class="line">    <span class="function">Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HttpRequest</span> <span class="keyword">extends</span> <span class="title">HttpMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回HTTP请求方法，解析为HttpMethod实例</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> HttpMethod <span class="title">getMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> HttpMethod.resolve(getMethodValue());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回HTTP请求方法，字符串</span></span><br><span class="line">    <span class="function">String <span class="title">getMethodValue</span><span class="params">()</span></span>;    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 请求的URI</span></span><br><span class="line">    <span class="function">URI <span class="title">getURI</span><span class="params">()</span></span>;</span><br><span class="line">&#125;    </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServerHttpRequest</span> <span class="keyword">extends</span> <span class="title">HttpRequest</span>, <span class="title">ReactiveHttpInputMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 连接的唯一标识或者用于日志处理标识</span></span><br><span class="line">    <span class="function">String <span class="title">getId</span><span class="params">()</span></span>;   </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取请求路径，封装为RequestPath对象</span></span><br><span class="line">    <span class="function">RequestPath <span class="title">getPath</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 返回查询参数，是只读的MultiValueMap实例</span></span><br><span class="line">    <span class="function">MultiValueMap&lt;String, String&gt; <span class="title">getQueryParams</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回Cookie集合，是只读的MultiValueMap实例</span></span><br><span class="line">    <span class="function">MultiValueMap&lt;String, HttpCookie&gt; <span class="title">getCookies</span><span class="params">()</span></span>;  </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 远程服务器地址信息</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> InetSocketAddress <span class="title">getRemoteAddress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// SSL会话实现的相关信息</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">default</span> SslInfo <span class="title">getSslInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;  </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 修改请求的方法，返回一个建造器实例Builder，Builder是内部类</span></span><br><span class="line">    <span class="keyword">default</span> ServerHttpRequest.<span class="function">Builder <span class="title">mutate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DefaultServerHttpRequestBuilder(<span class="keyword">this</span>);</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 覆盖请求方法</span></span><br><span class="line">        <span class="function">Builder <span class="title">method</span><span class="params">(HttpMethod httpMethod)</span></span>;</span><br><span class="line">		 </span><br><span class="line">        <span class="comment">// 覆盖请求的URI、请求路径或者上下文，这三者相互有制约关系，具体可以参考API注释</span></span><br><span class="line">        <span class="function">Builder <span class="title">uri</span><span class="params">(URI uri)</span></span>;</span><br><span class="line">        <span class="function">Builder <span class="title">path</span><span class="params">(String path)</span></span>;</span><br><span class="line">        <span class="function">Builder <span class="title">contextPath</span><span class="params">(String contextPath)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 覆盖请求头</span></span><br><span class="line">        <span class="function">Builder <span class="title">header</span><span class="params">(String key, String value)</span></span>;</span><br><span class="line">        <span class="function">Builder <span class="title">headers</span><span class="params">(Consumer&lt;HttpHeaders&gt; headersConsumer)</span></span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 覆盖SslInfo</span></span><br><span class="line">        <span class="function">Builder <span class="title">sslInfo</span><span class="params">(SslInfo sslInfo)</span></span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 构建一个新的ServerHttpRequest实例</span></span><br><span class="line">        <span class="function">ServerHttpRequest <span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;         </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果要修改<code>ServerHttpRequest</code>实例，那么需要这样做：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">ServerHttpRequest newRequest = request.mutate().headers(<span class="string">"key"</span>,<span class="string">"value"</span>).path(<span class="string">"/myPath"</span>).build();</span><br></pre></td></tr></table></figure>
+<p>这里最值得注意的是：<code>ServerHttpRequest</code>或者说<code>HttpMessage</code>接口提供的获取请求头方法<code>HttpHeaders getHeaders();</code>返回结果是一个只读的实例，具体是<code>ReadOnlyHttpHeaders</code>类型，这里提多一次，笔者写这篇博文时候使用的<code>Spring Cloud Gateway</code>版本为<code>Greenwich.SR1</code>。</p>
+<h3 id="ServerHttpResponse接口">ServerHttpResponse接口</h3>
+<p><code>ServerHttpResponse</code>实例是用于承载响应相关的属性和响应体，<code>Spring Cloud Gateway</code>中底层使用<code>Netty</code>处理网络请求，通过追溯源码，可以从<code>ReactorHttpHandlerAdapter</code>中得知<code>ServerWebExchange</code>实例中持有的<code>ServerHttpResponse</code>实例的具体实现是<code>ReactorServerHttpResponse</code>。之所以列出这些实例之间的关系，是因为这样比较容易理清一些隐含的问题，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ReactorServerHttpResponse的父类</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractServerHttpResponse</span><span class="params">(DataBufferFactory dataBufferFactory, HttpHeaders headers)</span> </span>&#123;</span><br><span class="line">	Assert.notNull(dataBufferFactory, <span class="string">"DataBufferFactory must not be null"</span>);</span><br><span class="line">	Assert.notNull(headers, <span class="string">"HttpHeaders must not be null"</span>);</span><br><span class="line">	<span class="keyword">this</span>.dataBufferFactory = dataBufferFactory;</span><br><span class="line">	<span class="keyword">this</span>.headers = headers;</span><br><span class="line">	<span class="keyword">this</span>.cookies = <span class="keyword">new</span> LinkedMultiValueMap&lt;&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReactorServerHttpResponse</span><span class="params">(HttpServerResponse response, DataBufferFactory bufferFactory)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">super</span>(bufferFactory, <span class="keyword">new</span> HttpHeaders(<span class="keyword">new</span> NettyHeadersAdapter(response.responseHeaders())));</span><br><span class="line">	Assert.notNull(response, <span class="string">"HttpServerResponse must not be null"</span>);</span><br><span class="line">	<span class="keyword">this</span>.response = response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可知<code>ReactorServerHttpResponse</code>构造函数初始化实例的时候，存放响应Header的是<code>HttpHeaders</code>实例，也就是响应Header是可以直接修改的。</p>
+<p><code>ServerHttpResponse</code>接口如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HttpMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取响应Header，目前的实现中返回的是HttpHeaders实例，可以直接修改</span></span><br><span class="line">    <span class="function">HttpHeaders <span class="title">getHeaders</span><span class="params">()</span></span>;</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ReactiveHttpOutputMessage</span> <span class="keyword">extends</span> <span class="title">HttpMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取DataBufferFactory实例，用于包装或者生成数据缓冲区DataBuffer实例(创建响应体)</span></span><br><span class="line">    <span class="function">DataBufferFactory <span class="title">bufferFactory</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册一个动作，在HttpOutputMessage提交之前此动作会进行回调</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">beforeCommit</span><span class="params">(Supplier&lt;? extends Mono&lt;Void&gt;&gt; action)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 判断HttpOutputMessage是否已经提交</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isCommitted</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 写入消息体到HTTP协议层</span></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">writeWith</span><span class="params">(Publisher&lt;? extends DataBuffer&gt; body)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 写入消息体到HTTP协议层并且刷新缓冲区</span></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">writeAndFlushWith</span><span class="params">(Publisher&lt;? extends Publisher&lt;? extends DataBuffer&gt;&gt; body)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 指明消息处理已经结束，一般在消息处理结束自动调用此方法，多次调用不会产生副作用</span></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">setComplete</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ServerHttpResponse</span> <span class="keyword">extends</span> <span class="title">ReactiveHttpOutputMessage</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 设置响应状态码</span></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">setStatusCode</span><span class="params">(@Nullable HttpStatus status)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取响应状态码</span></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    <span class="function">HttpStatus <span class="title">getStatusCode</span><span class="params">()</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取响应Cookie，封装为MultiValueMap实例，可以修改</span></span><br><span class="line">    <span class="function">MultiValueMap&lt;String, ResponseCookie&gt; <span class="title">getCookies</span><span class="params">()</span></span>;  </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 添加响应Cookie</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addCookie</span><span class="params">(ResponseCookie cookie)</span></span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以看到除了响应体比较难修改之外，其他的属性都是可变的。</p>
+<h3 id="ServerWebExchangeUtils和上下文属性">ServerWebExchangeUtils和上下文属性</h3>
+<p><code>ServerWebExchangeUtils</code>里面存放了很多静态公有的字符串KEY值(<strong>这些字符串KEY的实际值是<code>org.springframework.cloud.gateway.support.ServerWebExchangeUtils.</code> + 下面任意的静态公有KEY</strong>)，这些字符串KEY值一般是用于<code>ServerWebExchange</code>的属性(<code>Attribute</code>，见上文的<code>ServerWebExchange#getAttributes()</code>方法)的KEY，这些属性值都是有特殊的含义，在使用过滤器的时候如果时机适当可以直接取出来使用，下面逐个分析。</p>
+<ul>
+<li><code>PRESERVE_HOST_HEADER_ATTRIBUTE</code>：是否保存Host属性，值是布尔值类型，写入位置是<code>PreserveHostHeaderGatewayFilterFactory</code>，使用的位置是<code>NettyRoutingFilter</code>，作用是如果设置为true，HTTP请求头中的Host属性会写到底层Reactor-Netty的请求Header属性中。</li>
+<li><code>CLIENT_RESPONSE_ATTR</code>：保存底层Reactor-Netty的响应对象，类型是<code>reactor.netty.http.client.HttpClientResponse</code>。</li>
+<li><code>CLIENT_RESPONSE_CONN_ATTR</code>：保存底层Reactor-Netty的连接对象，类型是<code>reactor.netty.Connection</code>。</li>
+<li><code>URI_TEMPLATE_VARIABLES_ATTRIBUTE</code>：<code>PathRoutePredicateFactory</code>解析路径参数完成之后，把解析完成后的占位符KEY-路径Path映射存放在<code>ServerWebExchange</code>的属性中，KEY就是<code>URI_TEMPLATE_VARIABLES_ATTRIBUTE</code>。</li>
+<li><code>CLIENT_RESPONSE_HEADER_NAMES</code>：保存底层Reactor-Netty的响应Header的名称集合。</li>
+<li><code>GATEWAY_ROUTE_ATTR</code>：用于存放<code>RoutePredicateHandlerMapping</code>中匹配出来的具体的路由(<code>org.springframework.cloud.gateway.route.Route</code>)实例，通过这个路由实例可以得知当前请求会路由到下游哪个服务。</li>
+<li><code>GATEWAY_REQUEST_URL_ATTR</code>：<code>java.net.URI</code>类型的实例，这个实例代表直接请求或者负载均衡处理之后需要请求到下游服务的真实URI。</li>
+<li><code>GATEWAY_ORIGINAL_REQUEST_URL_ATTR</code>：<code>java.net.URI</code>类型的实例，需要重写请求URI的时候，保存原始的请求URI。</li>
+<li><code>GATEWAY_HANDLER_MAPPER_ATTR</code>：保存当前使用的<code>HandlerMapping</code>具体实例的类型简称(一般是字符串&quot;RoutePredicateHandlerMapping&quot;)。</li>
+<li><code>GATEWAY_SCHEME_PREFIX_ATTR</code>：确定目标路由URI中如果存在schemeSpecificPart属性，则保存该URI的scheme在此属性中，路由URI会被重新构造，见<code>RouteToRequestUrlFilter</code>。</li>
+<li><code>GATEWAY_PREDICATE_ROUTE_ATTR</code>：用于存放<code>RoutePredicateHandlerMapping</code>中匹配出来的具体的路由(<code>org.springframework.cloud.gateway.route.Route</code>)实例的ID。</li>
+<li><code>WEIGHT_ATTR</code>：实验性功能(此版本还不建议在正式版本使用)存放分组权重相关属性，见<code>WeightCalculatorWebFilter</code>。</li>
+<li><code>ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR</code>：存放响应Header中的ContentType的值。</li>
+<li><code>HYSTRIX_EXECUTION_EXCEPTION_ATTR</code>：<code>Throwable</code>的实例，存放的是Hystrix执行异常时候的异常实例，见<code>HystrixGatewayFilterFactory</code>。</li>
+<li><code>GATEWAY_ALREADY_ROUTED_ATTR</code>：布尔值，用于判断是否已经进行了路由，见<code>NettyRoutingFilter</code>。</li>
+<li><code>GATEWAY_ALREADY_PREFIXED_ATTR</code>：布尔值，用于判断请求路径是否被添加了前置部分，见<code>PrefixPathGatewayFilterFactory</code>。</li>
+</ul>
+<p><code>ServerWebExchangeUtils</code>提供的上下文属性用于<code>Spring Cloud Gateway</code>的<code>ServerWebExchange</code>组件处理请求和响应的时候，内部一些重要实例或者标识属性的安全传输和使用，使用它们可能存在一定的风险，因为没有人可以确定在版本升级之后，原有的属性KEY或者VALUE是否会发生改变，如果评估过风险或者规避了风险之后，可以安心使用。例如我们在做请求和响应日志(类似Nginx的Access Log)的时候，可以依赖到<code>GATEWAY_ROUTE_ATTR</code>，因为我们要打印路由的目标信息。举个简单例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AccessLogFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        String path = request.getPath().pathWithinApplication().value();</span><br><span class="line">        HttpMethod method = request.getMethod();</span><br><span class="line">        <span class="comment">// 获取路由的目标URI</span></span><br><span class="line">        URI targetUri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);</span><br><span class="line">        InetSocketAddress remoteAddress = request.getRemoteAddress();</span><br><span class="line">        <span class="keyword">return</span> chain.filter(exchange.mutate().build()).then(Mono.fromRunnable(() -&gt; &#123;</span><br><span class="line">            ServerHttpResponse response = exchange.getResponse();</span><br><span class="line">            HttpStatus statusCode = response.getStatusCode();</span><br><span class="line">            log.info(<span class="string">"请求路径:&#123;&#125;,客户端远程IP地址:&#123;&#125;,请求方法:&#123;&#125;,目标URI:&#123;&#125;,响应码:&#123;&#125;"</span>,</span><br><span class="line">                    path, remoteAddress, method, targetUri, statusCode);</span><br><span class="line">        &#125;));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="修改请求体">修改请求体</h2>
+<p>修改请求体是一个比较常见的需求。例如我们使用<code>Spring Cloud Gateway</code>实现网关的时候，要实现一个功能：把存放在请求头中的JWT解析后，提取里面的用户ID，然后写入到请求体中。我们简化这个场景，假设我们把userId明文存放在请求头中的accessToken中，请求体是一个JSON结构：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : &#123;</span><br><span class="line">        <span class="comment">// ... 这里是有效载荷，存放具体的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要提取accessToken，也就是userId插入到请求体JSON中如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"userId"</span>: <span class="string">"用户ID"</span>,</span><br><span class="line">    <span class="attr">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : &#123;</span><br><span class="line">        <span class="comment">// ... 这里是有效载荷，存放具体的数据</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里为了简化设计，用全局过滤器<code>GlobalFilter</code>实现，实际需要结合具体场景考虑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ModifyRequestBodyGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DataBufferFactory dataBufferFactory = <span class="keyword">new</span> NettyDataBufferFactory(ByteBufAllocator.DEFAULT);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        String accessToken = request.getHeaders().getFirst(<span class="string">"accessToken"</span>);</span><br><span class="line">        <span class="keyword">if</span> (!StringUtils.hasLength(accessToken)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"accessToken"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 新建一个ServerHttpRequest装饰器,覆盖需要装饰的方法</span></span><br><span class="line">        ServerHttpRequestDecorator decorator = <span class="keyword">new</span> ServerHttpRequestDecorator(request) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                Flux&lt;DataBuffer&gt; body = <span class="keyword">super</span>.getBody();</span><br><span class="line">                InputStreamHolder holder = <span class="keyword">new</span> InputStreamHolder();</span><br><span class="line">                body.subscribe(buffer -&gt; holder.inputStream = buffer.asInputStream());</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> != holder.inputStream) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        <span class="comment">// 解析JSON的节点</span></span><br><span class="line">                        JsonNode jsonNode = objectMapper.readTree(holder.inputStream);</span><br><span class="line">                        Assert.isTrue(jsonNode <span class="keyword">instanceof</span> ObjectNode, <span class="string">"JSON格式异常"</span>);</span><br><span class="line">                        ObjectNode objectNode = (ObjectNode) jsonNode;</span><br><span class="line">                        <span class="comment">// JSON节点最外层写入新的属性</span></span><br><span class="line">                        objectNode.put(<span class="string">"userId"</span>, accessToken);</span><br><span class="line">                        DataBuffer dataBuffer = dataBufferFactory.allocateBuffer();</span><br><span class="line">                        String json = objectNode.toString();</span><br><span class="line">                        log.info(<span class="string">"最终的JSON数据为:&#123;&#125;"</span>, json);</span><br><span class="line">                        dataBuffer.write(json.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">                        <span class="keyword">return</span> Flux.just(dataBuffer);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">super</span>.getBody();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="comment">// 使用修改后的ServerHttpRequestDecorator重新生成一个新的ServerWebExchange</span></span><br><span class="line">        <span class="keyword">return</span> chain.filter(exchange.mutate().request(decorator).build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">InputStreamHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        InputStream inputStream;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">// HTTP</span><br><span class="line">POST /order/json HTTP/1.1</span><br><span class="line">Host: localhost:9090</span><br><span class="line">Content-Type: application/json</span><br><span class="line">accessToken: 10086</span><br><span class="line">Accept: */*</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Host: localhost:9090</span><br><span class="line">accept-encoding: gzip, deflate</span><br><span class="line">content-length: 94</span><br><span class="line">Connection: keep-alive</span><br><span class="line">cache-control: no-cache</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="string">"payload"</span>: &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"doge"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 日志输出</span><br><span class="line">最终的JSON数据为:&#123;<span class="string">"serialNumber"</span>:<span class="string">"请求流水号"</span>,<span class="string">"payload"</span>:&#123;<span class="string">"name"</span>:<span class="string">"doge"</span>&#125;,<span class="string">"userId"</span>:<span class="string">"10086"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>最重要的是用到了<code>ServerHttpRequest</code>装饰器<code>ServerHttpRequestDecorator</code>，主要覆盖对应获取请求体数据缓冲区的方法即可，至于怎么处理其他逻辑需要自行考虑，这里只是做一个简单的示范。一般的代码逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">ServerHttpRequestDecorator requestDecorator = <span class="keyword">new</span> ServerHttpRequestDecorator(request) &#123;</span><br><span class="line"></span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="comment">// 拿到承载原始请求体的Flux</span></span><br><span class="line">         Flux&lt;DataBuffer&gt; body = <span class="keyword">super</span>.getBody();</span><br><span class="line">         <span class="comment">// 这里通过自定义方式生成新的承载请求体的Flux</span></span><br><span class="line">         Flux&lt;DataBuffer&gt; newBody = ...</span><br><span class="line">         <span class="keyword">return</span> newBody;</span><br><span class="line">     &#125;            </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> chain.filter(exchange.mutate().request(requestDecorator).build());</span><br></pre></td></tr></table></figure>
+<h2 id="修改响应体">修改响应体</h2>
+<p>修改响应体的需求也是比较常见的，具体的做法和修改请求体差不多。例如我们想要实现下面的功能：第三方服务请求经过网关，原始报文是密文，我们需要在网关实现密文解密，然后把解密后的明文路由到下游服务，下游服务处理成功响应明文，需要在网关把明文加密成密文再返回到第三方服务。现在简化整个流程，用AES加密算法，统一密码为字符串&quot;throwable&quot;，假设请求报文和响应报文明文如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请求密文</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : <span class="string">"加密后的请求消息载荷"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求明文（仅仅作为提示）</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : <span class="string">"&#123;\"name:\":\"doge\"&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 响应密文</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>: <span class="number">200</span>,</span><br><span class="line">    <span class="attr">"message"</span>:<span class="string">"ok"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : <span class="string">"加密后的响应消息载荷"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 响应明文（仅仅作为提示）</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"code"</span>: <span class="number">200</span>,</span><br><span class="line">    <span class="attr">"message"</span>:<span class="string">"ok"</span>,</span><br><span class="line">    <span class="attr">"payload"</span> : <span class="string">"&#123;\"name:\":\"doge\",\"age\":26&#125;"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了方便一些加解密或者编码解码的实现，需要引入<code>Apache</code>的<code>commons-codec</code>类库：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-codec<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-codec<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里定义一个全局过滤器专门处理加解密，实际上最好结合真实的场景决定是否适合全局过滤器，这里只是一个示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AES加解密工具类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> AesUtils &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 单例</span></span><br><span class="line">    X;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PASSWORD = <span class="string">"throwable"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String KEY_ALGORITHM = <span class="string">"AES"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SECURE_RANDOM_ALGORITHM = <span class="string">"SHA1PRNG"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_CIPHER_ALGORITHM = <span class="string">"AES/ECB/PKCS5Padding"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">encrypt</span><span class="params">(String content)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);</span><br><span class="line">            cipher.init(Cipher.ENCRYPT_MODE, provideSecretKey());</span><br><span class="line">            <span class="keyword">return</span> Hex.encodeHexString(cipher.doFinal(content.getBytes(StandardCharsets.UTF_8)));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] decrypt(String content) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);</span><br><span class="line">            cipher.init(Cipher.DECRYPT_MODE, provideSecretKey());</span><br><span class="line">            <span class="keyword">return</span> cipher.doFinal(Hex.decodeHex(content));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> SecretKey <span class="title">provideSecretKey</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            KeyGenerator keyGen = KeyGenerator.getInstance(KEY_ALGORITHM);</span><br><span class="line">            SecureRandom secureRandom = SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);</span><br><span class="line">            secureRandom.setSeed(PASSWORD.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">            keyGen.init(<span class="number">128</span>, secureRandom);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SecretKeySpec(keyGen.generateKey().getEncoded(), KEY_ALGORITHM);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// EncryptionGlobalFilter</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EncryptionGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerHttpRequest request = exchange.getRequest();</span><br><span class="line">        ServerHttpResponse response = exchange.getResponse();</span><br><span class="line">        DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();</span><br><span class="line">        ServerHttpRequestDecorator requestDecorator = processRequest(request, bufferFactory);</span><br><span class="line">        ServerHttpResponseDecorator responseDecorator = processResponse(response, bufferFactory);</span><br><span class="line">        <span class="keyword">return</span> chain.filter(exchange.mutate().request(requestDecorator).response(responseDecorator).build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ServerHttpRequestDecorator <span class="title">processRequest</span><span class="params">(ServerHttpRequest request, DataBufferFactory bufferFactory)</span> </span>&#123;</span><br><span class="line">        Flux&lt;DataBuffer&gt; body = request.getBody();</span><br><span class="line">        DataBufferHolder holder = <span class="keyword">new</span> DataBufferHolder();</span><br><span class="line">        body.subscribe(dataBuffer -&gt; &#123;</span><br><span class="line">            <span class="keyword">int</span> len = dataBuffer.readableByteCount();</span><br><span class="line">            holder.length = len;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[len];</span><br><span class="line">            dataBuffer.read(bytes);</span><br><span class="line">            DataBufferUtils.release(dataBuffer);</span><br><span class="line">            String text = <span class="keyword">new</span> String(bytes, StandardCharsets.UTF_8);</span><br><span class="line">            JsonNode jsonNode = readNode(text);</span><br><span class="line">            JsonNode payload = jsonNode.get(<span class="string">"payload"</span>);</span><br><span class="line">            String payloadText = payload.asText();</span><br><span class="line">            <span class="keyword">byte</span>[] content = AesUtils.X.decrypt(payloadText);</span><br><span class="line">            String requestBody = <span class="keyword">new</span> String(content, StandardCharsets.UTF_8);</span><br><span class="line">            log.info(<span class="string">"修改请求体payload,修改前:&#123;&#125;,修改后:&#123;&#125;"</span>, payloadText, requestBody);</span><br><span class="line">            rewritePayloadNode(requestBody, jsonNode);</span><br><span class="line">            DataBuffer data = bufferFactory.allocateBuffer();</span><br><span class="line">            data.write(jsonNode.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">            holder.dataBuffer = data;</span><br><span class="line">        &#125;);</span><br><span class="line">        HttpHeaders headers = <span class="keyword">new</span> HttpHeaders();</span><br><span class="line">        headers.putAll(request.getHeaders());</span><br><span class="line">        headers.remove(HttpHeaders.CONTENT_LENGTH);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ServerHttpRequestDecorator(request) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> HttpHeaders <span class="title">getHeaders</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> contentLength = holder.length;</span><br><span class="line">                <span class="keyword">if</span> (contentLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                    headers.setContentLength(contentLength);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    headers.set(HttpHeaders.TRANSFER_ENCODING, <span class="string">"chunked"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> headers;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> Flux.just(holder.dataBuffer);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ServerHttpResponseDecorator <span class="title">processResponse</span><span class="params">(ServerHttpResponse response, DataBufferFactory bufferFactory)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ServerHttpResponseDecorator(response) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">writeWith</span><span class="params">(Publisher&lt;? extends DataBuffer&gt; body)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (body <span class="keyword">instanceof</span> Flux) &#123;</span><br><span class="line">                    Flux&lt;? extends DataBuffer&gt; flux = (Flux&lt;? extends DataBuffer&gt;) body;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">super</span>.writeWith(flux.map(buffer -&gt; &#123;</span><br><span class="line">                        CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());</span><br><span class="line">                        DataBufferUtils.release(buffer);</span><br><span class="line">                        JsonNode jsonNode = readNode(charBuffer.toString());</span><br><span class="line">                        JsonNode payload = jsonNode.get(<span class="string">"payload"</span>);</span><br><span class="line">                        String text = payload.toString();</span><br><span class="line">                        String content = AesUtils.X.encrypt(text);</span><br><span class="line">                        log.info(<span class="string">"修改响应体payload,修改前:&#123;&#125;,修改后:&#123;&#125;"</span>, text, content);</span><br><span class="line">                        setPayloadTextNode(content, jsonNode);</span><br><span class="line">                        <span class="keyword">return</span> bufferFactory.wrap(jsonNode.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">                    &#125;));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.writeWith(body);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rewritePayloadNode</span><span class="params">(String text, JsonNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            JsonNode node = objectMapper.readTree(text);</span><br><span class="line">            ObjectNode objectNode = (ObjectNode) root;</span><br><span class="line">            objectNode.set(<span class="string">"payload"</span>, node);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setPayloadTextNode</span><span class="params">(String text, JsonNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ObjectNode objectNode = (ObjectNode) root;</span><br><span class="line">            objectNode.set(<span class="string">"payload"</span>, <span class="keyword">new</span> TextNode(text));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> JsonNode <span class="title">readNode</span><span class="params">(String in)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> objectMapper.readTree(in);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">DataBufferHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        DataBuffer dataBuffer;</span><br><span class="line">        <span class="keyword">int</span> length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先准备一份密文：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Object&gt; json = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">json.put(<span class="string">"serialNumber"</span>, <span class="string">"请求流水号"</span>);</span><br><span class="line">String content = <span class="string">"&#123;\"name\": \"doge\"&#125;"</span>;</span><br><span class="line">json.put(<span class="string">"payload"</span>, AesUtils.X.encrypt(content));</span><br><span class="line">System.out.println(<span class="keyword">new</span> ObjectMapper().writeValueAsString(json));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">&#123;<span class="string">"serialNumber"</span>:<span class="string">"请求流水号"</span>,<span class="string">"payload"</span>:<span class="string">"144e3dc734743f5709f1adf857bca473da683246fd612f86ac70edeb5f2d2729"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>模拟请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">POST /order/json HTTP/1.1</span><br><span class="line">Host: localhost:9090</span><br><span class="line">accessToken: 10086</span><br><span class="line">Content-Type: application/json</span><br><span class="line">User-Agent: PostmanRuntime/7.13.0</span><br><span class="line">Accept: */*</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Postman-Token: bda07fc3-ea1a-478c-b4d7-754fe6f37200,634734d9-feed-4fc9-ba20-7618bd986e1c</span><br><span class="line">Host: localhost:9090</span><br><span class="line">cookie: customCookieName=customCookieValue</span><br><span class="line">accept-encoding: gzip, deflate</span><br><span class="line">content-length: 104</span><br><span class="line">Connection: keep-alive</span><br><span class="line">cache-control: no-cache</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="string">"payload"</span>: <span class="string">"FE49xzR0P1cJ8a34V7ykc9poMkb9YS+GrHDt618tJyk="</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 响应结果</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="string">"payload"</span>: <span class="string">"oo/K1igg2t/S8EExkBVGWOfI1gAh5pBpZ0wyjNPW6e8="</span>   <span class="comment"># &lt;--- 解密后：&#123;"name":"doge","age":26&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遇到的问题：</p>
+<ul>
+<li>必须实现<code>Ordered</code>接口，返回一个小于-1的order值，这是因为<code>NettyWriteResponseFilter</code>的order值为-1，我们需要覆盖返回响应体的逻辑，自定义的<code>GlobalFilter</code>必须比<code>NettyWriteResponseFilter</code>优先执行。</li>
+<li>网关每次重启之后，第一个请求总是无法从原始的<code>ServerHttpRequest</code>读取到有效的Body，准确来说出现的现象是<code>NettyRoutingFilter</code>调用<code>ServerHttpRequest#getBody()</code>的时候获取到一个空的对象，导致空指针；奇怪的是从第二个请求开始就能正常调用。<strong>笔者把<code>Spring Cloud Gateway</code>的版本降低到<code>Finchley.SR3</code>，<code>Spring Boot</code>的版本降低到<code>2.0.8.RELEASE</code>，问题不再出现，初步确定是<code>Spring Cloud Gateway</code>版本升级导致的兼容性问题或者是BUG</strong>。</li>
+</ul>
+<p>最重要的是用到了<code>ServerHttpResponse</code>装饰器<code>ServerHttpResponseDecorator</code>，主要覆盖写入响应体数据缓冲区的部分，至于怎么处理其他逻辑需要自行考虑，这里只是做一个简单的示范。一般的代码逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">ServerHttpResponse response = exchange.getResponse();</span><br><span class="line">ServerHttpResponseDecorator responseDecorator = <span class="keyword">new</span> ServerHttpResponseDecorator(response) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">writeWith</span><span class="params">(Publisher&lt;? extends DataBuffer&gt; body)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (body <span class="keyword">instanceof</span> Flux) &#123;</span><br><span class="line">                    Flux&lt;? extends DataBuffer&gt; flux = (Flux&lt;? extends DataBuffer&gt;) body;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">super</span>.writeWith(flux.map(buffer -&gt; &#123;</span><br><span class="line">                        <span class="comment">// buffer就是原始的响应数据的缓冲区</span></span><br><span class="line">                        <span class="comment">// 下面处理完毕之后返回新的响应数据的缓冲区即可</span></span><br><span class="line">                        <span class="keyword">return</span> bufferFactory.wrap(...);</span><br><span class="line">                    &#125;));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.writeWith(body);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"><span class="keyword">return</span> chain.filter(exchange.mutate().response(responseDecorator).build());</span><br></pre></td></tr></table></figure>
+<h2 id="请求体或者响应体报文过大的问题">请求体或者响应体报文过大的问题</h2>
+<p>有热心的同学告诉笔者，如果请求报文过大或者响应报文过大的时候，前面两节的修改请求和响应报文的方法会出现问题，这里尝试重现一下遇到的具体问题。先把请求报文尝试加长：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Object&gt; json = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">json.put(<span class="string">"serialNumber"</span>, <span class="string">"请求流水号"</span>);</span><br><span class="line">StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++) &#123;</span><br><span class="line">    builder.append(<span class="string">"doge"</span>);</span><br><span class="line">&#125;</span><br><span class="line">String content = String.format(<span class="string">"&#123;\"name\": \"%s\"&#125;"</span>, builder.toString());</span><br><span class="line">json.put(<span class="string">"payload"</span>, AesUtils.X.encrypt(content));</span><br><span class="line">System.out.println(<span class="keyword">new</span> ObjectMapper().writeValueAsString(json));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求的JSON报文如下：</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="string">"payload"</span>: <span class="string">"0Dcf2plFpESprKjkdqNHM8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/zyJ4ipyLGvo5LX87d9oDAs="</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用上面的请求报文发起请求，确实存在问题：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201905/s-c-g-e-r-r-1.png" alt="s-c-g-e-r-r-1.png"></p>
+<p>主要问题是：</p>
+<ul>
+<li>请求体包数据装成的<code>Flux&lt;DataBuffer&gt;</code>实例被订阅之后，读取到的字节数组的长度被截断了，提供的原始请求报文里面字符串长度要大于1000，转换成byte数组绝对要大于1000，但是上面的示例中只读取到长度为673的byte数组。</li>
+<li>读取到的字节数组被截断后，则使用Jackson进行反序列化的时候提示没有读取到字符串的EOF标识，导致反序列化失败。</li>
+</ul>
+<p>既然遇到了问题，就想办法解决。首先第一步定位一下是什么原因，直觉告诉笔者：<strong>要开启一下DEBUG日志进行观察，如果还没有头绪可能要跟踪一下源码</strong>。</p>
+<p>开启DEBUG日志级别之后做一次请求，发现了一些可疑的日志信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">2019-05-19 11:16:15.660 [reactor-http-nio-2] DEBUG reactor.ipc.netty.http.server.HttpServer - [id: 0xa9b527e5, L:/0:0:0:0:0:0:0:1:9090 - R:/0:0:0:0:0:0:0:1:58012] READ COMPLETE</span><br><span class="line">2019-05-19 11:16:15.660 [reactor-http-nio-2] DEBUG reactor.ipc.netty.http.server.HttpServer - [id: 0xa9b527e5, L:/0:0:0:0:0:0:0:1:9090 ! R:/0:0:0:0:0:0:0:1:58012] INACTIVE</span><br><span class="line">2019-05-19 11:16:15.660 [reactor-http-nio-3] DEBUG reactor.ipc.netty.http.server.HttpServer - [id: 0x5554e091, L:/0:0:0:0:0:0:0:1:9090 - R:/0:0:0:0:0:0:0:1:58013] READ: 1024B</span><br><span class="line">         +-------------------------------------------------+</span><br><span class="line">         |  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f |</span><br><span class="line">+--------+-------------------------------------------------+----------------+</span><br><span class="line">|00000000| 50 4f 53 54 20 2f 6f 72 64 65 72 2f 6a 73 6f 6e |POST /order/json|</span><br><span class="line">|00000010| 20 48 54 54 50 2f 31 2e 31 0d 0a 61 63 63 65 73 | HTTP/1.1..acces|</span><br><span class="line">|00000020| 73 54 6f 6b 65 6e 3a 20 31 30 30 38 36 0d 0a 43 |sToken: 10086..C|</span><br><span class="line">|00000030| 6f 6e 74 65 6e 74 2d 54 79 70 65 3a 20 61 70 70 |ontent-Type: app|</span><br><span class="line">|00000040| 6c 69 63 61 74 69 6f 6e 2f 6a 73 6f 6e 0d 0a 55 |lication/json..U|</span><br><span class="line">|00000050| 73 65 72 2d 41 67 65 6e 74 3a 20 50 6f 73 74 6d |ser-Agent: Postm|</span><br><span class="line">|00000060| 61 6e 52 75 6e 74 69 6d 65 2f 37 2e 31 33 2e 30 |anRuntime/7.13.0|</span><br><span class="line">|00000070| 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 43 |..Accept: */*..C|</span><br><span class="line">|00000080| 61 63 68 65 2d 43 6f 6e 74 72 6f 6c 3a 20 6e 6f |ache-Control: no|</span><br><span class="line">|00000090| 2d 63 61 63 68 65 0d 0a 50 6f 73 74 6d 61 6e 2d |-cache..Postman-|</span><br><span class="line">|000000a0| 54 6f 6b 65 6e 3a 20 31 31 32 30 38 64 35 39 2d |Token: 11208d59-|</span><br><span class="line">|000000b0| 65 61 34 61 2d 34 62 39 63 2d 61 30 33 39 2d 30 |ea4a-4b9c-a039-0|</span><br><span class="line">|000000c0| 30 65 36 64 38 61 30 65 33 65 66 0d 0a 48 6f 73 |0e6d8a0e3ef..Hos|</span><br><span class="line">|000000d0| 74 3a 20 6c 6f 63 61 6c 68 6f 73 74 3a 39 30 39 |t: localhost:909|</span><br><span class="line">|000000e0| 30 0d 0a 63 6f 6f 6b 69 65 3a 20 63 75 73 74 6f |0..cookie: custo|</span><br><span class="line">|000000f0| 6d 43 6f 6f 6b 69 65 4e 61 6d 65 3d 63 75 73 74 |mCookieName=cust|</span><br><span class="line">|00000100| 6f 6d 43 6f 6f 6b 69 65 56 61 6c 75 65 0d 0a 61 |omCookieValue..a|</span><br><span class="line">|00000110| 63 63 65 70 74 2d 65 6e 63 6f 64 69 6e 67 3a 20 |ccept-encoding: |</span><br><span class="line">|00000120| 67 7a 69 70 2c 20 64 65 66 6c 61 74 65 0d 0a 63 |gzip, deflate..c|</span><br><span class="line">|00000130| 6f 6e 74 65 6e 74 2d 6c 65 6e 67 74 68 3a 20 35 |ontent-length: 5|</span><br><span class="line">|00000140| 34 31 36 0d 0a 43 6f 6e 6e 65 63 74 69 6f 6e 3a |416..Connection:|</span><br><span class="line">|00000150| 20 6b 65 65 70 2d 61 6c 69 76 65 0d 0a 0d 0a 7b | keep-alive....&#123;|</span><br><span class="line">|00000160| 0a 20 20 20 20 22 73 65 72 69 61 6c 4e 75 6d 62 |.    <span class="string">"serialNumb|</span></span><br><span class="line"><span class="string">|00000170| 65 72 22 3a 20 22 e8 af b7 e6 b1 82 e6 b5 81 e6 |er"</span>: <span class="string">"..........|</span></span><br><span class="line"><span class="string">|00000180| b0 b4 e5 8f b7 22 2c 0a 20 20 20 20 22 70 61 79 |....."</span>,.    <span class="string">"pay|</span></span><br><span class="line"><span class="string">|00000190| 6c 6f 61 64 22 3a 20 22 30 44 63 66 32 70 6c 46 |load"</span>: <span class="string">"0Dcf2plF|</span></span><br><span class="line"><span class="string">|000001a0| 70 45 53 70 72 4b 6a 6b 64 71 4e 48 4d 38 6a 6a |pESprKjkdqNHM8jj|</span></span><br><span class="line"><span class="string">|000001b0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|000001c0| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|000001d0| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|000001e0| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|000001f0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000200| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000210| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|00000220| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|00000230| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000240| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000250| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|00000260| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|00000270| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000280| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000290| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|000002a0| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|000002b0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|000002c0| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|000002d0| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|000002e0| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|000002f0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000300| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000310| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|00000320| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|00000330| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000340| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000350| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|00000360| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|00000370| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|00000380| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|00000390| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|000003a0| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|000003b0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">|000003c0| 71 76 2f 49 34 79 41 4b 35 48 65 31 31 75 53 35 |qv/I4yAK5He11uS5|</span></span><br><span class="line"><span class="string">|000003d0| 64 76 36 6d 67 61 72 2f 79 4f 4d 67 43 75 52 33 |dv6mgar/yOMgCuR3|</span></span><br><span class="line"><span class="string">|000003e0| 74 64 62 6b 75 58 62 2b 70 6f 47 71 2f 38 6a 6a |tdbkuXb+poGq/8jj|</span></span><br><span class="line"><span class="string">|000003f0| 49 41 72 6b 64 37 58 57 35 4c 6c 32 2f 71 61 42 |IArkd7XW5Ll2/qaB|</span></span><br><span class="line"><span class="string">+--------+-------------------------------------------------+----------------+</span></span><br><span class="line"><span class="string">2019-05-19 11:16:15.662 [reactor-http-nio-2] DEBUG reactor.ipc.netty.http.server.HttpServer - [id: 0xa9b527e5, L:/0:0:0:0:0:0:0:1:9090 ! R:/0:0:0:0:0:0:0:1:58012] UNREGISTERED</span></span><br><span class="line"><span class="string">2019-05-19 11:16:15.665 [reactor-http-nio-3] DEBUG reactor.ipc.netty.http.server.HttpServerOperations - [id: 0x5554e091, L:/0:0:0:0:0:0:0:1:9090 - R:/0:0:0:0:0:0:0:1:58013] Increasing pending responses, now 1</span></span><br><span class="line"><span class="string">2019-05-19 11:16:15.671 [reactor-http-nio-3] DEBUG reactor.ipc.netty.http.server.HttpServer - [id: 0x5554e091, L:/0:0:0:0:0:0:0:1:9090 - R:/0:0:0:0:0:0:0:1:58013] READ COMPLETE</span></span><br></pre></td></tr></table></figure>
+<p>注意一下关键字<code>READ: 1024B</code>，这里应该是底层的<code>Reactor-Netty</code>读取的最大数据报的长度限制，打印出来的数据报刚好也是1024B的大小，这个应该就是导致请求体被截断的根本原因；这个问题不单单会出现在请求体的获取，也会出现在响应体的写入。既然这个是共性的问题，那么项目Github上肯定有对应的Issue，找到一个互动比较长的<a href="https://github.com/spring-cloud/spring-cloud-gateway/issues/581" target="_blank" rel="noopener">gateway request size limit 1024B because netty default limit 1024,how to solve it? #581</a>，从回答来看，官方建议使用<code>ModifyRequestBodyGatewayFilterFactory</code>和<code>ModifyResponseBodyGatewayFilterFactory</code>完成对应的功能。这里可以尝试借鉴一下<code>ModifyRequestBodyGatewayFilterFactory</code>的实现方式修改之前的代码，因为代码的逻辑比较长和复杂，解密请求体的过滤器拆分到新的类<code>RequestEncryptionGlobalFilter</code>，加密响应体的过滤器拆分到<code>ResponseDecryptionGlobalFilter</code>：</p>
+<p><code>RequestEncryptionGlobalFilter</code>的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestEncryptionGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;HttpMessageReader&lt;?&gt;&gt; messageReaders = HandlerStrategies.withDefaults().messageReaders();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> processRequest(exchange, chain);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Mono&lt;Void&gt; <span class="title">processRequest</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerRequest serverRequest = <span class="keyword">new</span> DefaultServerRequest(exchange, messageReaders);</span><br><span class="line">        DataBufferFactory bufferFactory = exchange.getResponse().bufferFactory();</span><br><span class="line">        Mono&lt;String&gt; rawBody = serverRequest.bodyToMono(String<span class="class">.<span class="keyword">class</span>).<span class="title">map</span>(<span class="title">s</span> -&gt; <span class="title">s</span>)</span>;</span><br><span class="line">        BodyInserter&lt;Mono&lt;String&gt;, ReactiveHttpOutputMessage&gt; bodyInserter = BodyInserters.fromPublisher(rawBody, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        HttpHeaders tempHeaders = <span class="keyword">new</span> HttpHeaders();</span><br><span class="line">        tempHeaders.putAll(exchange.getRequest().getHeaders());</span><br><span class="line">        tempHeaders.remove(HttpHeaders.CONTENT_LENGTH);</span><br><span class="line">        CachedBodyOutputMessage outputMessage = <span class="keyword">new</span> CachedBodyOutputMessage(exchange, tempHeaders);</span><br><span class="line">        <span class="keyword">return</span> bodyInserter.insert(outputMessage, <span class="keyword">new</span> BodyInserterContext()).then(Mono.defer(() -&gt; &#123;</span><br><span class="line">            Flux&lt;DataBuffer&gt; body = outputMessage.getBody();</span><br><span class="line">            DataBufferHolder holder = <span class="keyword">new</span> DataBufferHolder();</span><br><span class="line">            body.subscribe(dataBuffer -&gt; &#123;</span><br><span class="line">                <span class="keyword">int</span> len = dataBuffer.readableByteCount();</span><br><span class="line">                holder.length = len;</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[len];</span><br><span class="line">                dataBuffer.read(bytes);</span><br><span class="line">                DataBufferUtils.release(dataBuffer);</span><br><span class="line">                String text = <span class="keyword">new</span> String(bytes, StandardCharsets.UTF_8);</span><br><span class="line">                JsonNode jsonNode = readNode(text);</span><br><span class="line">                JsonNode payload = jsonNode.get(<span class="string">"payload"</span>);</span><br><span class="line">                String payloadText = payload.asText();</span><br><span class="line">                <span class="keyword">byte</span>[] content = AesUtils.X.decrypt(payloadText);</span><br><span class="line">                String requestBody = <span class="keyword">new</span> String(content, StandardCharsets.UTF_8);</span><br><span class="line">                log.info(<span class="string">"修改请求体payload,修改前:&#123;&#125;,修改后:&#123;&#125;"</span>, payloadText, requestBody);</span><br><span class="line">                rewritePayloadNode(requestBody, jsonNode);</span><br><span class="line">                DataBuffer data = bufferFactory.allocateBuffer();</span><br><span class="line">                data.write(jsonNode.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">                holder.dataBuffer = data;</span><br><span class="line">            &#125;);</span><br><span class="line">            ServerHttpRequestDecorator requestDecorator = <span class="keyword">new</span> ServerHttpRequestDecorator(exchange.getRequest()) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> HttpHeaders <span class="title">getHeaders</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">long</span> contentLength = tempHeaders.getContentLength();</span><br><span class="line">                    HttpHeaders httpHeaders = <span class="keyword">new</span> HttpHeaders();</span><br><span class="line">                    httpHeaders.putAll(<span class="keyword">super</span>.getHeaders());</span><br><span class="line">                    <span class="keyword">if</span> (contentLength &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        httpHeaders.setContentLength(contentLength);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        httpHeaders.set(HttpHeaders.TRANSFER_ENCODING, <span class="string">"chunked"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> httpHeaders;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> Flux.just(holder.dataBuffer);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">return</span> chain.filter(exchange.mutate().request(requestDecorator).build());</span><br><span class="line">        &#125;));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rewritePayloadNode</span><span class="params">(String text, JsonNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            JsonNode node = objectMapper.readTree(text);</span><br><span class="line">            ObjectNode objectNode = (ObjectNode) root;</span><br><span class="line">            objectNode.set(<span class="string">"payload"</span>, node);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setPayloadTextNode</span><span class="params">(String text, JsonNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ObjectNode objectNode = (ObjectNode) root;</span><br><span class="line">            objectNode.set(<span class="string">"payload"</span>, <span class="keyword">new</span> TextNode(text));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> JsonNode <span class="title">readNode</span><span class="params">(String in)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> objectMapper.readTree(in);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">DataBufferHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        DataBuffer dataBuffer;</span><br><span class="line">        <span class="keyword">int</span> length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ResponseDecryptionGlobalFilter</code>的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseDecryptionGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NettyWriteResponseFilter.WRITE_RESPONSE_FILTER_ORDER - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> processResponse(exchange, chain);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Mono&lt;Void&gt; <span class="title">processResponse</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        ServerHttpResponseDecorator responseDecorator = <span class="keyword">new</span> ServerHttpResponseDecorator(exchange.getResponse()) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">writeWith</span><span class="params">(Publisher&lt;? extends DataBuffer&gt; body)</span> </span>&#123;</span><br><span class="line">                String originalResponseContentType = exchange.getAttribute(ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);</span><br><span class="line">                HttpHeaders httpHeaders = <span class="keyword">new</span> HttpHeaders();</span><br><span class="line">                httpHeaders.add(HttpHeaders.CONTENT_TYPE, originalResponseContentType);</span><br><span class="line">                ResponseAdapter responseAdapter = <span class="keyword">new</span> ResponseAdapter(body, httpHeaders);</span><br><span class="line">                DefaultClientResponse clientResponse = <span class="keyword">new</span> DefaultClientResponse(responseAdapter, ExchangeStrategies.withDefaults());</span><br><span class="line">                Mono&lt;String&gt; rawBody = clientResponse.bodyToMono(String<span class="class">.<span class="keyword">class</span>).<span class="title">map</span>(<span class="title">s</span> -&gt; <span class="title">s</span>)</span>;</span><br><span class="line">                BodyInserter&lt;Mono&lt;String&gt;, ReactiveHttpOutputMessage&gt; bodyInserter = BodyInserters.fromPublisher(rawBody, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                CachedBodyOutputMessage outputMessage = <span class="keyword">new</span> CachedBodyOutputMessage(exchange, exchange.getResponse().getHeaders());</span><br><span class="line">                <span class="keyword">return</span> bodyInserter.insert(outputMessage, <span class="keyword">new</span> BodyInserterContext())</span><br><span class="line">                        .then(Mono.defer(() -&gt; &#123;</span><br><span class="line">                            Flux&lt;DataBuffer&gt; messageBody = outputMessage.getBody();</span><br><span class="line">                            Flux&lt;DataBuffer&gt; flux = messageBody.map(buffer -&gt; &#123;</span><br><span class="line">                                CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer.asByteBuffer());</span><br><span class="line">                                DataBufferUtils.release(buffer);</span><br><span class="line">                                JsonNode jsonNode = readNode(charBuffer.toString());</span><br><span class="line">                                JsonNode payload = jsonNode.get(<span class="string">"payload"</span>);</span><br><span class="line">                                String text = payload.toString();</span><br><span class="line">                                String content = AesUtils.X.encrypt(text);</span><br><span class="line">                                log.info(<span class="string">"修改响应体payload,修改前:&#123;&#125;,修改后:&#123;&#125;"</span>, text, content);</span><br><span class="line">                                setPayloadTextNode(content, jsonNode);</span><br><span class="line">                                <span class="keyword">return</span> getDelegate().bufferFactory().wrap(jsonNode.toString().getBytes(StandardCharsets.UTF_8));</span><br><span class="line">                            &#125;);</span><br><span class="line">                            HttpHeaders headers = getDelegate().getHeaders();</span><br><span class="line">                            <span class="keyword">if</span> (!headers.containsKey(HttpHeaders.TRANSFER_ENCODING)) &#123;</span><br><span class="line">                                flux = flux.doOnNext(data -&gt; headers.setContentLength(data.readableByteCount()));</span><br><span class="line">                            &#125;</span><br><span class="line">                            <span class="keyword">return</span> getDelegate().writeWith(flux);</span><br><span class="line">                        &#125;));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">return</span> chain.filter(exchange.mutate().response(responseDecorator).build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setPayloadTextNode</span><span class="params">(String text, JsonNode root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ObjectNode objectNode = (ObjectNode) root;</span><br><span class="line">            objectNode.set(<span class="string">"payload"</span>, <span class="keyword">new</span> TextNode(text));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> JsonNode <span class="title">readNode</span><span class="params">(String in)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> objectMapper.readTree(in);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseAdapter</span> <span class="keyword">implements</span> <span class="title">ClientHttpResponse</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Flux&lt;DataBuffer&gt; flux;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> HttpHeaders headers;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">ResponseAdapter</span><span class="params">(Publisher&lt;? extends DataBuffer&gt; body, HttpHeaders headers)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.headers = headers;</span><br><span class="line">            <span class="keyword">if</span> (body <span class="keyword">instanceof</span> Flux) &#123;</span><br><span class="line">                flux = (Flux) body;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                flux = ((Mono) body).flux();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Flux&lt;DataBuffer&gt; <span class="title">getBody</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> flux;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> HttpHeaders <span class="title">getHeaders</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> headers;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> HttpStatus <span class="title">getStatusCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getRawStatusCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> MultiValueMap&lt;String, ResponseCookie&gt; <span class="title">getCookies</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模拟请求：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">POST /order/json HTTP/1.1</span><br><span class="line">Host: localhost:9090</span><br><span class="line">accessToken: 10086</span><br><span class="line">Content-Type: application/json</span><br><span class="line">User-Agent: PostmanRuntime/7.13.0</span><br><span class="line">Accept: */*</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">Postman-Token: 3a830202-f3d1-450e-839f-ae8f3b88bced,b229feb1-7c8b-4d25-a039-09345f3fe8f0</span><br><span class="line">Host: localhost:9090</span><br><span class="line">cookie: customCookieName=customCookieValue</span><br><span class="line">accept-encoding: gzip, deflate</span><br><span class="line">content-length: 5416</span><br><span class="line">Connection: keep-alive</span><br><span class="line">cache-control: no-cache</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">"serialNumber"</span>: <span class="string">"请求流水号"</span>,</span><br><span class="line">    <span class="string">"payload"</span>: <span class="string">"0Dcf2plFpESprKjkdqNHM8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/8jjIArkd7XW5Ll2/qaBqv/I4yAK5He11uS5dv6mgar/yOMgCuR3tdbkuXb+poGq/zyJ4ipyLGvo5LX87d9oDAs="</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 响应</span><br><span class="line">&#123;<span class="string">"serialNumber"</span>:<span class="string">"请求流水号"</span>,<span class="string">"userId"</span>:null,<span class="string">"payload"</span>:<span class="string">"7S2VqLu4J6LdW0As50JgZ0eFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+DkeFFoe2FbWytaYdpr2HPg5HhRaHthW1srWmHaa9hz4OR4UWh7YVtbK1ph2mvYc+Dm8rTVHylECORYnLNgnfWx0ENJ9a6E+abYhyFJ9zSIda"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>彻底解决了之前的请求或者响应报文截断的问题，笔者发现了很多博文都在(<strong>照搬</strong>)更改读取<code>DataBuffer</code>实例时候的代码逻辑，其实那段逻辑是不相关的，可以尝试用<code>BufferedReader</code>基于行读取然后用<code>StringBuilder</code>承载，或者像本文那样直接读取为byte数组等等，因为根本的原因是底层的<code>Reactor-Netty</code>的数据块读取大小限制导致获取到的<code>DataBuffer</code>实例里面的数据是不完整的，解决方案就是参照<code>Spring Cloud Gateway</code>本身提供的基础类库进行改造(<strong>暂时没发现有入口可以调整<code>Reactor-Netty</code>的配置</strong>)，难度也不大。</p>
+<h2 id="小结">小结</h2>
+<p>刚好遇到一个需求需要做网关的加解密包括请求体和响应体的修改，这里顺便把<code>Spring Cloud Gateway</code>一些涉及到这方面的一些内容梳理了一遍，顺便把坑踩了并且填完。下一步尝试按照目前官方提供的可用组件修改一下实现自定义的逻辑，包括<code>Hystrix</code>、基于<code>Eureka</code>和<code>Ribbon</code>的负载均衡、限流等等。</p>
+<p>(本文完 c-6-d e-a-20190518 r-a-20190519)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/05/18/spring-cloud-gateway-modify-request-response/>http://throwable.club/2019/05/18/spring-cloud-gateway-modify-request-response/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud Gateway</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/05/18/spring-cloud-gateway-modify-request-response/&title=Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+
+本文编写的时候使用的Spring Cloud Gateway版本为当时最新的版本Greenwich.SR1。
+
+我们在使用Spring Cloud Gateway的时候，注意到过滤器（包括GatewayFilter、GlobalFilter和过滤器链GatewayFilterChain），都依赖到ServerWebExchange：
+1234567891011121314public interface GlobalFilter &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilter extends ShortcutConfigurable &#123;	Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilterChain &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange);&#125;
+这里的设计和Servlet中的Filter是相似的，当前过滤器可以决定是否执行下一个过滤器的逻辑，由GatewayFilterChain#filter()是否被调用来决定。而ServerWebExchange就相当于当前请求和响应的上下文。ServerWebExchange实例不单存储了Request和Response对象，还提供了一些扩展方法，如果想实现改造请求参数或者响应参数，就必须深入了解ServerWebExchange。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/05/18/spring-cloud-gateway-modify-request-response/&title=Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+
+本文编写的时候使用的Spring Cloud Gateway版本为当时最新的版本Greenwich.SR1。
+
+我们在使用Spring Cloud Gateway的时候，注意到过滤器（包括GatewayFilter、GlobalFilter和过滤器链GatewayFilterChain），都依赖到ServerWebExchange：
+1234567891011121314public interface GlobalFilter &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilter extends ShortcutConfigurable &#123;	Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilterChain &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange);&#125;
+这里的设计和Servlet中的Filter是相似的，当前过滤器可以决定是否执行下一个过滤器的逻辑，由GatewayFilterChain#filter()是否被调用来决定。而ServerWebExchange就相当于当前请求和响应的上下文。ServerWebExchange实例不单存储了Request和Response对象，还提供了一些扩展方法，如果想实现改造请求参数或者响应参数，就必须深入了解ServerWebExchange。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLklEQVR42u3awW7rSAwEQP//T3uvD8ha6SYdwBqXTkYie1SjQ2NIPh7x9fzn+vmXn/999a327z/vefVsj7+4sLGxsW/Cfl5e+T2vHuIVo93E5M78ObGxsbHPY18Hw/VPJ0te33+9brIFuQUbGxsbOwEkn3Nqsn3Y2NjY2Bt2XrfJS0uzohI2Njb2N7NnIdGWmfLHyo8of15Lw8bGxv54dt4V/fzPf9LfxsbGxv5g9rO8ZkX56ztnLeTn4sLGxsY+id0WbhLAPgiTddtjBjY2Nvap7KR4lFPfNazTfivZ4uIdYmNjY9+QPWuyts2Atuk7Wz3aRGxsbOzj2LNY2gRP8rj74tTL14CNjY19EHsTM+8d7rkOpHYoJ9k4bGxs7DPYG2QbQm04tbGaFMUe+3eLjY2N/WHs/NY2WtoWbxJss62PRnawsbGxb87ejDbOSv/tUE6yyqwcho2NjX13dntg2AzKJA2D90bpy29hY2NjH8RuA6ONkHabZhsxK2ZhY2Njn8FOfmjTiE1+YdZymEXv/zR6sbGxsY9gJ4X12YFh3+6dtaWLGSVsbGzsm7Pzw8OmSZB/K9+Utq2LjY2NfTZ7/xNvWLJsNs+KVtjY2Nhns5MF8qjbHF02q9SDPtjY2NiHspNyz3VQzdrDs+Bsm8fY2NjY57HbJdsxmuF7GIVi8TzY2NjYx7GLkZfRASDfxHZD8y3DxsbGPo+9KeXkAzebz7MX8MvWY2NjYx/HbiPtXS2BWYM5eeYowLCxsbGPYCdRlAdVe2c7fNNG13BwBxsbG/uG7Dww8mZw2/rN28btYemXWho2Njb2QeyWsQ+8zaFi09LAxsbGPpudHzY25ft8m9q2cRKW2NjY2N/Dftd2/N2GztrS2NjY2Cexn+WVF25mcdWGU74WNjY29qnsWfzMBh/z1mw7mpPHW70p2NjY2Ddhb0IriY1Ne3hzfPrlv9jY2NjHsTeN1Tzw2kNR22AY1tKwsbGxv4w9Kwnlq8yOFvXYKDY2NvYXs9vSfzvKk5SN9qGIjY2NfR67PQwUCywaAwl49mvY2NjYJ7HzRu/meNCWh/ZhNos9bGxs7Fux/wP4Q3LerDJeCwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/05/18/spring-cloud-gateway-modify-request-response/&title=Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+
+本文编写的时候使用的Spring Cloud Gateway版本为当时最新的版本Greenwich.SR1。
+
+我们在使用Spring Cloud Gateway的时候，注意到过滤器（包括GatewayFilter、GlobalFilter和过滤器链GatewayFilterChain），都依赖到ServerWebExchange：
+1234567891011121314public interface GlobalFilter &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilter extends ShortcutConfigurable &#123;	Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain);&#125;public interface GatewayFilterChain &#123;    Mono&lt;Void&gt; filter(ServerWebExchange exchange);&#125;
+这里的设计和Servlet中的Filter是相似的，当前过滤器可以决定是否执行下一个过滤器的逻辑，由GatewayFilterChain#filter()是否被调用来决定。而ServerWebExchange就相当于当前请求和响应的上下文。ServerWebExchange实例不单存储了Request和Response对象，还提供了一些扩展方法，如果想实现改造请求参数或者响应参数，就必须深入了解ServerWebExchange。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLklEQVR42u3awW7rSAwEQP//T3uvD8ha6SYdwBqXTkYie1SjQ2NIPh7x9fzn+vmXn/999a327z/vefVsj7+4sLGxsW/Cfl5e+T2vHuIVo93E5M78ObGxsbHPY18Hw/VPJ0te33+9brIFuQUbGxsbOwEkn3Nqsn3Y2NjY2Bt2XrfJS0uzohI2Njb2N7NnIdGWmfLHyo8of15Lw8bGxv54dt4V/fzPf9LfxsbGxv5g9rO8ZkX56ztnLeTn4sLGxsY+id0WbhLAPgiTddtjBjY2Nvap7KR4lFPfNazTfivZ4uIdYmNjY9+QPWuyts2Atuk7Wz3aRGxsbOzj2LNY2gRP8rj74tTL14CNjY19EHsTM+8d7rkOpHYoJ9k4bGxs7DPYG2QbQm04tbGaFMUe+3eLjY2N/WHs/NY2WtoWbxJss62PRnawsbGxb87ejDbOSv/tUE6yyqwcho2NjX13dntg2AzKJA2D90bpy29hY2NjH8RuA6ONkHabZhsxK2ZhY2Njn8FOfmjTiE1+YdZymEXv/zR6sbGxsY9gJ4X12YFh3+6dtaWLGSVsbGzsm7Pzw8OmSZB/K9+Utq2LjY2NfTZ7/xNvWLJsNs+KVtjY2Nhns5MF8qjbHF02q9SDPtjY2NiHspNyz3VQzdrDs+Bsm8fY2NjY57HbJdsxmuF7GIVi8TzY2NjYx7GLkZfRASDfxHZD8y3DxsbGPo+9KeXkAzebz7MX8MvWY2NjYx/HbiPtXS2BWYM5eeYowLCxsbGPYCdRlAdVe2c7fNNG13BwBxsbG/uG7Dww8mZw2/rN28btYemXWho2Njb2QeyWsQ+8zaFi09LAxsbGPpudHzY25ft8m9q2cRKW2NjY2N/Dftd2/N2GztrS2NjY2Cexn+WVF25mcdWGU74WNjY29qnsWfzMBh/z1mw7mpPHW70p2NjY2Ddhb0IriY1Ne3hzfPrlv9jY2NjHsTeN1Tzw2kNR22AY1tKwsbGxv4w9Kwnlq8yOFvXYKDY2NvYXs9vSfzvKk5SN9qGIjY2NfR67PQwUCywaAwl49mvY2NjYJ7HzRu/meNCWh/ZhNos9bGxs7Fux/wP4Q3LerDJeCwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/05/20/interview-problem-double-thread-print-odd-even-alternately/" rel="prev" title="经典面试题-两个线程交替打印奇数和偶数">
+                                  
+                                      经典面试题-两个线程交替打印奇数和偶数
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Concurrency/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Concurrency</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/11/mysql-deadlock-troubleshoot-1st/" rel="prev" title="一次MySQL死锁问题的排查与分析(一)">
+                                    
+                                        一次MySQL死锁问题的排查与分析(一)
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/MySQL/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> MySQL</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解ServerWebExchange"><span class="toc-text">理解ServerWebExchange</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ServerWebExchange接口"><span class="toc-text">ServerWebExchange接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ServerHttpRequest接口"><span class="toc-text">ServerHttpRequest接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ServerHttpResponse接口"><span class="toc-text">ServerHttpResponse接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ServerWebExchangeUtils和上下文属性"><span class="toc-text">ServerWebExchangeUtils和上下文属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改请求体"><span class="toc-text">修改请求体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#修改响应体"><span class="toc-text">修改响应体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求体或者响应体报文过大的问题"><span class="toc-text">请求体或者响应体报文过大的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

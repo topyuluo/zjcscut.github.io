@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>深入分析Java反射(七)-简述反射调用的底层实现 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/12/16/java-reflection-implementance/">
+        深入分析Java反射(七)-简述反射调用的底层实现
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Reflection/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Reflection</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年12月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2018-12-16T01:09:52+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2018年12月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.7k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：14分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>深入分析Java反射(七)-简述反射调用的底层实现</h1>
+<h2 id="前提">前提</h2>
+<p>Java反射的API在JavaSE1.7的时候已经基本完善，<strong>但是本文编写的时候使用的是Oracle JDK11</strong>，因为JDK11对于sun包下的源码也上传了，可以直接通过IDE查看对应的源码和进行Debug。</p>
+<p>本文主要介绍反射调用的底层实现，当然还没有能力分析JVM的实现，这里只分析到最终Native方法的调用点。底层会依赖到Unsafe类，可以的话可以看下笔者之前写的一篇文章《神奇的魔法类和双刃剑-Unsafe》。</p>
+<h2 id="反射调用的底层实现探究">反射调用的底层实现探究</h2>
+<p>主要考虑下面的情况：</p>
+<ul>
+<li>属性操作：<code>java.lang.reflect.Field#set(Object obj, Object value)</code>和<code>java.lang.reflect.Field#get(Object obj)</code>。</li>
+<li>构造器调用：<code>java.lang.reflect.Constructor#newInstance(Object ... initargs)</code>。</li>
+<li>方法调用：<code>java.lang.reflect.Method#invoke(Object obj, Object... args)</code>。</li>
+</ul>
+<h3 id="处理属性操作的底层实现">处理属性操作的底层实现</h3>
+<p>属性操作方法<code>Field#set(Object obj, Object value)</code>和<code>Field#get(Object obj)</code>底层都是委托到<code>jdk.internal.reflect.FieldAccessor</code>实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FieldAccessor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getBoolean</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">byte</span> <span class="title">getByte</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">char</span> <span class="title">getChar</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">short</span> <span class="title">getShort</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getLong</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">getFloat</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getDouble</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(Object obj, Object value)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBoolean</span><span class="params">(Object obj, <span class="keyword">boolean</span> z)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setByte</span><span class="params">(Object obj, <span class="keyword">byte</span> b)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setChar</span><span class="params">(Object obj, <span class="keyword">char</span> c)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setShort</span><span class="params">(Object obj, <span class="keyword">short</span> s)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setInt</span><span class="params">(Object obj, <span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLong</span><span class="params">(Object obj, <span class="keyword">long</span> l)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFloat</span><span class="params">(Object obj, <span class="keyword">float</span> f)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Field&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDouble</span><span class="params">(Object obj, <span class="keyword">double</span> d)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>FieldAccessor</code>接口有很多的实现，<code>FieldAccessor</code>接口实例是通过<code>jdk.internal.reflect.ReflectionFactory</code>这个工厂构造的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> FieldAccessor <span class="title">newFieldAccessor</span><span class="params">(Field field, <span class="keyword">boolean</span> override)</span> </span>&#123;</span><br><span class="line">    checkInitted();</span><br><span class="line"></span><br><span class="line">    Field root = langReflectAccess.getRoot(field);</span><br><span class="line">    <span class="keyword">if</span> (root != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// FieldAccessor will use the root unless the modifiers have</span></span><br><span class="line">        <span class="comment">// been overrridden</span></span><br><span class="line">        <span class="keyword">if</span> (root.getModifiers() == field.getModifiers() || !override) &#123;</span><br><span class="line">            field = root;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> UnsafeFieldAccessorFactory.newFieldAccessor(field, override);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终委托到<code>UnsafeFieldAccessorFactory#newFieldAccessor()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UnsafeFieldAccessorFactory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> FieldAccessor <span class="title">newFieldAccessor</span><span class="params">(Field field, <span class="keyword">boolean</span> override)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; type = field.getType();</span><br><span class="line">        <span class="keyword">boolean</span> isStatic = Modifier.isStatic(field.getModifiers());</span><br><span class="line">        <span class="keyword">boolean</span> isFinal = Modifier.isFinal(field.getModifiers());</span><br><span class="line">        <span class="keyword">boolean</span> isVolatile = Modifier.isVolatile(field.getModifiers());</span><br><span class="line">        <span class="keyword">boolean</span> isQualified = isFinal || isVolatile;</span><br><span class="line">        <span class="keyword">boolean</span> isReadOnly = isFinal &amp;&amp; (isStatic || !override);</span><br><span class="line">        <span class="keyword">if</span> (isStatic) &#123;</span><br><span class="line">            <span class="comment">// This code path does not guarantee that the field's</span></span><br><span class="line">            <span class="comment">// declaring class has been initialized, but it must be</span></span><br><span class="line">            <span class="comment">// before performing reflective operations.</span></span><br><span class="line">            UnsafeFieldAccessorImpl.unsafe.ensureClassInitialized(field.getDeclaringClass());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!isQualified) &#123;</span><br><span class="line">                <span class="keyword">if</span> (type == Boolean.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticBooleanFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Byte.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticByteFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Short.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticShortFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Character.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticCharacterFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Integer.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticIntegerFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Long.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticLongFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Float.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticFloatFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Double.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticDoubleFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeStaticObjectFieldAccessorImpl(field);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (type == Boolean.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticBooleanFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Byte.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticByteFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Short.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticShortFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Character.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticCharacterFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Integer.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticIntegerFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Long.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticLongFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Float.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticFloatFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Double.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticDoubleFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedStaticObjectFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (!isQualified) &#123;</span><br><span class="line">                <span class="keyword">if</span> (type == Boolean.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeBooleanFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Byte.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeByteFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Short.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeShortFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Character.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeCharacterFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Integer.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeIntegerFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Long.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeLongFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Float.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeFloatFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Double.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeDoubleFieldAccessorImpl(field);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeObjectFieldAccessorImpl(field);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (type == Boolean.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedBooleanFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Byte.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedByteFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Short.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedShortFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Character.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedCharacterFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Integer.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedIntegerFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Long.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedLongFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Float.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedFloatFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (type == Double.TYPE) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedDoubleFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> UnsafeQualifiedObjectFieldAccessorImpl(field, isReadOnly);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里注意一下属性修饰符的判断：</p>
+<ul>
+<li>isStatic：静态属性，也就是static关键字修饰的属性。</li>
+<li>isFinal：final关键字修饰的属性。</li>
+<li>isVolatile：valatile关键字修饰的属性。</li>
+<li>isQualified：valatile关键字或者final关键字修饰的属性。</li>
+<li>isReadOnly：是否只读属性，final关键字修饰的属性或者static关键字修饰并且不能覆盖(override = false)的属性。</li>
+</ul>
+<p>通过上面修饰符做判断，得到最终的<code>FieldAccessor</code>实现。这里挑一个例子进行分析，例如<strong>一个普通非静态没有volatile和final关键字修饰属性</strong>最终就会得到<code>UnsafeObjectFieldAccessorImpl</code>的实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UnsafeObjectFieldAccessorImpl</span> <span class="keyword">extends</span> <span class="title">UnsafeFieldAccessorImpl</span> </span>&#123;</span><br><span class="line">    UnsafeObjectFieldAccessorImpl(Field field) &#123;</span><br><span class="line">        <span class="keyword">super</span>(field);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">        ensureObj(obj);</span><br><span class="line">        <span class="keyword">return</span> unsafe.getObject(obj, fieldOffset);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(Object obj, Object value)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, IllegalAccessException</span>&#123;</span><br><span class="line">        ensureObj(obj);</span><br><span class="line">        <span class="keyword">if</span> (isFinal) &#123;</span><br><span class="line">            throwFinalFieldIllegalAccessException(value);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!field.getType().isAssignableFrom(value.getClass())) &#123;</span><br><span class="line">                throwSetIllegalArgumentException(value);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        unsafe.putObject(obj, fieldOffset, value);</span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getBoolean</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> newGetBooleanIllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">byte</span> <span class="title">getByte</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> newGetByteIllegalArgumentException();</span><br><span class="line">    &#125;     </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略其他直接抛出异常的方法 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见<code>UnsafeObjectFieldAccessorImpl</code>中除了<code>get(Object obj)</code>和<code>set(Object obj, Object value)</code>方法，其他方法都是直接抛出IllegalArgumentException。而<code>get(Object obj)</code>和<code>set(Object obj, Object value)</code>底层分别依赖于<code>jdk.internal.misc.Unsafe</code>的<code>putObject(obj, fieldOffset, value)</code>和<code>getObject(obj, fieldOffset)</code>方法。而属性的内存偏移地址是在<code>UnsafeObjectFieldAccessorImpl</code>的父类<code>UnsafeFieldAccessorImpl</code>的构造函数中计算出来的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">UnsafeFieldAccessorImpl</span> <span class="keyword">extends</span> <span class="title">FieldAccessorImpl</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Unsafe unsafe = Unsafe.getUnsafe();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> Field   field;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">long</span>    fieldOffset;</span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">boolean</span> isFinal;</span><br><span class="line"></span><br><span class="line">    UnsafeFieldAccessorImpl(Field field) &#123;</span><br><span class="line">        <span class="keyword">this</span>.field = field;</span><br><span class="line">        <span class="keyword">if</span> (Modifier.isStatic(field.getModifiers()))</span><br><span class="line">            fieldOffset = unsafe.staticFieldOffset(field);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            fieldOffset = unsafe.objectFieldOffset(field);</span><br><span class="line">        isFinal = Modifier.isFinal(field.getModifiers());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 省略其他方法 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以做个小结，属性反射操作<code>Field</code>的<code>setXX</code>和<code>getXX</code>方法最终委托到<code>jdk.internal.misc.Unsafe</code>的<code>putXX</code>和<code>getXX</code>方法，而属性的内存偏移地址是通过<code>jdk.internal.misc.Unsafe</code>的<code>staticFieldBase()</code>、<code>staticFieldOffset</code>和<code>objectFieldOffset</code>几个方法计算的。</p>
+<h3 id="处理构造器调用的底层实现">处理构造器调用的底层实现</h3>
+<p><code>Constructor#newInstance()</code>方法调用依赖到<code>ConstructorAccessor</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">newInstance</span><span class="params">(Object ... initargs)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException, IllegalAccessException,</span></span><br><span class="line"><span class="function">               IllegalArgumentException, InvocationTargetException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!override) &#123;</span><br><span class="line">            Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">            checkAccess(caller, clazz, clazz, modifiers);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((clazz.getModifiers() &amp; Modifier.ENUM) != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Cannot reflectively create enum objects"</span>);</span><br><span class="line">        ConstructorAccessor ca = constructorAccessor;   <span class="comment">// read volatile</span></span><br><span class="line">        <span class="keyword">if</span> (ca == <span class="keyword">null</span>) &#123;</span><br><span class="line">            ca = acquireConstructorAccessor();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        T inst = (T) ca.newInstance(initargs);</span><br><span class="line">        <span class="keyword">return</span> inst;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ConstructorAccessor接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConstructorAccessor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Constructor&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">newInstance</span><span class="params">(Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException,</span></span><br><span class="line"><span class="function">               IllegalArgumentException,</span></span><br><span class="line"><span class="function">               InvocationTargetException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而获取<code>ConstructorAccessor</code>实例也是通过反射工厂类<code>ReflectionFactory</code>，具体是<code>ReflectionFactory#newConstructorAccessor</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ConstructorAccessor <span class="title">newConstructorAccessor</span><span class="params">(Constructor&lt;?&gt; c)</span> </span>&#123;</span><br><span class="line">    checkInitted();</span><br><span class="line">    Class&lt;?&gt; declaringClass = c.getDeclaringClass();</span><br><span class="line">    <span class="comment">// 抽象方法会进入此if分支</span></span><br><span class="line">    <span class="keyword">if</span> (Modifier.isAbstract(declaringClass.getModifiers())) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InstantiationExceptionConstructorAccessorImpl(<span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 宿主类直接是Class类型，则无法实例化</span></span><br><span class="line">    <span class="keyword">if</span> (declaringClass == Class<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InstantiationExceptionConstructorAccessorImpl</span><br><span class="line">            (<span class="string">"Can not instantiate java.lang.Class"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// use the root Constructor that will not cache caller class</span></span><br><span class="line">    Constructor&lt;?&gt; root = langReflectAccess.getRoot(c);</span><br><span class="line">    <span class="keyword">if</span> (root != <span class="keyword">null</span>) &#123;</span><br><span class="line">        c = root;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当前声明构造的宿主类是ConstructorAccessorImpl的子类</span></span><br><span class="line">    <span class="keyword">if</span> (Reflection.isSubclassOf(declaringClass,</span><br><span class="line">                                ConstructorAccessorImpl<span class="class">.<span class="keyword">class</span>)) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BootstrapConstructorAccessorImpl(c);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// </span></span><br><span class="line">    <span class="keyword">if</span> (noInflation &amp;&amp; !ReflectUtil.isVMAnonymousClass(c.getDeclaringClass())) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MethodAccessorGenerator().</span><br><span class="line">            generateConstructor(c.getDeclaringClass(),</span><br><span class="line">                                c.getParameterTypes(),</span><br><span class="line">                                c.getExceptionTypes(),</span><br><span class="line">                                c.getModifiers());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        NativeConstructorAccessorImpl acc =</span><br><span class="line">            <span class="keyword">new</span> NativeConstructorAccessorImpl(c);</span><br><span class="line">        DelegatingConstructorAccessorImpl res =</span><br><span class="line">            <span class="keyword">new</span> DelegatingConstructorAccessorImpl(acc);</span><br><span class="line">        acc.setParent(res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见最终得到的<code>ConstructorAccessor</code>实例为<code>DelegatingConstructorAccessorImpl</code>，而<code>DelegatingConstructorAccessorImpl</code>只是一个委托实现，底层是调用<code>NativeConstructorAccessorImpl</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NativeConstructorAccessorImpl</span> <span class="keyword">extends</span> <span class="title">ConstructorAccessorImpl</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Constructor&lt;?&gt; c;</span><br><span class="line">    <span class="keyword">private</span> DelegatingConstructorAccessorImpl parent;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> numInvocations;</span><br><span class="line"></span><br><span class="line">    NativeConstructorAccessorImpl(Constructor&lt;?&gt; c) &#123;</span><br><span class="line">        <span class="keyword">this</span>.c = c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">newInstance</span><span class="params">(Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException,</span></span><br><span class="line"><span class="function">               IllegalArgumentException,</span></span><br><span class="line"><span class="function">               InvocationTargetException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// We can't inflate a constructor belonging to a vm-anonymous class</span></span><br><span class="line">        <span class="comment">// because that kind of class can't be referred to by name, hence can't</span></span><br><span class="line">        <span class="comment">// be found from the generated bytecode.</span></span><br><span class="line">        <span class="keyword">if</span> (++numInvocations &gt; ReflectionFactory.inflationThreshold()</span><br><span class="line">                &amp;&amp; !ReflectUtil.isVMAnonymousClass(c.getDeclaringClass())) &#123;</span><br><span class="line">            ConstructorAccessorImpl acc = (ConstructorAccessorImpl)</span><br><span class="line">                <span class="keyword">new</span> MethodAccessorGenerator().</span><br><span class="line">                    generateConstructor(c.getDeclaringClass(),</span><br><span class="line">                                        c.getParameterTypes(),</span><br><span class="line">                                        c.getExceptionTypes(),</span><br><span class="line">                                        c.getModifiers());</span><br><span class="line">            parent.setDelegate(acc);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> newInstance0(c, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setParent</span><span class="params">(DelegatingConstructorAccessorImpl parent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这个就是最终构造实例化对象的native方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> Object <span class="title">newInstance0</span><span class="params">(Constructor&lt;?&gt; c, Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException,</span></span><br><span class="line"><span class="function">               IllegalArgumentException,</span></span><br><span class="line"><span class="function">               InvocationTargetException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>NativeConstructorAccessorImpl#newInstance0()</code>就是最终构造实例化对象的Native方法。当然有例外的情况，例如非正常调用下，如果构造器的宿主类是一个抽象类，那么最终会返回一个<code>InstantiationExceptionConstructorAccessorImpl</code>实例，里面直接抛出InstantiationException异常。</p>
+<h3 id="处理方法调用的底层实现">处理方法调用的底层实现</h3>
+<p><code>Method#invoke()</code>调用依赖于<code>MethodAccessor</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MethodAccessor接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MethodAccessor</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Matches specification in &#123;<span class="doctag">@link</span> java.lang.reflect.Method&#125; */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object obj, Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, InvocationTargetException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object obj, Object... args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalAccessException, IllegalArgumentException,</span></span><br><span class="line"><span class="function">           InvocationTargetException</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!override) &#123;</span><br><span class="line">            Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">            checkAccess(caller, clazz,</span><br><span class="line">                        Modifier.isStatic(modifiers) ? <span class="keyword">null</span> : obj.getClass(),</span><br><span class="line">                        modifiers);</span><br><span class="line">        &#125;</span><br><span class="line">        MethodAccessor ma = methodAccessor;             <span class="comment">// read volatile</span></span><br><span class="line">        <span class="keyword">if</span> (ma == <span class="keyword">null</span>) &#123;</span><br><span class="line">            ma = acquireMethodAccessor();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ma.invoke(obj, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>获取<code>MethodAccessor</code>实例的逻辑和前两节类似，是通过<code>ReflectionFactory#newMethodAccessor()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> MethodAccessor <span class="title">newMethodAccessor</span><span class="params">(Method method)</span> </span>&#123;</span><br><span class="line">    checkInitted();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Reflection.isCallerSensitive(method)) &#123;</span><br><span class="line">        Method altMethod = findMethodForReflection(method);</span><br><span class="line">        <span class="keyword">if</span> (altMethod != <span class="keyword">null</span>) &#123;</span><br><span class="line">            method = altMethod;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// use the root Method that will not cache caller class</span></span><br><span class="line">    Method root = langReflectAccess.getRoot(method);</span><br><span class="line">    <span class="keyword">if</span> (root != <span class="keyword">null</span>) &#123;</span><br><span class="line">        method = root;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (noInflation &amp;&amp; !ReflectUtil.isVMAnonymousClass(method.getDeclaringClass())) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MethodAccessorGenerator().</span><br><span class="line">            generateMethod(method.getDeclaringClass(),</span><br><span class="line">                           method.getName(),</span><br><span class="line">                           method.getParameterTypes(),</span><br><span class="line">                           method.getReturnType(),</span><br><span class="line">                           method.getExceptionTypes(),</span><br><span class="line">                           method.getModifiers());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        NativeMethodAccessorImpl acc =</span><br><span class="line">            <span class="keyword">new</span> NativeMethodAccessorImpl(method);</span><br><span class="line">        DelegatingMethodAccessorImpl res =</span><br><span class="line">            <span class="keyword">new</span> DelegatingMethodAccessorImpl(acc);</span><br><span class="line">        acc.setParent(res);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终会委托到<code>NativeMethodAccessorImpl#invoke(Object obj, Object[] args)</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NativeMethodAccessorImpl</span> <span class="keyword">extends</span> <span class="title">MethodAccessorImpl</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Method method;</span><br><span class="line">    <span class="keyword">private</span> DelegatingMethodAccessorImpl parent;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> numInvocations;</span><br><span class="line"></span><br><span class="line">    NativeMethodAccessorImpl(Method method) &#123;</span><br><span class="line">        <span class="keyword">this</span>.method = method;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object obj, Object[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IllegalArgumentException, InvocationTargetException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// We can't inflate methods belonging to vm-anonymous classes because</span></span><br><span class="line">        <span class="comment">// that kind of class can't be referred to by name, hence can't be</span></span><br><span class="line">        <span class="comment">// found from the generated bytecode.</span></span><br><span class="line">        <span class="keyword">if</span> (++numInvocations &gt; ReflectionFactory.inflationThreshold()</span><br><span class="line">                &amp;&amp; !ReflectUtil.isVMAnonymousClass(method.getDeclaringClass())) &#123;</span><br><span class="line">            MethodAccessorImpl acc = (MethodAccessorImpl)</span><br><span class="line">                <span class="keyword">new</span> MethodAccessorGenerator().</span><br><span class="line">                    generateMethod(method.getDeclaringClass(),</span><br><span class="line">                                   method.getName(),</span><br><span class="line">                                   method.getParameterTypes(),</span><br><span class="line">                                   method.getReturnType(),</span><br><span class="line">                                   method.getExceptionTypes(),</span><br><span class="line">                                   method.getModifiers());</span><br><span class="line">            parent.setDelegate(acc);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> invoke0(method, obj, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setParent</span><span class="params">(DelegatingMethodAccessorImpl parent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> Object <span class="title">invoke0</span><span class="params">(Method m, Object obj, Object[] args)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>NativeMethodAccessorImpl#invoke0()</code>就是方法调用的最终调用的Native方法。</p>
+<h2 id="小结">小结</h2>
+<p>学习知识过程总是阶梯式上升的，JDK中的类库设计也类似这样，如果提前熟悉<code>Unsafe</code>类的相关方法，其实反射调用的底层实现也能够相对轻易地理解。属性、构造和方法反射调用底层的实现(<strong>只考虑正常调用的情况下</strong>)如下：</p>
+<ul>
+<li>对于属性(Field)：<code>Field#setXX()</code>和<code>Field#getXX()</code>分别对应<code>Unsafe</code>的<code>putXX()</code>和<code>getXX()</code>方法，也就是说完全依赖<code>Unsafe</code>中的Native方法。</li>
+<li>对于构造(Constructor)：<code>Constructor#newInstance()</code>底层调用<code>NativeConstructorAccessorImpl#newInstance0()</code>。</li>
+<li>对于方法(Method)：<code>Method#invoke()</code>底层调用<code>NativeMethodAccessorImpl#invoke0()</code></li>
+</ul>
+<p>(本文完 e-a-20181216 c-1-d)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/12/16/java-reflection-implementance/>http://throwable.club/2018/12/16/java-reflection-implementance/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Reflection/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Reflection</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/12/16/java-reflection-implementance/&title=深入分析Java反射(七)-简述反射调用的底层实现 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/12/16/java-reflection-implementance/&title=深入分析Java反射(七)-简述反射调用的底层实现 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aQW4jMQwEwPz/09lrAGftbkqEHaDm5IM9o5qDSDf19RVf30+vn995/Px4n/YpyW+PLjw8PLy1pd96cH7nx+/ka8bDw8Pb5iWLSHbd58vKd++T9eDh4eF9Gi8vD/kdkgYdDw8P7+/ykmY3KQxtscHDw8P7NF4bN7SB7PP7JGVgPWvBw8PDi3mz4PW9n1fme3h4eHjHU/VkGPa8VOTh7CwyfrFaPDw8vAVevuHmLWze5t4aer0YueHh4eFd5c0enxeGfEPPI+BiFIeHh4e3wNvIM2Zx8Hko/N874OHh4V3l5S1yvjXnw6qTshG15nh4eHgLvJMgdbaJF/HrqH2P4hc8PDy8q7wkepiN+ZMQoYUVYQQeHh7eVd7zeCJHzprvZEHtSy9OkOHh4eGVvFnAejIMa19le0zhl/keHh4e3jIvb4tb6nlhSPb8F4cG8PDw8C7x2g23HVnljfjJ3X7B4+Hh4S3w2uhhOLxfKEL5c/Hw8PD2eO2PT6KKPK6dlSs8PDy8bd7JtCgf4bdDtZNQ+NowDA8PD+/hnnk00B4I2HtZSbSBh4eHt83LR/Wz7TunnhSJF/8V8PDw8K7yZm1xW0jy+7eFBA8PD+9dvNmGfjJIayOGfG14eHh4e7ykSZ2113lhaI8X1MUJDw8Pb43XxgF5mJsvqG2dowKDh4eHt8Zrh1uzRcxKQtu44+Hh4b2X1w6u2uC1DmfzQ1d4eHh4C7zv8mqDg9miz8MRPDw8vD3ebMPNo4RZozwrVEcXHh4eXsnL49d2tJ+Px2bhSPREPDw8vDXerfyzHZglyFkZw8PDw/sc3smv2lHZyavHw8PD+4u8WZDRHtJqqgQeHh7eTV7+mJx9PkgbHhrAw8PDW+bVf+9LcBvIXls0Hh4e3n3eP5qsxTq2Ul5nAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/12/16/java-reflection-implementance/&title=深入分析Java反射(七)-简述反射调用的底层实现 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aQW4jMQwEwPz/09lrAGftbkqEHaDm5IM9o5qDSDf19RVf30+vn995/Px4n/YpyW+PLjw8PLy1pd96cH7nx+/ka8bDw8Pb5iWLSHbd58vKd++T9eDh4eF9Gi8vD/kdkgYdDw8P7+/ykmY3KQxtscHDw8P7NF4bN7SB7PP7JGVgPWvBw8PDi3mz4PW9n1fme3h4eHjHU/VkGPa8VOTh7CwyfrFaPDw8vAVevuHmLWze5t4aer0YueHh4eFd5c0enxeGfEPPI+BiFIeHh4e3wNvIM2Zx8Hko/N874OHh4V3l5S1yvjXnw6qTshG15nh4eHgLvJMgdbaJF/HrqH2P4hc8PDy8q7wkepiN+ZMQoYUVYQQeHh7eVd7zeCJHzprvZEHtSy9OkOHh4eGVvFnAejIMa19le0zhl/keHh4e3jIvb4tb6nlhSPb8F4cG8PDw8C7x2g23HVnljfjJ3X7B4+Hh4S3w2uhhOLxfKEL5c/Hw8PD2eO2PT6KKPK6dlSs8PDy8bd7JtCgf4bdDtZNQ+NowDA8PD+/hnnk00B4I2HtZSbSBh4eHt83LR/Wz7TunnhSJF/8V8PDw8K7yZm1xW0jy+7eFBA8PD+9dvNmGfjJIayOGfG14eHh4e7ykSZ2113lhaI8X1MUJDw8Pb43XxgF5mJsvqG2dowKDh4eHt8Zrh1uzRcxKQtu44+Hh4b2X1w6u2uC1DmfzQ1d4eHh4C7zv8mqDg9miz8MRPDw8vD3ebMPNo4RZozwrVEcXHh4eXsnL49d2tJ+Px2bhSPREPDw8vDXerfyzHZglyFkZw8PDw/sc3smv2lHZyavHw8PD+4u8WZDRHtJqqgQeHh7eTV7+mJx9PkgbHhrAw8PDW+bVf+9LcBvIXls0Hh4e3n3eP5qsxTq2Ul5nAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/12/16/java-reflection-optimal-performance/" rel="prev" title="深入分析Java反射(八)-优化反射调用性能">
+                                  
+                                      深入分析Java反射(八)-优化反射调用性能
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Reflection/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Reflection</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/12/15/java-reflection-handle-exception/" rel="prev" title="深入分析Java反射(六)-反射调用异常处理">
+                                    
+                                        深入分析Java反射(六)-反射调用异常处理
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Reflection/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Reflection</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '深入分析Java反射(七)-简述反射调用的底层实现',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反射调用的底层实现探究"><span class="toc-text">反射调用的底层实现探究</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#处理属性操作的底层实现"><span class="toc-text">处理属性操作的底层实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理构造器调用的底层实现"><span class="toc-text">处理构造器调用的底层实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#处理方法调用的底层实现"><span class="toc-text">处理方法调用的底层实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

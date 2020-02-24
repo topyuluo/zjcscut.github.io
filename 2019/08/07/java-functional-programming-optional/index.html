@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Java函数式编程之Optional | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/08/07/java-functional-programming-optional/">
+        Java函数式编程之Optional
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Functional-Programming/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Functional Programming</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年8月7日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-08-11T23:22:56+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年8月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：13分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p><code>java.util.Optional</code>是JDK8中引入的类，它是JDK从著名的Java工具包<code>Guava</code>中移植过来。本文编写的时候使用的是JDK11。<code>Optional</code>是一个包含了<code>NULL</code>值或者非<code>NULL</code>值的对象容器，它常用作明确表明没有结果（其实明确表明存在结果也可以用<code>Optional</code>表示）的方法返回类型，这样可以避免<code>NULL</code>值带来的可能的异常（一般是<code>NullPointerException</code>）。也就是说，一个方法的返回值类型是<code>Optional</code>，则应该避免返回<code>NULL</code>，而应该让返回值指向一个包含<code>NULL</code>对象的<code>Optional</code>实例。<code>Optional</code>的出现为<code>NULL</code>判断、过滤操作、映射操作等提供了函数式适配入口，它算是Java引入函数式编程的一个重要的里程碑。</p>
+<p>本文新增一个<code>Asciidoc</code>的预览模式，可以体验一下<code>Spring</code>官方文档的感觉：</p>
+<ul>
+<li>Github Page：<a href="http://www.throwable.club/adoc/20190807/java-functional-programming-optional" target="_blank" rel="noopener">http://www.throwable.club/adoc/20190807/java-functional-programming-optional</a></li>
+<li>Coding Page：<a href="http://throwable.coding.me/adoc/20190807/java-functional-programming-optional" target="_blank" rel="noopener">http://throwable.coding.me/adoc/20190807/java-functional-programming-optional</a></li>
+</ul>
+<a id="more"></a>
+<h2 id="Optional各个方法源码分析和使用场景">Optional各个方法源码分析和使用场景</h2>
+<p><code>Optional</code>的源码比较简单，归根于它是一个简单的对象容器。下面会结合源码分析它的所有构造、属性、方法和对应的使用场景。</p>
+<h3 id="Optional属性和构造">Optional属性和构造</h3>
+<p><code>Optional</code>的属性和构造如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Optional</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这个是通用的代表NULL值的Optional实例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Optional&lt;?&gt; EMPTY = <span class="keyword">new</span> Optional&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 泛型类型的对象实例</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> T value;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 实例化Optional，注意是私有修饰符，value置为NULL</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Optional</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 直接返回内部的EMPTY实例</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span>&lt;T&gt; Optional&lt;T&gt; <span class="title">empty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        Optional&lt;T&gt; t = (Optional&lt;T&gt;) EMPTY;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 通过value实例化Optional，如果value为NULL则抛出NPE</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Optional</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = Objects.requireNonNull(value);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 通过value实例化Optional，如果value为NULL则抛出NPE，实际上就是使用Optional(T value)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Optional&lt;T&gt; <span class="title">of</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Optional&lt;&gt;(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果value为NULL则返回EMPTY实例，否则调用Optional#of(value)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Optional&lt;T&gt; <span class="title">ofNullable</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value == <span class="keyword">null</span> ? empty() : of(value);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 暂时省略其他代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果明确一个对象实例不为<code>NULL</code>的时候，应该使用<code>Optional#of()</code>，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Order o = selectByOrderId(orderId);</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">null</span> != o</span><br><span class="line">Optional op = Optional.of(o);</span><br></pre></td></tr></table></figure>
+<p>如果无法明确一个对象实例是否为<code>NULL</code>的时候，应该使用<code>Optional#ofNullable()</code>，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Optional op = Optional.ofNullable(selectByOrderId(orderId));</span><br></pre></td></tr></table></figure>
+<p>明确表示一个持有<code>NULL</code>值的<code>Optional</code>实例可以使用<code>Optional.empty()</code>。</p>
+<h3 id="get-方法">get()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果value为空，则抛出NPE，否则直接返回value</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"No value present"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>get()</code>方法一般是需要明确<code>value</code>不为<code>NULL</code>的时候使用，它做了先验<code>value</code>的存在性。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Order o = selectByOrderId(orderId);</span><br><span class="line"><span class="keyword">assert</span> <span class="keyword">null</span> != o</span><br><span class="line">Optional op = Optional.of(o);</span><br><span class="line">Order value = op.get();</span><br></pre></td></tr></table></figure>
+<h3 id="isPresent-方法">isPresent()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断value是否存在，不为NULL则返回true，如果为NULL则返回false</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPresent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value != <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Order o = selectByOrderId(orderId);</span><br><span class="line"><span class="keyword">boolean</span> existed = Optional.ofNullable(o).isPresent();</span><br></pre></td></tr></table></figure>
+<h3 id="isEmpty-方法">isEmpty()方法</h3>
+<p><code>isEmpty()</code>是JDK11引入的方法，是<code>isPresent()</code>的反向判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断value是否存在，为NULL则返回true，为非NULL则返回false</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value == <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ifPresent-方法">ifPresent()方法</h3>
+<p><code>ifPresent()</code>方法的作用是：如果<code>value</code>不为<code>NULL</code>，则使用<code>value</code>调用消费者函数式接口的消费方法<code>Consumer#accept()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ifPresent</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> T&gt; action)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">        action.accept(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Optional.ofNullable(selectByOrderId(orderId)).ifPresent(o-&gt; LOGGER.info(<span class="string">"订单ID:&#123;&#125;"</span>,o.getOrderId());</span><br></pre></td></tr></table></figure>
+<h3 id="ifPresentOrElse-方法">ifPresentOrElse()方法</h3>
+<p><code>ifPresentOrElse()</code>方法是JDK9新增的方法，它是<code>ifPresent()</code>方法的加强版，如果<code>value</code>不为<code>NULL</code>，则使用<code>value</code>调用消费者函数式接口的消费方法<code>Consumer#accept()</code>，如果<code>value</code>为<code>NULL</code>则执行<code>Runnable#run()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ifPresentOrElse</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> T&gt; action, Runnable emptyAction)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">        action.accept(value);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        emptyAction.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String orderId = <span class="string">"xxxx"</span>; </span><br><span class="line">Optional.ofNullable(selectByOrderId(orderId)).ifPresentOrElse(o-&gt; LOGGER.info(<span class="string">"订单ID:&#123;&#125;"</span>,o.getOrderId()), ()-&gt; LOGGER.info(<span class="string">"订单&#123;&#125;不存在"</span>,o.getOrderId()));</span><br></pre></td></tr></table></figure>
+<h3 id="filter-方法">filter()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Optional&lt;T&gt; <span class="title">filter</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 判断predicate不能为NULL</span></span><br><span class="line">    Objects.requireNonNull(predicate);</span><br><span class="line">    <span class="comment">// value为NULL，说明是空实例，则直接返回自身</span></span><br><span class="line">    <span class="keyword">if</span> (!isPresent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// value不为NULL，则通过predicate判断，命中返回自身，不命中则返回空实例empty</span></span><br><span class="line">        <span class="keyword">return</span> predicate.test(value) ? <span class="keyword">this</span> : empty();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法的功能是简单的过滤功能，容器持有对象<code>value</code>非<code>NULL</code>会做一次判断，决定返回自身实例还是<code>empty()</code>。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Optional.ofNullable(selectByOrderId(orderId)).filter(o -&gt; o.getStatus() == <span class="number">1</span>).ifPresent(o-&gt; LOGGER.info(<span class="string">"订单&#123;&#125;的状态为1"</span>,o.getOrderId));</span><br></pre></td></tr></table></figure>
+<h3 id="map-方法">map()方法</h3>
+<p><code>map()</code>是简单的值映射操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;U&gt; <span class="function">Optional&lt;U&gt; <span class="title">map</span><span class="params">(Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; mapper)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 判断mapper不能为NULL</span></span><br><span class="line">    Objects.requireNonNull(mapper);</span><br><span class="line">    <span class="comment">// value为NULL，说明是空实例，则直接返回empty()</span></span><br><span class="line">    <span class="keyword">if</span> (!isPresent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> empty();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// value不为NULL，通过mapper转换类型，重新封装为可空的Optional实例</span></span><br><span class="line">        <span class="keyword">return</span> Optional.ofNullable(mapper.apply(value));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>API注释里面的一个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;URI&gt; uris = ...;</span><br><span class="line"><span class="comment">// 找到URI列表中未处理的URI对应的路径</span></span><br><span class="line">Optional&lt;Path&gt; p = uris.stream().filter(uri -&gt; !isProcessedYet(uri)).findFirst().map(Paths::get);</span><br></pre></td></tr></table></figure>
+<h3 id="flatMap-方法">flatMap()方法</h3>
+<p><code>flatMap()</code>方法也是一个映射操作，不过映射的<code>Optional</code>类型返回值直接由外部决定，不需要通过值重新封装为<code>Optional</code>实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;U&gt; <span class="function">Optional&lt;U&gt; <span class="title">flatMap</span><span class="params">(Function&lt;? <span class="keyword">super</span> T, ? extends Optional&lt;? extends U&gt;&gt; mapper)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// mapper存在性判断</span></span><br><span class="line">    Objects.requireNonNull(mapper);</span><br><span class="line">    <span class="comment">// value为NULL，说明是空实例，则直接返回empty()</span></span><br><span class="line">    <span class="keyword">if</span> (!isPresent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> empty();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// value不为NULL，通过mapper转换，直接返回mapper的返回值，做一次空判断</span></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        Optional&lt;U&gt; r = (Optional&lt;U&gt;) mapper.apply(value);</span><br><span class="line">        <span class="keyword">return</span> Objects.requireNonNull(r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OptionalOrderFactory</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> Optional&lt;Order&gt; <span class="title">create</span><span class="params">(String id)</span></span>&#123;</span><br><span class="line">        <span class="comment">//省略...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">String orderId = <span class="string">"xxx"</span>;</span><br><span class="line">Optional&lt;Order&gt; op =  Optional.of(orderId).flatMap(id -&gt; OptionalOrderFactory.create(id));</span><br></pre></td></tr></table></figure>
+<h3 id="or-方法">or()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Optional&lt;T&gt; <span class="title">or</span><span class="params">(Supplier&lt;? extends Optional&lt;? extends T&gt;&gt; supplier)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// supplier存在性判断</span></span><br><span class="line">    Objects.requireNonNull(supplier);</span><br><span class="line">    <span class="comment">// value不为NULL，则直接返回自身</span></span><br><span class="line">    <span class="keyword">if</span> (isPresent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// value为NULL，则返回supplier提供的Optional实例，做一次空判断</span></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">        Optional&lt;T&gt; r = (Optional&lt;T&gt;) supplier.get();</span><br><span class="line">        <span class="keyword">return</span> Objects.requireNonNull(r);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Order a = <span class="keyword">null</span>;</span><br><span class="line">Order b = select();</span><br><span class="line"><span class="comment">// 拿到的就是b订单实例包装的Optional</span></span><br><span class="line">Optional&lt;Order&gt; op = Optional.ofNullable(a).or(b);</span><br></pre></td></tr></table></figure>
+<h3 id="stream-方法">stream()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对value做NULL判断，转换为Stream类型</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Stream&lt;T&gt; <span class="title">stream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!isPresent()) &#123;</span><br><span class="line">        <span class="keyword">return</span> Stream.empty();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Stream.of(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="orElse-方法">orElse()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 值不为NULL则直接返回value，否则返回other</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">orElse</span><span class="params">(T other)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value != <span class="keyword">null</span> ? value : other;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>orElse()</code>就是常见的提供默认值兜底的方法，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String v1 = <span class="keyword">null</span>;</span><br><span class="line">String v2 = <span class="string">"default"</span>;</span><br><span class="line"><span class="comment">// 拿到的就是v2对应的"default"值</span></span><br><span class="line">String value = Optional.ofNullable(v1).orElse(v2);</span><br></pre></td></tr></table></figure>
+<h3 id="orElseGet-方法">orElseGet()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 值不为NULL则直接返回value，否则返回Supplier#get()</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">orElseGet</span><span class="params">(Supplier&lt;? extends T&gt; supplier)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value != <span class="keyword">null</span> ? value : supplier.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>orElseGet()</code>只是<code>orElse()</code>方法的升级版，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String v1 = <span class="keyword">null</span>;</span><br><span class="line">Supplier&lt;String&gt; v2 = () -&gt; <span class="string">"default"</span>;</span><br><span class="line"><span class="comment">// 拿到的就是v2对应的"default"值</span></span><br><span class="line">String value = Optional.ofNullable(v1).orElseGet(v2);</span><br></pre></td></tr></table></figure>
+<h3 id="orElseThrow-方法">orElseThrow()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果值为NULL，则抛出NoSuchElementException，否则直接返回value</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">orElseThrow</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchElementException(<span class="string">"No value present"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果值不为NULL，则直接返回value，否则返回Supplier#get()提供的异常实例</span></span><br><span class="line"><span class="keyword">public</span> &lt;X extends Throwable&gt; <span class="function">T <span class="title">orElseThrow</span><span class="params">(Supplier&lt;? extends X&gt; exceptionSupplier)</span> <span class="keyword">throws</span> X </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> exceptionSupplier.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Optional.ofNullable(orderInfoVo.getAmount()).orElseThrow(()-&gt; <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"%s订单的amount不能为NULL"</span>,orderInfoVo.getOrderId())));</span><br></pre></td></tr></table></figure>
+<h3 id="equals-和hashCode-方法">equals()和hashCode()方法</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == obj) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!(obj <span class="keyword">instanceof</span> Optional)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Optional&lt;?&gt; other = (Optional&lt;?&gt;) obj;</span><br><span class="line">    <span class="keyword">return</span> Objects.equals(value, other.value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Objects.hashCode(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这两个方法都是比较<code>value</code>，说明了<code>Optional</code>实例如果使用于<code>HashMap</code>的KEY，只要<code>value</code>相同，对于<code>HashMap</code>就是同一个KEY。如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Optional,Boolean&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">Optional&lt;String&gt; op1 = Optional.of(<span class="string">"throwable"</span>);</span><br><span class="line">map.put(op1, <span class="keyword">true</span>);</span><br><span class="line">Optional&lt;String&gt; op2 = Optional.of(<span class="string">"throwable"</span>);</span><br><span class="line">map.put(op2, <span class="keyword">false</span>);</span><br><span class="line"><span class="comment">// 输出false</span></span><br><span class="line">System.out.println(map.get(op1));</span><br></pre></td></tr></table></figure>
+<h2 id="Optional实战">Optional实战</h2>
+<p>下面展示一下<code>Optional</code>的一些常见的使用场景。</p>
+<h3 id="空判断">空判断</h3>
+<p>空判断主要是用于不知道当前对象是否为<code>NULL</code>的时候，需要设置对象的属性。不使用<code>Optional</code>时候的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">null</span> != order)&#123;</span><br><span class="line">    order.setAmount(orderInfoVo.getAmount());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>Optional</code>时候的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Optional.ofNullable(order).ifPresent(o -&gt; o.setAmount(orderInfoVo.getAmount()));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果判断空的对象是OrderInfoVo如下</span></span><br><span class="line">Order o = select();</span><br><span class="line">OrderInfoVo vo = ...</span><br><span class="line">Optional.ofNullable(vo).ifPresent(v -&gt; o.setAmount(v.getAmount()));</span><br></pre></td></tr></table></figure>
+<p>使用<code>Optional</code>实现空判断的好处是<strong>只有一个属性设值的时候可以压缩代码为一行</strong>，这样做的话，代码会相对简洁。</p>
+<h3 id="断言">断言</h3>
+<p>在维护一些老旧的系统的时候，很多情况下外部的传参没有做空判断，因此需要写一些断言代码如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">null</span> == orderInfoVo.getAmount())&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"%s订单的amount不能为NULL"</span>,orderInfoVo.getOrderId()));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (StringUtils.isBlank(orderInfoVo.getAddress())&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"%s订单的address不能为空"</span>,orderInfoVo.getOrderId()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>Optional</code>后的断言代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Optional.ofNullable(orderInfoVo.getAmount()).orElseThrow(()-&gt; <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"%s订单的amount不能为NULL"</span>,orderInfoVo.getOrderId())));</span><br><span class="line">Optional.ofNullable(orderInfoVo.getAddress()).orElseThrow(()-&gt; <span class="keyword">new</span> IllegalArgumentException(String.format(<span class="string">"%s订单的address不能为空"</span>,orderInfoVo.getOrderId())));</span><br></pre></td></tr></table></figure>
+<h3 id="综合仿真案例">综合仿真案例</h3>
+<p>下面是一个仿真案例，模拟的步骤如下：</p>
+<ul>
+<li>给出客户ID列表查询客户列表。</li>
+<li>基于存在的客户列表中的客户ID查询订单列表。</li>
+<li>基于订单列表转换为订单DTO视图列表。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Order</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String orderId;</span><br><span class="line">    <span class="keyword">private</span> Long customerId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderDto</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String orderId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟客户查询</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;Customer&gt; <span class="title">selectCustomers</span><span class="params">(List&lt;Long&gt; ids)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟订单查询</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;Order&gt; <span class="title">selectOrders</span><span class="params">(List&lt;Long&gt; customerIds)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    List&lt;Long&gt; ids = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;OrderDto&gt; view = Optional.ofNullable(selectCustomers(ids))</span><br><span class="line">            .filter(cs -&gt; !cs.isEmpty())</span><br><span class="line">            .map(cs -&gt; selectOrders(cs.stream().map(Customer::getId).collect(Collectors.toList())))</span><br><span class="line">            .map(orders -&gt; &#123;</span><br><span class="line">                List&lt;OrderDto&gt; dtoList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                orders.forEach(o -&gt; &#123;</span><br><span class="line">                    OrderDto dto = <span class="keyword">new</span> OrderDto();</span><br><span class="line">                    dto.setOrderId(o.getOrderId());</span><br><span class="line">                    dtoList.add(dto);</span><br><span class="line">                &#125;);</span><br><span class="line">                <span class="keyword">return</span> dtoList;</span><br><span class="line">            &#125;).orElse(Collections.emptyList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p><code>Optional</code>本质是一个对象容器，它的特征如下：</p>
+<ol>
+<li><code>Optional</code>作为一个容器承载对象，提供方法适配部分函数式接口，结合部分函数式接口提供方法实现<code>NULL</code>判断、过滤操作、安全取值、映射操作等等。</li>
+<li><code>Optional</code>一般使用场景是用于方法返回值的包装，当然也可以作为临时变量从而享受函数式接口的便捷功能。</li>
+<li><code>Optional</code>只是一个简化操作的工具，可以解决多层嵌套代码的节点空判断问题（例如简化箭头型代码）。</li>
+<li><code>Optional</code>并非银弹。</li>
+</ol>
+<p>这里提到箭头型代码，下面尝试用常规方法和<code>Optional</code>分别解决：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设VO有多个层级，每个层级都不知道父节点是否为NULL，如下</span></span><br><span class="line"><span class="comment">// - OrderInfoVo</span></span><br><span class="line"><span class="comment">//   - UserInfoVo</span></span><br><span class="line"><span class="comment">//     - AddressInfoVo</span></span><br><span class="line"><span class="comment">//        - address(属性)</span></span><br><span class="line"><span class="comment">// 假设我要为address属性赋值，那么就会产生箭头型代码。</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 常规方法</span></span><br><span class="line">String address = <span class="string">"xxx"</span>;</span><br><span class="line">OrderInfoVo o = ...;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">null</span> != o)&#123;</span><br><span class="line">    UserInfoVo uiv = o.getUserInfoVo();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> != uiv)&#123;</span><br><span class="line">        AddressInfoVo aiv = uiv.getAddressInfoVo();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != aiv)&#123;</span><br><span class="line">            aiv.setAddress(address);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Optional</span></span><br><span class="line">String address = <span class="string">"xxx"</span>;</span><br><span class="line">OrderInfoVo o = <span class="keyword">null</span>;</span><br><span class="line">Optional.ofNullable(o)</span><br><span class="line">        .map(OrderInfoVo::getUserInfoVo)</span><br><span class="line">        .map(UserInfoVo::getAddressInfoVo)</span><br><span class="line">        .ifPresent(a -&gt; a.setAddress(address));</span><br></pre></td></tr></table></figure>
+<p>使用<code>Optional</code>解决箭头型代码，通过映射操作<code>map()</code>能减少大量的<code>if</code>和<code>NULL</code>判断分支，使得代码更加简洁。</p>
+<p>有些开发者提议把<code>DAO</code>方法的返回值类型定义为<code>Optional</code>，笔者对此持中立态度，原因是：</p>
+<ol>
+<li><code>Optional</code>是JDK1.8引入，低版本的JDK并不能使用，不是所有的系统都能平滑迁移到JDK1.8+。</li>
+<li>并不是所有人都热衷于函数式编程，因为它带来了便捷的同时转变了代码的阅读逻辑（有些人甚至会认为降低了代码的可读性）。</li>
+</ol>
+<h2 id="附件">附件</h2>
+<ul>
+<li>Github Page：<a href="http://www.throwable.club/2019/08/07/java-functional-programming-optional" target="_blank" rel="noopener">http://www.throwable.club/2019/08/07/java-functional-programming-optional</a></li>
+<li>Coding Page：<a href="http://throwable.coding.me/2019/08/07/java-functional-programming-optional" target="_blank" rel="noopener">http://throwable.coding.me/2019/08/07/java-functional-programming-optional</a></li>
+<li>Markdown或Asciidoc文件：<a href="https://github.com/zjcscut/blog-article-file/tree/master/20190807/java-functional-programming-optional" target="_blank" rel="noopener">https://github.com/zjcscut/blog-article-file/tree/master/20190807/java-functional-programming-optional</a></li>
+</ul>
+<p>（本文完 c-2-d e-a-20190805 by throwable）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/08/07/java-functional-programming-optional/>http://throwable.club/2019/08/07/java-functional-programming-optional/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Optional/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Optional</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/08/07/java-functional-programming-optional/&title=Java函数式编程之Optional | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+java.util.Optional是JDK8中引入的类，它是JDK从著名的Java工具包Guava中移植过来。本文编写的时候使用的是JDK11。Optional是一个包含了NULL值或者非NULL值的对象容器，它常用作明确表明没有结果（其实明确表明存在结果也可以用Optional表示）的方法返回类型，这样可以避免NULL值带来的可能的异常（一般是NullPointerException）。也就是说，一个方法的返回值类型是Optional，则应该避免返回NULL，而应该让返回值指向一个包含NULL对象的Optional实例。Optional的出现为NULL判断、过滤操作、映射操作等提供了函数式适配入口，它算是Java引入函数式编程的一个重要的里程碑。
+本文新增一个Asciidoc的预览模式，可以体验一下Spring官方文档的感觉：
+
+Github Page：http://www.throwable.club/adoc/20190807/java-functional-programming-optional
+Coding Page：http://throwable.coding.me/adoc/20190807/java-functional-programming-optional
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/08/07/java-functional-programming-optional/&title=Java函数式编程之Optional | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+java.util.Optional是JDK8中引入的类，它是JDK从著名的Java工具包Guava中移植过来。本文编写的时候使用的是JDK11。Optional是一个包含了NULL值或者非NULL值的对象容器，它常用作明确表明没有结果（其实明确表明存在结果也可以用Optional表示）的方法返回类型，这样可以避免NULL值带来的可能的异常（一般是NullPointerException）。也就是说，一个方法的返回值类型是Optional，则应该避免返回NULL，而应该让返回值指向一个包含NULL对象的Optional实例。Optional的出现为NULL判断、过滤操作、映射操作等提供了函数式适配入口，它算是Java引入函数式编程的一个重要的里程碑。
+本文新增一个Asciidoc的预览模式，可以体验一下Spring官方文档的感觉：
+
+Github Page：http://www.throwable.club/adoc/20190807/java-functional-programming-optional
+Coding Page：http://throwable.coding.me/adoc/20190807/java-functional-programming-optional
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3awY4aMRAEUP7/p4mUawJUddsbIr05rdiB8fPB7in34xFfz9/X/s7niyv/7uPGhYeHhzcaevLg95//OYiW+uq/r375/Zjx8PDwbvPeL8Qvv/x2QPlTkklp78HDw8P7Bl4+uM2iv9ly8PDw8P4XXlIit/d80caAh4eHtwgj2k0iWfTzreV61oKHh4cX89pjrW/4++L5Hh4eHt7iVD0PFJIHb4ry5+jCw8PDu8FLfnSzAs+Ox2YjKd4Y8PDw8Ba8PDiYNRDk7HwK8jHg4eHh3eYlS3MylOQ321ghn5S/vDHg4eHh/SCvbauaFb75J235joeHh3eDN3vVnz24Lak3zQpRfoyHh4c34p1afNt4op3cvLWrfmPAw8PDK3mnYoU6YF1MU47Ew8PDu8GbxaObknpfshfRBh4eHt4F3uxr7fI9i4nr/Q0PDw/vx3mbB8zK8bOhxocDMDw8PLyjvFlj06bsTo6v2uatD3g8PDy8Q7x80d9Hum3rQDL1H+7Hw8PDu8BLyty27Wn/dz6eIsbFw8PDO8pLAC2siAlGT8wP3vDw8PDO8mZx6iyGyGe6LaCjpis8PDy8o7x8ELPjrrZNqt2iXt6Jh4eHd4FXVNzBkVV+nDbbcmYjwcPDw7vBm7VJ5Z/kuUhdNM+yFjw8PLwFry1n2+W46PkKWgfqAh0PDw/vMi+/2gBidgDWti98yFrw8PDwDvGSRTxZ4ts2glk53uYMeHh4eDd4sy2hPbjabAx5wHFg38PDw8MLePnVMma8U00JeHh4eLd5eYmcH01tAuK8lI+mDw8PD+8ab9antLmnneLhpoWHh4f3T3mzpqg8wrgRbeDh4eF9A+9UAb3HR+1ZeHh4eNd4mzAiekwc8uZhbrQX4OHh4V3gbQ7AZiFsshnkbV6bAzk8PDy8kvcLzIIr8E6CuogAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/08/07/java-functional-programming-optional/&title=Java函数式编程之Optional | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+java.util.Optional是JDK8中引入的类，它是JDK从著名的Java工具包Guava中移植过来。本文编写的时候使用的是JDK11。Optional是一个包含了NULL值或者非NULL值的对象容器，它常用作明确表明没有结果（其实明确表明存在结果也可以用Optional表示）的方法返回类型，这样可以避免NULL值带来的可能的异常（一般是NullPointerException）。也就是说，一个方法的返回值类型是Optional，则应该避免返回NULL，而应该让返回值指向一个包含NULL对象的Optional实例。Optional的出现为NULL判断、过滤操作、映射操作等提供了函数式适配入口，它算是Java引入函数式编程的一个重要的里程碑。
+本文新增一个Asciidoc的预览模式，可以体验一下Spring官方文档的感觉：
+
+Github Page：http://www.throwable.club/adoc/20190807/java-functional-programming-optional
+Coding Page：http://throwable.coding.me/adoc/20190807/java-functional-programming-optional
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3awY4aMRAEUP7/p4mUawJUddsbIr05rdiB8fPB7in34xFfz9/X/s7niyv/7uPGhYeHhzcaevLg95//OYiW+uq/r375/Zjx8PDwbvPeL8Qvv/x2QPlTkklp78HDw8P7Bl4+uM2iv9ly8PDw8P4XXlIit/d80caAh4eHtwgj2k0iWfTzreV61oKHh4cX89pjrW/4++L5Hh4eHt7iVD0PFJIHb4ry5+jCw8PDu8FLfnSzAs+Ox2YjKd4Y8PDw8Ba8PDiYNRDk7HwK8jHg4eHh3eYlS3MylOQ321ghn5S/vDHg4eHh/SCvbauaFb75J235joeHh3eDN3vVnz24Lak3zQpRfoyHh4c34p1afNt4op3cvLWrfmPAw8PDK3mnYoU6YF1MU47Ew8PDu8GbxaObknpfshfRBh4eHt4F3uxr7fI9i4nr/Q0PDw/vx3mbB8zK8bOhxocDMDw8PLyjvFlj06bsTo6v2uatD3g8PDy8Q7x80d9Hum3rQDL1H+7Hw8PDu8BLyty27Wn/dz6eIsbFw8PDO8pLAC2siAlGT8wP3vDw8PDO8mZx6iyGyGe6LaCjpis8PDy8o7x8ELPjrrZNqt2iXt6Jh4eHd4FXVNzBkVV+nDbbcmYjwcPDw7vBm7VJ5Z/kuUhdNM+yFjw8PLwFry1n2+W46PkKWgfqAh0PDw/vMi+/2gBidgDWti98yFrw8PDwDvGSRTxZ4ts2glk53uYMeHh4eDd4sy2hPbjabAx5wHFg38PDw8MLePnVMma8U00JeHh4eLd5eYmcH01tAuK8lI+mDw8PD+8ab9antLmnneLhpoWHh4f3T3mzpqg8wrgRbeDh4eF9A+9UAb3HR+1ZeHh4eNd4mzAiekwc8uZhbrQX4OHh4V3gbQ7AZiFsshnkbV6bAzk8PDy8kvcLzIIr8E6CuogAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/08/12/middleware-redis-hash-problem-first/" rel="prev" title="使用Redis的HSCAN命令遇到的一个问题">
+                                  
+                                      使用Redis的HSCAN命令遇到的一个问题
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/07/27/java-concurrency-executor-service/" rel="prev" title="JUC线程池服务ExecutorService接口实现源码分析">
+                                    
+                                        JUC线程池服务ExecutorService接口实现源码分析
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/ExecutorService/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> ExecutorService</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Java函数式编程之Optional',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optional各个方法源码分析和使用场景"><span class="toc-text">Optional各个方法源码分析和使用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Optional属性和构造"><span class="toc-text">Optional属性和构造</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#get-方法"><span class="toc-text">get()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isPresent-方法"><span class="toc-text">isPresent()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isEmpty-方法"><span class="toc-text">isEmpty()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ifPresent-方法"><span class="toc-text">ifPresent()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ifPresentOrElse-方法"><span class="toc-text">ifPresentOrElse()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#filter-方法"><span class="toc-text">filter()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map-方法"><span class="toc-text">map()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flatMap-方法"><span class="toc-text">flatMap()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#or-方法"><span class="toc-text">or()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stream-方法"><span class="toc-text">stream()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElse-方法"><span class="toc-text">orElse()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElseGet-方法"><span class="toc-text">orElseGet()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#orElseThrow-方法"><span class="toc-text">orElseThrow()方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#equals-和hashCode-方法"><span class="toc-text">equals()和hashCode()方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Optional实战"><span class="toc-text">Optional实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#空判断"><span class="toc-text">空判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#断言"><span class="toc-text">断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#综合仿真案例"><span class="toc-text">综合仿真案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附件"><span class="toc-text">附件</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

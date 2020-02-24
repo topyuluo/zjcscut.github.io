@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JSR310新日期API(三)-日期时间格式化与解析 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/01/05/java-jsr310-date-time-format-parse/">
+        JSR310新日期API(三)-日期时间格式化与解析
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年1月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-01-05T21:45:27+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年1月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：11分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>JSR310新日期API(三)-日期时间格式化与解析</h1>
+<h2 id="前提">前提</h2>
+<p>前一篇文章已经比较详细地介绍了JSR-310中新增的常用的日期时间类，在实际应用中，我们也十分关注这些日期时间类的格式化操作，更加通俗来说就是字符串和日期时间类的相互转换问题。下面先回顾一下Java旧有的日期时间类和字符串之间的转换方案，然后重点分析JSR-310中新增的常用的日期时间类和字符串之间的转换方案。</p>
+<h2 id="SimpleDateFormat">SimpleDateFormat</h2>
+<p>Java旧有的日期时间类格式化为字符串或者字符串基于模式(pattern)解析为日期时间类完全依赖于<code>java.text.DateFormat</code>的实现类<code>java.text.SimpleDateFormat</code>。<code>SimpleDateFormat</code>的基本功能是完备的，但是存在两个问题：</p>
+<ul>
+<li><strong>解析和格式化的效率比较低</strong>，原因是依赖了本来就效率不高的<code>Calendar</code>，内部有大量的字符串或者字符(char)的判断和转换代码，因此使用了大量循环、switch块等，这些因素都导致了<code>SimpleDateFormat</code>的效率比较低。</li>
+<li><strong>非线程安全</strong>，这个是因为<code>SimpleDateFormat</code>在做转换操作的时候共享了<code>DateFormat</code>的一个内部<code>Calendar</code>的成员calendar。</li>
+</ul>
+<p>效率低是可以忍受的，但是非线程安全这一点可能会导致严重的问题。对于非线程安全这个问题也有解决方案：</p>
+<ul>
+<li>方案一：把<code>SimpleDateFormat</code>实例封闭在方法中，也就是调用的时候才创建，这样虽然导致了资源浪费，但是可以避免并发问题。</li>
+<li>方案二：使用<code>ThreadLocal</code>装载<code>SimpleDateFormat</code>实例，对于同一个线程来说，共享一个<code>SimpleDateFormat</code>实例。</li>
+</ul>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleDateFormatMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		java.util.Date date = <span class="keyword">new</span> Date();</span><br><span class="line">		SimpleDateFormat simpleDateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line">		String dateString = simpleDateFormat.format(date);</span><br><span class="line">		System.out.println(dateString);</span><br><span class="line">		date = simpleDateFormat.parse(dateString);</span><br><span class="line">		System.out.println(date);</span><br><span class="line">		simpleDateFormat.applyPattern(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">		dateString = simpleDateFormat.format(date);</span><br><span class="line">		System.out.println(dateString);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出如下</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">03</span> <span class="number">23</span>:<span class="number">32</span>:<span class="number">05</span></span><br><span class="line">Thu Jan <span class="number">03</span> <span class="number">23</span>:<span class="number">32</span>:<span class="number">05</span> CST <span class="number">2019</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">03</span></span><br></pre></td></tr></table></figure>
+<p>对于Java旧有的日期时间类，<code>SimpleDateFormat</code>是基本能够满足的，再加上有第三方库<code>apache-common-lang3</code>、<code>joda-time</code>等的补足，格式化和解析的效率也会有所提高。</p>
+<h2 id="JSR-310日期时间类的格式化和解析">JSR-310日期时间类的格式化和解析</h2>
+<p>JSR-310日期时间类的格式化依赖于日期时间格式化器<code>java.time.format.DateTimeFormatter</code>，它有一个建造器类<code>java.time.format.DateTimeFormatterBuilder</code>。</p>
+<h3 id="DateTimeFormatterBuilder">DateTimeFormatterBuilder</h3>
+<p><code>java.time.format.DateTimeFormatterBuilder</code>用于构建日期时间类格式化器，它在设计的时候使用了链式结构，内部持有一个<code>DateTimeFormatterBuilder</code>类型的parent成员指向父<code>DateTimeFormatterBuilder</code>实例和一个<code>DateTimeFormatterBuilder</code>类型的active成员指向当前的<code>DateTimeFormatterBuilder</code>实例。还有一点比较重要的是：<code>DateTimeFormatterBuilder</code>实例内部维护了一个<code>DateTimePrinterParser</code>列表printerParsers，真正的解析工作是委托给对应的<code>DateTimePrinterParser</code>实例完成的，如果没有可用或者没有添加<code>DateTimePrinterParser</code>，那么解析或者格式化方法相当于空跑。接着看下<code>DateTimeFormatterBuilder</code>提供构建<code>DateTimeFormatter</code>时允许添加特性的方法。</p>
+<p><strong>解析风格配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 大小写敏感 - 默认</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">parseCaseSensitive</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 大小写不敏感</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">parseCaseInsensitive</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 严格 - 默认</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">parseStrict</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 宽松</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">parseLenient</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>默认值配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于TemporalField实例配置解析时候写入默认值，支持的TemporalField主要在ChronoField</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">parseDefaulting</span><span class="params">(TemporalField field, <span class="keyword">long</span> value)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加日期时间属性格式化符号控制配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 对于每个日期时间字段格式化的控制，实际作用是添加一个DateTimePrinterParser的实现NumberPrinterParser</span></span><br><span class="line"><span class="comment"> * TemporalField：日期时间字段类型实例，主要实现类为在ChronoField的枚举属性</span></span><br><span class="line"><span class="comment"> * minWidth：打印最小长度限制，范围是[1,19]</span></span><br><span class="line"><span class="comment"> * maxWidth：打印最大长度限制，范围是[1,19]</span></span><br><span class="line"><span class="comment"> * SignStyle：符号风格，有NORMAL、ALWAYS、NEVER、NOT_NEGATIVE、EXCEEDS_PAD五种选择</span></span><br><span class="line"><span class="comment"> *     - NORMAL：严格模式下只接收负值，宽松模式下接收所有符号</span></span><br><span class="line"><span class="comment"> *     - ALWAYS：0会替换为'+'，严格模式下不接收缺失的符号，宽松模式下缺失的符号会替换为一个正数</span></span><br><span class="line"><span class="comment"> *     - NEVER：只输出绝对的固定值，严格模式下不接收任何符号，宽松模式下只接收固定长度的符号</span></span><br><span class="line"><span class="comment"> *     - NOT_NEGATIVE：以异常的方式阻止负值，严格模式下不接收任何符号，宽松模式下只接收固定长度的符号</span></span><br><span class="line"><span class="comment"> *     - EXCEEDS_PAD：只输出超出宽度限制的符号，负数替换为'-'，严格模式下只输出超出宽度限制的符号，宽松模式下缺失的符号会替换为一个正数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendValue</span><span class="params">(TemporalField field, <span class="keyword">int</span> minWidth, <span class="keyword">int</span> maxWidth, SignStyle signStyle)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 下面2个是重载方法</span></span></span><br><span class="line"><span class="function"><span class="comment">// minWidth = 1,maxWidth = 19,signStyle = SignStyle.NORMAL</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendValue</span><span class="params">(TemporalField field)</span></span></span><br><span class="line"><span class="function"><span class="comment">// minWidth = maxWidth = width,signStyle = SignStyle.NOT_NEGATIVE</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendValue</span><span class="params">(TemporalField field, <span class="keyword">int</span> width)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加基于基础值进行减少配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例如field=YEAR，width=2，baseValue=2018，那么当前格式化的实例的有效值为[2018,2117]，2019-&gt;1，2117-&gt;99</span></span><br><span class="line"><span class="comment">// width范围是[1,10]，maxWidth范围是[1,10]</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendValueReduced</span><span class="params">(TemporalField field, <span class="keyword">int</span> width, <span class="keyword">int</span> maxWidth, <span class="keyword">int</span> baseValue)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendValueReduced</span><span class="params">(TemporalField field, <span class="keyword">int</span> width, <span class="keyword">int</span> maxWidth, ChronoLocalDate baseDate)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加小数(点)配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// decimalPoint = true则输出小数，minWidth范围是[0,9]，maxWidth范围是[1,9]</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendFraction</span><span class="params">(TemporalField field, <span class="keyword">int</span> minWidth, <span class="keyword">int</span> maxWidth, <span class="keyword">boolean</span> decimalPoint)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加文本格式配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendText</span><span class="params">(TemporalField field)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendText</span><span class="params">(TemporalField field, TextStyle textStyle)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendText</span><span class="params">(TemporalField field, Map&lt;Long, String&gt; textLookup)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加瞬时时间配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendInstant</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendInstant</span><span class="params">(<span class="keyword">int</span> fractionalDigits)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加时区相关的配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 时间偏移量如+01:00</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendOffsetId</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 指定格式的时间偏移量</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendOffset</span><span class="params">(String pattern, String noOffsetText)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 指定文本风格的本地时间偏移量</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendLocalizedOffset</span><span class="params">(TextStyle style)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendZoneId</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendZoneRegionId</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendZoneOrOffsetId</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendZoneText</span><span class="params">(TextStyle textStyle)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendZoneText</span><span class="params">(TextStyle textStyle, Set&lt;ZoneId&gt; preferredZones)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 太平洋时间时区偏移量</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendGenericZoneText</span><span class="params">(TextStyle textStyle)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendGenericZoneText</span><span class="params">(TextStyle textStyle, Set&lt;ZoneId&gt; preferredZones)</span> </span></span><br><span class="line"><span class="function"><span class="comment">// 日历配置</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendChronologyId</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendChronologyText</span><span class="params">(TextStyle textStyle)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加本地日期时间配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendLocalized</span><span class="params">(FormatStyle dateStyle, FormatStyle timeStyle)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加常量文字(字符串)配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendLiteral</span><span class="params">(<span class="keyword">char</span> literal)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendLiteral</span><span class="params">(String literal)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加其他格式化器的属性到当期建造器</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">append</span><span class="params">(DateTimeFormatter formatter)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 配置候选格式化器</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendOptional</span><span class="params">(DateTimeFormatter formatter)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>追加通用格式配置</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pattern的解析基本包含了上面提到的其他种类的配置</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DateTimeFormatterBuilder <span class="title">appendPattern</span><span class="params">(String pattern)</span></span></span><br></pre></td></tr></table></figure>
+<p>上面只是分析完毕，实际上理解这些配置方法的成本还是挺高的，可以参考<code>DateTimeFormatter</code>中已经存在的一些静态变量<code>ISO_LOCAL_TIME</code>、<code>ISO_OFFSET_TIME</code>、<code>ISO_LOCAL_DATE_TIME</code>等学习怎么使用<code>DateTimeFormatterBuilder</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> DateTimeFormatter ISO_LOCAL_TIME;</span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">    ISO_LOCAL_TIME = <span class="keyword">new</span> DateTimeFormatterBuilder()</span><br><span class="line">            .appendValue(HOUR_OF_DAY, <span class="number">2</span>)</span><br><span class="line">            .appendLiteral(<span class="string">':'</span>)</span><br><span class="line">            .appendValue(MINUTE_OF_HOUR, <span class="number">2</span>)</span><br><span class="line">            .optionalStart()</span><br><span class="line">            .appendLiteral(<span class="string">':'</span>)</span><br><span class="line">            .appendValue(SECOND_OF_MINUTE, <span class="number">2</span>)</span><br><span class="line">            .optionalStart()</span><br><span class="line">            .appendFraction(NANO_OF_SECOND, <span class="number">0</span>, <span class="number">9</span>, <span class="keyword">true</span>)</span><br><span class="line">            .toFormatter(ResolverStyle.STRICT, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模仿上面的代码，我们做一个简单的例子：格式化用<code>LocalDateTime</code>存储的日期时间2018-1-5 15:30:30为&quot;当前时间是：2018年1月5日 15时30分30秒，祝你生活愉快！&quot;。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateTimeFormatterBuilderMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		DateTimeFormatterBuilder builder = <span class="keyword">new</span> DateTimeFormatterBuilder();</span><br><span class="line">		builder.appendLiteral(<span class="string">"当前时间是："</span>);</span><br><span class="line">		builder.appendValue(ChronoField.YEAR, <span class="number">4</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">"年"</span>);</span><br><span class="line">		builder.appendValue(ChronoField.MONTH_OF_YEAR, <span class="number">1</span>, <span class="number">2</span>, SignStyle.NORMAL);</span><br><span class="line">		builder.appendLiteral(<span class="string">"月"</span>);</span><br><span class="line">		builder.appendValue(ChronoField.DAY_OF_MONTH, <span class="number">1</span>, <span class="number">2</span>, SignStyle.NORMAL);</span><br><span class="line">		builder.appendLiteral(<span class="string">"日"</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">" "</span>);</span><br><span class="line">		builder.appendValue(ChronoField.HOUR_OF_DAY, <span class="number">2</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">"时"</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">":"</span>);</span><br><span class="line">		builder.appendValue(ChronoField.MINUTE_OF_HOUR, <span class="number">2</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">"分"</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">":"</span>);</span><br><span class="line">		builder.appendValue(ChronoField.SECOND_OF_MINUTE, <span class="number">2</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">"秒"</span>);</span><br><span class="line">		builder.appendLiteral(<span class="string">"，祝你生活愉快！"</span>);</span><br><span class="line">		DateTimeFormatter formatter = builder.toFormatter();</span><br><span class="line">		System.out.println(formatter.format(LocalDateTime.now()));</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻执行后输出结果</span></span><br><span class="line">当前时间是：<span class="number">2019</span>年<span class="number">1</span>月<span class="number">5</span>日 <span class="number">15</span>时:<span class="number">50</span>分:<span class="number">50</span>秒，祝你生活愉快！</span><br></pre></td></tr></table></figure>
+<p>从理论上来看，如果能够熟练使用上面分析过的规则，那么可以格式化或者反向解析任意格式的日期时间或者字符串。</p>
+<h3 id="DateTimeFormatter">DateTimeFormatter</h3>
+<p><code>java.time.format.DateTimeFormatter</code>在设计上是一个不可变类，也就是它是线程安全的，<code>DateTimeFormatter</code>的静态方法和实例方法只要返回<code>DateTimeFormatter</code>类型，那么必定是一个新的实例。它主要职责是格式化日期时间。一般情况下，构造<code>DateTimeFormatter</code>实例可以使用它提供的静态工厂方法，这些静态方法如果不能满足需求，可以考虑使用<code>DateTimeFormatterBuilder</code>定制化建造<code>DateTimeFormatter</code>实例。常用的2个静态工厂方法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DateTimeFormatter <span class="title">ofPattern</span><span class="params">(String pattern)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DateTimeFormatter <span class="title">ofPattern</span><span class="params">(String pattern, Locale locale)</span></span></span><br></pre></td></tr></table></figure>
+<p>字符串pattern基本可以填写任意合法的日期时间格式，因为底层使用<code>DateTimeFormatterBuilder#appendPattern()</code>进行解析，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd"</span>)</span><br><span class="line">DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</span><br><span class="line">DateTimeFormatter.ofPattern(<span class="string">"yyyy年MM月dd日 HH时mm分ss秒"</span>)</span><br></pre></td></tr></table></figure>
+<p>至于日期时间实例的格式化，主要通过下面的两个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">format</span><span class="params">(TemporalAccessor temporal)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">formatTo</span><span class="params">(TemporalAccessor temporal, Appendable appendable)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateTimeFormatterMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(<span class="string">"yyyy年MM月dd日 HH时mm分ss秒"</span>);</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">		String value = formatter.format(localDateTime);</span><br><span class="line">		StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		formatter.formatTo(localDateTime, builder);</span><br><span class="line">		System.out.println(value);</span><br><span class="line">		System.out.println(builder.toString());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出</span></span><br><span class="line"><span class="number">2019</span>年<span class="number">01</span>月<span class="number">05</span>日 <span class="number">16</span>时<span class="number">28</span>分<span class="number">01</span>秒</span><br><span class="line"><span class="number">2019</span>年<span class="number">01</span>月<span class="number">05</span>日 <span class="number">16</span>时<span class="number">28</span>分<span class="number">01</span>秒</span><br></pre></td></tr></table></figure>
+<p>字符串反解析为日期时间类型的(parse)方法并不存在于<code>DateTimeFormatter</code>类中，parse方法存在于日期时间类自身之中，这样的设计才是合理的，思想和领域驱动的方向是一致的，这里用<code>LocalDateTime</code>为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用DateTimeFormatter.ISO_LOCAL_DATE_TIME进行解析</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">parse</span><span class="params">(CharSequence text)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 使用传入的自定义DateTimeFormatter进行解析</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">parse</span><span class="params">(CharSequence text, DateTimeFormatter formatter)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateTimeFormatterMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(<span class="string">"yyyy年MM月dd日 HH时mm分ss秒"</span>);</span><br><span class="line">		String dateTime = <span class="string">"2019年01月05日 16时28分01秒"</span>;</span><br><span class="line">		LocalDateTime parseResult = LocalDateTime.parse(dateTime, formatter);</span><br><span class="line">		System.out.println(parseResult);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">05</span>T16:<span class="number">28</span>:<span class="number">01</span></span><br></pre></td></tr></table></figure>
+<p>由于<code>DateTimeFormatter</code>实例创建的时候相对耗时，因此需要考虑避免多次创建<code>DateTimeFormatter</code>实例，可以考虑编写一个工具类，用哈希表缓存<code>pattern -&gt; DateTimeFormatter</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里只列举LocalDateTime和LocalDate的例子，其他的日期时间类可以以此类推</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> DateTimeFormatUtils &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 单例</span></span><br><span class="line">	SINGLETON;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ConcurrentMap&lt;String, DateTimeFormatter&gt; FORMATTERS = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">formatLocalDateTime</span><span class="params">(LocalDateTime value, String pattern)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> getOrCreateDateTimeFormatter(pattern).format(value);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> LocalDateTime <span class="title">parseLocalDateTime</span><span class="params">(String value, String pattern)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> LocalDateTime.parse(value, getOrCreateDateTimeFormatter(pattern));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">formatLocalDate</span><span class="params">(LocalDate value, String pattern)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> getOrCreateDateTimeFormatter(pattern).format(value);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> LocalDate <span class="title">parseLocalDate</span><span class="params">(String value, String pattern)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> LocalDate.parse(value, getOrCreateDateTimeFormatter(pattern));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> DateTimeFormatter <span class="title">getOrCreateDateTimeFormatter</span><span class="params">(String pattern)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> FORMATTERS.computeIfAbsent(pattern, DateTimeFormatter::ofPattern);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后还要注意一点：<strong>格式化或者解析的时候使用的模式pattern必须是合法日期时间表示格式(例如年份用yyyy表示)，并且严格区分日期时间、只有日期属性和只有时间属性三种不同的情况</strong>，如果使用<code>yyyy-MM-dd HH:mm:ss</code>模式创建的<code>DateTimeFormatter</code>去格式化<code>LocalTime</code>或者<code>LocalDate</code>，会抛出异常，异常的类型是<code>DateTimeException</code>或者其子类，属于运行时异常。</p>
+<h2 id="小结">小结</h2>
+<p>在JavaEE开发中，特别在系统交互中，日期时间字段的转换是比较重要的。其实JSR-310中的日期时间API的格式化和解析和旧有的日期时间API的格式化和解析从本质上是没有区别的，都是字符串解析和转换的游戏，但是个人是推荐使用JSR-310中的日期时间API的格式化和解析，原因是：</p>
+<ul>
+<li>性能上有很大提升(直观上推测，没有做严格测试)。</li>
+<li>类库设计上更加合理。</li>
+<li>线程安全。</li>
+</ul>
+<p>(本文完 e-a-2019-1-5 c-2-d)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/01/05/java-jsr310-date-time-format-parse/>http://throwable.club/2019/01/05/java-jsr310-date-time-format-parse/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/JSR-310/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>JSR-310</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/01/05/java-jsr310-date-time-format-parse/&title=JSR310新日期API(三)-日期时间格式化与解析 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/01/05/java-jsr310-date-time-format-parse/&title=JSR310新日期API(三)-日期时间格式化与解析 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrUlEQVR42u3aS27DMAwFwNz/0um2QBPnkRSToBivitQfjRaS/cjbLT7ul8ffc37/ktz5+ln53ZoHHh4e3vLQnw3o2T2vf79+bvWqB1OAh4eHt8a7XrKTBTpZ0HvX5psEHh4e3nfy8g0g336SScHDw8P7T7z89/ycyQaDh4eH9x5evkwn8UQSNORDf1PWgoeHhxfz8irS9/y9Ut/Dw8PDG1fVezFBHlhMgo9otHh4eHgLvGpwkCCrwe48EHkxlXh4eHhrvOqnfsLIo4q86FUdAx4eHt4eL28IqIan+RDzV/PCGPDw8PDeyOvhT01HrwgXdUbg4eHhjXnJC27eaJXHCnmEkUxloRiGh4eHN+BNmqXySDc/J/9vNE14eHh4C7zeK2yvaSBf+s/Gynh4eHgbvOqye2p76MW+zTACDw8Pb4GXx7KTxbq3rFcLbHh4eHh7vOQB+WYwSVPnbVgPrsLDw8Nb5lXbsHov02eDjxcTjYeHh7fAqzZd5cWq6uaRP71aMMPDw8Pb5uWLdTXzSIbVCyNeNGnh4eHhHeX1Cv/VyCCa43izyV/r8fDw8D7FmzRm5dtA3t2Qh8J4eHh4G7xqQ0B16L04+GyZDQ8PD+8sL1mI81g2j1mrBa3mmXh4eHgLvOR1dh6/9gbXaz54+t2Ah4eHt8CrDmiyqeSD7kUkhcfj4eHhHeJVi1W9EloCnkQneHh4eJ/izacgx/farV58BuDh4eEd5d2LR3WBrrYXzKcDDw8Pb5u3ceu8UaAX7Ob3wcPDw9vj5ZFBHhZUi2Q5tVpUw8PDw9vjVRfr5GHVQPY2Pp5uDHh4eHgf5Z3aAPLGglEDAR4eHt7X8PLYIt9CcnA+EXh4eHh7vLw1Kt8k3vN6HW0MeHh4eOe7m+of+fEK3NswDlTt8PDw8M7zfgCBYZxxwPTFKQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/01/05/java-jsr310-date-time-format-parse/&title=JSR310新日期API(三)-日期时间格式化与解析 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrUlEQVR42u3aS27DMAwFwNz/0um2QBPnkRSToBivitQfjRaS/cjbLT7ul8ffc37/ktz5+ln53ZoHHh4e3vLQnw3o2T2vf79+bvWqB1OAh4eHt8a7XrKTBTpZ0HvX5psEHh4e3nfy8g0g336SScHDw8P7T7z89/ycyQaDh4eH9x5evkwn8UQSNORDf1PWgoeHhxfz8irS9/y9Ut/Dw8PDG1fVezFBHlhMgo9otHh4eHgLvGpwkCCrwe48EHkxlXh4eHhrvOqnfsLIo4q86FUdAx4eHt4eL28IqIan+RDzV/PCGPDw8PDeyOvhT01HrwgXdUbg4eHhjXnJC27eaJXHCnmEkUxloRiGh4eHN+BNmqXySDc/J/9vNE14eHh4C7zeK2yvaSBf+s/Gynh4eHgbvOqye2p76MW+zTACDw8Pb4GXx7KTxbq3rFcLbHh4eHh7vOQB+WYwSVPnbVgPrsLDw8Nb5lXbsHov02eDjxcTjYeHh7fAqzZd5cWq6uaRP71aMMPDw8Pb5uWLdTXzSIbVCyNeNGnh4eHhHeX1Cv/VyCCa43izyV/r8fDw8D7FmzRm5dtA3t2Qh8J4eHh4G7xqQ0B16L04+GyZDQ8PD+8sL1mI81g2j1mrBa3mmXh4eHgLvOR1dh6/9gbXaz54+t2Ah4eHt8CrDmiyqeSD7kUkhcfj4eHhHeJVi1W9EloCnkQneHh4eJ/izacgx/farV58BuDh4eEd5d2LR3WBrrYXzKcDDw8Pb5u3ceu8UaAX7Ob3wcPDw9vj5ZFBHhZUi2Q5tVpUw8PDw9vjVRfr5GHVQPY2Pp5uDHh4eHgf5Z3aAPLGglEDAR4eHt7X8PLYIt9CcnA+EXh4eHh7vLw1Kt8k3vN6HW0MeHh4eOe7m+of+fEK3NswDlTt8PDw8M7zfgCBYZxxwPTFKQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/01/06/java-jsr310-date-time-calculate/" rel="prev" title="JSR310新日期API(四)-日期时间常用计算工具">
+                                  
+                                      JSR310新日期API(四)-日期时间常用计算工具
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/01/01/java-jsr310-time-api/" rel="prev" title="JSR310新日期API(二)-日期时间API">
+                                    
+                                        JSR310新日期API(二)-日期时间API
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JSR310新日期API(三)-日期时间格式化与解析',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleDateFormat"><span class="toc-text">SimpleDateFormat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSR-310日期时间类的格式化和解析"><span class="toc-text">JSR-310日期时间类的格式化和解析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DateTimeFormatterBuilder"><span class="toc-text">DateTimeFormatterBuilder</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DateTimeFormatter"><span class="toc-text">DateTimeFormatter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

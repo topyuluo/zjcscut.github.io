@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JUC线程池扩展可回调的Future | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/07/02/java-concurrency-listenable-future/">
+        JUC线程池扩展可回调的Future
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年7月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-07-07T15:00:41+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年7月7日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：13分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201907/j-u-c-l-f-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近在看JUC线程池<code>java.util.concurrent.ThreadPoolExecutor</code>的源码实现，其中了解到<code>java.util.concurrent.Future</code>的实现原理。从目前<code>java.util.concurrent.Future</code>的实现来看，虽然实现了异步提交任务，但是任务结果的获取过程需要主动调用<code>Future#get()</code>或者<code>Future#get(long timeout, TimeUnit unit)</code>，而前者是阻塞的，后者在异步任务执行时间不确定的情况下有可能需要进行轮询，这两种情况和异步调用的初衷有点相违背。于是笔者想结合目前了解到的<code>Future</code>实现原理的前提下扩展出支持（监听）回调的<code>Future</code>，思路上参考了<code>Guava</code>增强的<code>ListenableFuture</code>。本文编写的时候使用的JDK是JDK11，代码可以在JDK[8,12]版本上运行，其他版本可能不适合。</p>
+<a id="more"></a>
+<h2 id="简单分析Future的实现原理">简单分析Future的实现原理</h2>
+<h3 id="虚拟例子推演">虚拟例子推演</h3>
+<p>并发大师<strong>Doug Lea</strong>在设计JUC线程池的时候，提供了一个顶层执行器接口<code>Executor</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上，这里定义的方法<code>Executor#execute()</code>是整套线程池体系最核心的接口，也就是<code>ThreadPoolExecutor</code>定义的核心线程、额外创建的线程（线程池最大线程容量 - 核心线程数）都是在这个接口提交任务的时候懒创建的，也就是说<code>ExecutorService</code>接口扩展的功能都是基于<code>Executor#execute()</code>的基础进行扩展。<code>Executor#execute()</code>方法只是单纯地把任务实例<code>Runnable</code>对象投放到线程池中分配合适的线程执行，但是由于方法返回值是<code>void</code>类型，我们是无法感知任务什么时候执行完毕。这个时候就需要对<code>Runnable</code>任务实例进行包装（下面是伪代码 + 伪逻辑）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下面这个Wrapper和Status类是笔者虚构出来</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Runnable target;</span><br><span class="line">    <span class="keyword">private</span> Status status = Status.of(<span class="string">"初始化"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">           target.run();</span><br><span class="line">           status = Status.of(<span class="string">"执行成功"</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span>(Throwable t)&#123;</span><br><span class="line">           status = Status.of(<span class="string">"执行异常"</span>); </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们只需要把<code>new Wrapper(原始Runnable实例)</code>投放到线程池执行，那么通过定义好的<code>Status</code>状态记录变量就能得知异步任务执行的状态，以及什么时候执行完毕（包括正常的执行完毕和异常的执行完毕）。这里仅仅解决了任务执行的状态获取，但是<code>Executor#execute()</code>方法法返回值是<code>void</code>类型的特点使得我们无法回调<code>Runnable</code>对象执行的结果。这个时候需要定义一个可以回调执行结果的接口，其实已经有现成的接口<code>Callable</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里遇到了一个问题：由于<code>Executor#execute()</code>只接收<code>Runnable</code>参数，我们需要把<code>Callable</code>接口适配到<code>Runnable</code>接口，这个时候，做一次简单的委托即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wrapper</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Callable callable;</span><br><span class="line">    <span class="keyword">private</span> Status status = Status.of(<span class="string">"初始化"</span>);</span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="keyword">private</span> Object outcome;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">           outcome = callable.call();</span><br><span class="line">           status = Status.of(<span class="string">"执行成功"</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span>(Throwable t)&#123;</span><br><span class="line">           status = Status.of(<span class="string">"执行异常"</span>); </span><br><span class="line">           outcome = t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里把<code>Callable</code>实例直接委托给<code>Wrapper</code>，而<code>Wrapper</code>实现了<code>Runnable</code>接口，执行结果直接存放在定义好的<code>Object</code>类型的对象<code>outcome</code>中即可。当我们感知到执行状态已经结束，就可以从<code>outcome</code>中提取到执行结果。</p>
+<h3 id="Future的实现">Future的实现</h3>
+<p>上面一个小结仅仅对<code>Future</code>实现做一个相对合理的虚拟推演，实际上，<code>RunnableFuture</code>才是JUC中常用的复合接口，它同时实现了<code>Runnable</code>和<code>Future</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">Runnable</span>, <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上一节提到的虚构出来的<code>Wrapper</code>类，在JUC中类似的实现是<code>java.util.concurrent.FutureTask</code>，它就是<code>Callable</code>和<code>Runnable</code>的适配器，<code>FutureTask</code>实现了<code>RunnableFuture</code>接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureTask</span>&lt;<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">int</span> state;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NEW          = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> COMPLETING   = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NORMAL       = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> EXCEPTIONAL  = <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> CANCELLED    = <span class="number">4</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> INTERRUPTING = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> INTERRUPTED  = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The underlying callable; nulled out after running */</span></span><br><span class="line">    <span class="keyword">private</span> Callable&lt;V&gt; callable;</span><br><span class="line">    <span class="comment">/** The result to return or exception to throw from get() */</span></span><br><span class="line">    <span class="keyword">private</span> Object outcome; <span class="comment">// non-volatile, protected by state reads/writes</span></span><br><span class="line">    <span class="comment">/** The thread running the callable; CASed during run() */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Thread runner;</span><br><span class="line">    <span class="comment">/** Treiber stack of waiting threads */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> WaitNode waiters;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到核心属性<code>state</code>表示执行状态，<code>outcome</code>承载执行结果。接着看提交<code>Callable</code>类型任务的方法<code>ExecutorService#submit()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ExecutorService</span> <span class="keyword">extends</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 省略其他接口方法</span></span><br><span class="line"></span><br><span class="line">    &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们通过上述<code>ExecutorService#submit()</code>方法提交<code>Callable</code>类型任务的时候，实际上做了如下的步骤：</p>
+<ol>
+<li>检查入参<code>task</code>的存在性，如果为<code>null</code>抛出<code>NullPointerException</code>。</li>
+<li>把<code>Callable</code>类型的<code>task</code>包装为<code>FutureTask</code>实例。</li>
+<li>把新建的<code>FutureTask</code>实例放到线程池中执行，也就是调用<code>Executor#execute(FutureTask实例)</code>。</li>
+<li>返回<code>FutureTask</code>实例的接口实例<code>RunnableFuture</code>（实际上是返回子接口<code>Future</code>实例）。</li>
+</ol>
+<p>如果我们需要获取结果，可以<code>Future#get()</code>或者<code>Future#get(long timeout, TimeUnit unit)</code>获取，调用这两个方法的时候参看<code>FutureTask</code>里面的方法实现，得知步骤如下：</p>
+<ol>
+<li>如果状态<code>state</code>小于等于<code>COMPLETING(1)</code>，说明任务还在执行中，获取结果的请求线程会放入<code>WaitNode</code>类型的队列中进行阻塞。</li>
+<li>如果任务执行完毕，不管异常完毕还是正常完毕，除了会更新状态<code>state</code>和把结果赋值到<code>outcome</code>之外，还会唤醒所有阻塞获取结果的线程，然后调用钩子方法<code>FutureTask#done()</code>（具体见源码<code>FutureTask#finishCompletion()</code>）。</li>
+</ol>
+<p>其实分析了这么多，笔者想指出的结论就是：<strong><code>Callable</code>类型任务提交到线程池中执行完毕（包括正常执行完毕和异常执行完毕）之后，都会回调钩子方法<code>FutureTask#done()</code></strong>。这个就是我们扩展可监听<code>Future</code>的理论依据。</p>
+<h2 id="扩展可回调的Future">扩展可回调的Future</h2>
+<p>先做一次编码实现，再简单测试其功能。</p>
+<h3 id="编码实现">编码实现</h3>
+<p>先定义一个<code>Future</code>接口的子接口<code>ListenableFuture</code>，用于添加可监听的回调：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ListenableFuture</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">addCallback</span><span class="params">(ListenableFutureCallback&lt;V&gt; callback, Executor executor)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ListenableFutureCallback</code>是一个函数式回调接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ListenableFutureCallback</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">callback</span><span class="params">(V value, Throwable throwable)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于<code>ListenableFutureCallback</code>而言，回调的结果<code>value</code>和<code>throwable</code>是互斥的。正常执行完毕的情况下<code>value</code>将会是执行结果值，<code>throwable</code>为<code>null</code>；异常执行完毕的情况下，<code>value</code>将会是<code>null</code>，<code>throwable</code>将会是抛出的异常实例。如果更习惯于分开处理正常执行完毕的结果和异常执行完毕的结果，<code>ListenableFutureCallback</code>可以这样定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ListenableFutureCallback</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(V value)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable throwable)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着定义<code>ListenableExecutorService</code>接口继承<code>ExecutorService</code>接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ListenableExecutorService</span> <span class="keyword">extends</span> <span class="title">ExecutorService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &lt;T&gt; <span class="function">ListenableFuture&lt;T&gt; <span class="title">listenableSubmit</span><span class="params">(Callable&lt;T&gt; callable)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 定义这个方法是因为有些时候由于任务执行时间非常短，有可能通过返回的ListenableFuture实例添加回调之前已经执行完毕，因此可以支持显式传入回调</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> callable  callable</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> callbacks callbacks</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> executor  executor</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> ListenableFuture</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    &lt;T&gt; <span class="function">ListenableFuture&lt;T&gt; <span class="title">listenableSubmit</span><span class="params">(Callable&lt;T&gt; callable, List&lt;ListenableFutureCallback&lt;T&gt;&gt; callbacks, Executor executor)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后添加一个执行单元适配器<code>ListenableFutureCallbackRunnable</code>，承载每次回调触发的调用（实现<code>Runnable</code>接口，从而支持异步执行）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListenableFutureCallbackRunnable</span>&lt;<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ListenableFutureCallback&lt;V&gt; callback;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> V value;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Throwable throwable;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        callback.callback(value, throwable);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着需要定义一个<code>FutureTask</code>的子类<code>ListenableFutureTask</code>，核心逻辑是覆盖<code>FutureTask#done()</code>方法触发回调：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListenableFutureTask</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListenableFutureTask</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">FutureTask</span>&lt;<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">ListenableFuture</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;Execution&lt;V&gt;&gt; executions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableFutureTask</span><span class="params">(Callable&lt;V&gt; callable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(callable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableFutureTask</span><span class="params">(Runnable runnable, V result)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(runnable, result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;V&gt; <span class="function">ListenableFutureTask&lt;V&gt; <span class="title">newTaskFor</span><span class="params">(Callable&lt;V&gt; callable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ListenableFutureTask&lt;&gt;(callable);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">done</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator&lt;Execution&lt;V&gt;&gt; iterator = executions.iterator();</span><br><span class="line">        Throwable throwable = <span class="keyword">null</span>;</span><br><span class="line">        V value = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            value = get();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">            throwable = t;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Execution&lt;V&gt; execution = iterator.next();</span><br><span class="line">            ListenableFutureCallbackRunnable&lt;V&gt; callbackRunnable = <span class="keyword">new</span> ListenableFutureCallbackRunnable&lt;&gt;(execution.getCallback(),</span><br><span class="line">                    value, throwable);</span><br><span class="line">            <span class="comment">// 异步回调</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != execution.getExecutor()) &#123;</span><br><span class="line">                execution.getExecutor().execute(callbackRunnable);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 同步回调</span></span><br><span class="line">                callbackRunnable.run();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addCallback</span><span class="params">(ListenableFutureCallback&lt;V&gt; callback, Executor executor)</span> </span>&#123;</span><br><span class="line">        Execution&lt;V&gt; execution = <span class="keyword">new</span> Execution&lt;&gt;();</span><br><span class="line">        execution.setCallback(callback);</span><br><span class="line">        execution.setExecutor(executor);</span><br><span class="line">        executions.add(execution);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Execution - 承载每个回调实例和对应的Executor，Executor实例为null则进行同步回调</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Execution</span> &lt;<span class="title">V</span>&gt;</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Executor executor;</span><br><span class="line">    <span class="keyword">private</span> ListenableFutureCallback&lt;V&gt; callback;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后一步就是编写线程池<code>ListenableThreadPoolExecutor</code>，继承自<code>ThreadPoolExecutor</code>并且实现<code>ListenableExecutorService</code>接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListenableThreadPoolExecutor</span> <span class="keyword">extends</span> <span class="title">ThreadPoolExecutor</span> <span class="keyword">implements</span> <span class="title">ListenableExecutorService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit, BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit, </span></span></span><br><span class="line"><span class="function"><span class="params">    BlockingQueue&lt;Runnable&gt; workQueue, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit, </span></span></span><br><span class="line"><span class="function"><span class="params">    BlockingQueue&lt;Runnable&gt; workQueue, RejectedExecutionHandler handler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ListenableThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">     BlockingQueue&lt;Runnable&gt; workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">ListenableFuture&lt;T&gt; <span class="title">listenableSubmit</span><span class="params">(Callable&lt;T&gt; callable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == callable) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"callable"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ListenableFutureTask&lt;T&gt; listenableFutureTask = ListenableFutureTask.newTaskFor(callable);</span><br><span class="line">        execute(listenableFutureTask);</span><br><span class="line">        <span class="keyword">return</span> listenableFutureTask;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; <span class="function">ListenableFuture&lt;T&gt; <span class="title">listenableSubmit</span><span class="params">(Callable&lt;T&gt; callable, List&lt;ListenableFutureCallback&lt;T&gt;&gt; callbacks, Executor executor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == callable) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"callable"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == callbacks) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"callbacks"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        ListenableFutureTask&lt;T&gt; listenableFutureTask = ListenableFutureTask.newTaskFor(callable);</span><br><span class="line">        <span class="keyword">for</span> (ListenableFutureCallback&lt;T&gt; callback : callbacks) &#123;</span><br><span class="line">            listenableFutureTask.addCallback(callback, executor);</span><br><span class="line">        &#125;</span><br><span class="line">        execute(listenableFutureTask);</span><br><span class="line">        <span class="keyword">return</span> listenableFutureTask;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试">测试</h3>
+<p>引入<code>junit</code>，编写测试类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListenableFutureTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ListenableExecutorService EXECUTOR;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Executor E;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeClass</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        EXECUTOR = <span class="keyword">new</span> ListenableThreadPoolExecutor(<span class="number">1</span>, <span class="number">3</span>, <span class="number">0</span>, TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">10</span>), <span class="keyword">new</span> ThreadFactory() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger counter = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">                Thread thread = <span class="keyword">new</span> Thread(r);</span><br><span class="line">                thread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">                thread.setName(String.format(<span class="string">"ListenableWorker-%d"</span>, counter.getAndIncrement()));</span><br><span class="line">                <span class="keyword">return</span> thread;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        E = Executors.newFixedThreadPool(<span class="number">3</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testListenableFuture1</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ListenableFuture&lt;String&gt; future = EXECUTOR.listenableSubmit(() -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"message"</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        future.addCallback((v, t) -&gt; &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"Value = %s,Throwable = %s"</span>, v, t));</span><br><span class="line">        &#125;, <span class="keyword">null</span>);</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testListenableFuture2</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ListenableFuture&lt;String&gt; future = EXECUTOR.listenableSubmit(() -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"exception"</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        future.addCallback((v, t) -&gt; &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"Value = %s,Throwable = %s"</span>, v, t));</span><br><span class="line">        &#125;, <span class="keyword">null</span>);</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testListenableFuture3</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ListenableFuture&lt;String&gt; future = EXECUTOR.listenableSubmit(() -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"message"</span>;</span><br><span class="line">        &#125;);</span><br><span class="line">        future.addCallback((v, t) -&gt; &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"Value = %s,Throwable = %s"</span>, v, t));</span><br><span class="line">        &#125;, E);</span><br><span class="line">        System.out.println(<span class="string">"testListenableFuture3 end..."</span>);</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testListenableFuture4</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ListenableFuture&lt;String&gt; future = EXECUTOR.listenableSubmit(() -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"exception"</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        future.addCallback((v, t) -&gt; &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"Value = %s,Throwable = %s"</span>, v, t));</span><br><span class="line">        &#125;, E);</span><br><span class="line">        System.out.println(<span class="string">"testListenableFuture4 end..."</span>);</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行结果:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// testListenableFuture1</span><br><span class="line">Value = message,Throwable = null</span><br><span class="line"></span><br><span class="line">// testListenableFuture2</span><br><span class="line">Value = null,Throwable = java.util.concurrent.ExecutionException: java.lang.RuntimeException: exception</span><br><span class="line"></span><br><span class="line">// testListenableFuture3</span><br><span class="line">testListenableFuture3 end...</span><br><span class="line">Value = message,Throwable = null</span><br><span class="line"></span><br><span class="line">// testListenableFuture4</span><br><span class="line">testListenableFuture4 end...</span><br><span class="line">Value = null,Throwable = java.util.concurrent.ExecutionException: java.lang.RuntimeException: exception</span><br></pre></td></tr></table></figure>
+<p>和预期的结果一致，注意一下如果<code>Callable</code>执行抛出异常，异常被包装为<code>ExecutionException</code>，要调用<code>Throwable#getCause()</code>才能得到原始的异常实例。</p>
+<h2 id="小结">小结</h2>
+<p>本文通过了解<code>ThreadPoolExecutor</code>和<code>Future</code>的实现原理做简单的扩展，使得异步提交任务变得更加优雅和简便。强化了动手能力的同时，也能加深对并发编程的一些认知。当然，本文只是提供一个十分简陋的实现，笔者其实还想到了如对回调处理的耗时做监控、回调打上分组标签执行等等更完善的功能，等到有需要的场景再进行实现。</p>
+<p>这里记录一下过程中的一些领悟：</p>
+<ul>
+<li><code>Executor#execute()</code>是线程池的核心接口，所有其他功能都是基于此接口做扩展，它的设计本身是无状态的。</li>
+<li>灵活使用适配器模式，可以在不改变已发布的接口的功能同时实现新的接口的功能适配。</li>
+<li>要善于发掘和使用JDK类库设计者留给开发者的扩展接口。</li>
+</ul>
+<p>（本文完 c-1-d e-a-20190702）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/07/02/java-concurrency-listenable-future/>http://throwable.club/2019/07/02/java-concurrency-listenable-future/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/ListenableFuture/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>ListenableFuture</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/07/02/java-concurrency-listenable-future/&title=JUC线程池扩展可回调的Future | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近在看JUC线程池java.util.concurrent.ThreadPoolExecutor的源码实现，其中了解到java.util.concurrent.Future的实现原理。从目前java.util.concurrent.Future的实现来看，虽然实现了异步提交任务，但是任务结果的获取过程需要主动调用Future#get()或者Future#get(long timeout, TimeUnit unit)，而前者是阻塞的，后者在异步任务执行时间不确定的情况下有可能需要进行轮询，这两种情况和异步调用的初衷有点相违背。于是笔者想结合目前了解到的Future实现原理的前提下扩展出支持（监听）回调的Future，思路上参考了Guava增强的ListenableFuture。本文编写的时候使用的JDK是JDK11，代码可以在JDK[8,12]版本上运行，其他版本可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/07/02/java-concurrency-listenable-future/&title=JUC线程池扩展可回调的Future | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近在看JUC线程池java.util.concurrent.ThreadPoolExecutor的源码实现，其中了解到java.util.concurrent.Future的实现原理。从目前java.util.concurrent.Future的实现来看，虽然实现了异步提交任务，但是任务结果的获取过程需要主动调用Future#get()或者Future#get(long timeout, TimeUnit unit)，而前者是阻塞的，后者在异步任务执行时间不确定的情况下有可能需要进行轮询，这两种情况和异步调用的初衷有点相违背。于是笔者想结合目前了解到的Future实现原理的前提下扩展出支持（监听）回调的Future，思路上参考了Guava增强的ListenableFuture。本文编写的时候使用的JDK是JDK11，代码可以在JDK[8,12]版本上运行，其他版本可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACp0lEQVR42u3aQVLDMBAEQP7/6fAAwJ5ZScGpap8ocCK1DpKY3a+v+HldPj/fab/5eqy/3tz24OHh4X3I1K9Hn33qlxni4eHhHeNdT+6a2k4r2b1nhwQeHh7ep/CSK+8rfvIFxcPDw/sUXj719sKdHyp4eHh4T+CtbNNtcJAcPP+QteDh4eHFvDaQfcLPR+p7eHh4eMtV9TxCbctXyfIlo9zMFg8PD+8AL99w26JX3kYwK4zl88TDw8M7wWsvtSshQhvUzkbHw8PDO8fL/71vi2H5dXm26UefwsPDwzvASzbxvOzUxgfr1/fi2o2Hh4e3iZcHCrPaWnJdTtjD+eDh4eEd47U192T7bg+Ytpx2/eZNGIGHh4e3idcGBO0StMs0G6s+l/Dw8PBK3uz6m1x2k+nmM1k5wPDw8PD28mahQNtk0P4+b0q4eRMPDw/vMG/lEjyLXPPRl8IIPDw8vAO8Wc/S+pHQHgxt4IuHh4d3jtduzSv4PBTegMTDw8N7Cy8PZ9sSWl7WSsaNFhoPDw/vGC+JIfIB8hJX+057rcfDw8M7zcvLTu0B0IYReUB881c8PDy8w7y89NVOvY0t2kXHw8PDez/vnfFr3hawcoDh4eHhnePl0W0bpK6Ev225K2oIw8PDw9vKW2kOyAtd63HGtiMBDw8PbxMvDxra8GL9nXaho9YrPDw8vGVe29KUBAd5c0DbmlAcdXh4eHhbea/ymW3NeVzbltnw8PDw3s9rt9rZVw8L/3Hgu+0kwcPDw4t5s3artgGrbQvIg+MbPB4eHt4xXrspX08rD4iTN4cpCx4eHt4jebNmrLaxoD1O8PDw8J7Ma4PddsnqRoFdOQceHh5ewDvRPtU2HMwu1jefxcPDwzvAm12I840+WaAV9oZaHx4eHl7K+wZe1Svwx/gGNwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/07/02/java-concurrency-listenable-future/&title=JUC线程池扩展可回调的Future | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近在看JUC线程池java.util.concurrent.ThreadPoolExecutor的源码实现，其中了解到java.util.concurrent.Future的实现原理。从目前java.util.concurrent.Future的实现来看，虽然实现了异步提交任务，但是任务结果的获取过程需要主动调用Future#get()或者Future#get(long timeout, TimeUnit unit)，而前者是阻塞的，后者在异步任务执行时间不确定的情况下有可能需要进行轮询，这两种情况和异步调用的初衷有点相违背。于是笔者想结合目前了解到的Future实现原理的前提下扩展出支持（监听）回调的Future，思路上参考了Guava增强的ListenableFuture。本文编写的时候使用的JDK是JDK11，代码可以在JDK[8,12]版本上运行，其他版本可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACp0lEQVR42u3aQVLDMBAEQP7/6fAAwJ5ZScGpap8ocCK1DpKY3a+v+HldPj/fab/5eqy/3tz24OHh4X3I1K9Hn33qlxni4eHhHeNdT+6a2k4r2b1nhwQeHh7ep/CSK+8rfvIFxcPDw/sUXj719sKdHyp4eHh4T+CtbNNtcJAcPP+QteDh4eHFvDaQfcLPR+p7eHh4eMtV9TxCbctXyfIlo9zMFg8PD+8AL99w26JX3kYwK4zl88TDw8M7wWsvtSshQhvUzkbHw8PDO8fL/71vi2H5dXm26UefwsPDwzvASzbxvOzUxgfr1/fi2o2Hh4e3iZcHCrPaWnJdTtjD+eDh4eEd47U192T7bg+Ytpx2/eZNGIGHh4e3idcGBO0StMs0G6s+l/Dw8PBK3uz6m1x2k+nmM1k5wPDw8PD28mahQNtk0P4+b0q4eRMPDw/vMG/lEjyLXPPRl8IIPDw8vAO8Wc/S+pHQHgxt4IuHh4d3jtduzSv4PBTegMTDw8N7Cy8PZ9sSWl7WSsaNFhoPDw/vGC+JIfIB8hJX+057rcfDw8M7zcvLTu0B0IYReUB881c8PDy8w7y89NVOvY0t2kXHw8PDez/vnfFr3hawcoDh4eHhnePl0W0bpK6Ev225K2oIw8PDw9vKW2kOyAtd63HGtiMBDw8PbxMvDxra8GL9nXaho9YrPDw8vGVe29KUBAd5c0DbmlAcdXh4eHhbea/ymW3NeVzbltnw8PDw3s9rt9rZVw8L/3Hgu+0kwcPDw4t5s3artgGrbQvIg+MbPB4eHt4xXrspX08rD4iTN4cpCx4eHt4jebNmrLaxoD1O8PDw8J7Ma4PddsnqRoFdOQceHh5ewDvRPtU2HMwu1jefxcPDwzvAm12I840+WaAV9oZaHx4eHl7K+wZe1Svwx/gGNwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/07/15/java-concurrency-thread-pool-executor/" rel="prev" title="JUC线程池ThreadPoolExecutor源码分析">
+                                  
+                                      JUC线程池ThreadPoolExecutor源码分析
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/ThreadPoolExecutor/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> ThreadPoolExecutor</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/06/29/java-understand-instrument-first/" rel="prev" title="深入理解Instrument(一)">
+                                    
+                                        深入理解Instrument(一)
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Instrument/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Instrument</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JUC线程池扩展可回调的Future',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简单分析Future的实现原理"><span class="toc-text">简单分析Future的实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#虚拟例子推演"><span class="toc-text">虚拟例子推演</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Future的实现"><span class="toc-text">Future的实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展可回调的Future"><span class="toc-text">扩展可回调的Future</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#编码实现"><span class="toc-text">编码实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

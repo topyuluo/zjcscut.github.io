@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>RabbitMQ消息发送、消费和确认 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/11/25/rabbitmq-send-consume-confirm/">
+        RabbitMQ消息发送、消费和确认
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/RabbitMQ/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;RabbitMQ</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年11月25日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2018-11-25T22:13:55+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2018年11月25日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.1k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：25分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>前提</h1>
+<p>前一篇文章介绍到RabbitMQ相关组件的声明，组件声明完成之后，就可以发送消息和消费消息，消费消息的时候需要考虑消息的确认。</p>
+<h2 id="消息的发送">消息的发送</h2>
+<p>消息的发送只依赖于交互器(名称)、可选路由键和可选的Header参数，可选路由键和Header可以认为是路由参数。因为RabbitMQ有四种内建的交换器，加上特殊的默认交换器可以认为有五种，这里列举一下通过这五种交换器发送消息需要的参数：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">交换器类型</th>
+<th style="text-align:center">路由参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认交换器(AMQP default)</td>
+<td style="text-align:center">交换器名称(空字符串)和队列名称</td>
+</tr>
+<tr>
+<td style="text-align:center">Direct交换器</td>
+<td style="text-align:center">交换器名称和路由键</td>
+</tr>
+<tr>
+<td style="text-align:center">Fanout交换器</td>
+<td style="text-align:center">交换器名称(API中必须提供路由键，可以随意输入)</td>
+</tr>
+<tr>
+<td style="text-align:center">Topic交换器</td>
+<td style="text-align:center">交换器名称和路由键</td>
+</tr>
+<tr>
+<td style="text-align:center">Headers交换器</td>
+<td style="text-align:center">交换器名称和Header参数(API中必须提供路由键，可以随意输入)</td>
+</tr>
+</tbody>
+</table>
+<p>消息的发布依赖于Channel的<code>basicPublish</code>方法，按照惯例查看其重载方法中参数列表长度最大的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicPublish</span><span class="params">(String exchange, </span></span></span><br><span class="line"><span class="function"><span class="params">                  String routingKey, </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">boolean</span> mandatory, </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">boolean</span> immediate, </span></span></span><br><span class="line"><span class="function"><span class="params">                  BasicProperties props, </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>exchange：交换器名称。</li>
+<li>routingKey：路由键。</li>
+<li>mandatory：是否强制的，如果此属性设置为true，消息发布的时候如果根据exchange和routingKey无法找到可达的目标队列，会调用AMQP方法<code>basic.return</code>将该消息返回给消息发布者；如果此属性设置为false，出现上面的情况，消息会被消息中间件代理直接丢弃。</li>
+<li>immediate：是否立即的，如果此属性设置为true，消息通过exchange和routingKey找到目标队列(一个或者多个)，如果所有的目标队列都没有消费者，那么会调用AMQP方法<code>basic.return</code>将该消息返回给消息发布者。</li>
+<li>props：BasicProperties类型，消息属性或者叫消息元数据，<code>com.rabbitmq.client.MessageProperties</code>已经提供了一些列的实现，如果不满足可以使用<code>BasicProperties.Builder</code>自行构建。</li>
+<li>body：字节数组类型，消息的有效负载，一般我们说的消息或者消息体就是指这个。</li>
+</ul>
+<p>值得注意的是：<code>immediate</code>属性在<a href="http://www.rabbitmq.com/blog/2012/11/19/breaking-things-with-rabbitmq-3-0/" target="_blank" rel="noopener">RabbitMQ-3.0版本已经被移除</a>，具体原因是：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-m-s-c-c/r-m-s-c-c-1.png" alt="r-m-s-c-c-1.png"></p>
+<p>翻译一下就是：<code>immediate</code>属性原有的功能对于基础代码的复杂性太高，特别是在镜像队列的条件下。它还影响到镜像队列的性能优化，推荐使用TTL(Time To Live，队列消息过期特性)或者DLX(Dead Letter Exchange，死信交换器)替代。<strong>在RabbitMQ-3.0后的版本如果immediate设置为true，会抛异常。</strong></p>
+<p>举个消息发送的例子(<strong>下面的例子中，每次发送之前都声明交换器、队列和绑定，实际上我们不需要这样操作，如果依赖于Servlet容器，可以在容器启动之后做一次声明即可</strong>)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageSendMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_EXCHANGE = <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			<span class="comment">//使用Direct类型的交换器</span></span><br><span class="line">			channel.queueDeclare(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.exchangeDeclare(<span class="string">"throwable.exchange.direct"</span>, BuiltinExchangeType.DIRECT, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.queueBind(<span class="string">"throwable.queue.direct"</span>, <span class="string">"throwable.exchange.direct"</span>, <span class="string">"direct.routingKey"</span>, <span class="keyword">null</span>);</span><br><span class="line">			<span class="comment">//发送"Direct Message"到队列throwable.queue.direct</span></span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.direct"</span>, <span class="string">"direct.routingKey"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Direct Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">			<span class="comment">//其实也可以通过默认的交换器直接发送消息到队列throwable.queue.direct</span></span><br><span class="line">			channel.basicPublish(DEFAULT_EXCHANGE, <span class="string">"throwable.queue.direct"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Direct Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">			<span class="comment">//使用Fanout类型的交换器</span></span><br><span class="line">			channel.queueDeclare(<span class="string">"throwable.queue.fanout"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.exchangeDeclare(<span class="string">"throwable.exchange.fanout"</span>, BuiltinExchangeType.FANOUT, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			<span class="comment">//这里路由键随便写，或者用空字符串也可以</span></span><br><span class="line">			channel.queueBind(<span class="string">"throwable.queue.fanout"</span>, <span class="string">"throwable.exchange.fanout"</span>, <span class="string">"random"</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.fanout"</span>, <span class="string">"random"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Fanout Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">			<span class="comment">//使用Topic类型的交换器</span></span><br><span class="line">			channel.queueDeclare(<span class="string">"throwable.queue.topic"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.exchangeDeclare(<span class="string">"throwable.exchange.topic"</span>, BuiltinExchangeType.TOPIC, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.queueBind(<span class="string">"throwable.queue.topic"</span>, <span class="string">"throwable.exchange.topic"</span>, <span class="string">"topic.routingKey.#"</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.topic"</span>, <span class="string">"topic.routingKey.throwable"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Topic Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line"></span><br><span class="line">			<span class="comment">//使用Headers类型的交换器</span></span><br><span class="line">			channel.queueDeclare(<span class="string">"throwable.queue.headers"</span>, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			channel.exchangeDeclare(<span class="string">"throwable.exchange.headers"</span>, BuiltinExchangeType.HEADERS, <span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">			Map&lt;String, Object&gt; headerBindingArgs = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">			headerBindingArgs.put(<span class="string">"headers.name"</span>, <span class="string">"throwable"</span>);</span><br><span class="line">			headerBindingArgs.put(<span class="string">"headers.age"</span>, <span class="number">25</span>);</span><br><span class="line">			headerBindingArgs.put(<span class="string">"x-match"</span>, <span class="string">"all"</span>);</span><br><span class="line">			<span class="comment">//这里路由键随便写，或者用空字符串也可以,要添加Headers参数到绑定参数中</span></span><br><span class="line">			channel.queueBind(<span class="string">"throwable.queue.headers"</span>, <span class="string">"throwable.exchange.headers"</span>, <span class="string">"random"</span>, headerBindingArgs);</span><br><span class="line">			AMQP.BasicProperties basicProperties = MessageProperties.TEXT_PLAIN;</span><br><span class="line">			<span class="comment">//这里发送消息的时候要添加Headers参数到消息属性中</span></span><br><span class="line">			AMQP.BasicProperties realBasicProperties = basicProperties.builder().headers(headerBindingArgs).build();</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.headers"</span>, <span class="string">"random"</span>,</span><br><span class="line">					realBasicProperties, <span class="string">"Headers Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="消息的元数据">消息的元数据</h3>
+<p>消息元数据接口是<code>com.rabbitmq.client.BasicProperties</code>，实现类是<code>com.rabbitmq.client.AMQP$BasicProperties</code>，可以看一下具体的属性：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicProperties</span> <span class="keyword">extends</span> <span class="title">com</span>.<span class="title">rabbitmq</span>.<span class="title">client</span>.<span class="title">impl</span>.<span class="title">AMQBasicProperties</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String contentType;</span><br><span class="line">    <span class="keyword">private</span> String contentEncoding;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,Object&gt; headers;</span><br><span class="line">    <span class="keyword">private</span> Integer deliveryMode;</span><br><span class="line">    <span class="keyword">private</span> Integer priority;</span><br><span class="line">    <span class="keyword">private</span> String correlationId;</span><br><span class="line">    <span class="keyword">private</span> String replyTo;</span><br><span class="line">    <span class="keyword">private</span> String expiration;</span><br><span class="line">    <span class="keyword">private</span> String messageId;</span><br><span class="line">    <span class="keyword">private</span> Date timestamp;</span><br><span class="line">    <span class="keyword">private</span> String type;</span><br><span class="line">    <span class="keyword">private</span> String userId;</span><br><span class="line">    <span class="keyword">private</span> String appId;</span><br><span class="line">    <span class="keyword">private</span> String clusterId;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//省略Setter、Getter和Builder方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>属性分析：</p>
+<ul>
+<li>contentType：消息内容类型，类似于HTTP协议中的Content-Type，例如：application/json。</li>
+<li>contentEncoding：消息内容编码，类似于MIME的内容编码，例如：gzip。</li>
+<li>headers：头部属性，K-V结构，一般使用在Headers的交换器和绑定中，很多时候被开发者滥用用来传输一些自定义属性，其实也无可厚非。</li>
+<li>deliveryMode：<strong>消息的持久化模式，deliveryMode=1代表消息不持久化(nonpersistent)，deliveryMode=2代表消息持久化(persistent)。</strong></li>
+<li>priority：消息优先级，可选值为0-255，值越大优先级越大，注意要和队列的优先级区分。</li>
+<li>correlationId：客户端定义的用于客户端区分和标识消息的唯一标记。</li>
+<li>replyTo：需要应答的目标队列名，只有一个持有值，不会有任何额外的操作，spring-amqp模块对这个值做了额外的操作，不要混淆原生Java驱动和二次封装的框架。</li>
+<li>expiration：消息过期时间，单位为毫秒。</li>
+<li>messageId：消息的唯一标识，消息中间件代理对消息接收去重的一个重要标识。</li>
+<li>timestamp：消息发送时的时间戳。</li>
+<li>type：可选的消息类型。</li>
+<li>userId：可选的发布消息的用户的唯一标识。</li>
+<li>appId：可选的发布消息的应用的唯一标识。</li>
+<li>clusterId：集群唯一标识，AMQP-0-9-1已经弃用，供RabbitMQ集群应用程序使用的集群内路由标识符。</li>
+</ul>
+<p><strong>消息元数据的每个属性基本对应着AMQP规范中的属性值，以上的描述来源于AMQP协议，RabbitMQ中的实现要自行实践相关的属性</strong>。<code>com.rabbitmq.client.MessageProperties</code>中已经有几个现成的<code>BasicProperties</code>实例，如果合适的话可以直接拿过来使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Empty basic properties, with no fields set */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties MINIMAL_BASIC =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">/** Empty basic properties, with only deliveryMode set to 2 (persistent) */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties MINIMAL_PERSISTENT_BASIC =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="number">2</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Content-type "application/octet-stream", deliveryMode 1 (nonpersistent), priority zero */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties BASIC =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="string">"application/octet-stream"</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="number">1</span>,</span><br><span class="line">                            <span class="number">0</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Content-type "application/octet-stream", deliveryMode 2 (persistent), priority zero */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties PERSISTENT_BASIC =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="string">"application/octet-stream"</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="number">2</span>,</span><br><span class="line">                            <span class="number">0</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Content-type "text/plain", deliveryMode 1 (nonpersistent), priority zero */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties TEXT_PLAIN =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="string">"text/plain"</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="number">1</span>,</span><br><span class="line">                            <span class="number">0</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Content-type "text/plain", deliveryMode 2 (persistent), priority zero */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> BasicProperties PERSISTENT_TEXT_PLAIN =</span><br><span class="line">        <span class="keyword">new</span> BasicProperties(<span class="string">"text/plain"</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>,</span><br><span class="line">                            <span class="number">2</span>,</span><br><span class="line">                            <span class="number">0</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>,</span><br><span class="line">                            <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="mandatory属性的作用">mandatory属性的作用</h3>
+<p>mandatory属性主要是用于消息发送路由失败后配置消息返回(return)功能使用，可以故意造一下消息发布路由失败的场景，验证一下mandatory属性的作用。之前的例子中曾经建立过一个Direct类型的交换<code>throwable.exchange.direct</code>和队列<code>throwable.queue.direct</code>基于路由键<code>direct.routingKey</code>进行了绑定，我们开启mandatory特性，故意把路由键弄错，看效果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MandatoryMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.direct"</span>, <span class="string">"doge"</span>,</span><br><span class="line">					<span class="keyword">true</span>, <span class="keyword">false</span>, <span class="keyword">null</span>, <span class="string">"Mandatory Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">			<span class="comment">//使用addReturnListener(ReturnCallBack)也可以</span></span><br><span class="line">			channel.addReturnListener(<span class="keyword">new</span> ReturnListener() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReturn</span><span class="params">(<span class="keyword">int</span> replyCode, String replyText,</span></span></span><br><span class="line"><span class="function"><span class="params">										 String exchange,</span></span></span><br><span class="line"><span class="function"><span class="params">										 String routingKey,</span></span></span><br><span class="line"><span class="function"><span class="params">										 AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">										 <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">					builder.append(<span class="string">"返回码:"</span>).append(replyCode).append(<span class="string">"\n"</span>);</span><br><span class="line">					builder.append(<span class="string">"返回信息:"</span>).append(replyText).append(<span class="string">"\n"</span>);</span><br><span class="line">					builder.append(<span class="string">"交换器:"</span>).append(exchange).append(<span class="string">"\n"</span>);</span><br><span class="line">					builder.append(<span class="string">"路由键:"</span>).append(routingKey).append(<span class="string">"\n"</span>);</span><br><span class="line">					builder.append(<span class="string">"消息体:"</span>).append(<span class="keyword">new</span> String(body, StandardCharsets.UTF_8));</span><br><span class="line">					System.out.println(builder.toString());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="comment">//因为是异步回调,这里要sleep一下</span></span><br><span class="line">			Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行之后，控制台打印：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">返回码:<span class="number">312</span></span><br><span class="line">返回信息:NO_ROUTE</span><br><span class="line">交换器:throwable.exchange.direct</span><br><span class="line">路由键:doge</span><br><span class="line">消息体:Mandatory Message</span><br></pre></td></tr></table></figure>
+<p>可见路由失败的消息直接原样返回，这样就能确保路由错误的情况下消息也不会丢失。</p>
+<h3 id="消息发送的确认机制">消息发送的确认机制</h3>
+<p>前面提到的mandatory属性和消息返回机制能保证路由失败的消息也不丢失，实际上消息发送的时候允许使用消息发送确认(Confirm)机制，这样可以确认客户端发送的消息是否已经到达了消息中间件代理。消息发送的确认机制主要包括轻量级的确认和消息事务，这一小节介绍一下轻量级的确认。消息发送的轻量级确认需要把信道(Channel)更变为Confirm模式，通过等待消息中间件代理消息是否到达的确认回调，依赖到的方法或者类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//信道更变为Confirm模式</span></span><br><span class="line">Confirm.<span class="function">SelectOk <span class="title">confirmSelect</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待消息中间件确认消息到达 - 同步阻塞法法</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">waitForConfirms</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待消息中间件确认消息到达，可以设置超时，单位毫秒 - 同步阻塞方法</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">waitForConfirms</span><span class="params">(<span class="keyword">long</span> timeout)</span> <span class="keyword">throws</span> InterruptedException, TimeoutException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待消息中间件确认消息到达，存在任一消息未到达，则抛出IOException - 同步阻塞方法</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">waitForConfirmsOrDie</span><span class="params">()</span> <span class="keyword">throws</span> IOException, InterruptedException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//等待消息中间件确认消息到达，可以设置超时，单位毫秒，存在任一消息未到达，则抛出IOException - 同步阻塞方法</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">waitForConfirmsOrDie</span><span class="params">(<span class="keyword">long</span> timeout)</span> <span class="keyword">throws</span> IOException, InterruptedException, TimeoutException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//消息发布确认回调接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConfirmListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleAck</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleNack</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息发送确认模式开启之后，每条消息都会基于同一个信道下新增一个投递标签(deliveryTag)属性，deliveryTag属性是从1开始递增的整数，只要新建一个信道实例就会重置为1，<strong>一定要十分注意，这个消息投递标签和消息消费中的信封(Envelope)中的deliveryTag不是同一个属性，后者虽然也是从1开始递增，但是它是基于队列而不是信道</strong>。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfirmMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			channel.addConfirmListener(<span class="keyword">new</span> ConfirmListener() &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleAck</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(String.format(<span class="string">"消息发送确认回调成功,序号:%s,是否批量:%s"</span>, deliveryTag, multiple));</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleNack</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(String.format(<span class="string">"消息发送确认回调失败,序号:%s,是否批量:%s"</span>, deliveryTag, multiple));</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			channel.confirmSelect();</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.direct"</span>, <span class="string">"direct.routingKey"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Direct Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">			<span class="keyword">if</span> (!channel.waitForConfirms()) &#123;</span><br><span class="line">				System.out.println(<span class="string">"消息发送确认失败!"</span>);</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				System.out.println(<span class="string">"消息发送确认成功!"</span>);</span><br><span class="line">			&#125;</span><br><span class="line">			Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息发布确认基本上是遵循下面的代码模板：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">channel.addConfirmListener(<span class="keyword">new</span> ConfirmListener() &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;;</span><br><span class="line">channel.confirmSelect();</span><br><span class="line">channel.basicPublish();</span><br><span class="line"><span class="keyword">if</span> (!channel.waitForConfirms()) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，这里演示的仅仅是单条的消息发布确认，这种做法性能会相对低下，但是可靠性会提高，编码难度也相对比较低。</p>
+<h3 id="消息发布事务">消息发布事务</h3>
+<p>消息发布事务能够保证消息发布到RabbitMQ的Broker这个动作是一个原子操作，也就是开启了消息发布事务模式，消息能明确知道发布成功或者失败。使用消息发布事务需要把信道转换为事务模式，然后进行消息发布和事务提交(或者回滚)，依赖于下面的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//信道转换为事务模式</span></span><br><span class="line">Tx.<span class="function">SelectOk <span class="title">txSelect</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//提交事务</span></span><br><span class="line">Tx.<span class="function">CommitOk <span class="title">txCommit</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//回滚事务</span></span><br><span class="line">Tx.<span class="function">RollbackOk <span class="title">txRollback</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<p>消息发布事务的基本代码模板如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123; </span><br><span class="line">      channel.txSelect();</span><br><span class="line">	  channel.basicPublish();</span><br><span class="line">	  channel.txCommit();</span><br><span class="line">	&#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">	  channel.txRollback();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessagePublishTxMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				channel.txSelect();</span><br><span class="line">				channel.basicPublish(<span class="string">"throwable.exchange.direct"</span>, <span class="string">"direct.routingKey"</span>,</span><br><span class="line">						MessageProperties.TEXT_PLAIN, <span class="string">"Direct Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">				channel.txCommit();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">				channel.txRollback();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一般来说，事物基本是遵循&quot;等价交换的原则&quot;，消息发布的可靠性是需要性能换取的，消息发布事务的可靠性是最高的，但是代价是它的性能是比较低的。</p>
+<h2 id="消息的消费">消息的消费</h2>
+<p>消息消费主要包括推模式和拉模式，区别如下：</p>
+<ul>
+<li>推模式：客户端注册消费者到消息中间件代理的队列，也就是对队列进行订阅，消息中间件代理通过队列投递(deliver)消息到消费者中，典型方法是<code>basic-consume</code>。</li>
+<li>拉模式：客户端主动向消息中间件代理拉取队列中的消息，典型方法是<code>basic-get</code>。</li>
+</ul>
+<h3 id="消息消费之推模式">消息消费之推模式</h3>
+<p>推模式下，消息的消费依赖于Channel的<code>basicConsume</code>方法(用的是最新的RabbitMQ的Java驱动，关于消息消费的方法新增了不少，在3.X版本只有几个方法)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">basicConsume</span><span class="params">(String queue,</span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> autoAck, </span></span></span><br><span class="line"><span class="function"><span class="params">                    String consumerTag, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> noLocal, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> exclusive, </span></span></span><br><span class="line"><span class="function"><span class="params">                    Map&lt;String, Object&gt; arguments, </span></span></span><br><span class="line"><span class="function"><span class="params">                    Consumer callback)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">String <span class="title">basicConsume</span><span class="params">(String queue, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> autoAck, </span></span></span><br><span class="line"><span class="function"><span class="params">                    String consumerTag, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> noLocal, </span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">boolean</span> exclusive, </span></span></span><br><span class="line"><span class="function"><span class="params">                    Map&lt;String, Object&gt; arguments, </span></span></span><br><span class="line"><span class="function"><span class="params">                    DeliverCallback deliverCallback, </span></span></span><br><span class="line"><span class="function"><span class="params">                    CancelCallback cancelCallback, </span></span></span><br><span class="line"><span class="function"><span class="params">                    ConsumerShutdownSignalCallback shutdownSignalCallback)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<p>别看第二个方法的参数列表很庞大很吓人，它只是把<code>com.rabbitmq.client.Consumer</code>接口的部分方法拆解出来做成单独的接口，方便使用Lambda表达式，参数分析如下：</p>
+<ul>
+<li>queue：消费者订阅的队列名称。</li>
+<li>autoAck：是否自动确认(主动ack)。</li>
+<li>consumerTag：消费者标签，队列中消费者的唯一标识，如果不指定则由消息中间件代理自动生成，停止消费者和取消消费者都是基于此标识属性。</li>
+<li>noLocal：是否非本地的，如果此属性为true，则消息中间件代理不会投递消息到此消费者如果发布消息使用的连接和当前消费者建立的通道所在的连接是同一个连接，但是RabbitMQ不支持此属性。</li>
+<li>exclusive：是否独占(排他)的，如果此属性为true，队列中只能有一个消费者(也就是当前设置了exclusive=true的消费者)，消费者关闭(shutdown)</li>
+<li>arguments：消费者参数，K-V结构。</li>
+</ul>
+<p>下面看一下<code>Consumer</code>、<code>DeliverCallback</code>、<code>CancelCallback</code>和<code>ConsumerShutdownSignalCallback</code>的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Consumer</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//创建消费者成功的回调</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleConsumeOk</span><span class="params">(String consumerTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//消费者取消成功的回调 - 主动调用basicCancel或者队列删除等因素</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleCancelOk</span><span class="params">(String consumerTag)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//消费者取消的回调 - 主动调用basicCancel或者队列删除等因素</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleCancel</span><span class="params">(String consumerTag)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//消费者关闭的信号回调</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleShutdownSignal</span><span class="params">(String consumerTag, ShutdownSignalException sig)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//AMQP方法basic.recover-ok的回调</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleRecoverOk</span><span class="params">(String consumerTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//消息推模式下接受消息中间件代理投递的消息 - 核心方法</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">                        Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">                        AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">byte</span>[] body)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DeliverCallback</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//Delivery中持有了Envelope、AMQP.BasicProperties和消息体body</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle</span><span class="params">(String consumerTag, Delivery message)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CancelCallback</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">handle</span><span class="params">(String consumerTag)</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConsumerShutdownSignalCallback</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">void</span> <span class="title">handleShutdownSignal</span><span class="params">(String consumerTag, ShutdownSignalException sig)</span></span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>DeliverCallback</code>、<code>CancelCallback</code>和<code>ConsumerShutdownSignalCallback</code>实际上就是把<code>Consumer</code>接口中的部分方法抽离出来编写为函数式接口，没有特别的东西，所以我们还是关注<code>Consumer</code>接口的使用就可以了。<code>Consumer</code>接口有一个默认的实现类<code>DefaultConsumer</code>，可以直接使用。在旧版本的Java驱动中还存在一个废弃的<code>QueueingConsumer</code>，在5.X版本的驱动已经删除该类。其实，我们也可以自行实现<code>Consumer</code>接口，因为<code>DefaultConsumer</code>也仅仅是对<code>Consumer</code>接口进行了空实现，具体的方法还是需要我们覆盖实现自定义的逻辑。这里举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumeMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			channel.basicConsume(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">true</span>, <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">										   Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">										   AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">										   <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"消息序号:"</span> + envelope.getDeliveryTag());</span><br><span class="line">					System.out.println(<span class="string">"交换器:"</span> + envelope.getExchange());</span><br><span class="line">					System.out.println(<span class="string">"路由键:"</span> + envelope.getRoutingKey());</span><br><span class="line">					System.out.println(<span class="string">"消息内容:"</span> + <span class="keyword">new</span> String(body, StandardCharsets.UTF_8));</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="comment">//消息消费是异步的，要想办法阻塞消费者所在的线程和主线程，否则会退出</span></span><br><span class="line">			Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-m-s-c-c/r-m-s-c-c-2.png" alt="r-m-s-c-c-2.png"></p>
+<p>可以从Web管理界面看到消费者已经启动，消费者标签是由RabbitMQ代理随机生成的，我们开启了消息自动确认，所以Ack required一栏是空心的圆形，也就是不需要进行消息消费确认。还有一点需要注意的是：<strong><code>Consumer</code>接口的回调也就是<code>DefaultConsumer</code>中的方法回调是委托到RabbitMQ的Java驱动中的线程池执行，过程是异步的，也就是我们在写Demo的时候需要想办法挂起<code>DefaultConsumer</code>实例所在的线程和主线程，否则会导致线程退出无法消费消息</strong>。</p>
+<h3 id="消息消费之拉模式">消息消费之拉模式</h3>
+<p>拉模式下，消息消费主要依赖于Channel的<code>basicGet</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">GetResponse <span class="title">basicGet</span><span class="params">(String queue, <span class="keyword">boolean</span> autoAck)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<p>此方法很简单，只依赖于队列名称和是否自动确认两个参数，如果autoAck为false，需要手动确认。返回值如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GetResponse</span> </span>&#123;</span><br><span class="line">    <span class="comment">//信封对象，主要用于获取消息的投递标签DeliveryTag、交换器、路由键等</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Envelope envelope;</span><br><span class="line">    <span class="comment">//消息元数据</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> BasicProperties props;</span><br><span class="line">    <span class="comment">//消息体</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] body;</span><br><span class="line">    <span class="comment">//当前队列中剩余消息数量，只是个参考值</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> messageCount;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//省略Getter方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>信封对象中的投递标签DeliveryTag很重要，用于手动确认的时候指定对应的值。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicGetMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span></span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">	       provideChannel(channel -&gt; &#123;</span><br><span class="line">			   GetResponse getResponse = channel.basicGet(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">true</span>);</span><br><span class="line">			   System.out.println(String.format(<span class="string">"消息内容:%s,消息序号:%s"</span>, <span class="keyword">new</span> String(getResponse.getBody(), StandardCharsets.UTF_8),</span><br><span class="line">					   getResponse.getEnvelope().getDeliveryTag()));</span><br><span class="line">		   &#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="消息消费的确认机制">消息消费的确认机制</h2>
+<p>消息消费的确认机制保障消息中间件代理的消息成功投递到消费者中，主要包括三种类确认：</p>
+<ul>
+<li>主动积极确认：主动积极确认成功后，消息会从队列中移除，支持批量确认操作，典型方法是<code>basic-ack</code>，下面直接叫ack。</li>
+<li>主动消极确认：消极积极确认成功后，基于<code>basic-get</code>或者<code>basic-consume</code>等到的消息标签，可以选择消息重新入队列或者直接丢弃，支持批量操作，典型方法是<code>basic-nack</code>，下面直接叫nack。</li>
+<li>拒绝：基于<code>basic-get</code>或者<code>basic-consume</code>等到的消息标签进行消息拒绝，可以选择丢弃或者重新入队，下面叫做reject。</li>
+</ul>
+<p>nack和reject的基本功能是相同的，nack同时支持批量操作和单条操作，而reject只支持单条操作。消息消费确认其实是手动确认，如果针对的是<code>basicConsume</code>方法，则其autoAck属性需要设置为false，否则有可能会出现重复确认导致异常。</p>
+<h3 id="ack">ack</h3>
+<p>ack依赖于Channel的<code>basicAck</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicAck</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>deliveryTag：Envelope(信封)对象中的消息标签。</li>
+<li>multiple：是否使用批量积极确认，如果此属性为true，则消息标签小于当前deliveryTag的所有消息都会被主动积极确认，不了解此属性最好使用false。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AckMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			<span class="comment">//这里autoAck设置为false</span></span><br><span class="line">			channel.basicConsume(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">false</span>, <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">										   Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">										   AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">										   <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"消息序号:"</span> + envelope.getDeliveryTag());</span><br><span class="line">					System.out.println(<span class="string">"交换器:"</span> + envelope.getExchange());</span><br><span class="line">					System.out.println(<span class="string">"路由键:"</span> + envelope.getRoutingKey());</span><br><span class="line">					System.out.println(<span class="string">"消息内容:"</span> + <span class="keyword">new</span> String(body, StandardCharsets.UTF_8));</span><br><span class="line">					channel.basicAck(envelope.getDeliveryTag(), <span class="keyword">false</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="comment">//消息消费是异步的，要想办法阻塞消费者所在的线程和主线程，否则会退出</span></span><br><span class="line">			Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="nack">nack</h3>
+<p>nack依赖于Channel的<code>basicNack</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicNack</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> multiple, <span class="keyword">boolean</span> requeue)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>deliveryTag：Envelope(信封)对象中的消息标签。</li>
+<li>multiple：是否使用批量消极确认，如果此属性为true，则消息标签小于当前deliveryTag的所有消息都会被主动消极确认，不了解此属性最好使用false。</li>
+<li>requeue：是否重新入队，如果此属性为true，消息会被重新放置回去对应队列(如果可能的话，会放回到原来的位置)，如果此属性为false，消息直接被丢弃。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NackMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			<span class="comment">//这里autoAck设置为false</span></span><br><span class="line">			channel.basicConsume(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">false</span>, <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">										   Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">										   AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">										   <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"消息序号:"</span> + envelope.getDeliveryTag());</span><br><span class="line">					System.out.println(<span class="string">"交换器:"</span> + envelope.getExchange());</span><br><span class="line">					System.out.println(<span class="string">"路由键:"</span> + envelope.getRoutingKey());</span><br><span class="line">					System.out.println(<span class="string">"消息内容:"</span> + <span class="keyword">new</span> String(body, StandardCharsets.UTF_8));</span><br><span class="line">					channel.basicNack(envelope.getDeliveryTag(), <span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="comment">//消息消费是异步的，要想办法阻塞消费者所在的线程和主线程，否则会退出</span></span><br><span class="line">			Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>属性<code>requeue</code>如果设置为true，需要谨慎设计程序的逻辑，否则很有可能导致消息一直重复消费失败并且重复重新入队，表现为消费者线程出现死循环逻辑，耗尽服务器CPU资源。</p>
+<h3 id="reject">reject</h3>
+<p>reject的用法和nack基本一致，不过reject没有批量处理功能，依赖于<code>Channel的basicReject</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicReject</span><span class="params">(<span class="keyword">long</span> deliveryTag, <span class="keyword">boolean</span> requeue)</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+<p>简单举个使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RejectMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			GetResponse getResponse = channel.basicGet(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">true</span>);</span><br><span class="line">			channel.basicReject(getResponse.getEnvelope().getDeliveryTag(), <span class="keyword">false</span>);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="消费消息不进行消息确认会怎么样">消费消息不进行消息确认会怎么样</h3>
+<p>消息消费方法<code>basiConsume</code>中的autoAck属性设置为false，但是消费者接收到消息后不进行消息确认会怎么样？举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NoneAckMain</span> <span class="keyword">extends</span> <span class="title">BaseChannelFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		provideChannel(channel -&gt; &#123;</span><br><span class="line">			channel.basicPublish(<span class="string">"throwable.exchange.direct"</span>, <span class="string">"direct.routingKey"</span>,</span><br><span class="line">					MessageProperties.TEXT_PLAIN, <span class="string">"Direct Message"</span>.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">			<span class="comment">//autoAck = false</span></span><br><span class="line">			channel.basicConsume(<span class="string">"throwable.queue.direct"</span>, <span class="keyword">false</span>, <span class="keyword">new</span> DefaultConsumer(channel) &#123;</span><br><span class="line">				<span class="meta">@Override</span></span><br><span class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></span><br><span class="line"><span class="function"><span class="params">										   Envelope envelope,</span></span></span><br><span class="line"><span class="function"><span class="params">										   AMQP.BasicProperties properties,</span></span></span><br><span class="line"><span class="function"><span class="params">										   <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">					System.out.println(<span class="string">"消息序号:"</span> + envelope.getDeliveryTag());</span><br><span class="line">					System.out.println(<span class="string">"交换器:"</span> + envelope.getExchange());</span><br><span class="line">					System.out.println(<span class="string">"路由键:"</span> + envelope.getRoutingKey());</span><br><span class="line">					System.out.println(<span class="string">"消息内容:"</span> + <span class="keyword">new</span> String(body, StandardCharsets.UTF_8));</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">			<span class="comment">//消息消费是异步的，要想办法阻塞消费者所在的线程和主线程，否则会退出</span></span><br><span class="line">			Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行之后，控制台输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">消息序号:<span class="number">1</span></span><br><span class="line">交换器:throwable.exchange.direct</span><br><span class="line">路由键:direct.routingKey</span><br><span class="line">消息内容:Direct Message</span><br></pre></td></tr></table></figure>
+<p>查看RabbitMQ的Web管理界面，发现消息由Ready转变为Unacked状态：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-m-s-c-c/r-m-s-c-c-3.png" alt="r-m-s-c-c-3.png"></p>
+<p>尝试终止消费者所在线程，再次观察RabbitMQ的Web管理界面对应队列：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-m-s-c-c/r-m-s-c-c-4.png" alt="r-m-s-c-c-4.png"></p>
+<p>发现消息由Unacked状态恢复为Ready。这里需要注意，只有Ready状态的消息才能被消息中间件代理投递到消费者。总的来说就是：</p>
+<ul>
+<li>被路由到队列的新消息的状态为Ready，这种消息可以被消息中间件代理投递到客户端的消费者中。</li>
+<li>客户端消费者在消费消息的时候，如果采用手动确认(autoAck=false)并且没有主动确认(也就是没有调用<code>basicAck</code>、<code>basicNack</code>或者<code>basicReject</code>)，那么消息就会变为Unacked状态，Unacked状态的消息只有当所有的消费者线程终止的时候，才会重新转变为Ready状态。</li>
+</ul>
+<h2 id="小结">小结</h2>
+<p>这篇文章仅仅从基本使用来分析RabbitMQ中的消息发送、消费和确认的例子。关于消息发布确认机制和消息发布事务机制后面有专门的文章分析其性能和具体使用场景。</p>
+<p>RabbitMQ中的消息发布确认(publish confirm)和消息消费(投递)确认(deliver confirm)能够确保消息发布和消息消费阶段消息不会丢失，至于策略应该根据具体场景选择，autoAck并不适合所有的场景。</p>
+<p>(本文完 c-2-d e-a-20181125)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/11/25/rabbitmq-send-consume-confirm/>http://throwable.club/2018/11/25/rabbitmq-send-consume-confirm/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/RabbitMQ/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>RabbitMQ</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/11/25/rabbitmq-send-consume-confirm/&title=RabbitMQ消息发送、消费和确认 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/11/25/rabbitmq-send-consume-confirm/&title=RabbitMQ消息发送、消费和确认 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrElEQVR42u3aQW4bMRAEQP3/0wmQa6J19wwpO0DtybCsJYsHctzD1yt+fv15/v5N/rz77vMo+aerBw8PD2809edpJROa/X0yYv7pP5YADw8P7xrveSNuh3/GJ0fOu1Hat+Hh4eF9L6+dUD2Vx7IbDw8P7//ltUdFUmq3gQgeHh7eT+Al02pD3jYCni3TsawFDw8PL+ZtNuXv+vlifw8PDw9v0VWftaY2zf7ZMfB2Pnh4eHgXePsm0yzSnf0mX5pizfDw8PBKXvIP/A3k7C/rOePh4eFd4D0P8DzpPJY9u0u35TgeHh7eWd6s7dReHZghN1EIHh4e3md4SfNpdmDMDpX2u6sbDXh4eHjdPlwU1m1MkCxEvljPpOhmGR4eHt4hXhsTtBHtpig/EHng4eHhHeXda4AVJ1J8FNXXDvDw8PAu8No4IN+sZxcCzsbBeHh4eDd4m6sAs/ZVUqA/hxTFO/Hw8PAu8PKe0dm2WV5A7+MPPDw8vLO8vD2fb9b5ouRR76t88PDw8D7DOxvU5gVxEkO0b8PDw8P7JC8fbHYkzDb6tkDHw8PDu8fL44O26TV7c/LdfAnw8PDw7vGKIvVQIypfiDaBfvspHh4e3gXeDJkEsm0ZvYmG8fDw8D7Da1v4m2I6mVxeyhf/MeDh4eEd4rVb+f54mJXFbUyMh4eH90nePrTNi/I86sXDw8P7ObyigXQo0p0dLcdaZXh4eHhr3uZC1b5B1YYO7QLh4eHh3eC1TankFe1lgrzNlh8neHh4eLd5yWGQDNwW3PlhcKy/h4eHh3eUl5e/m6sDs7FWhxYeHh7et/LywTZNsrbQ/2L58PDw8H4AL5n6foFmh9OqpMbDw8MreXkYUQQBcfm7SaCjkhoPDw/vKG/WAGsHmF1ByEvz1+bBw8PDS3m/ATnnu2DlqU34AAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/11/25/rabbitmq-send-consume-confirm/&title=RabbitMQ消息发送、消费和确认 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrElEQVR42u3aQW4bMRAEQP3/0wmQa6J19wwpO0DtybCsJYsHctzD1yt+fv15/v5N/rz77vMo+aerBw8PD2809edpJROa/X0yYv7pP5YADw8P7xrveSNuh3/GJ0fOu1Hat+Hh4eF9L6+dUD2Vx7IbDw8P7//ltUdFUmq3gQgeHh7eT+Al02pD3jYCni3TsawFDw8PL+ZtNuXv+vlifw8PDw9v0VWftaY2zf7ZMfB2Pnh4eHgXePsm0yzSnf0mX5pizfDw8PBKXvIP/A3k7C/rOePh4eFd4D0P8DzpPJY9u0u35TgeHh7eWd6s7dReHZghN1EIHh4e3md4SfNpdmDMDpX2u6sbDXh4eHjdPlwU1m1MkCxEvljPpOhmGR4eHt4hXhsTtBHtpig/EHng4eHhHeXda4AVJ1J8FNXXDvDw8PAu8No4IN+sZxcCzsbBeHh4eDd4m6sAs/ZVUqA/hxTFO/Hw8PAu8PKe0dm2WV5A7+MPPDw8vLO8vD2fb9b5ouRR76t88PDw8D7DOxvU5gVxEkO0b8PDw8P7JC8fbHYkzDb6tkDHw8PDu8fL44O26TV7c/LdfAnw8PDw7vGKIvVQIypfiDaBfvspHh4e3gXeDJkEsm0ZvYmG8fDw8D7Da1v4m2I6mVxeyhf/MeDh4eEd4rVb+f54mJXFbUyMh4eH90nePrTNi/I86sXDw8P7ObyigXQo0p0dLcdaZXh4eHhr3uZC1b5B1YYO7QLh4eHh3eC1TankFe1lgrzNlh8neHh4eLd5yWGQDNwW3PlhcKy/h4eHh3eUl5e/m6sDs7FWhxYeHh7et/LywTZNsrbQ/2L58PDw8H4AL5n6foFmh9OqpMbDw8MreXkYUQQBcfm7SaCjkhoPDw/vKG/WAGsHmF1ByEvz1+bBw8PDS3m/ATnnu2DlqU34AAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/11/28/rabbitmq-extension-confirm-cancel/" rel="prev" title="RabbitMQ扩展之消费者取消通知">
+                                  
+                                      RabbitMQ扩展之消费者取消通知
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/11/25/rabbitmq-component-operation/" rel="prev" title="RabbitMQ队列、交换器和绑定的操作">
+                                    
+                                        RabbitMQ队列、交换器和绑定的操作
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'RabbitMQ消息发送、消费和确认',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#消息的发送"><span class="toc-text">消息的发送</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消息的元数据"><span class="toc-text">消息的元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mandatory属性的作用"><span class="toc-text">mandatory属性的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息发送的确认机制"><span class="toc-text">消息发送的确认机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息发布事务"><span class="toc-text">消息发布事务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息的消费"><span class="toc-text">消息的消费</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#消息消费之推模式"><span class="toc-text">消息消费之推模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消息消费之拉模式"><span class="toc-text">消息消费之拉模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息消费的确认机制"><span class="toc-text">消息消费的确认机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ack"><span class="toc-text">ack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nack"><span class="toc-text">nack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reject"><span class="toc-text">reject</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#消费消息不进行消息确认会怎么样"><span class="toc-text">消费消息不进行消息确认会怎么样</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

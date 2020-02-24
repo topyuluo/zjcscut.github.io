@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>深入理解Java中的Garbage Collection | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/06/09/java-jvm-garbage-collection-summary/">
+        深入理解Java中的Garbage Collection
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/JVM/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;JVM</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年6月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-09T11:56:26+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：22分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近由于系统业务量比较大，从生产的GC日志(结合Pinpoint)来看，需要对部分系统进行GC调优。但是鉴于以往不是专门做这一块，但是一直都有零散的积累，这里做一个相对全面的总结。本文只针对<code>HotSpot VM</code>也就是<code>Oracle Hotspot VM</code>或者<code>OpenJDK Hotspot VM</code>，版本为Java8，其他VM不一定适用。</p>
+<h2 id="什么是GC-Garbage-Collection">什么是GC(Garbage Collection)</h2>
+<p><code>Garbage Collection</code>可以翻译为“垃圾收集” – 一般主观上会认为做法是：找到垃圾，然后把垃圾扔掉。在VM中，GC的实现过程恰恰相反，GC的目的是为了追踪所有正在使用的对象，并且将剩余的对象标记为垃圾，随后标记为垃圾的对象会被清除，回收这些垃圾对象占据的内存，从而实现内存的自动管理。</p>
+<a id="more"></a>
+<h2 id="分代假说-Generational-Hypothesis">分代假说(Generational Hypothesis)</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">具体内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">弱分代假说（Weak Generational Hypothesis）</td>
+<td style="text-align:center">大多数对象在年轻时死亡</td>
+</tr>
+<tr>
+<td style="text-align:center">强分代假说（Strong Generational Hypothesis）</td>
+<td style="text-align:center">越老的对象越不容易死亡</td>
+</tr>
+</tbody>
+</table>
+<p><strong>弱分代假说</strong>已经在各种不同类型的编程范式或者编程语言中得到证实，而<strong>强分代假说</strong>目前提供的证据并不充足，观点还存在争论。</p>
+<p>分代垃圾回收器的主要设计目的是减少回收过程的停顿时间，同时提升空间吞吐量。如果采用复制算法对年轻代对象进行回收，那么期望的停顿时间很大程度取决于次级回收(<code>Minor Collection</code>)之后存活的对象总量，而这一数值又取决于年轻代的整体空间。</p>
+<p>如果年轻代的整体空间太小，虽然一次回收的过程比较快，但是由于两次回收之间的间隔太短，年轻代对象有可能没有足够的时间“到达死亡”，因而导致回收的内存不多，有可能引发下面的情况：</p>
+<ul>
+<li>年轻代的对象回收过于频繁并且存活下来需要复制的对象数量变多，增大垃圾回收器停顿线程和扫描其栈上数据的开销。</li>
+<li>将较大比例的年轻代对象提升到老年代会导致老年代被快速填充，会影响整个堆的垃圾回收速率。</li>
+<li>许多证据表明，对新生代对象的修改会比老年代对象的修改更加频繁，如果过早将年轻代对象晋升到老年代，那么大量的更新操作(<code>mutation</code>)会给赋值器的写屏障带来比较大的压力。</li>
+<li>对象的晋升会使得程序的工作集合变得稀疏。</li>
+</ul>
+<p>分代垃圾回收器的设计师对上面几个方面进行平衡的一门艺术：</p>
+<ol>
+<li>要尽量加快次级回收的速度。</li>
+<li>要尽量减少次级回收的成本。</li>
+<li>要减少回收成本更高的主回收(<code>Major Collection</code>)。</li>
+<li>要适当减少赋值器的内存管理开销。</li>
+</ol>
+<p>基于<strong>弱分代假说</strong>，JVM中把堆内存分为年轻代(<strong>Young Generation</strong>)和老年代(<strong>Old Generation</strong>)，而老年代有些时候也称为<strong>Tenured</strong>。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-2.png" alt="j-v-m-g-c-s-2.png"></p>
+<p>JVM对不同分代提供了不同的垃圾回收算法。实际上，不同分代之间的对象有可能相互引用，这些被引用的对象在分代垃圾回收的时候也会被视为<code>GC Roots</code>(见下一节分析)。弱分代假说有可能在特定场景中对某些应用是不适用的；而GC算法针对年轻代或者老年代的对象进行了优化，对于具备“中等”预期寿命的对象，JVM的垃圾回收表现是相对劣势的。</p>
+<h2 id="对象判活算法">对象判活算法</h2>
+<p>JVM中是通过可达性算法(<code>Reachability Analysis</code>)来判定对象是否存活的。这个算法的基本思路就是：通过一些列的称为<code>GC Roots(GC根集合)</code>的活跃引用为起始点，从这些集合节点开始向下搜索，搜索所走过的路径称为引用链(<code>Reference Chain</code>)，当一个对象到<code>GC Roots</code>没有任何引用链相连时，说明该对象是不可达的。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-1.png" alt="j-v-m-g-c-s-1.png"></p>
+<p><code>GC Roots</code>具体是指什么？这一点可以从<code>HotSpot VM</code>的<code>Parallel Scavenge</code>源码实现总结出来，参考jdk9分支的<code>psTasks.hpp</code>和<code>psTasks.cpp</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// psTasks.hpp</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScavengeRootsTask</span> :</span> <span class="keyword">public</span> GCTask &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">enum</span> RootType &#123;</span><br><span class="line">    universe              = <span class="number">1</span>,</span><br><span class="line">    jni_handles           = <span class="number">2</span>,</span><br><span class="line">    threads               = <span class="number">3</span>,</span><br><span class="line">    object_synchronizer   = <span class="number">4</span>,</span><br><span class="line">    flat_profiler         = <span class="number">5</span>,</span><br><span class="line">    system_dictionary     = <span class="number">6</span>,</span><br><span class="line">    class_loader_data     = <span class="number">7</span>,</span><br><span class="line">    management            = <span class="number">8</span>,</span><br><span class="line">    jvmti                 = <span class="number">9</span>,</span><br><span class="line">    code_cache            = <span class="number">10</span></span><br><span class="line">  &#125;;</span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  RootType _root_type;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  ScavengeRootsTask(RootType value) : _root_type(value) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">char</span>* <span class="title">name</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> (<span class="keyword">char</span> *)<span class="string">"scavenge-roots-task"</span>; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">do_it</span><span class="params">(GCTaskManager* manager, uint which)</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// psTasks.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ScavengeRootsTask::do_it</span><span class="params">(GCTaskManager* manager, uint which)</span> </span>&#123;</span><br><span class="line">  assert(ParallelScavengeHeap::heap()-&gt;is_gc_active(), <span class="string">"called outside gc"</span>);</span><br><span class="line"></span><br><span class="line">  PSPromotionManager* pm = PSPromotionManager::gc_thread_promotion_manager(which);</span><br><span class="line">  <span class="function">PSScavengeRootsClosure <span class="title">roots_closure</span><span class="params">(pm)</span></span>;</span><br><span class="line">  <span class="function">PSPromoteRootsClosure  <span class="title">roots_to_old_closure</span><span class="params">(pm)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> (_root_type) &#123;</span><br><span class="line">    <span class="keyword">case</span> universe:</span><br><span class="line">      Universe::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> jni_handles:</span><br><span class="line">      JNIHandles::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> threads:</span><br><span class="line">    &#123;</span><br><span class="line">      ResourceMark rm;</span><br><span class="line">      Threads::oops_do(&amp;roots_closure, <span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> object_synchronizer:</span><br><span class="line">      ObjectSynchronizer::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> flat_profiler:</span><br><span class="line">      FlatProfiler::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> system_dictionary:</span><br><span class="line">      SystemDictionary::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> class_loader_data:</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="function">PSScavengeKlassClosure <span class="title">klass_closure</span><span class="params">(pm)</span></span>;</span><br><span class="line">      ClassLoaderDataGraph::oops_do(&amp;roots_closure, &amp;klass_closure, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> management:</span><br><span class="line">      Management::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> jvmti:</span><br><span class="line">      JvmtiExport::oops_do(&amp;roots_closure);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> code_cache:</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="function">MarkingCodeBlobClosure <span class="title">each_scavengable_code_blob</span><span class="params">(&amp;roots_to_old_closure, CodeBlobToOopClosure::FixRelocations)</span></span>;</span><br><span class="line">        CodeCache::scavenge_root_nmethods_do(&amp;each_scavengable_code_blob);</span><br><span class="line">        AOTLoader::oops_do(&amp;roots_closure);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      fatal(<span class="string">"Unknown root type"</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Do the real work</span></span><br><span class="line">  pm-&gt;drain_stacks(<span class="literal">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于<code>HotSpot VM</code>的源码里面注释比较少，所以只能参考一些资料和源码方法的具体实现猜测<code>GC Roots</code>的具体组成：</p>
+<ul>
+<li><code>Universe::oops_do</code>：VM的一些静态数据结构里指向GC堆里的对象的活跃引用等等。</li>
+<li><code>JNIHandles::oops_do</code>：所有的JNI handle，包括所有的global handle和local handle。</li>
+<li><code>Threads::oops_do</code>：所有线程的虚拟机栈，具体应该是所有Java线程当前活跃的栈帧里指向GC堆里的对象的引用，或者换句话说，当前所有正在被调用的方法的引用类型的参数/局部变量/临时值。</li>
+<li><code>ObjectSynchronizer::oops_do</code>：所有被对象同步器关联的对象，看源码应该是<code>ObjectMonitor</code>中处于Block状态的对象，从Java代码层面应该是通过<code>synchronized</code>关键字加锁或者等待加锁的对象。</li>
+<li><code>FlatProfiler::oops_do</code>：所有线程的中的<code>ThreadProfiler</code>。</li>
+<li><code>SystemDictionary::oops_do</code>：<code>System Dictionary</code>，也就是系统字典，是记录了指向<code>Klass</code>，KEY是一个Entry，由<code>KalssName</code>和<code>Classloader</code>组成，实际上，YGC不会处理<code>System Dictionary</code>，但是会扫描<code>System Dictionary</code>，某些GC可能触发类卸载功能，可以这样理解：<code>System Dictionary</code>包含了所有的类加载器。</li>
+<li><code>ClassLoaderDataGraph::oops_do</code>：所有已加载的类或者已加载的系统类。</li>
+<li><code>Management::oops_do</code>：<code>MBean</code>所持有的对象。</li>
+<li><code>JvmtiExport::oops_do</code>：<code>JVMTI</code>导出的对象，断点或者对象分配事件收集器相关的对象。</li>
+<li><code>CodeCache::scavenge_root_nmethods_do</code>：代码缓存(Code Cache)。</li>
+<li><code>AOTLoader::oops_do</code>：AOT加载器相关，包括了AOT相关代码缓存。</li>
+</ul>
+<p>还有其他有可能的引用：</p>
+<p><code>StringTable::oops_do</code>：所有驻留的字符串(<code>StringTable</code>中的)。</p>
+<h2 id="JVM中的内存池">JVM中的内存池</h2>
+<p>JVM把内存池划分为多个区域，下面分别介绍每个区域的组成和基本功能，方便下面介绍GC算法的时候去理解垃圾收集如何在不同的内存池空间中发挥其职责。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-3.png" alt="j-v-m-g-c-s-3.png"></p>
+<ul>
+<li>年轻代(<strong>Young Generation</strong>)：包括<strong>Eden</strong>和<strong>Survivor Spaces</strong>，而<strong>Survivor Spaces</strong>又等分为<strong>Survivor 0</strong>和<strong>Survivor 1</strong>，有时候也称为<strong>from</strong>和<strong>to</strong>两个区。</li>
+<li>老年代(<strong>Old Generation</strong>)：一般称为<strong>Tenured</strong>。</li>
+<li>元空间：称为<strong>Metaspace</strong>，在Java8中VM已经移除了永久代<strong>Permanent Generation</strong>。</li>
+</ul>
+<h3 id="Eden">Eden</h3>
+<blockquote>
+<p>伊甸园是地上的乐园，根据《圣经·旧约·创世纪》记载，神·耶和华照自己的形像造了人类的祖先男人亚当，再用亚当的一个肋骨创造了女人夏娃，并安置第一对男女住在伊甸园中。</p>
+</blockquote>
+<p><strong>Eden</strong>，也就是伊甸园，是一块普通的在创建对象的时候进行对象分配的内存区域。而<strong>Eden</strong>进一步划分为驻留在<strong>Eden</strong>空间中的一个或者多个<strong>Thread Local Allocation Buffer(线程本地分配缓冲区，简称TLAB)</strong>，<strong>TLAB</strong>是线程独占的。JVM允许线程在创建大多数对象的时候直接在相应的<strong>TLAB</strong>中进行分配，这样可以避免多线程之间进行同步带来的性能开销。</p>
+<p>当无法在<strong>TLAB</strong>中进行对象分配的时候(一般是缓冲区没有足够的空间)，那么对象分配操作将会在<strong>Eden</strong>中共享的空间(<strong>Common Area</strong>)中进行。如果整个<strong>Eden</strong>都没有足够的空间，则会触发<strong>YGC(Young Generation Garbage Collection)</strong>，以释放更多的<strong>Eden</strong>中的空间。触发YGC后依然没有足够的内存，那么对象就会在老年代中分配（一般这种情况称为<strong>分配担保(Handle Promotion)</strong>，是有前置条件的）。</p>
+<p>当垃圾回收器收集<strong>Eden</strong>的时候，会遍历所有相对于<code>GC Roots</code>可达的对象，并且标记它们是<strong>活</strong>对象，这一阶段称为<strong>标记</strong>阶段。</p>
+<p>这里还有一点需要注意的是：堆中的对象有可能跨代链接，也就是有可能年轻代中的对象被老年代中的对象持有(注：老年代中的对象被年轻代中的对象持有这种情况在YGC中不需要考虑)，这个时候如果不遍历老年代的对象，那么就无法通过可达性算法分析这种被被老年代中的对象持有的年轻代对象是否可达。JVM中采用了<strong>Card Marking</strong>（<strong>卡片标记</strong>）的方式解决了这个问题，这里不对卡片标记的细节实现进行展开。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-4.png" alt="j-v-m-g-c-s-4.png"></p>
+<p>标记阶段完成后，<strong>Eden</strong>中所有存活的对象会被复制到<strong>幸存者空间(Survivor Spaces)</strong> 的其中一块空间。复制阶段完成后，整个<strong>Eden</strong>被认为是空的，可以重新用于分配更多其他的对象。这里采用的GC算法称为<strong>标记-复制(Mark and Copy)</strong> 算法：标记存活的对象，然后复制它们到<strong>幸存者空间(Survivor Spaces)</strong> 的其中一块空间，注意这里<strong>是复制，不是移动</strong>。</p>
+<p>关于<strong>Eden</strong>就介绍这么多，其中<strong>TLAB</strong>和<strong>Card Marking</strong>是JVM中的相对底层实现，大概知道即可。</p>
+<h3 id="Survivor-Spaces">Survivor Spaces</h3>
+<p><strong>Survivor Spaces</strong>也就是幸存者空间，幸存者空间最常用的名称是<strong>from</strong>和<strong>to</strong>。最重要的一点是：幸存者空间中的两个区域总有一个区域是空的。</p>
+<p>下一次YGC触发之后，空闲的那一块幸存者空间才会入驻对象。年轻代的所有存活的对象(包括Eden和非空的from幸存者区域中的存活对象)，都会被复制到to幸存者区域，这个过程完成之后，to幸存者区域会存放着活跃的对象，而from幸存者区域会被清空。接下来，from幸存者区域和to幸存者区域的角色会交换，也就是下一轮YGC触发之后存活的对象会复制到from幸存者区域，而to幸存者区域会被清空，如此循环往复。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-5.png" alt="j-v-m-g-c-s-5.png"></p>
+<p>上面提到的存活对象的复制过程在两个幸存者空间之间多次往复之后，某些存活的对象“年龄足够大”(经过多次复制还存活下来)，则这些“年纪大的”对象就会晋升到老年代中，这些对象会从幸存者空间移动到老年代空间中，然后它们就驻留在老年代中，直到自身变为不可达。</p>
+<p>如果对象在<strong>Eden</strong>中出生并且经过了第一次<strong>YGC</strong>之后依然存活，并且能够被<strong>Survivor Spaces</strong>容纳的话，对象将会被复制到<strong>Survivor Spaces</strong>并且对象年龄被设定为1。对象在<strong>Survivor Spaces</strong>中每经历一次<strong>YGC</strong>之后还能存活下来，则对象年龄就会增加1，当它的年龄增加到<strong>晋升老年代的年龄阈值</strong>，那么它就会晋升到老年代也就是被移动到老年代中。<strong>晋升老年代的年龄阈值</strong>的JVM参数是<code>-XX:MaxTenuringThreshold=n</code>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VM参数</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">可选值</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>-XX:MaxTenuringThreshold=n</code></td>
+<td style="text-align:center"><strong>Survivor Spaces</strong>存活对象晋升老年代的年龄阈值</td>
+<td style="text-align:center">1&lt;= n &lt;= 15</td>
+<td style="text-align:center">15</td>
+</tr>
+</tbody>
+</table>
+<p>值得注意的是：JVM中设置<code>-XX:MaxTenuringThreshold</code>的默认值为最大可选值，也就是15。</p>
+<p>JVM还具备<strong>动态对象年龄判断</strong>的功能，JVM并不是永远地要求存活对象的年龄必须达到<code>MaxTenuringThreshold</code>才能晋升到老年代，如果在<strong>Survivor Spaces</strong>中相同年龄的所有对象的大小总和大于<strong>Survivor Spaces</strong>的一半，那么年龄大于或者等于该年龄的对象可以直接晋升到老年代，不需要等待对象年龄到达<code>MaxTenuringThreshold</code>，例如：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">占比</th>
+<th style="text-align:center">年龄</th>
+<th style="text-align:center">动作(<code>MaxTenuringThreshold=15</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>ObjectType-1</code></td>
+<td style="text-align:center">60%</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">下一次YGC如果存活直接晋升到老年代</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ObjectType-2</code></td>
+<td style="text-align:center">1%</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">下一次YGC如果存活直接晋升到老年代</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ObjectType-3</code></td>
+<td style="text-align:center">10%</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">下一次YGC如果存活对象年龄增加1</td>
+</tr>
+</tbody>
+</table>
+<p>可以简单总结一下对象进入老年代的几种情况：</p>
+<ul>
+<li>多次YGC对象存活下来并且年龄到达设定的<code>-XX:MaxTenuringThreshold=n</code>导致对象晋升。</li>
+<li>因为动态对象年龄判断导致对象晋升。</li>
+<li>大对象直接进入老年代，这里大对象通常指需要大量连续内存的Java对象，最常见的就是<strong>大型的数组对象</strong>或者<strong>长度很大的字符串</strong>，因为年轻代完全有可能装不下这类大对象。</li>
+<li>年轻代空间不足的时候，老年代会进行空间分配担保，这种情况下对象也是直接在老年代分配。</li>
+</ul>
+<h3 id="Tenured">Tenured</h3>
+<p>老年代(<strong>Old Generation</strong>)更多时候被称为<strong>Tenured</strong>，它的内存空间的实现一般会更加复杂。老年代空间一般要比年轻大大得多，它里面承载的对象一般不会是“内存垃圾”，侧面也说明老年代中的对象的回收率一般比较低。</p>
+<p>老年代发生GC的频率一般情况下会比年轻代低，并且老年代中的大多数对象都被期望为存活的对象(也就是对象经历GC之后存活率比较高)，因此标记和复制算法并不适用于老年代。老年代的GC算法一般是移动对象以最小化内存碎片。老年代的GC算法一般规则如下：</p>
+<ul>
+<li>通过<code>GC Roots</code>遍历和标记所有可达的对象。</li>
+<li>删除所有相对于<code>GC Roots</code>不可达的对象。</li>
+<li>通过把存活的对象连续地复制到老年代内存空间的开头(也就是起始地址的一端)以压缩老年代内存空间的内容，这个过程主要包括显式的内存压缩从而避免过多的内存碎片。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-6.png" alt="j-v-m-g-c-s-6.png"></p>
+<h3 id="Metaspace">Metaspace</h3>
+<p>在Java8之前JVM内存池中还定义了一块空间叫永久代(<strong>Permanent Generation</strong>)，这块内存空间主要用于存放元数据例如<code>Class</code>信息等等，它还存放其他数据内容，例如驻留的字符串(字符串常量池)。实际上永久代曾经给Java开发者带来了很多麻烦，因为大多数情况下很难预测永久代需要设定多大的空间，因为开发者也很难预测元数据或者字符串常量池的具体大小，一旦分配的元数据等内容出现了失败就会遇到<code>java.lang.OutOfMemoryError: Permgen space</code>异常。排除内存溢出导致的<code>java.lang.OutOfMemoryError</code>异常，如果是正常情况下导致的异常，唯一的解决手段就是通过VM参数<code>-XX:MaxPermSize=XXXXm</code>增大永久代的内存，不过这样也是治标不治本。</p>
+<p>因为元数据等内容是难以预测的，Java8中已经移除了永久代，新增了一块内存区域<strong>Metaspace(元空间)</strong>，很多其他杂项(例如字符串常量池)都移动了Java堆中。<code>Class</code>定义信息等元数据目前是直接加载到元空间中。元空间是一片分配在机器本地内存(<code>native memory</code>)的内存区，<strong>它和承载Java对象的堆内存是隔离的</strong>。默认情况下，元空间的大小仅仅受限于机器本地内存可以分配给Java程序的极限值，这样基本可以避免因为添加新的类导致<code>java.lang.OutOfMemoryError: Permgen space</code>异常发生的场景。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VM参数</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">可选值</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>XX:MetaspaceSize=Xm</code></td>
+<td style="text-align:center"><strong>Metaspace扩容时触发FullGC的初始化阈值</strong></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>XX:MaxMetaspaceSize=Ym</code></td>
+<td style="text-align:center"><strong>Metaspace的内存上限</strong></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">接近于无穷大</td>
+</tr>
+</tbody>
+</table>
+<h3 id="常用内存池相关的VM参数">常用内存池相关的VM参数</h3>
+<ul>
+<li><strong>-Xmx</strong> 和 <strong>-Xms</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VM参数</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">可选值</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>-Xmx</code></td>
+<td style="text-align:center"><strong>设置最大堆内存大小</strong></td>
+<td style="text-align:center">有下限控制，视VM版本</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-Xms</code></td>
+<td style="text-align:center"><strong>设置最小堆内存大小</strong></td>
+<td style="text-align:center">有下限控制，视VM版本</td>
+<td style="text-align:center">-</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-7.png" alt="j-v-m-g-c-s-7.png"></p>
+<hr>
+<ul>
+<li><strong>-Xmn</strong>、<strong>-XX:NewRatio</strong> 和 <strong>-XX:SurvivorRatio</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">VM参数</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">可选值</th>
+<th style="text-align:center">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>-Xmn</code></td>
+<td style="text-align:center"><strong>设置年轻代内存大小</strong></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:NewRatio=</code></td>
+<td style="text-align:center"><strong>设置老年代和年轻代的内存大小比值，设置为4表示年轻代占堆内存的1/5</strong></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>-XX:SurvivorRatio=</code></td>
+<td style="text-align:center"><strong>设置Eden和幸存者区域的内存大小比值，设置为8表示from:to:Eden=1:1:8</strong></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">8</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-8.png" alt="j-v-m-g-c-s-8.png"></p>
+<h2 id="GC类型">GC类型</h2>
+<p>参考R大(<code>RednaxelaFX</code>)的知乎回答，其实在<code>HotSpot VM</code>的GC分类只有两大种：</p>
+<ul>
+<li><code>Partial GC</code>：也就是<strong>部分GC</strong>，不收集整个GC堆。
+<ul>
+<li><code>Young GC</code>：只收集young gen的GC。</li>
+<li><code>Old GC</code>：只收集old gen的GC，目前只有CMS的concurrent collection是这个模式。</li>
+<li><code>Mixed GC</code>：收集整个young gen以及部分old gen的GC，目前只有G1有这个模式。</li>
+</ul>
+</li>
+<li><code>Full GC</code>：收集整个堆，包括young gen、old gen、perm gen（如果存在的话）等所有部分的模式。</li>
+</ul>
+<p>因为<code>HotSpot VM</code>发展多年，外界对GC的名词解读已经混乱，所以才出现了<code>Minor GC</code>、<code>Major GC</code>和<code>Full GC</code>。</p>
+<h3 id="Minor-GC">Minor GC</h3>
+<p><strong>Minor GC</strong>，也就是<strong>Minor Garbage Collection</strong>，直译为次级垃圾回收，它的定义相对清晰：<strong>发生在年轻代</strong>的垃圾回收就叫做Minor GC。<strong>Minor Garbage Collection</strong>处理过程中会发生：</p>
+<ol>
+<li>当JVM无法为新的对象分配内存空间的时候，始终会触发Minor GC，常见的情况如Eden的内存已经满了，并且对象分配的发生率越高，Minor GC发生的频率越高。</li>
+<li>Minor GC期间，老年代中的对象会被忽略。老年代中的对象引用的年轻代的对象会被认为是<strong>GC Roots</strong>的一部分，在标记阶段会简单忽略年轻代对象中引用的老年代对象。</li>
+<li>Minor GC会导致<strong>Stop The World</strong>，表现为暂停应用线程。大多数情况下，Eden中的大多数对象都可以视为垃圾并且这些垃圾不会被复制到幸存者空间，这个时候Minor GC的停顿时间会十分短暂，甚至可以忽略不计。相反，如果Eden中有大量存活对象需要复制到幸存者空间，那么Minor GC的停顿时间会显著增加。</li>
+</ol>
+<h3 id="Major-GC和Full-GC">Major GC和Full GC</h3>
+<p><strong>Major GC</strong>(<strong>Major Garbage Collection</strong>，可以直译为主垃圾收集)和<strong>Full GC</strong>目前是两个没有正式定义的术语，具体来说就是：JVM规范中或者垃圾收集研究论文中都没有明确定义Major GC或者Full GC。不过按照民间或者约定俗成，两者区别如下：</p>
+<ul>
+<li><strong>Major GC</strong>：对老年代进行垃圾收集。</li>
+<li><strong>Full GC</strong>：对整个堆进行垃圾收集 – 包括年轻代和老年代。</li>
+</ul>
+<p>实际上，GC过程是十分复杂的，而且很多<strong>Major GC</strong>都是由<strong>Minor GC</strong>触发的，所以要严格分割<strong>Major GC</strong>或者<strong>Minor GC</strong>几乎是不可能的。另一方面，现在垃圾收集算法像<strong>G1</strong>收集算法提供部分垃圾回收功能，侧面说明并<strong>不能单纯按照收集什么区域来划分GC的类型</strong>。</p>
+<p>上面的一些理论或者资料指明：<strong>与其讨论或者担心GC到底是Major GC或者是Minor GC，不如花更多精力去关注GC过程是否会导致应用的线程停顿或者GC过程是否能够和应用线程并发执行</strong>。</p>
+<h2 id="常用的GC算法">常用的GC算法</h2>
+<p>下面分析一下目前<code>Hotspot VM</code>中比较常见的GC算法，因为G1算法相对复杂，这里暂时没有能力分析。</p>
+<h3 id="GC算法的目的">GC算法的目的</h3>
+<p>GC算法的目的主要有两个：</p>
+<ol>
+<li>找出所有存活的对象，对它们进行标记。</li>
+<li>移除所有无用的对象。</li>
+</ol>
+<p>寻找存活的对象主要是基于<code>GC Roots</code>的可达性算法，关于标记阶段有几点注意事项：</p>
+<ol>
+<li>标记阶段所有应用线程将会停顿(也就是<strong>Stop The World</strong>)，应用线程暂时停顿保存其信息在还原点中(<strong>Safepoint</strong>)。</li>
+<li>标记阶段的持续时间并不取决于堆中的对象总数或者是堆的大小，而是取决于存活对象的总数，因此增加堆的大小并不会显著影响标记阶段的持续时间。</li>
+</ol>
+<p>标记阶段完成后的下一个阶段就是移除所有无用的对象，按照处理方式分为三种常见的算法：</p>
+<ul>
+<li><strong>Sweep</strong> – 清理，也就是<code>Mark and Sweep</code>，标记-清理。</li>
+<li><strong>Compact</strong> – 压缩，也就是<code>Mark-Sweep-Compact</code>，标记-清理-压缩。</li>
+<li><strong>Copy</strong> – 复制，也就是<code>Mark and Copy</code>，标记-复制。</li>
+</ul>
+<h3 id="Mark-Sweep算法">Mark-Sweep算法</h3>
+<p><strong>Mark-Sweep</strong>算法，也就是<strong>标记-清理</strong>算法，是一种间接回收算法(<strong>Indirect Collection</strong>)，它并非直接检测垃圾对象本身，而是先确定所有存活的对象，然后反过来判断其他对象是垃圾对象。主要包括标记和清理两个阶段，它是最简单和最基础的收集算法，主要包括两个阶段：</p>
+<ul>
+<li>第一阶段为追踪(<strong>trace</strong>)阶段：收集器从<code>GC Roots</code>开始遍历所有可达对象，并且对这些存活的对象进行标记(<strong>mark</strong>)。</li>
+<li>第二阶段为清理(<strong>sweep</strong>)阶段：收集器把所有未标记的对象进行清理和回收。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-9.png" alt="j-v-m-g-c-s-9.png"></p>
+<h3 id="Mark-Sweep-Compact算法">Mark-Sweep-Compact算法</h3>
+<p>内存碎片化是非移动式收集算法无法解决的一个问题之一：尽管堆中有可用空间，但是内存管理器却无法找到一块连续内存块来满足较大对象的分配需求，或者花费较长时间才能找到合适的空闲内存空间。</p>
+<p><strong>Mark-Sweep-Compact</strong>算法，也就是<strong>标记-清理-压缩</strong>算法，也是一种间接回收算法(<strong>Indirect Collection</strong>)，它主要包括三个阶段：</p>
+<ul>
+<li>标记阶段：收集器从<code>GC Roots</code>开始遍历所有可达对象，并且对这些存活的对象进行标记。</li>
+<li>清理阶段：收集器把所有未标记的对象进行清理和回收。</li>
+<li>压缩阶段：收集器把所有存活的对象移动到堆内存的起始端，然后清理掉端边界之外的内存空间。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-10.png" alt="j-v-m-g-c-s-10.png"></p>
+<p>对堆内存进行压缩整理可以有效地降低内存外部碎片化(<strong>External Fragmentation</strong>)问题，这个是<strong>标记-清理-压缩</strong>算法的一个优势。</p>
+<h3 id="Mark-Copy算法">Mark-Copy算法</h3>
+<p><strong>Mark-Copy</strong>算法，也就是<strong>标记-复制</strong>算法，和标记-清理-压缩算法十分相似，重要的区别在于：标记-复制算法在标记和清理完成之后，所有存活的对象会被复制到一个不同的内存区域 – 幸存者空间。主要包括三个阶段：</p>
+<ul>
+<li>标记阶段：收集器从<code>GC Roots</code>开始遍历所有可达对象，并且对这些存活的对象进行标记。</li>
+<li>清理阶段：收集器把所有未标记的对象进行清理和回收  — <strong>实际上这一步可能是不存在的，因为存活对象指针被复制之后，原来指针所在的位置已经可以重新分配新的对象，可以不进行清理</strong>。</li>
+<li>复制阶段：把所有存活的对象复制到<strong>Survivor Spaces</strong>中的某一块空间中。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-v-m-g-c-s-11.png" alt="j-v-m-g-c-s-11.png"></p>
+<p>标记-复制算法可以避免内存碎片化的问题，但是它的代价比较大，因为用的是半区复制回收，区域可用内存为原来的一半。</p>
+<h2 id="小结">小结</h2>
+<p>JVM和GC是Java开发者必须掌握的内容，包含的知识其实还是挺多的，本文也只是简单介绍了一些基本概念：</p>
+<ul>
+<li>分代假说。</li>
+<li>Minor GC、Major GC和Full GC。</li>
+<li>内存池组成。</li>
+<li>常用的GC算法。</li>
+</ul>
+<p>后面会分析一下GC收集器搭配和GC日志查看、JVM提供的工具等等。</p>
+<p>参考资料：</p>
+<ul>
+<li>《深入理解Java虚拟机-2nd》</li>
+<li>《The Garbage Collection Handbook》</li>
+<li>知乎-RednaxelaFX部分回答</li>
+<li><a href="https://plumbr.io/handbook/what-is-garbage-collection" target="_blank" rel="noopener">Java Garbage Collection handbook</a></li>
+<li><code>OpenJDK HotSpot VM</code>部分源码</li>
+</ul>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/06/09/java-jvm-garbage-collection-summary/>http://throwable.club/2019/06/09/java-jvm-garbage-collection-summary/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/JVM/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>JVM</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/06/09/java-jvm-garbage-collection-summary/&title=深入理解Java中的Garbage Collection | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近由于系统业务量比较大，从生产的GC日志(结合Pinpoint)来看，需要对部分系统进行GC调优。但是鉴于以往不是专门做这一块，但是一直都有零散的积累，这里做一个相对全面的总结。本文只针对HotSpot VM也就是Oracle Hotspot VM或者OpenJDK Hotspot VM，版本为Java8，其他VM不一定适用。
+什么是GC(Garbage Collection)
+Garbage Collection可以翻译为“垃圾收集” – 一般主观上会认为做法是：找到垃圾，然后把垃圾扔掉。在VM中，GC的实现过程恰恰相反，GC的目的是为了追踪所有正在使用的对象，并且将剩余的对象标记为垃圾，随后标记为垃圾的对象会被清除，回收这些垃圾对象占据的内存，从而实现内存的自动管理。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/06/09/java-jvm-garbage-collection-summary/&title=深入理解Java中的Garbage Collection | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近由于系统业务量比较大，从生产的GC日志(结合Pinpoint)来看，需要对部分系统进行GC调优。但是鉴于以往不是专门做这一块，但是一直都有零散的积累，这里做一个相对全面的总结。本文只针对HotSpot VM也就是Oracle Hotspot VM或者OpenJDK Hotspot VM，版本为Java8，其他VM不一定适用。
+什么是GC(Garbage Collection)
+Garbage Collection可以翻译为“垃圾收集” – 一般主观上会认为做法是：找到垃圾，然后把垃圾扔掉。在VM中，GC的实现过程恰恰相反，GC的目的是为了追踪所有正在使用的对象，并且将剩余的对象标记为垃圾，随后标记为垃圾的对象会被清除，回收这些垃圾对象占据的内存，从而实现内存的自动管理。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtklEQVR42u3aS27jMBAFQN//0pnNLLIY0a8/TDxAaWXAFsWSAZJ43a9XfH19u87fPv3y6d58nGSE5oWHh4c3mPp56DPvabTza8oZ56c8zhAPDw/vGi8ZLplo8vm8xFef9caCh4eH9wG8/JibIJOtCA8PD+9/5yVRRXMqN8bEw8PDu8bLF+JqmFuNJ3LqctaCh4eHF/PyKtLnfL5S38PDw8MbV9Xnm0S1aWBr4/k7Ah4eHt4FXvXx5wPxudGqdyCuHpfx8PDwfobXK1zlbQHJQp8/a+HwjYeHh7fKOy+svQU6n3R+mB5lKnh4eHhjXm+5n2wnyb3JAb1c38PDw8Nb4k2mm8cHk8nlx/S1mh4eHh7eGNZb1nsvaLI9NLMWPDw8vPhZ1UJUb8metCCM/jE8PDy8C7xJ0SuPAHZ/X91g8PDw8HZ5vUn3lum8CaC3VfzjLjw8PLwLvF7NPY8qelFvte2gicTDw8Mb8KpB7VYb1nyraP5LeHh4eEsV9klU2gsy5ltFIXHBw8PDW+IlkcGklJWPVi2zRZscHh4e3jVeL7TNJz05xFfDCDw8PLzf4uVH29275rHIq3pOx8PDw7vAq5Kq8US1YFZoJsDDw8O7wGv+KF6y89iiN/JCGQwPDw+vNc/exlBtGui90F5L1pumKzw8PLwl3qR8VT2C581YvRaHQl8DHh4e3oC3VdovLNlx1DtqDsPDw8O7zKvGtdW2gN6Y1QsPDw/vHm9+LO6FFPkrSDoBHkfGw8PDu8CrLrUJI28ayEOKeXEODw8Pb5fX2wzyWHarLSB/rXh4eHg/w6sW9XsxbjUgXsta8PDw8D6MN7mrxy40EODh4eF9DK9a7M8LbNVGhDcvEQ8PD+8ar9o6UC10VZuuquHFm40BDw8Pb5XXOygnx9+8yWDSLrCcXuDh4eGdrj9wj32CqKULHwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/06/09/java-jvm-garbage-collection-summary/&title=深入理解Java中的Garbage Collection | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+最近由于系统业务量比较大，从生产的GC日志(结合Pinpoint)来看，需要对部分系统进行GC调优。但是鉴于以往不是专门做这一块，但是一直都有零散的积累，这里做一个相对全面的总结。本文只针对HotSpot VM也就是Oracle Hotspot VM或者OpenJDK Hotspot VM，版本为Java8，其他VM不一定适用。
+什么是GC(Garbage Collection)
+Garbage Collection可以翻译为“垃圾收集” – 一般主观上会认为做法是：找到垃圾，然后把垃圾扔掉。在VM中，GC的实现过程恰恰相反，GC的目的是为了追踪所有正在使用的对象，并且将剩余的对象标记为垃圾，随后标记为垃圾的对象会被清除，回收这些垃圾对象占据的内存，从而实现内存的自动管理。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtklEQVR42u3aS27jMBAFQN//0pnNLLIY0a8/TDxAaWXAFsWSAZJ43a9XfH19u87fPv3y6d58nGSE5oWHh4c3mPp56DPvabTza8oZ56c8zhAPDw/vGi8ZLplo8vm8xFef9caCh4eH9wG8/JibIJOtCA8PD+9/5yVRRXMqN8bEw8PDu8bLF+JqmFuNJ3LqctaCh4eHF/PyKtLnfL5S38PDw8MbV9Xnm0S1aWBr4/k7Ah4eHt4FXvXx5wPxudGqdyCuHpfx8PDwfobXK1zlbQHJQp8/a+HwjYeHh7fKOy+svQU6n3R+mB5lKnh4eHhjXm+5n2wnyb3JAb1c38PDw8Nb4k2mm8cHk8nlx/S1mh4eHh7eGNZb1nsvaLI9NLMWPDw8vPhZ1UJUb8metCCM/jE8PDy8C7xJ0SuPAHZ/X91g8PDw8HZ5vUn3lum8CaC3VfzjLjw8PLwLvF7NPY8qelFvte2gicTDw8Mb8KpB7VYb1nyraP5LeHh4eEsV9klU2gsy5ltFIXHBw8PDW+IlkcGklJWPVi2zRZscHh4e3jVeL7TNJz05xFfDCDw8PLzf4uVH29275rHIq3pOx8PDw7vAq5Kq8US1YFZoJsDDw8O7wGv+KF6y89iiN/JCGQwPDw+vNc/exlBtGui90F5L1pumKzw8PLwl3qR8VT2C581YvRaHQl8DHh4e3oC3VdovLNlx1DtqDsPDw8O7zKvGtdW2gN6Y1QsPDw/vHm9+LO6FFPkrSDoBHkfGw8PDu8CrLrUJI28ayEOKeXEODw8Pb5fX2wzyWHarLSB/rXh4eHg/w6sW9XsxbjUgXsta8PDw8D6MN7mrxy40EODh4eF9DK9a7M8LbNVGhDcvEQ8PD+8ar9o6UC10VZuuquHFm40BDw8Pb5XXOygnx9+8yWDSLrCcXuDh4eGdrj9wj32CqKULHwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/06/23/java-concurrency-thread-state/" rel="prev" title="Java线程生命周期与状态切换">
+                                  
+                                      Java线程生命周期与状态切换
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Thread/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Thread</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/29/framework-hystrix-full-configuration/" rel="prev" title="Hystrix完整配置列表">
+                                    
+                                        Hystrix完整配置列表
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Framework/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Framework</a> <a class="tag" href="/blog/tags/Hystrix/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Hystrix</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '深入理解Java中的Garbage Collection',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是GC-Garbage-Collection"><span class="toc-text">什么是GC(Garbage Collection)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分代假说-Generational-Hypothesis"><span class="toc-text">分代假说(Generational Hypothesis)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象判活算法"><span class="toc-text">对象判活算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JVM中的内存池"><span class="toc-text">JVM中的内存池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Eden"><span class="toc-text">Eden</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Survivor-Spaces"><span class="toc-text">Survivor Spaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tenured"><span class="toc-text">Tenured</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metaspace"><span class="toc-text">Metaspace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用内存池相关的VM参数"><span class="toc-text">常用内存池相关的VM参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC类型"><span class="toc-text">GC类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Minor-GC"><span class="toc-text">Minor GC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Major-GC和Full-GC"><span class="toc-text">Major GC和Full GC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用的GC算法"><span class="toc-text">常用的GC算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GC算法的目的"><span class="toc-text">GC算法的目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mark-Sweep算法"><span class="toc-text">Mark-Sweep算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mark-Sweep-Compact算法"><span class="toc-text">Mark-Sweep-Compact算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mark-Copy算法"><span class="toc-text">Mark-Copy算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

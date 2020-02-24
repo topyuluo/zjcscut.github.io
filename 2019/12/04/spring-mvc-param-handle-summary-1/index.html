@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>SpringMVC请求参数接收总结(一) | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/12/04/spring-mvc-param-handle-summary-1/">
+        SpringMVC请求参数接收总结(一)
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring/SpringMVC/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring&nbsp;/&nbsp;SpringMVC</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年12月4日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-04T01:24:23+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年12月4日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.6k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：27分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>在日常使用<code>SpringMVC</code>进行开发的时候，有可能遇到前端各种类型的请求参数，这里做一次相对全面的总结。<code>SpringMVC</code>中处理控制器参数的接口是<code>HandlerMethodArgumentResolver</code>，此接口有众多子类，分别处理不同(注解类型)的参数，下面只列举几个子类：</p>
+<ul>
+<li><code>RequestParamMethodArgumentResolver</code>：解析处理使用了<code>@RequestParam</code>注解的参数、<code>MultipartFile</code>类型参数和<code>Simple</code>类型(如<code>long</code>、<code>int</code>等类型)参数。</li>
+<li><code>RequestResponseBodyMethodProcessor</code>：解析处理<code>@RequestBody</code>注解的参数。</li>
+<li><code>PathVariableMapMethodArgumentResolver</code>：解析处理<code>@PathVariable</code>注解的参数。</li>
+</ul>
+<a id="more"></a>
+<p>实际上，一般在解析一个控制器的请求参数的时候，用到的是<code>HandlerMethodArgumentResolverComposite</code>，里面装载了所有启用的<code>HandlerMethodArgumentResolver</code>子类。而<code>HandlerMethodArgumentResolver</code>子类在解析参数的时候使用到<code>HttpMessageConverter</code>（实际上也是一个列表，进行遍历匹配解析）子类进行匹配解析，常见的如<code>MappingJackson2HttpMessageConverter</code>（使用<code>Jackson</code>进行序列化和反序列化）。而<code>HandlerMethodArgumentResolver</code>子类到底依赖什么<code>HttpMessageConverter</code>实例实际上是由请求头中的<code>Content-Type</code>（在<code>SpringMVC</code>中统一命名为<code>MediaType</code>，见<code>org.springframework.http.MediaType</code>）决定的，因此我们在处理控制器的请求参数之前必须要明确外部请求的<code>Content-Type</code>到底是什么。上面的逻辑可以直接看源码<code>AbstractMessageConverterMethodArgumentResolver#readWithMessageConverters</code>，思路是比较清晰的。在<code>@RequestMapping</code>注解中，<code>produces</code>和<code>consumes</code>属性就是和请求或者响应的<code>Content-Type</code>相关的：</p>
+<ul>
+<li><code>consumes</code>属性：指定处理请求的提交内容类型（<code>Content-Type</code>），例如<code>application/json</code>、<code>text/html</code>等等，只有命中了对应的<code>Content-Type</code>的值才会接受该请求。</li>
+<li><code>produces</code>属性：指定返回的内容类型，仅当某个请求的请求头中的（<code>Accept</code>）类型中包含该指定类型才返回，如果返回的是JSON数据一般考虑使用<code>application/json;charset=UTF-8</code>。</li>
+</ul>
+<p>另外提一点，<code>SpringMVC</code>中默认使用<code>Jackson</code>作为JSON的工具包，如果不是完全理解透整套源码的运作，一般不是十分建议修改默认使用的<code>MappingJackson2HttpMessageConverter</code>（例如有些人喜欢使用<code>FastJson</code>，实现<code>HttpMessageConverter</code>引入<code>FastJson</code>做HTTP消息转换器，这种做法并不推荐）。</p>
+<h2 id="SpringMVC请求参数接收">SpringMVC请求参数接收</h2>
+<p>其实一般的表单或者JSON数据的请求都是相对简单的，一些复杂的处理主要包括URL路径参数、文件上传、数组或者列表类型数据等。另外，关于参数类型中存在日期类型属性（例如<code>java.util.Date</code>、<code>java.sql.Date</code>、<code>java.time.LocalDate</code>、<code>java.time.LocalDateTime</code>、<code>java.time.ZonedDateTime</code>等等），解析的时候一般需要自定义实现的逻辑实现<code>String--&gt;日期类型</code>的转换。其实道理很简单，日期相关的类型对于每个国家、每个时区甚至每个使用者来说认知都不一定相同，所以<code>SpringMVC</code>并没有对于日期时间类型的解析提供一个通用的解决方案。在演示一些例子可能用到下面的模特类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Contact&gt; contacts;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Contact</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String phone;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面主要以<code>HTTP</code>的<code>GET</code>方法和<code>POST</code>方法提交在<code>SpringMVC</code>体系中正确处理参数的例子进行分析，还会花精力整理<code>SpringMVC</code>体系中<strong>独有的<code>URL</code>路径参数</strong>处理的一些技巧以及最常见的<strong>日期参数</strong>处理的合理实践（对于<code>GET</code>方法和<code>POST</code>方法提交的参数处理，基本囊括了其他如<code>DELETE</code>、<code>PUT</code>等方法的参数处理，随机应变即可）。</p>
+<h3 id="GET方法请求参数处理">GET方法请求参数处理</h3>
+<p><code>HTTP(s)</code>协议使用<code>GET</code>方法进行请求的时候，提交的参数位于<code>URL</code>模式的<code>Query</code>部分，也就是<code>URL</code>的<code>?</code>之后的参数，格式是<code>key1=value1&amp;key2=value2</code>。<code>GET</code>方法请求参数可以有多种方法获取：</p>
+<ol>
+<li>使用<code>@RequestParam</code>注解处理。</li>
+<li>使用对象接收，注意对象的属性名称要和<code>Query</code>中的参数名称一致。</li>
+<li>使用<code>HttpServletRequest</code>实例提供的方法（不推荐，存在硬编码）。</li>
+</ol>
+<p>假设请求的<code>URL</code>为<code>http://localhost:8080/get?name=doge&amp;age=26</code>，那么控制器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/get1"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get1</span><span class="params">(@RequestParam(name = <span class="string">"name"</span>)</span> String name,</span></span><br><span class="line"><span class="function">                     @<span class="title">RequestParam</span><span class="params">(name = <span class="string">"age"</span>)</span> Integer age) </span>&#123;</span><br><span class="line">        log.info(<span class="string">"name:&#123;&#125;,age:&#123;&#125;"</span>, name, age);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/get2"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get2</span><span class="params">(UserVo vo)</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"name:&#123;&#125;,age:&#123;&#125;"</span>, vo.getName(), vo.getAge());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(path = <span class="string">"/get3"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get3</span><span class="params">(HttpServletRequest request)</span> </span>&#123;</span><br><span class="line">        String name = request.getParameter(<span class="string">"name"</span>);</span><br><span class="line">        String age = request.getParameter(<span class="string">"age"</span>);</span><br><span class="line">        log.info(<span class="string">"name:&#123;&#125;,age:&#123;&#125;"</span>, name, age);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserVo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> String name;</span><br><span class="line">        <span class="keyword">private</span> Integer age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="表单参数">表单参数</h3>
+<p>表单参数，一般对应于页面上<code>&lt;form&gt;</code>标签内的所有<code>&lt;input&gt;</code>标签的<code>name-value</code>聚合而成的参数，一般<code>Content-Type</code>指定为<code>application/x-www-form-urlencoded</code>，也就是会进行<code>URL</code>编码。下面介绍几种常见的表单参数提交的参数形式。</p>
+<ul>
+<li>【非对象】- 非对象类型单个参数接收。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-1.png" alt="spmvc-p-1"></p>
+<p>对应的控制器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/post"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">post</span><span class="params">(@RequestParam(name = <span class="string">"name"</span>)</span> String name,</span></span><br><span class="line"><span class="function">                   @<span class="title">RequestParam</span><span class="params">(name = <span class="string">"age"</span>)</span> Integer age) </span>&#123;</span><br><span class="line">    String content = String.format(<span class="string">"name = %s,age = %d"</span>, name, age);</span><br><span class="line">    log.info(content);</span><br><span class="line">    <span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说实话，如果有毅力的话，所有的复杂参数的提交最终都可以转化为多个单参数接收，不过这样做会产生十分多冗余的代码，而且可维护性比较低。这种情况下，用到的参数处理器是<code>RequestParamMapMethodArgumentResolver</code>。</p>
+<ul>
+<li>【对象】 - 对象类型参数接收。</li>
+</ul>
+<p>我们接着写一个接口用于提交用户信息，用到的是上面提到的模特类，主要包括用户姓名、年龄和联系人信息列表，这个时候，我们目标的控制器最终编码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/user"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">saveUser</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">    log.info(user.toString());</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还是指定<code>Content-Type</code>为<code>application/x-www-form-urlencoded</code>，接着我们需要构造请求参数：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-2.png" alt="spmvc-p-2"></p>
+<p>因为没有使用注解，最终的参数处理器为<code>ServletModelAttributeMethodProcessor</code>，主要是把<code>HttpServletRequest</code>中的表单参数封装到<code>MutablePropertyValues</code>实例中，再通过参数类型实例化(通过构造反射创建<code>User</code>实例)，反射匹配属性进行值的填充。另外，请求复杂参数里面的列表属性请求参数看起来比较奇葩，实际上和在<code>.properties</code>文件中添加最终映射到<code>Map</code>类型的参数的写法是一致的。那么，能不能把整个请求参数塞在一个字段中提交呢？</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-3.png" alt="spmvc-p-3"></p>
+<p>直接这样做是不行的，因为实际提交的<code>Form</code>表单，<code>key</code>是<code>user</code>字符串，<code>value</code>实际上也是一个字符串，缺少一个<code>String-&gt;User</code>类型的转换器，实际上<code>RequestParamMethodArgumentResolver</code>依赖<code>WebConversionService</code>中<code>Converter</code>实例列表进行参数转换：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-4.png" alt="spmvc-p-4"></p>
+<p>解决办法还是有的，添加一个<code>org.springframework.core.convert.converter.Converter</code>实现即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringUserConverter</span> <span class="keyword">implements</span> <span class="title">Converter</span>&lt;<span class="title">String</span>, <span class="title">User</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowaired</span></span><br><span class="line">    <span class="keyword">private</span> ObjectMapper objectMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">convert</span><span class="params">(String source)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">               <span class="keyword">return</span> objectMapper.readValue(source, User<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">               <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这种做法属于曲线救国的做法，不推荐使用在生产环境，但是如果有些第三方接口的对接无法避免这种参数，可以选择这种实现方式。</p>
+<ul>
+<li>【数组】 - 列表或者数组类型参数。</li>
+</ul>
+<p>极度不推荐使用在<code>application/x-www-form-urlencoded</code>这种媒体类型的表单提交的形式下强行使用列表或者数组类型参数，除非是为了兼容处理历史遗留系统的参数提交处理。例如提交的参数形式是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">list &#x3D; [&quot;string-1&quot;, &quot;string-2&quot;, &quot;string-3&quot;]</span><br></pre></td></tr></table></figure>
+<p>那么表单参数的形式要写成：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">name</th>
+<th style="text-align:center">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">list[0]</td>
+<td style="text-align:center">string-1</td>
+</tr>
+<tr>
+<td style="text-align:center">list[1]</td>
+<td style="text-align:center">string-2</td>
+</tr>
+<tr>
+<td style="text-align:center">list[2]</td>
+<td style="text-align:center">string-3</td>
+</tr>
+</tbody>
+</table>
+<p>控制器的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(path = <span class="string">"/list"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">list</span><span class="params">(@RequestParam(name=<span class="string">"list"</span>)</span> List&lt;String&gt; list) </span>&#123;</span><br><span class="line">    log.info(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个更加复杂的例子如下，假设想要提交的报文格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user &#x3D; [&#123;&quot;name&quot;:&quot;doge-1&quot;,&quot;age&quot;: 21&#125;,&#123;&quot;name&quot;:&quot;doge-2&quot;,&quot;age&quot;: 22&#125;]</span><br></pre></td></tr></table></figure>
+<p>那么表单参数的形式要写成：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">name</th>
+<th style="text-align:center">value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">user[0].name</td>
+<td style="text-align:center">doge-1</td>
+</tr>
+<tr>
+<td style="text-align:center">user[0].age</td>
+<td style="text-align:center">21</td>
+</tr>
+<tr>
+<td style="text-align:center">user[1].name</td>
+<td style="text-align:center">doge-2</td>
+</tr>
+<tr>
+<td style="text-align:center">user[1].age</td>
+<td style="text-align:center">22</td>
+</tr>
+</tbody>
+</table>
+<p>控制器的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(path = <span class="string">"/user"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveUsers</span><span class="params">(@RequestParam(name=<span class="string">"user"</span>)</span> List&lt;UserVo&gt; users) </span>&#123;</span><br><span class="line">    log.info(users);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserVo</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> Integer age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JSON参数">JSON参数</h3>
+<p>一般来说，直接在<code>POST</code>请求中的请求体提交一个JSON字符串这种方式对于<code>SpringMVC</code>来说是比较友好的，只需要把<code>Content-Type</code>设置为<code>application/json</code>，提交一个原始的JSON字符串即可，控制器方法参数使用<code>@RequestBody</code>注解处理：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-5.png" alt="spmvc-p-5"></p>
+<p>后端控制器的代码也比较简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/user-2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">saveUser2</span><span class="params">(@RequestBody User user)</span> </span>&#123;</span><br><span class="line">    log.info(user.toString());</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为使用了<code>@RequestBody</code>注解，最终使用到的参数处理器为<code>RequestResponseBodyMethodProcessor</code>，实际上会用到<code>MappingJackson2HttpMessageConverter</code>进行参数类型的转换，底层依赖到<code>Jackson</code>相关的包。推荐使用这种方式，这是最常用也是最稳健的<code>JSON</code>参数处理方式。</p>
+<h2 id="URL路径参数">URL路径参数</h2>
+<p><code>URL</code>路径参数，或者叫请求路径参数是基于URL模板获取到的参数，例如<code>/user/{userId}</code>是一个<code>URL</code>模板(<code>URL</code>模板中的参数占位符是{})，实际请求的<code>URL</code>为<code>/user/1</code>，那么通过匹配实际请求的<code>URL</code>和<code>URL</code>模板就能提取到<code>userId</code>为1。在<code>SpringMVC</code>中，<code>URL</code>模板中的路径参数叫做<code>PathVariable</code>，对应注解<code>@PathVariable</code>，对应的参数处理器为<code>PathVariableMethodArgumentResolver</code>。<strong>注意一点是，@PathVariable的解析是按照value(name)属性进行匹配，和URL参数的顺序是无关的</strong>。举个简单的例子：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-6.png" alt="spmvc-p-6"></p>
+<p>后台的控制器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/user/&#123;name&#125;/&#123;age&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findUser1</span><span class="params">(@PathVariable(value = <span class="string">"age"</span>)</span> Integer age,</span></span><br><span class="line"><span class="function">						@<span class="title">PathVariable</span><span class="params">(value = <span class="string">"name"</span>)</span> String name) </span>&#123;</span><br><span class="line">	String content = String.format(<span class="string">"name = %s,age = %d"</span>, name, age);</span><br><span class="line">	log.info(content);</span><br><span class="line">	<span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种用法被广泛使用于<code>Representational State Transfer(REST)</code>的软件架构风格，个人觉得这种风格是比较灵活和清晰的(从URL和请求方法就能完全理解接口的意义和功能)。下面再介绍两种相对特殊的使用方式。</p>
+<ul>
+<li>带条件的<code>URL</code>参数。</li>
+</ul>
+<p>其实路径参数支持正则表达式，例如我们在使用<code>/sex/{sex}</code>接口的时候，要求<code>sex</code>必须是<code>F(Female)</code>或者<code>M(Male)</code>，那么我们的URL模板可以定义为<code>/sex/{sex:M|F}</code>，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/sex/&#123;sex:M|F&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">findUser2</span><span class="params">(@PathVariable(value = <span class="string">"sex"</span>)</span> String sex)</span>&#123;</span><br><span class="line">    log.info(sex);</span><br><span class="line">    <span class="keyword">return</span> sex;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只有<code>/sex/F</code>或者<code>/sex/M</code>的请求才会进入<code>findUser2()</code>控制器方法，其他该路径前缀的请求都是非法的，会返回404状态码。这里仅仅是介绍了一个最简单的<code>URL</code>参数正则表达式的使用方式，更强大的用法可以自行摸索。</p>
+<ul>
+<li><code>@MatrixVariable</code>的使用。</li>
+</ul>
+<p><code>MatrixVariable</code>也是<code>URL</code>参数的一种，对应注解<code>@MatrixVariable</code>，不过它并不是<code>URL</code>中的一个值(这里的值指定是两个&quot;/“之间的部分)，而是值的一部分，它通过”;“进行分隔，通过”=&quot;进行K-V设置。说起来有点抽象，举个例子：假如我们需要打电话给一个名字为doge，性别是男，分组是码畜的程序员，<code>GET</code>请求的<code>URL</code>可以表示为：<code>/call/doge;gender=male;group=programmer</code>，我们设计的控制器方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/call/&#123;name&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">find</span><span class="params">(@PathVariable(value = <span class="string">"name"</span>)</span> String name,</span></span><br><span class="line"><span class="function">                   @<span class="title">MatrixVariable</span><span class="params">(value = <span class="string">"gender"</span>)</span> String gender,</span></span><br><span class="line"><span class="function">                   @<span class="title">MatrixVariable</span><span class="params">(value = <span class="string">"group"</span>)</span> String group) </span>&#123;</span><br><span class="line">    String content = String.format(<span class="string">"name = %s,gender = %s,group = %s"</span>, name, gender, group);</span><br><span class="line">    log.info(content);</span><br><span class="line">    <span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，如果你按照上面的例子写好代码，尝试请求一下该接口发现是报错的：<code>400 Bad Request - Missing matrix variable 'gender' for method parameter of type String</code>。这是因为<code>@MatrixVariable</code>注解的使用是不安全的，在<code>SpringMVC</code>中默认是关闭对其支持。要开启对<code>@MatrixVariable</code>的支持，需要设置<code>RequestMappingHandlerMapping#setRemoveSemicolonContent</code>方法为<code>false</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomMvcConfiguration</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> RequestMappingHandlerMapping requestMappingHandlerMapping;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		requestMappingHandlerMapping.setRemoveSemicolonContent(<span class="keyword">false</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除非有很特殊的需要，否则不建议使用<code>@MatrixVariable</code>。</p>
+<h2 id="文件上传">文件上传</h2>
+<p>文件上传在使用<code>POSTMAN</code>模拟请求的时候需要选择<code>form-data</code>，<code>POST</code>方式进行提交：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-8.png" alt="spmvc-p-8"></p>
+<p>假设我们在D盘有一个图片文件叫doge.jpg，现在要通过本地服务接口把文件上传，控制器的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/file1"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">file1</span><span class="params">(@RequestPart(name = <span class="string">"file1"</span>)</span> MultipartFile multipartFile) </span>&#123;</span><br><span class="line">	String content = String.format(<span class="string">"name = %s,originName = %s,size = %d"</span>,</span><br><span class="line">	multipartFile.getName(), multipartFile.getOriginalFilename(), multipartFile.getSize());</span><br><span class="line">	log.info(content);</span><br><span class="line">	<span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name = file1,originName = doge.jpg,size = <span class="number">68727</span></span><br></pre></td></tr></table></figure>
+<p>可能有点疑惑，参数是怎么来的，我们可以用<code>Fildder</code>软件抓个包看下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-7.png" alt="spmvc-p-7"></p>
+<p>可知<code>MultipartFile</code>实例的主要属性分别来自<code>Content-Disposition</code>、<code>Content-Type</code>和<code>Content-Length</code>，另外，<code>InputStream</code>用于读取请求体的最后部分(文件的字节序列)。参数处理器用到的是<code>RequestPartMethodArgumentResolver</code>(记住一点，使用了<code>@RequestPart</code>和<code>MultipartFile</code>一定是使用此参数处理器)。在其他情况下，使用<code>@RequestParam</code>和<code>MultipartFile</code>或者仅仅使用<code>MultipartFile</code>(参数的名字必须和<code>POST</code>表单中的<code>Content-Disposition</code>描述的<code>name</code>一致)也可以接收上传的文件数据，主要是通过<code>RequestParamMethodArgumentResolver</code>进行解析处理的，它的功能比较强大，具体可以看其<code>supportsParameter</code>方法，这两种情况的控制器方法代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/file2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">file2</span><span class="params">(MultipartFile file1)</span> </span>&#123;</span><br><span class="line">	String content = String.format(<span class="string">"name = %s,originName = %s,size = %d"</span>,</span><br><span class="line">				file1.getName(), file1.getOriginalFilename(), file1.getSize());</span><br><span class="line">	log.info(content);</span><br><span class="line">	<span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/file3"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">file3</span><span class="params">(@RequestParam(name = <span class="string">"file1"</span>)</span> MultipartFile multipartFile) </span>&#123;</span><br><span class="line">	String content = String.format(<span class="string">"name = %s,originName = %s,size = %d"</span>,</span><br><span class="line">			multipartFile.getName(), multipartFile.getOriginalFilename(), multipartFile.getSize());</span><br><span class="line">	log.info(content);</span><br><span class="line">	<span class="keyword">return</span> content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="其他参数">其他参数</h2>
+<p>其他参数主要包括请求头、<code>Cookie</code>、<code>Model</code>、<code>Map</code>等相关参数，还有一些并不是很常用或者一些相对原生的属性值获取(例如<code>HttpServletRequest</code>、<code>HttpServletResponse</code>等)不做讨论。</p>
+<h3 id="请求头">请求头</h3>
+<p>请求头的值主要通过<code>@RequestHeader</code>注解的参数获取，参数处理器是<code>RequestHeaderMethodArgumentResolver</code>，需要在注解中指定请求头的<code>Key</code>。简单实用如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-9.png" alt="spmvc-p-9"></p>
+<p>控制器方法代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/header"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">header</span><span class="params">(@RequestHeader(name = <span class="string">"Content-Type"</span>)</span> String Content-Type) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Content-Type;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Cookie">Cookie</h3>
+<p><code>Cookie</code>的值主要通过<code>@CookieValue</code>注解的参数获取，参数处理器为<code>ServletCookieValueMethodArgumentResolver</code>，需要在注解中指定<code>Cookie</code>的<code>Key</code>。控制器方法代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/cookie"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">cookie</span><span class="params">(@CookieValue(name = <span class="string">"JSESSIONID"</span>)</span> String sessionId) </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> sessionId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Model类型参数">Model类型参数</h3>
+<p><code>Model</code>类型参数的处理器是<code>ModelMethodProcessor</code>，实际上处理此参数是直接返回<code>ModelAndViewContainer</code>实例中的<code>Model</code>(<code>ModelMap</code>类型)，因为要桥接不同的接口和类的功能，因此回调的实例是<code>BindingAwareModelMap</code>类型，此类型继承自<code>ModelMap</code>同时实现了<code>Model</code>接口。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/model"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">model</span><span class="params">(Model model, ModelMap modelMap)</span> </span>&#123;</span><br><span class="line">    log.info(<span class="string">"&#123;&#125;"</span>, model == modelMap);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意调用此接口，控制台输出INFO日志内容为：true。还要注意一点：<code>ModelMap</code>或者<code>Model</code>中添加的属性项会附加到<code>HttpRequestServlet</code>实例中带到页面中进行渲染。</p>
+<h3 id="ModelAttribute参数">@ModelAttribute参数</h3>
+<p><code>@ModelAttribute</code>注解处理的参数处理器为<code>ModelAttributeMethodProcessor</code>，<code>@ModelAttribute</code>的功能源码的注释如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Annotation that binds a method parameter or method return value to a named model attribute, exposed to a web view.</span><br></pre></td></tr></table></figure>
+<p>简单来说，就是通过<code>key-value</code>形式绑定方法参数或者方法返回值到<code>Model(Map)</code>中，区别下面三种情况：</p>
+<ol>
+<li><code>@ModelAttribute</code>使用在方法(返回值)上，方法没有返回值(<code>void</code>类型)， <code>Model(Map)</code>参数需要自行设置。</li>
+<li><code>@ModelAttribute</code>使用在方法(返回值)上，方法有返回值(非<code>void</code>类型)，返回值会添加到<code>Model(Map)</code>参数，<code>key</code>由<code>@ModelAttribute</code>的<code>value</code>指定，否则会使用返回值类型字符串(首写字母变为小写，如返回值类型为<code>Integer</code>，则<code>key</code>为<code>integer</code>)。</li>
+<li><code>@ModelAttribute</code>使用在方法参数中，则可以获取同一个控制器中的已经设置的<code>@ModelAttribute</code>对应的值。</li>
+</ol>
+<p>在一个控制器(使用了<code>@Controller</code>)中，如果存在一到多个使用了<code>@ModelAttribute</code>的方法，这些方法总是在进入控制器方法之前执行，并且执行顺序是由加载顺序决定的(具体的顺序是带参数的优先，并且按照方法首字母升序排序)，举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ModelAttributeController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@ModelAttribute</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">(Model model)</span> </span>&#123;</span><br><span class="line">		log.info(<span class="string">"before.........."</span>);</span><br><span class="line">		model.addAttribute(<span class="string">"before"</span>, <span class="string">"beforeValue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@ModelAttribute</span>(value = <span class="string">"beforeArg"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">beforeArg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		log.info(<span class="string">"beforeArg.........."</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"beforeArgValue"</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@GetMapping</span>(value = <span class="string">"/modelAttribute"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">modelAttribute</span><span class="params">(Model model, @ModelAttribute(value = <span class="string">"beforeArg"</span>)</span> String beforeArg) </span>&#123;</span><br><span class="line">		log.info(<span class="string">"modelAttribute.........."</span>);</span><br><span class="line">		log.info(<span class="string">"beforeArg..........&#123;&#125;"</span>, beforeArg);</span><br><span class="line">		log.info(<span class="string">"&#123;&#125;"</span>, model);</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@ModelAttribute</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after</span><span class="params">(Model model)</span> </span>&#123;</span><br><span class="line">		log.info(<span class="string">"after.........."</span>);</span><br><span class="line">		model.addAttribute(<span class="string">"after"</span>, <span class="string">"afterValue"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@ModelAttribute</span>(value = <span class="string">"afterArg"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">afterArg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		log.info(<span class="string">"afterArg.........."</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"afterArgValue"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用此接口，控制台输出日志如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">after..........</span><br><span class="line">before..........</span><br><span class="line">afterArg..........</span><br><span class="line">beforeArg..........</span><br><span class="line">modelAttribute..........</span><br><span class="line">beforeArg..........beforeArgValue</span><br><span class="line">&#123;after&#x3D;afterValue, before&#x3D;beforeValue, afterArg&#x3D;afterArgValue, beforeArg&#x3D;beforeArgValue&#125;</span><br></pre></td></tr></table></figure>
+<p>可以印证排序规则和参数设置、获取的结果和前面的分析是一致的。</p>
+<h3 id="Errors或者BindingResult参数">Errors或者BindingResult参数</h3>
+<p><code>Errors</code>其实是<code>BindingResult</code>的父接口，<code>BindingResult</code>主要用于回调JSR参数校验异常的属性项，如果JSR校验异常，一般会抛出<code>MethodArgumentNotValidException</code>异常，并且会返回400(Bad Request)，见全局异常处理器<code>DefaultHandlerExceptionResolver</code>。<code>Errors</code>类型的参数处理器为<code>ErrorsMethodArgumentResolver</code>。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/errors"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">errors</span><span class="params">(@RequestBody @Validated ErrorsModel errors, BindingResult bindingResult)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (bindingResult.hasErrors()) &#123;</span><br><span class="line">		<span class="keyword">for</span> (ObjectError objectError : bindingResult.getAllErrors()) &#123;</span><br><span class="line">			log.warn(<span class="string">"name=&#123;&#125;,message=&#123;&#125;"</span>, objectError.getObjectName(), objectError.getDefaultMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> errors.toString();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ErrorsModel</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorsModel</span> </span>&#123;</span><br><span class="line">    <span class="meta">@NotNull</span>(message = <span class="string">"id must not be null!"</span>)</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"errors name must not be empty!"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用接口控制台Warn日志如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name&#x3D;errors,message&#x3D;errors name must not be empty!</span><br></pre></td></tr></table></figure>
+<p>一般情况下，不建议用这种方式处理JSR校验异常的属性项，因为会涉及到大量的重复的硬编码工作，建议：方式一直接继承<code>ResponseEntityExceptionHandler</code>覆盖对应的方法或者方式二同时使用<code>@ExceptionHandler</code>和<code>@(Rest)ControllerAdvice</code>注解进行异常处理。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ApplicationRestControllerAdvice</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@ExceptionHandler</span>(BusinessException<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">	<span class="title">public</span> <span class="title">Response</span> <span class="title">handleBusinessException</span>(<span class="title">BusinessException</span> <span class="title">e</span>, <span class="title">HttpServletRequest</span> <span class="title">request</span>)</span>&#123;</span><br><span class="line">           <span class="comment">// 这里处理异常和返回值</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Value参数">@Value参数</h3>
+<p>控制器方法的参数可以是<code>@Value</code>注解修饰的参数，会从<code>Environment</code>实例中装配和转换属性值到对应的参数中(也就是参数的来源并不是请求体)，参数处理器为<code>ExpressionValueMethodArgumentResolver</code>。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/value"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">value</span><span class="params">(@Value(value = <span class="string">"$&#123;spring.application.name&#125;"</span>)</span> String name) </span>&#123;</span><br><span class="line">    log.info(<span class="string">"spring.application.name=&#123;&#125;"</span>, name);</span><br><span class="line">    <span class="keyword">return</span> name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>spring.application.name</code>属性一般在配置文件中指定，在加载配置文件属性的时候添加到全局的<code>Environment</code>中。</p>
+<h3 id="Map类型参数">Map类型参数</h3>
+<p><code>Map</code>类型参数的范围相对比较广，对应一系列的参数处理器，注意区别使用了上面提到的部分注解的<code>Map</code>类型和完全不使用注解的<code>Map</code>类型参数，两者的处理方式不相同。下面列举几个相对典型的<code>Map</code>类型参数处理例子。</p>
+<p><strong>不使用任何注解的Map&lt;String,Object&gt;参数</strong></p>
+<p>这种情况下参数实际上直接回调<code>ModelAndViewContainer</code>中的<code>ModelMap</code>实例，参数处理器为<code>MapMethodProcessor</code>，往<code>Map</code>参数中添加的属性将会带到页面中。</p>
+<p><strong>使用@RequestParam注解的Map&lt;String,Object&gt;参数</strong></p>
+<p>这种情况下的参数处理器为<code>RequestParamMapMethodArgumentResolver</code>，使用的请求方式需要指定<code>Content-Type</code>为<code>x-www-form-urlencoded</code>，不能使用<code>application/json</code>的方式：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-10.png" alt="spmvc-p-10"></p>
+<p>控制器代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/map"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">mapArgs</span><span class="params">(@RequestParam Map&lt;String, Object&gt; map)</span> </span>&#123;</span><br><span class="line">    log.info(<span class="string">"&#123;&#125;"</span>, map);</span><br><span class="line">    <span class="keyword">return</span> map.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用@RequestHeader注解的Map&lt;String,Object&gt;参数</strong></p>
+<p>这种情况下的参数处理器为<code>RequestHeaderMapMethodArgumentResolver</code>，作用是获取请求的所有请求头的<code>Key-Value</code>。</p>
+<p><strong>使用@PathVariable注解的Map&lt;String,Object&gt;参数</strong></p>
+<p>这种情况下的参数处理器为<code>PathVariableMapMethodArgumentResolver</code>，作用是获取所有路径参数封装为<code>Key-Value</code>结构。</p>
+<h3 id="MultipartFile集合-批量文件上传">MultipartFile集合-批量文件上传</h3>
+<p>批量文件上传的时候，我们一般需要接收一个<code>MultipartFile</code>集合，可以有两种选择：</p>
+<ol>
+<li>使用<code>MultipartHttpServletRequest</code>参数，直接调用<code>getFiles</code>方法获取<code>MultipartFile</code>列表。</li>
+<li>使用<code>@RequestParam</code>注解修饰<code>MultipartFile</code>列表，参数处理器是<code>RequestParamMethodArgumentResolver</code>，其实就是第1种方式的封装而已。</li>
+</ol>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-11.png" alt="spmvc-p-11"></p>
+<p>控制器方法代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/parts"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">partArgs</span><span class="params">(@RequestParam(name = <span class="string">"file"</span>)</span> List&lt;MultipartFile&gt; parts) </span>&#123;</span><br><span class="line">    log.info(<span class="string">"&#123;&#125;"</span>, parts);</span><br><span class="line">    <span class="keyword">return</span> parts.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="日期类型参数处理">日期类型参数处理</h2>
+<p>日期参数处理个人认为是请求参数处理中最复杂的，因为一般日期处理的逻辑不是通用的，过多的定制化处理导致很难有一个统一的标准处理逻辑去处理和转换日期类型的参数。不过，这里介绍几个通用的方法，以应对各种奇葩的日期格式。下面介绍的例子中全部使用Jdk8中引入的日期时间API，围绕<code>java.util.Date</code>为核心的日期时间API的使用方式类同。</p>
+<h3 id="一、统一以字符串形式接收">一、统一以字符串形式接收</h3>
+<p>这种是最原始但是最奏效的方式，统一以字符串形式接收，然后自行处理类型转换，下面给个小例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/date1"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">date1</span><span class="params">(@RequestBody UserDto userDto)</span> </span>&#123;</span><br><span class="line">    UserEntity userEntity = <span class="keyword">new</span> UserEntity();</span><br><span class="line">    userEntity.setUserId(userDto.getUserId());</span><br><span class="line">    userEntity.setBirthdayTime(LocalDateTime.parse(userDto.getBirthdayTime(), FORMATTER));</span><br><span class="line">    userEntity.setGraduationTime(LocalDateTime.parse(userDto.getGraduationTime(), FORMATTER));</span><br><span class="line">    log.info(userEntity.toString());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDto</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String userId;</span><br><span class="line">	<span class="keyword">private</span> String birthdayTime;</span><br><span class="line">	<span class="keyword">private</span> String graduationTime;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserEntity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String userId;</span><br><span class="line">	<span class="keyword">private</span> LocalDateTime birthdayTime;</span><br><span class="line">	<span class="keyword">private</span> LocalDateTime graduationTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-12.png" alt="spmvc-p-12"></p>
+<p>使用字符串接收后再转换的缺点就是模板代码太多，编码风格不够简洁，重复性工作太多。</p>
+<h3 id="二、使用注解-DateTimeFormat或者-JsonFormat">二、使用注解@DateTimeFormat或者@JsonFormat</h3>
+<p><code>@DateTimeFormat</code>注解配合<code>@RequestBody</code>的参数使用的时候，会发现抛出<code>InvalidFormatException</code>异常，提示转换失败，这是因为在处理此注解的时候，只支持<code>Form</code>表单提交(<code>Content-Type</code>为<code>x-www-form-urlencoded</code>)，例子如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/spmvc-p-13.png" alt="spmvc-p-13"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDto2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String userId;</span><br><span class="line">	<span class="meta">@DateTimeFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</span><br><span class="line">	<span class="keyword">private</span> LocalDateTime birthdayTime;</span><br><span class="line">	<span class="meta">@DateTimeFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</span><br><span class="line">	<span class="keyword">private</span> LocalDateTime graduationTime;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/date2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">date2</span><span class="params">(UserDto2 userDto2)</span> </span>&#123;</span><br><span class="line">    log.info(userDto2.toString());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//或者像下面这样</span></span><br><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/date2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">date2</span><span class="params">(@RequestParam(<span class="string">"name"</span>=<span class="string">"userId"</span>)</span>String userId,</span></span><br><span class="line"><span class="function">                    @<span class="title">RequestParam</span><span class="params">(<span class="string">"name"</span>=<span class="string">"birthdayTime"</span>)</span> @<span class="title">DateTimeFormat</span><span class="params">(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</span> LocalDateTime birthdayTime,</span></span><br><span class="line"><span class="function">                    @<span class="title">RequestParam</span><span class="params">(<span class="string">"name"</span>=<span class="string">"graduationTime"</span>)</span> @<span class="title">DateTimeFormat</span><span class="params">(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</span> LocalDateTime graduationTime) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>@JsonFormat</code>注解可使用在Form表单或者JSON请求参数的场景，因此更推荐使用<code>@JsonFormat</code>注解，不过注意需要指定时区(<code>timezone</code>属性，例如在中国是东八区<code>GMT+8</code>)，否则有可能导致出现<strong>时差</strong>，举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/date2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">date2</span><span class="params">(@RequestBody UserDto2 userDto2)</span> </span>&#123;</span><br><span class="line">    log.info(userDto2.toString());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDto2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userId;</span><br><span class="line">    <span class="meta">@JsonFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>, timezone = <span class="string">"GMT+8"</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime birthdayTime;</span><br><span class="line">    <span class="meta">@JsonFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>, timezone = <span class="string">"GMT+8"</span>)</span><br><span class="line">    <span class="keyword">private</span> LocalDateTime graduationTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="三、Jackson序列化和反序列化定制">三、Jackson序列化和反序列化定制</h3>
+<p>因为<code>SpringMVC</code>默认使用<code>Jackson</code>处理<code>@RequestBody</code>的参数转换，因此可以通过定制序列化器和反序列化器来实现日期类型的转换，这样我们就可以使用<code>application/json</code>的形式提交请求参数。这里的例子是转换请求Json参数中的字符串为<code>LocalDateTime</code>类型，属于Json反序列化，因此需要定制反序列化器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span>(value = <span class="string">"/date3"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">date3</span><span class="params">(@RequestBody UserDto3 userDto3)</span> </span>&#123;</span><br><span class="line">    log.info(userDto3.toString());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDto3</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String userId;</span><br><span class="line">	<span class="meta">@JsonDeserialize</span>(using = CustomLocalDateTimeDeserializer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">	<span class="title">private</span> <span class="title">LocalDateTime</span> <span class="title">birthdayTime</span></span>;</span><br><span class="line">	<span class="meta">@JsonDeserialize</span>(using = CustomLocalDateTimeDeserializer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">	<span class="title">private</span> <span class="title">LocalDateTime</span> <span class="title">graduationTime</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomLocalDateTimeDeserializer</span> <span class="keyword">extends</span> <span class="title">LocalDateTimeDeserializer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">CustomLocalDateTimeDeserializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="四、最佳实践">四、最佳实践</h3>
+<p>前面三种方式都存在硬编码等问题，其实最佳实践是直接修改<code>MappingJackson2HttpMessageConverter</code>中的<code>ObjectMapper</code>对于日期类型处理默认的序列化器和反序列化器，这样就能全局生效，不需要再使用其他注解或者定制序列化方案(当然，有些时候需要特殊处理定制)，或者说，在需要特殊处理的场景才使用其他注解或者定制序列化方案。使用钩子接口<code>Jackson2ObjectMapperBuilderCustomizer</code>可以实现对容器中的<code>ObjectMapper</code>单例中的属性定制：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Jackson2ObjectMapperBuilderCustomizer <span class="title">jackson2ObjectMapperBuilderCustomizer</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> customizer-&gt;&#123;</span><br><span class="line">		customizer.serializerByType(LocalDateTime<span class="class">.<span class="keyword">class</span>,<span class="title">new</span> <span class="title">LocalDateTimeSerializer</span>(</span></span><br><span class="line">				DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));</span><br><span class="line">		customizer.deserializerByType(LocalDateTime<span class="class">.<span class="keyword">class</span>,<span class="title">new</span> <span class="title">LocalDateTimeDeserializer</span>(</span></span><br><span class="line">				DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就能定制化<code>MappingJackson2HttpMessageConverter</code>中持有的<code>ObjectMapper</code>，上面的<code>LocalDateTime</code>序列化和反序列化器对全局生效。</p>
+<h2 id="请求URL匹配">请求URL匹配</h2>
+<p>前面基本介绍完了主流的请求参数处理，其实<code>SpringMVC</code>中还会按照<code>URL</code>的模式进行匹配，使用的是<code>Ant</code>路径风格，处理工具类为<code>org.springframework.util.AntPathMatcher</code>，从此类的注释来看，匹配规则主要包括下面四点<br>
+：</p>
+<ol>
+<li><code>?</code>匹配1个字符。</li>
+<li><code>*</code>匹配0个或者多个<strong>字符</strong>。</li>
+<li><code>**</code>匹配路径中0个或者多个<strong>目录</strong>。</li>
+<li>正则支持，如<code>{spring:[a-z]+}</code>将正则表达式[a-z]+匹配到的值，赋值给名为<strong>spring</strong>的路径变量。</li>
+</ol>
+<p>举些例子：</p>
+<p><strong>’?'形式的URL</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern?"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/pattern  <span class="number">404</span> Not Found</span><br><span class="line">/patternd  <span class="number">200</span> OK</span><br><span class="line">/patterndd  <span class="number">404</span> Not Found</span><br><span class="line">/pattern/  <span class="number">404</span> Not Found</span><br><span class="line">/patternd/s  <span class="number">404</span> Not Found</span><br></pre></td></tr></table></figure>
+<p><strong>’*'形式的URL</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern*"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/pattern  <span class="number">200</span> OK</span><br><span class="line">/pattern/  <span class="number">200</span> OK</span><br><span class="line">/patternd  <span class="number">200</span> OK</span><br><span class="line">/pattern/a  <span class="number">404</span> Not Found</span><br></pre></td></tr></table></figure>
+<p><strong>’**'形式的URL</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern/**/p"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/pattern/p  <span class="number">200</span> OK</span><br><span class="line">/pattern/x/p  <span class="number">200</span> OK</span><br><span class="line">/pattern/x/y/p  <span class="number">200</span> OK</span><br></pre></td></tr></table></figure>
+<p><strong>{spring:[a-z]+}形式的URL</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern/&#123;key:[a-c]+&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern</span><span class="params">(@PathVariable(name = <span class="string">"key"</span>)</span> String key) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/pattern/a  <span class="number">200</span> OK</span><br><span class="line">/pattern/ab  <span class="number">200</span> OK</span><br><span class="line">/pattern/abc  <span class="number">200</span> OK</span><br><span class="line">/pattern  <span class="number">404</span> Not Found</span><br><span class="line">/pattern/abcd  <span class="number">404</span> Not Found</span><br></pre></td></tr></table></figure>
+<p>上面的四种URL模式可以组合使用，千变万化。</p>
+<p><code>URL</code>匹配还遵循<strong>精确匹配原则</strong>，也就是存在两个模式对同一个<code>URL</code>都能够匹配成功，则<strong>选取最精确的<code>URL</code>匹配</strong>，进入对应的控制器方法，举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern/**/p"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@GetMapping</span>(value = <span class="string">"/pattern/p"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">pattern2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面两个控制器，如果请求<code>URL</code>为<code>/pattern/p</code>，最终进入的方法为<code>pattern2</code>。</p>
+<p>最后，<code>org.springframework.util.AntPathMatcher</code>作为一个工具类，可以单独使用，不仅仅可以用于匹配<code>URL</code>，也可以用于匹配系统文件路径，不过需要使用其带参数构造改变内部的<code>pathSeparator</code>变量，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AntPathMatcher antPathMatcher = <span class="keyword">new</span> AntPathMatcher(File.separator);</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p>笔者在前一段时间曾经花大量时间梳理和分析过<code>Spring</code>、<code>SpringMVC</code>的源码，但是后面一段很长的时间需要进行业务开发，对架构方面的东西有点生疏了，毕竟东西不用就会生疏，这个是常理。这篇文章基于一些<code>SpringMVC</code>的源码经验总结了请求参数的处理相关的一些知识，希望帮到自己和大家。</p>
+<p>参考资料：</p>
+<ul>
+<li>spring-boot-web-starter:2.0.3.RELEASE源码。</li>
+</ul>
+<p>（本文完 c-7-d e-a-20180512 旧文重发）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/12/04/spring-mvc-param-handle-summary-1/>http://throwable.club/2019/12/04/spring-mvc-param-handle-summary-1/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/SpringMVC/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>SpringMVC</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/12/04/spring-mvc-param-handle-summary-1/&title=SpringMVC请求参数接收总结(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+在日常使用SpringMVC进行开发的时候，有可能遇到前端各种类型的请求参数，这里做一次相对全面的总结。SpringMVC中处理控制器参数的接口是HandlerMethodArgumentResolver，此接口有众多子类，分别处理不同(注解类型)的参数，下面只列举几个子类：
+
+RequestParamMethodArgumentResolver：解析处理使用了@RequestParam注解的参数、MultipartFile类型参数和Simple类型(如long、int等类型)参数。
+RequestResponseBodyMethodProcessor：解析处理@RequestBody注解的参数。
+PathVariableMapMethodArgumentResolver：解析处理@PathVariable注解的参数。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/12/04/spring-mvc-param-handle-summary-1/&title=SpringMVC请求参数接收总结(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+在日常使用SpringMVC进行开发的时候，有可能遇到前端各种类型的请求参数，这里做一次相对全面的总结。SpringMVC中处理控制器参数的接口是HandlerMethodArgumentResolver，此接口有众多子类，分别处理不同(注解类型)的参数，下面只列举几个子类：
+
+RequestParamMethodArgumentResolver：解析处理使用了@RequestParam注解的参数、MultipartFile类型参数和Simple类型(如long、int等类型)参数。
+RequestResponseBodyMethodProcessor：解析处理@RequestBody注解的参数。
+PathVariableMapMethodArgumentResolver：解析处理@PathVariable注解的参数。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqElEQVR42u3aQW4CMQwF0Ln/pds1qhi+7Rio9LKqKB3yUik2tq8rXj9/1rPXn637J/992rPfXhsLDw8Pb7z1HiPZ0LNXkuPI94OHh4f3Hl7yuPyyngSJe0a+Zzw8PLzv4eVJdh4SkkPEw8PD+7+83sWdvJI/Ew8PD+8beJMSw6Skmx/Neq0FDw8Pr1MNuPI21Wd/Xunv4eHh4Y276hsXevX4RrvFw8PDW+DlF+58vKB6NL3AgIeHh7fNS9pXveZWtVxbHSOIkm88PDy8BV6vJPrTWtWxqvxzXxwxHh4e3lFer/U1SYXz99+Hn+iA8PDw8N7C20iFzw4WFJpheHh4eGu8jZ+Ta31yTPfPeai14OHh4a3x5iXUU6WEvGEWFSPw8PDw1ni9IYC83XW/9WphIgoweHh4eAu8wmRWsX01eU/1UMqlCjw8PLyjvLzN/9mCb6/NhoeHhzfnzcsBeTEiCRLV6370jQEPDw/vEK/X1K8OaZU32vtbPDw8vDXevGyat/nzYNMrDT88Ew8PD2+BVy2SnmrqV5PvalqPh4eH9x5edRAqX6dS6mbJGA8PD2+Blzef7t+TF1ur5eC8VBH19/Dw8PDGvCRR7g1C5UNaeWgpz0Tg4eHhLfCSL//VokA1Fe7tp3BweHh4eEd51TAwSYKrm26GgUmUw8PDwyvy8tGr6iZG7f/JFwA8PDy8Nd6B9lKQEM9LHuXiBR4eHt5R3tmQMLncq+WJ6N+Ah4eHt8CrXrX3afQktOTl40nAwMPDwzvF6wWDfCuTfD/v4EUNMDw8PLyjvEn9s1pmrabgB2IaHh4e3hfwJolvddBq1AbDw8PD+wJedWQqSdzzsYPkCXh4eHjv4SUfmQ9dVZPpybjACyQeHh7eAm9eWk02eiqcXBsLDw8PL12/gVDkKfZNxXQAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/12/04/spring-mvc-param-handle-summary-1/&title=SpringMVC请求参数接收总结(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+在日常使用SpringMVC进行开发的时候，有可能遇到前端各种类型的请求参数，这里做一次相对全面的总结。SpringMVC中处理控制器参数的接口是HandlerMethodArgumentResolver，此接口有众多子类，分别处理不同(注解类型)的参数，下面只列举几个子类：
+
+RequestParamMethodArgumentResolver：解析处理使用了@RequestParam注解的参数、MultipartFile类型参数和Simple类型(如long、int等类型)参数。
+RequestResponseBodyMethodProcessor：解析处理@RequestBody注解的参数。
+PathVariableMapMethodArgumentResolver：解析处理@PathVariable注解的参数。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqElEQVR42u3aQW4CMQwF0Ln/pds1qhi+7Rio9LKqKB3yUik2tq8rXj9/1rPXn637J/992rPfXhsLDw8Pb7z1HiPZ0LNXkuPI94OHh4f3Hl7yuPyyngSJe0a+Zzw8PLzv4eVJdh4SkkPEw8PD+7+83sWdvJI/Ew8PD+8beJMSw6Skmx/Neq0FDw8Pr1MNuPI21Wd/Xunv4eHh4Y276hsXevX4RrvFw8PDW+DlF+58vKB6NL3AgIeHh7fNS9pXveZWtVxbHSOIkm88PDy8BV6vJPrTWtWxqvxzXxwxHh4e3lFer/U1SYXz99+Hn+iA8PDw8N7C20iFzw4WFJpheHh4eGu8jZ+Ta31yTPfPeai14OHh4a3x5iXUU6WEvGEWFSPw8PDw1ni9IYC83XW/9WphIgoweHh4eAu8wmRWsX01eU/1UMqlCjw8PLyjvLzN/9mCb6/NhoeHhzfnzcsBeTEiCRLV6370jQEPDw/vEK/X1K8OaZU32vtbPDw8vDXevGyat/nzYNMrDT88Ew8PD2+BVy2SnmrqV5PvalqPh4eH9x5edRAqX6dS6mbJGA8PD2+Blzef7t+TF1ur5eC8VBH19/Dw8PDGvCRR7g1C5UNaeWgpz0Tg4eHhLfCSL//VokA1Fe7tp3BweHh4eEd51TAwSYKrm26GgUmUw8PDwyvy8tGr6iZG7f/JFwA8PDy8Nd6B9lKQEM9LHuXiBR4eHt5R3tmQMLncq+WJ6N+Ah4eHt8CrXrX3afQktOTl40nAwMPDwzvF6wWDfCuTfD/v4EUNMDw8PLyjvEn9s1pmrabgB2IaHh4e3hfwJolvddBq1AbDw8PD+wJedWQqSdzzsYPkCXh4eHjv4SUfmQ9dVZPpybjACyQeHh7eAm9eWk02eiqcXBsLDw8PL12/gVDkKfZNxXQAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/12/09/spring-boot-server-deploy-monitor/" rel="prev" title="你的SpringBoot应用真的部署更新成功了吗">
+                                  
+                                      你的SpringBoot应用真的部署更新成功了吗
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Spring/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Spring</a> <a class="tag" href="/blog/tags/SpringBoot/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> SpringBoot</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/11/29/spring-mvc-param-global-encryption-decryption-in-action/" rel="prev" title="SpringMVC请求参数和响应结果全局加密和解密">
+                                    
+                                        SpringMVC请求参数和响应结果全局加密和解密
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Spring/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Spring</a> <a class="tag" href="/blog/tags/SpringMVC/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> SpringMVC</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'SpringMVC请求参数接收总结(一)',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringMVC请求参数接收"><span class="toc-text">SpringMVC请求参数接收</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GET方法请求参数处理"><span class="toc-text">GET方法请求参数处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#表单参数"><span class="toc-text">表单参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JSON参数"><span class="toc-text">JSON参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URL路径参数"><span class="toc-text">URL路径参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传"><span class="toc-text">文件上传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他参数"><span class="toc-text">其他参数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#请求头"><span class="toc-text">请求头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cookie"><span class="toc-text">Cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model类型参数"><span class="toc-text">Model类型参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ModelAttribute参数"><span class="toc-text">@ModelAttribute参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Errors或者BindingResult参数"><span class="toc-text">Errors或者BindingResult参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Value参数"><span class="toc-text">@Value参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map类型参数"><span class="toc-text">Map类型参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MultipartFile集合-批量文件上传"><span class="toc-text">MultipartFile集合-批量文件上传</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日期类型参数处理"><span class="toc-text">日期类型参数处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、统一以字符串形式接收"><span class="toc-text">一、统一以字符串形式接收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、使用注解-DateTimeFormat或者-JsonFormat"><span class="toc-text">二、使用注解@DateTimeFormat或者@JsonFormat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三、Jackson序列化和反序列化定制"><span class="toc-text">三、Jackson序列化和反序列化定制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四、最佳实践"><span class="toc-text">四、最佳实践</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求URL匹配"><span class="toc-text">请求URL匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

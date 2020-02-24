@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Hystrix完整配置列表 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/05/29/framework-hystrix-full-configuration/">
+        Hystrix完整配置列表
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Framework/Hystrix/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Framework&nbsp;/&nbsp;Hystrix</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月29日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T01:24:02+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.6k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：29分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/hystrix-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p><code>Hystrix</code>在2018年11月20日之后已经停止维护，最后一个提交记录是：<code>Latest commit 3cb2158  on 20 Nov 2018</code>，最后一个正式版本为<code>1.5.18</code>。鉴于目前所在公司的技术栈是<code>Spring Cloud</code>，熔断和降级组件主要用的还是<code>Hystrix</code>，这里就<code>Hystrix</code>的完整列表做一个分析记录，方便以后可以随时查询。本文主要参考：<a href="https://github.com/Netflix/Hystrix/wiki/Configuration" target="_blank" rel="noopener">Hystrix Configuration</a>。其中，命令配置是针对<code>HystrixCommand</code>，主要包括命令执行(execution)配置、命令降级(fallback)配置、熔断器(circuit breaker)配置、度量统计(metrics)配置和请求上下文配置。</p>
+<a id="more"></a>
+<h2 id="HystrixCommandKey、HystrixCommandGroupKey和HystrixThreadPoolKey">HystrixCommandKey、HystrixCommandGroupKey和HystrixThreadPoolKey</h2>
+<p><code>HystrixCommandKey</code>、<code>HystrixCommandGroupKey</code>和<code>HystrixThreadPoolKey</code>三个KEY是<code>HystrixCommand</code>的重要标识。下面分别分析一下它们的含义。</p>
+<h3 id="HystrixCommandKey">HystrixCommandKey</h3>
+<p><code>HystrixCommandKey</code>是<code>Hystrix</code>命令的唯一标识，准确来说是<code>HystrixCommand</code>实例或者<code>HystrixObservableCommand</code>实例的唯一标识。它是必须的，如果不自定义配置，它会通过下面方式确定默认值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[HystrixCommand或者HystrixObservableCommand的具体子类].getClass().getSimpleName();</span><br></pre></td></tr></table></figure>
+<p>编程式配置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandKey.Factory.asKey(<span class="string">"Your Key"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Command</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"Group Key"</span>))</span><br><span class="line">                .andCommandKey(HystrixCommandKey.Factory.asKey(<span class="string">"Command Key"</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意一点：大部分<code>Hystrix</code>的配置都是和<code>HystrixCommandKey</code>绑定，所以<code>HystrixCommandKey</code>是比较重要的。</p>
+<h3 id="HystrixCommandGroupKey">HystrixCommandGroupKey</h3>
+<p><code>HystrixCommandGroupKey</code>是用于对<code>Hystrix</code>命令进行分组，分组之后便于统计展示于仪表盘、上传报告和预警等等，也就是说，<code>HystrixCommandGroupKey</code>是<code>Hystrix</code>内部进行度量统计时候的分组标识，数据上报和统计的最小维度就是分组的KEY。<code>HystrixCommandGroupKey</code>是必须配置的，配置方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HystrixCommandGroupKey.Factory.asKey(<span class="string">"Group Key"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Command</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"Group Key"</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="HystrixThreadPoolKey">HystrixThreadPoolKey</h3>
+<p><code>HystrixThreadPoolKey</code>主要标识用于监控、度量和缓存等等作用的<code>HystrixThreadPool</code>实例。一个<code>HystrixCommand</code>会和一个独立的<code>HystrixThreadPool</code>实例关联，也就是说一类<code>HystrixCommand</code>总是在同一个<code>HystrixThreadPool</code>实例中执行。如果不显式配置<code>HystrixThreadPoolKey</code>，那么会使用<code>HystrixCommandGroupKey</code>的值去配置<code>HystrixThreadPoolKey</code>。<code>HystrixThreadPoolKey</code>的配置方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HystrixThreadPoolKey.Factory.asKey(<span class="string">"ThreadPoolKey"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Command</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"xxx"</span>))</span><br><span class="line">                .andCommandKey(HystrixCommandKey.Factory.asKey(<span class="string">"YYY"</span>))</span><br><span class="line">                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(<span class="string">"ThreadPoolKey"</span>)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="命令执行-execution-配置">命令执行(execution)配置</h2>
+<h3 id="隔离策略">隔离策略</h3>
+<ul>
+<li><strong>execution.isolation.strategy</strong></li>
+</ul>
+<p>隔离策略决定<code>Hystrix</code>命令执行的时候采用什么类型的策略进行依赖隔离。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>THREAD</code> (见<code>ExecutionIsolationStrategy.THREAD</code>)</td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>THREAD</code>,<code>SEMAPHORE</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.isolation.strategy</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.isolation.strategy</code></td>
+</tr>
+</tbody>
+</table>
+<p>执行隔离策略到底选择线程池(<code>THREAD</code>)还是信号量(<code>SEMAPHORE</code>)？文档中给出的建议是：</p>
+<blockquote>
+<p>使用<code>HystrixCommand</code>的时候建议用<code>THREAD</code>策略，使用<code>HystrixObservableCommand</code>的时候建议使用<code>SEMAPHORE</code>策略。</p>
+</blockquote>
+<blockquote>
+<p>使用<code>THREAD</code>策略让<code>HystrixCommand</code>在线程中执行可以提供额外的保护层，以防止因为网络超时导致的延时失败。</p>
+</blockquote>
+<blockquote>
+<p>一般情况下，只有这种特殊例子下<code>HystrixCommand</code>会搭配<code>SEMAPHORE</code>策略使用：调用的频次太高(例如每个实例每秒数百次调用)，这种情况如果选用<code>THREAD</code>策略有可能导致超过线程隔离的上限(有可能需要太多的线程或者命令太多线程不足够用于隔离请求)，这种情况一般是非网络请求调用。</p>
+</blockquote>
+<p><strong>笔者想说的是：建议选用默认值，因为目前很少遇到使用信号量隔离的场景。</strong></p>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.isolation.strategy</span>=<span class="string">THREAD</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.isolation.strategy</span>=<span class="string">THREAD</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否允许超时">是否允许超时</h3>
+<ul>
+<li><strong>execution.timeout.enabled</strong></li>
+</ul>
+<p>决定<code>HystrixCommand#run()</code>执行时是否允许超时，只有设置为true的时候，下面提到的“超时时间上限”才会有效。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>,<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.timeout.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.timeout.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">保持选用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionTimeoutEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.timeout.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.timeout.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="超时时间上限">超时时间上限</h3>
+<ul>
+<li><strong>execution.isolation.thread.timeoutInMilliseconds</strong></li>
+</ul>
+<p><code>HystrixCommand</code>执行时候超时的最大上限，单位是毫秒，如果命令执行耗时超过此时间值那么会进入降级逻辑。这个配置生效的前提是<code>hystrix.command.default.execution.timeout.enabled</code>或者<code>hystrix.command.[HystrixCommandKey].execution.timeout.enabled</code>为true。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>1000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.isolation.thread.timeoutInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">保持选用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionTimeoutInMilliseconds(<span class="number">1000</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds</span>=<span class="string">1000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.isolation.thread.timeoutInMilliseconds</span>=<span class="string">1000</span></span><br></pre></td></tr></table></figure>
+<h3 id="超时是否中断">超时是否中断</h3>
+<p>此配置项决定<code>HystrixCommand#run()</code>执行的时候调用超时的情况下是否中断。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.isolation.thread.interruptOnTimeout</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.isolation.thread.interruptOnTimeout</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">保持选用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionIsolationThreadInterruptOnTimeout(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.isolation.thread.interruptOnTimeout</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.isolation.thread.interruptOnTimeout</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="取消是否中断">取消是否中断</h3>
+<ul>
+<li><strong>execution.isolation.thread.interruptOnCancel</strong></li>
+</ul>
+<p>此配置项决定<code>HystrixCommand#run()</code>执行的时候取消调用的情况下是否中断。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.isolation.thread.interruptOnCancel</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.isolation.thread.interruptOnCancel</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">保持选用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionIsolationThreadInterruptOnFutureCancel(<span class="keyword">false</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.isolation.thread.interruptOnCancel</span>=<span class="string">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.isolation.thread.interruptOnCancel</span>=<span class="string">false</span></span><br></pre></td></tr></table></figure>
+<h3 id="最大并发请求上限-SEMAPHORE">最大并发请求上限(SEMAPHORE)</h3>
+<ul>
+<li><strong>execution.isolation.semaphore.maxConcurrentRequests</strong></li>
+</ul>
+<p>此配置项决定使用<code>HystrixCommand#run()</code>方法和<code>ExecutionIsolationStrategy.SEMAPHORE</code>隔离策略下并发请求数量的最高上限。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].execution.isolation.semaphore.maxConcurrentRequests</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">必须根据实际情况设定此值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)</span><br><span class="line">                        .withExecutionIsolationSemaphoreMaxConcurrentRequests(<span class="number">100</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests</span>=<span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.execution.isolation.semaphore.maxConcurrentRequests</span>=<span class="string">100</span></span><br></pre></td></tr></table></figure>
+<h2 id="命令降级-fallback-配置">命令降级(fallback)配置</h2>
+<p>命令降级配置控制<code>HystrixCommand#getFallback()</code>的执行逻辑，所有命令降级配置对策略<code>ExecutionIsolationStrategy.THREAD</code>或者<code>ExecutionIsolationStrategy.SEMAPHORE</code>都生效。</p>
+<h3 id="最大并发降级请求处理上限">最大并发降级请求处理上限</h3>
+<ul>
+<li><strong>fallback.isolation.semaphore.maxConcurrentRequests</strong></li>
+</ul>
+<p>这个属性用于控制一个<code>HystrixCommand#getFallback()</code>实例方法在执行线程中调用的最大上限，如果超过此上限，降级逻辑不会执行并且会抛出一个异常。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].fallback.isolation.semaphore.maxConcurrentRequests</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">必须根据实际情况设定此值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withFallbackIsolationSemaphoreMaxConcurrentRequests(<span class="number">20</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests</span>=<span class="string">20</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.fallback.isolation.semaphore.maxConcurrentRequests</span>=<span class="string">20</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否开启降级">是否开启降级</h3>
+<ul>
+<li><strong>fallback.enabled</strong></li>
+</ul>
+<p>此属性控制当<code>HystrixCommand</code>执行失败之后是否调用<code>HystrixCommand#getFallback()</code>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>false</code>、<code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.fallback.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].fallback.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withFallbackEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.fallback.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.fallback.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="断路器-circuit-breaker-配置">断路器(circuit breaker)配置</h2>
+<p>断路器配置用于控制<code>HystrixCircuitBreaker</code>实例的行为。</p>
+<h3 id="是否启用断路器">是否启用断路器</h3>
+<ul>
+<li><strong>circuitBreaker.enabled</strong></li>
+</ul>
+<p>此属性确定断路器是否用于跟踪健康状况，以及当断路器打开的时候是否用于短路请求(使请求快速失败进入降级逻辑)。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>false</code>、<code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="断路器请求量阈值">断路器请求量阈值</h3>
+<ul>
+<li><strong>circuitBreaker.requestVolumeThreshold</strong></li>
+</ul>
+<p>此属性设置将使断路器打开的滑动窗口中的最小请求数量。</p>
+<p>例如，如果值是20，那么如果在滑动窗口中只接收到19个请求(比如一个10秒的窗口)，即使所有19个请求都失败了，断路器也不会打开。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>20</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.requestVolumeThreshold</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.requestVolumeThreshold</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值，如果部分接口不能容忍默认阈值可以单独配置</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerRequestVolumeThreshold(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.requestVolumeThreshold</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.requestVolumeThreshold</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="断路器等待窗口时间">断路器等待窗口时间</h3>
+<ul>
+<li><strong>circuitBreaker.sleepWindowInMilliseconds</strong></li>
+</ul>
+<p>此属性设置断路器打开后拒绝请求的时间量，每隔一段时间(<code>sleepWindowInMilliseconds</code>，单位是毫秒)允许再次尝试(也就是放行一个请求)确定是否应该关闭断路器。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>5000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.sleepWindowInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerSleepWindowInMilliseconds(<span class="number">5000</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds</span>=<span class="string">5000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.sleepWindowInMilliseconds</span>=<span class="string">5000</span></span><br></pre></td></tr></table></figure>
+<h3 id="断路器错误百分比阈值">断路器错误百分比阈值</h3>
+<ul>
+<li><strong>circuitBreaker.errorThresholdPercentage</strong></li>
+</ul>
+<p>此属性设置一个错误百分比，当请求错误率超过设定值，断路器就会打开。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>50</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.errorThresholdPercentage</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.errorThresholdPercentage</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerErrorThresholdPercentage(<span class="number">50</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.errorThresholdPercentage</span>=<span class="string">50</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.errorThresholdPercentage</span>=<span class="string">50</span></span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>配置项<code>circuitBreaker.requestVolumeThreshold</code>针对错误请求数量。</li>
+<li>配置项<code>circuitBreaker.errorThresholdPercentage</code>针对错误请求百分比。</li>
+</ul>
+<h3 id="是否强制打开断路器">是否强制打开断路器</h3>
+<ul>
+<li><strong>circuitBreaker.forceOpen</strong></li>
+</ul>
+<p>此属性控制断路器是否强制打开，强制打开断路器会使所有请求直接进入降级逻辑，也就是包裹在<code>HystrixCommand#run()</code>的逻辑不会执行。<code>circuitBreaker.forceOpen</code>属性和<code>circuitBreaker.forceClosed</code>属性互斥。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>false</code>、<code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.forceOpen</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.forceOpen</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerForceOpen(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.forceOpen</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.forceOpen</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否强制关闭断路器">是否强制关闭断路器</h3>
+<ul>
+<li><strong>circuitBreaker.forceClosed</strong></li>
+</ul>
+<p>此属性控制断路器是否强制关闭，强制关闭断路器会导致所有和断路器相关的配置和功能都失效，<code>HystrixCommand#run()</code>抛出异常会正常进入降级逻辑。<code>circuitBreaker.forceClosed</code>属性和<code>circuitBreaker.forceOpen</code>属性互斥。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>false</code>、<code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.circuitBreaker.forceClosed</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].circuitBreaker.forceClosed</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withCircuitBreakerForceClosed(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.circuitBreaker.forceClosed</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.circuitBreaker.forceClosed</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="度量统计-metrics-配置">度量统计(metrics)配置</h2>
+<p>度量统计配置会对<code>HystrixCommand</code>或者<code>HystrixObservableCommand</code>执行时候的统计数据收集动作生效。</p>
+<h3 id="滑动窗口持续时间">滑动窗口持续时间</h3>
+<ul>
+<li><strong>metrics.rollingStats.timeInMilliseconds</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingStats.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingStats.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingStatisticalWindowInMilliseconds(<span class="number">10000</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingStats.timeInMilliseconds</span>=<span class="string">10000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingStats.timeInMilliseconds</span>=<span class="string">10000</span></span><br></pre></td></tr></table></figure>
+<h3 id="滑动窗口Bucket总数">滑动窗口Bucket总数</h3>
+<ul>
+<li><strong>metrics.rollingStats.numBuckets</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">需要满足<code>metrics.rollingStats.timeInMilliseconds % metrics.rollingStats.numBuckets == 0</code>，要尽量小，否则有可能影响性能</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingStats.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingStats.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingStatisticalWindowBuckets(<span class="number">100</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingStats.numBuckets</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingStats.numBuckets</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否启用百分数计算">是否启用百分数计算</h3>
+<ul>
+<li><strong>metrics.rollingPercentile.enabled</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingPercentile.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingPercentile.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingPercentileEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingPercentile.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingPercentile.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="百分数计算使用的滑动窗口持续时间">百分数计算使用的滑动窗口持续时间</h3>
+<ul>
+<li><strong>metrics.rollingPercentile.timeInMilliseconds</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>60000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingPercentile.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingPercentile.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingPercentileWindowInMilliseconds(<span class="number">60000</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingPercentile.timeInMilliseconds</span>=<span class="string">60000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingPercentile.timeInMilliseconds</span>=<span class="string">60000</span></span><br></pre></td></tr></table></figure>
+<h3 id="百分数计算使用的Bucket总数">百分数计算使用的Bucket总数</h3>
+<ul>
+<li><strong>metrics.rollingPercentile.numBuckets</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>6</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">满足<code>metrics.rollingPercentile.timeInMilliseconds % metrics.rollingPercentile.numBuckets == 0</code>，要尽量小，否则有可能影响性能</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingPercentile.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingPercentile.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingPercentileWindowBuckets(<span class="number">6</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingPercentile.numBuckets</span>=<span class="string">6</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingPercentile.numBuckets</span>=<span class="string">6</span></span><br></pre></td></tr></table></figure>
+<h3 id="百分数计算使用的Bucket容量">百分数计算使用的Bucket容量</h3>
+<ul>
+<li><strong>metrics.rollingPercentile.bucketSize</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>100</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.rollingPercentile.bucketSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.rollingPercentile.bucketSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsRollingPercentileBucketSize(<span class="number">100</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.rollingPercentile.bucketSize</span>=<span class="string">100</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.rollingPercentile.bucketSize</span>=<span class="string">100</span></span><br></pre></td></tr></table></figure>
+<h3 id="健康状态快照收集的周期">健康状态快照收集的周期</h3>
+<ul>
+<li><strong>metrics.healthSnapshot.intervalInMilliseconds</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>500</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].metrics.healthSnapshot.intervalInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withMetricsHealthSnapshotIntervalInMilliseconds(<span class="number">500</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds</span>=<span class="string">500</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.metrics.healthSnapshot.intervalInMilliseconds</span>=<span class="string">500</span></span><br></pre></td></tr></table></figure>
+<h2 id="请求上下文配置">请求上下文配置</h2>
+<p>请求上下文属性主要涉及到<code>HystrixRequestContext</code>和<code>HystrixCommand</code>的使用。</p>
+<h3 id="是否启用请求缓存">是否启用请求缓存</h3>
+<ul>
+<li><strong>requestCache.enabled</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.requestCache.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].requestCache.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withRequestCacheEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.requestCache.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.requestCache.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否启用请求日志">是否启用请求日志</h3>
+<ul>
+<li><strong>requestLog.enabled</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.command.default.requestLog.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.command.[HystrixCommandKey].requestLog.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()</span><br><span class="line">                        .withRequestLogEnabled(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.command.default.requestLog.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.command.CustomCommand.requestLog.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="请求合成器配置">请求合成器配置</h2>
+<p>请求合成器配置主要控制<code>HystrixCollapser</code>的行为。</p>
+<h3 id="请求合成的最大批次量">请求合成的最大批次量</h3>
+<ul>
+<li><strong>maxRequestsInBatch</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>Integer.MAX_VALUE</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.collapser.default.maxRequestsInBatch</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.collapser.[HystrixCollapserKey].maxRequestsInBatch</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomHystrixCollapser</span> <span class="keyword">extends</span> <span class="title">HystrixCollapser</span>&lt;<span class="title">List</span>&lt;<span class="title">String</span>&gt;, <span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomHystrixCollapser</span><span class="params">(Setter setter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withCollapserKey(HystrixCollapserKey.Factory.asKey(<span class="string">"CustomHystrixCollapser"</span>))</span><br><span class="line">                .andCollapserPropertiesDefaults(HystrixCollapserProperties.Setter()</span><br><span class="line">                        .withMaxRequestsInBatch(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRequestArgument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> HystrixCommand&lt;List&lt;String&gt;&gt; createCommand(Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">mapResponseToRequests</span><span class="params">(List&lt;String&gt; batchResponse, Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.default.maxRequestsInBatch</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.CustomHystrixCollapser.maxRequestsInBatch</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="延迟执行时间">延迟执行时间</h3>
+<ul>
+<li><strong>timerDelayInMilliseconds</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.collapser.default.timerDelayInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.collapser.[HystrixCollapserKey].timerDelayInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomHystrixCollapser</span> <span class="keyword">extends</span> <span class="title">HystrixCollapser</span>&lt;<span class="title">List</span>&lt;<span class="title">String</span>&gt;, <span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomHystrixCollapser</span><span class="params">(Setter setter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withCollapserKey(HystrixCollapserKey.Factory.asKey(<span class="string">"CustomHystrixCollapser"</span>))</span><br><span class="line">                .andCollapserPropertiesDefaults(HystrixCollapserProperties.Setter()</span><br><span class="line">                        .withTimerDelayInMilliseconds(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRequestArgument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> HystrixCommand&lt;List&lt;String&gt;&gt; createCommand(Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">mapResponseToRequests</span><span class="params">(List&lt;String&gt; batchResponse, Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.default.timerDelayInMilliseconds</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.CustomHystrixCollapser.timerDelayInMilliseconds</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否启用请求合成缓存">是否启用请求合成缓存</h3>
+<ul>
+<li><strong>requestCache.enabled</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>true</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.collapser.default.requestCache.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.collapser.[HystrixCollapserKey].requestCache.enabled</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议保持默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomHystrixCollapser</span> <span class="keyword">extends</span> <span class="title">HystrixCollapser</span>&lt;<span class="title">List</span>&lt;<span class="title">String</span>&gt;, <span class="title">String</span>, <span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomHystrixCollapser</span><span class="params">(Setter setter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withCollapserKey(HystrixCollapserKey.Factory.asKey(<span class="string">"CustomHystrixCollapser"</span>))</span><br><span class="line">                .andCollapserPropertiesDefaults(HystrixCollapserProperties.Setter()</span><br><span class="line">                        .withTimerDelayInMilliseconds(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getRequestArgument</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> HystrixCommand&lt;List&lt;String&gt;&gt; createCommand(Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">mapResponseToRequests</span><span class="params">(List&lt;String&gt; batchResponse, Collection&lt;CollapsedRequest&lt;String, String&gt;&gt; collapsedRequests)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.default.requestCache.enabled</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.collapser.CustomHystrixCollapser.requestCache.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="线程池配置">线程池配置</h2>
+<p><code>Hystrix</code>使用的是JUC线程池<code>ThreadPoolExecutor</code>，线程池相关配置直接影响<code>ThreadPoolExecutor</code>实例。<code>Hystrix</code>的命令执行选用了线程池策略，那么就是通过线程池隔离执行的，最好为每一个分组设立独立的线程池。笔者在生产实践的时候，一般把<code>HystrixCommandGroupKey</code>和<code>HystrixThreadPoolKey</code>设置为一致。</p>
+<h3 id="核心线程数">核心线程数</h3>
+<ul>
+<li><strong>coreSize</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.coreSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].coreSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withCoreSize(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.coreSize</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.coreSize</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="最大线程数">最大线程数</h3>
+<ul>
+<li><strong>maximumSize</strong></li>
+</ul>
+<p>此属性只有在<code>allowMaximumSizeToDivergeFromCoreSize</code>为<code>true</code>的时候才生效。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.maximumSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].maximumSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withMaximumSize(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.maximumSize</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.maximumSize</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<h3 id="最大任务队列容量">最大任务队列容量</h3>
+<ul>
+<li><strong>maxQueueSize</strong></li>
+</ul>
+<p>此属性配置为-1时使用的是<code>SynchronousQueue</code>，配置为大于1的整数时使用的是<code>LinkedBlockingQueue</code>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>-1</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>-1</code>或者大于0的整数</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.maxQueueSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].maxQueueSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withMaxQueueSize(-<span class="number">1</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.maxQueueSize</span>=<span class="string">-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.maxQueueSize</span>=<span class="string">-1</span></span><br></pre></td></tr></table></figure>
+<h3 id="任务拒绝的任务队列阈值">任务拒绝的任务队列阈值</h3>
+<ul>
+<li><strong>queueSizeRejectionThreshold</strong></li>
+</ul>
+<p>当<code>maxQueueSize</code>配置为-1的时候，此配置项不生效。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>5</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">大于0的整数</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.queueSizeRejectionThreshold</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].queueSizeRejectionThreshold</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withQueueSizeRejectionThreshold(<span class="number">5</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.queueSizeRejectionThreshold</span>=<span class="string">5</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.queueSizeRejectionThreshold</span>=<span class="string">5</span></span><br></pre></td></tr></table></figure>
+<h3 id="非核心线程存活时间">非核心线程存活时间</h3>
+<ul>
+<li><strong>keepAliveTimeMinutes</strong></li>
+</ul>
+<p>当<code>allowMaximumSizeToDivergeFromCoreSize</code>为<code>true</code>并且<code>maximumSize</code>大于<code>coreSize</code>时此配置才生效。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>1</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">大于0的整数</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.keepAliveTimeMinutes</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].keepAliveTimeMinutes</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withKeepAliveTimeMinutes(<span class="number">1</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.keepAliveTimeMinutes</span>=<span class="string">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.keepAliveTimeMinutes</span>=<span class="string">1</span></span><br></pre></td></tr></table></figure>
+<h3 id="是否允许最大线程数生效">是否允许最大线程数生效</h3>
+<ul>
+<li><strong>allowMaximumSizeToDivergeFromCoreSize</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center"><code>true</code>、<code>false</code></td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].allowMaximumSizeToDivergeFromCoreSize</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">根据真实情况自行配置和调整</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withAllowMaximumSizeToDivergeFromCoreSize(<span class="keyword">true</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize</span>=<span class="string">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.allowMaximumSizeToDivergeFromCoreSize</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="线程池滑动窗口持续时间">线程池滑动窗口持续时间</h3>
+<ul>
+<li><strong>metrics.rollingStats.timeInMilliseconds</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10000</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.metrics.rollingStats.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].metrics.rollingStats.timeInMilliseconds</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议使用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withMetricsRollingStatisticalWindowInMilliseconds(<span class="number">10000</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.metrics.rollingStats.timeInMilliseconds</span>=<span class="string">10000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.metrics.rollingStats.timeInMilliseconds</span>=<span class="string">10000</span></span><br></pre></td></tr></table></figure>
+<h3 id="线程池滑动窗口Bucket总数">线程池滑动窗口Bucket总数</h3>
+<ul>
+<li><strong>metrics.rollingStats.numBuckets</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">项</th>
+<th style="text-align:center">值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">默认值</td>
+<td style="text-align:center"><code>10</code></td>
+</tr>
+<tr>
+<td style="text-align:center">可选值</td>
+<td style="text-align:center">满足<code>metrics.rollingStats.timeInMilliseconds % metrics.rollingStats.numBuckets == 0</code>，值要尽量少，否则会影响性能</td>
+</tr>
+<tr>
+<td style="text-align:center">默认全局配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.default.metrics.rollingStats.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">实例配置</td>
+<td style="text-align:center"><code>hystrix.threadpool.[HystrixThreadPoolKey].metrics.rollingStats.numBuckets</code></td>
+</tr>
+<tr>
+<td style="text-align:center">建议(笔者备注)</td>
+<td style="text-align:center">建议使用默认值</td>
+</tr>
+</tbody>
+</table>
+<p>编程式配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomCommand</span> <span class="keyword">extends</span> <span class="title">HystrixCommand</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomCommand</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(<span class="string">"CustomCommand"</span>))</span><br><span class="line">                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()</span><br><span class="line">                        .withMetricsRollingStatisticalWindowBuckets(<span class="number">10</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中(Properties)配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下面配置二选一</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认全局配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.default.metrics.rollingStats.numBuckets</span>=<span class="string">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 实例配置</span></span><br><span class="line"><span class="meta">hystrix.threadpool.CustomCommand.metrics.rollingStats.numBuckets</span>=<span class="string">10</span></span><br></pre></td></tr></table></figure>
+<p>(本文完 e-a-201890602 1:00 AM c-3-d)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/05/29/framework-hystrix-full-configuration/>http://throwable.club/2019/05/29/framework-hystrix-full-configuration/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Framework/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Framework</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Hystrix/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Hystrix</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/05/29/framework-hystrix-full-configuration/&title=Hystrix完整配置列表 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+Hystrix在2018年11月20日之后已经停止维护，最后一个提交记录是：Latest commit 3cb2158  on 20 Nov 2018，最后一个正式版本为1.5.18。鉴于目前所在公司的技术栈是Spring Cloud，熔断和降级组件主要用的还是Hystrix，这里就Hystrix的完整列表做一个分析记录，方便以后可以随时查询。本文主要参考：Hystrix Configuration。其中，命令配置是针对HystrixCommand，主要包括命令执行(execution)配置、命令降级(fallback)配置、熔断器(circuit breaker)配置、度量统计(metrics)配置和请求上下文配置。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/05/29/framework-hystrix-full-configuration/&title=Hystrix完整配置列表 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+Hystrix在2018年11月20日之后已经停止维护，最后一个提交记录是：Latest commit 3cb2158  on 20 Nov 2018，最后一个正式版本为1.5.18。鉴于目前所在公司的技术栈是Spring Cloud，熔断和降级组件主要用的还是Hystrix，这里就Hystrix的完整列表做一个分析记录，方便以后可以随时查询。本文主要参考：Hystrix Configuration。其中，命令配置是针对HystrixCommand，主要包括命令执行(execution)配置、命令降级(fallback)配置、熔断器(circuit breaker)配置、度量统计(metrics)配置和请求上下文配置。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqklEQVR42u3a22ojMRAEUP//TyevgcTeqm7JmOXMU2BuOhOQ2qV+POLj68nx8+zvK3+fffbk9i2HDzw8PLxDQ3896GeDy4eekNoP8ce9eHh4eNd4yeNmy0AyoefvyseMh4eH9zm8s2V3fg0eHh7e/8TbF9zJM/Hw8PA+jddO669hm3I5px7OWvDw8PBiXr6L9Dl/X9nfw8PDw1vvquebYW0xnW9urUaLh4eHd4G3iWjb8GLWmNWWy3h4eHi3ee2kv9/Emt07+yh4eHh47+FtGqfafCAPgvMwt96Xw8PDwyt57XT8+nGv44NTQUNdduPh4eFd4O1/9s+2slrAJibGw8PDO8ubRQazCCP5lPnyk3xiPDw8vLO8pEg9FT20n2BWrD+SBAUPDw9vwZstAG1zwKxhq23/irJqPDw8vEO8NozIXzBjbMKI+n+Ih4eHV/LyybfFzAr3fJst+pR4eHh4F3j5z/vix/9ie2xfstcdW3h4eHgj3mbybQOIZPFIFpLi+Xh4eHhHebOyOC95zxbQbTiCh4eHd48XXRqEC/k1+aDbDTk8PDy89/BmL5udPdAEkH9QPDw8vAu8diib6LaNG84uRXh4eHg3ePlE3Mas+6k/DyP+sQbi4eHhHeK1DUz5xN1O6EmR3V6Dh4eHd4+3jydmS8Ks3SpvOMDDw8O7x8uH1TZpJfduIuOopwwPDw/vAi8ZaBsuJAtAgpkV5Xh4eHg3eF/l0Ua6m0aENib+48l4eHh4F3j50bZVzc62Ie+mQwAPDw9vw8u3mvLJNwpY11tiBwprPDw8vAVvNsQ8sJhtnh1YwPDw8PA+hneq9aptI2jfjoeHh/dpvM2RBBazbTM8PDy89/CSMKIdVhtetDFHdC8eHh7eBV4brc6m7LaN9djQ8fDw8E7yvgFOTVS5f16cpAAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/05/29/framework-hystrix-full-configuration/&title=Hystrix完整配置列表 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+Hystrix在2018年11月20日之后已经停止维护，最后一个提交记录是：Latest commit 3cb2158  on 20 Nov 2018，最后一个正式版本为1.5.18。鉴于目前所在公司的技术栈是Spring Cloud，熔断和降级组件主要用的还是Hystrix，这里就Hystrix的完整列表做一个分析记录，方便以后可以随时查询。本文主要参考：Hystrix Configuration。其中，命令配置是针对HystrixCommand，主要包括命令执行(execution)配置、命令降级(fallback)配置、熔断器(circuit breaker)配置、度量统计(metrics)配置和请求上下文配置。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqklEQVR42u3a22ojMRAEUP//TyevgcTeqm7JmOXMU2BuOhOQ2qV+POLj68nx8+zvK3+fffbk9i2HDzw8PLxDQ3896GeDy4eekNoP8ce9eHh4eNd4yeNmy0AyoefvyseMh4eH9zm8s2V3fg0eHh7e/8TbF9zJM/Hw8PA+jddO669hm3I5px7OWvDw8PBiXr6L9Dl/X9nfw8PDw1vvquebYW0xnW9urUaLh4eHd4G3iWjb8GLWmNWWy3h4eHi3ee2kv9/Emt07+yh4eHh47+FtGqfafCAPgvMwt96Xw8PDwyt57XT8+nGv44NTQUNdduPh4eFd4O1/9s+2slrAJibGw8PDO8ubRQazCCP5lPnyk3xiPDw8vLO8pEg9FT20n2BWrD+SBAUPDw9vwZstAG1zwKxhq23/irJqPDw8vEO8NozIXzBjbMKI+n+Ih4eHV/LyybfFzAr3fJst+pR4eHh4F3j5z/vix/9ie2xfstcdW3h4eHgj3mbybQOIZPFIFpLi+Xh4eHhHebOyOC95zxbQbTiCh4eHd48XXRqEC/k1+aDbDTk8PDy89/BmL5udPdAEkH9QPDw8vAu8diib6LaNG84uRXh4eHg3ePlE3Mas+6k/DyP+sQbi4eHhHeK1DUz5xN1O6EmR3V6Dh4eHd4+3jydmS8Ks3SpvOMDDw8O7x8uH1TZpJfduIuOopwwPDw/vAi8ZaBsuJAtAgpkV5Xh4eHg3eF/l0Ua6m0aENib+48l4eHh4F3j50bZVzc62Ie+mQwAPDw9vw8u3mvLJNwpY11tiBwprPDw8vAVvNsQ8sJhtnh1YwPDw8PA+hneq9aptI2jfjoeHh/dpvM2RBBazbTM8PDy89/CSMKIdVhtetDFHdC8eHh7eBV4brc6m7LaN9djQ8fDw8E7yvgFOTVS5f16cpAAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/06/09/java-jvm-garbage-collection-summary/" rel="prev" title="深入理解Java中的Garbage Collection">
+                                  
+                                      深入理解Java中的Garbage Collection
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JVM/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JVM</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/27/in-action-share-spring-cloud-gateway-guide/" rel="prev" title="内部分享-Spring Cloud Gateway初体验">
+                                    
+                                        内部分享-Spring Cloud Gateway初体验
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/In-Action/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> In Action</a> <a class="tag" href="/blog/tags/Spring-Cloud-Gateway/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Spring Cloud Gateway</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Hystrix完整配置列表',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HystrixCommandKey、HystrixCommandGroupKey和HystrixThreadPoolKey"><span class="toc-text">HystrixCommandKey、HystrixCommandGroupKey和HystrixThreadPoolKey</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HystrixCommandKey"><span class="toc-text">HystrixCommandKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HystrixCommandGroupKey"><span class="toc-text">HystrixCommandGroupKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HystrixThreadPoolKey"><span class="toc-text">HystrixThreadPoolKey</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令执行-execution-配置"><span class="toc-text">命令执行(execution)配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#隔离策略"><span class="toc-text">隔离策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否允许超时"><span class="toc-text">是否允许超时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时时间上限"><span class="toc-text">超时时间上限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#超时是否中断"><span class="toc-text">超时是否中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取消是否中断"><span class="toc-text">取消是否中断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最大并发请求上限-SEMAPHORE"><span class="toc-text">最大并发请求上限(SEMAPHORE)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令降级-fallback-配置"><span class="toc-text">命令降级(fallback)配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最大并发降级请求处理上限"><span class="toc-text">最大并发降级请求处理上限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否开启降级"><span class="toc-text">是否开启降级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#断路器-circuit-breaker-配置"><span class="toc-text">断路器(circuit breaker)配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#是否启用断路器"><span class="toc-text">是否启用断路器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#断路器请求量阈值"><span class="toc-text">断路器请求量阈值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#断路器等待窗口时间"><span class="toc-text">断路器等待窗口时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#断路器错误百分比阈值"><span class="toc-text">断路器错误百分比阈值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否强制打开断路器"><span class="toc-text">是否强制打开断路器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否强制关闭断路器"><span class="toc-text">是否强制关闭断路器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#度量统计-metrics-配置"><span class="toc-text">度量统计(metrics)配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口持续时间"><span class="toc-text">滑动窗口持续时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口Bucket总数"><span class="toc-text">滑动窗口Bucket总数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否启用百分数计算"><span class="toc-text">是否启用百分数计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#百分数计算使用的滑动窗口持续时间"><span class="toc-text">百分数计算使用的滑动窗口持续时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#百分数计算使用的Bucket总数"><span class="toc-text">百分数计算使用的Bucket总数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#百分数计算使用的Bucket容量"><span class="toc-text">百分数计算使用的Bucket容量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#健康状态快照收集的周期"><span class="toc-text">健康状态快照收集的周期</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求上下文配置"><span class="toc-text">请求上下文配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#是否启用请求缓存"><span class="toc-text">是否启用请求缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否启用请求日志"><span class="toc-text">是否启用请求日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#请求合成器配置"><span class="toc-text">请求合成器配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#请求合成的最大批次量"><span class="toc-text">请求合成的最大批次量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延迟执行时间"><span class="toc-text">延迟执行时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否启用请求合成缓存"><span class="toc-text">是否启用请求合成缓存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池配置"><span class="toc-text">线程池配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#核心线程数"><span class="toc-text">核心线程数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最大线程数"><span class="toc-text">最大线程数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最大任务队列容量"><span class="toc-text">最大任务队列容量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#任务拒绝的任务队列阈值"><span class="toc-text">任务拒绝的任务队列阈值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非核心线程存活时间"><span class="toc-text">非核心线程存活时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否允许最大线程数生效"><span class="toc-text">是否允许最大线程数生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程池滑动窗口持续时间"><span class="toc-text">线程池滑动窗口持续时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#线程池滑动窗口Bucket总数"><span class="toc-text">线程池滑动窗口Bucket总数</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2020/01/16/netty-custom-rpc-framework-client/">
+        基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Netty/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Netty&nbsp;/&nbsp;Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2020年1月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-01-16T22:57:36+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年1月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：9分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>前置文章：</p>
+<ul>
+<li><a href="http://www.throwable.club/2020/01/12/netty-custom-rpc-framework-protocol" target="_blank" rel="noopener">《基于Netty和SpringBoot实现一个轻量级RPC框架-协议篇》</a></li>
+<li><a href="http://www.throwable.club/2020/01/15/netty-custom-rpc-framework-server" target="_blank" rel="noopener">《基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇》</a></li>
+</ul>
+<p>前一篇文章相对简略地介绍了<code>RPC</code>服务端的编写，而这篇博文最要介绍服务端（<code>Client</code>）的实现。<code>RPC</code>调用一般是面向契约编程的，而<code>Client</code>的核心功能就是：把契约接口方法的调用抽象为使用<code>Netty</code>向<code>RPC</code>服务端通过私有协议发送一个请求。这里最底层的实现依赖于动态代理，因此动态代理是动态实现接口的最简单方式（如果字节码研究得比较深入，可以通过字节码编程实现接口）。需要的依赖如下：</p>
+<ul>
+<li><code>JDK1.8+</code></li>
+<li><code>Netty:4.1.44.Final</code></li>
+<li><code>SpringBoot:2.2.2.RELEASE</code></li>
+</ul>
+<a id="more"></a>
+<h2 id="动态代理的简单使用">动态代理的简单使用</h2>
+<p>一般可以通过<code>JDK</code>动态代理或者<code>Cglib</code>的字节码增强来实现此功能，为了简单起见，不引入额外的依赖，这里选用<code>JDK</code>动态代理。这里重新搬出前面提到的契约接口<code>HelloService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来需要通过动态代理为此接口添加一个实现：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDynamicProxy</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Class&lt;HelloService&gt; interfaceKlass = HelloService<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">        InvocationHandler handler = <span class="keyword">new</span> HelloServiceImpl(interfaceKlass);</span><br><span class="line">        HelloService helloService = (HelloService)</span><br><span class="line">                Proxy.newProxyInstance(interfaceKlass.getClassLoader(), <span class="keyword">new</span> Class[]&#123;interfaceKlass&#125;, handler);</span><br><span class="line">        System.out.println(helloService.sayHello(<span class="string">"throwable"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServiceImpl</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Class&lt;?&gt; interfaceKlass;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">            <span class="comment">// 这里应该根据方法的返回值类型去决定返回结果</span></span><br><span class="line">            <span class="keyword">return</span> String.format(<span class="string">"[%s#%s]方法被调用,参数列表:%s"</span>, interfaceKlass.getName(), method.getName(),</span><br><span class="line">                    JSON.toJSONString(args));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 控制台输出结果</span></span><br><span class="line">[club.throwable.contract.HelloService#sayHello]方法被调用,参数列表:["throwable"]</span><br></pre></td></tr></table></figure>
+<p>这里可以确认两点：</p>
+<ol>
+<li><code>InvocationHandler</code>实现后会对被代理接口生成一个动态实现类。</li>
+<li>动态实现类（接口）方法被调用的时候，实际上是调用<code>InvocationHandler</code>对应实例的<code>invoke()</code>方法，传入的参数就是当前方法调用的元数据。</li>
+</ol>
+<h2 id="Client端代码实现">Client端代码实现</h2>
+<p><code>Client</code>端需要通过动态代理为契约接口生成一个动态实现类，然后提取契约接口调用方法时候所能提供的元数据，通过这些元数据和<code>Netty</code>客户端的支持（例如<code>Netty</code>的<code>Channel</code>）基于私有<code>RPC</code>协议组装请求信息并且发送请求。这里先定义一个请求参数提取器接口<code>RequestArgumentExtractor</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestArgumentExtractInput</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Class&lt;?&gt; interfaceKlass;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Method method;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestArgumentExtractOutput</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String interfaceName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String methodName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; methodArgumentSignatures;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RequestArgumentExtractor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">RequestArgumentExtractOutput <span class="title">extract</span><span class="params">(RequestArgumentExtractInput input)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简单实现一下，解析结果添加到缓存中，实现类<code>DefaultRequestArgumentExtractor</code>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultRequestArgumentExtractor</span> <span class="keyword">implements</span> <span class="title">RequestArgumentExtractor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ConcurrentMap&lt;CacheKey, RequestArgumentExtractOutput&gt; cache = Maps.newConcurrentMap();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RequestArgumentExtractOutput <span class="title">extract</span><span class="params">(RequestArgumentExtractInput input)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; interfaceKlass = input.getInterfaceKlass();</span><br><span class="line">        Method method = input.getMethod();</span><br><span class="line">        String methodName = method.getName();</span><br><span class="line">        Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();</span><br><span class="line">        <span class="keyword">return</span> cache.computeIfAbsent(<span class="keyword">new</span> CacheKey(interfaceKlass.getName(), methodName,</span><br><span class="line">                Lists.newArrayList(parameterTypes)), x -&gt; &#123;</span><br><span class="line">            RequestArgumentExtractOutput output = <span class="keyword">new</span> RequestArgumentExtractOutput();</span><br><span class="line">            output.setInterfaceName(interfaceKlass.getName());</span><br><span class="line">            List&lt;String&gt; methodArgumentSignatures = Lists.newArrayList();</span><br><span class="line">            <span class="keyword">for</span> (Class&lt;?&gt; klass : parameterTypes) &#123;</span><br><span class="line">                methodArgumentSignatures.add(klass.getName());</span><br><span class="line">            &#125;</span><br><span class="line">            output.setMethodArgumentSignatures(methodArgumentSignatures);</span><br><span class="line">            output.setMethodName(methodName);</span><br><span class="line">            <span class="keyword">return</span> output;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CacheKey</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String interfaceName;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String methodName;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> List&lt;Class&lt;?&gt;&gt; parameterTypes;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            CacheKey cacheKey = (CacheKey) o;</span><br><span class="line">            <span class="keyword">return</span> Objects.equals(interfaceName, cacheKey.interfaceName) &amp;&amp;</span><br><span class="line">                    Objects.equals(methodName, cacheKey.methodName) &amp;&amp;</span><br><span class="line">                    Objects.equals(parameterTypes, cacheKey.parameterTypes);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> Objects.hash(interfaceName, methodName, parameterTypes);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在不考虑重连、断连等情况下，新增一个类<code>ClientChannelHolder</code>用于保存<code>Netty</code>客户端的<code>Channel</code>实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientChannelHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;Channel&gt; CHANNEL_REFERENCE = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着新增一个契约动态代理工厂（工具类）<code>ContractProxyFactory</code>，用于为契约接口生成代理类实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContractProxyFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> RequestArgumentExtractor EXTRACTOR = <span class="keyword">new</span> DefaultRequestArgumentExtractor();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ConcurrentMap&lt;Class&lt;?&gt;, Object&gt; CACHE = Maps.newConcurrentMap();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">ofProxy</span><span class="params">(Class&lt;T&gt; interfaceKlass)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 缓存契约接口的代理类实例</span></span><br><span class="line">        <span class="keyword">return</span> (T) CACHE.computeIfAbsent(interfaceKlass, x -&gt;</span><br><span class="line">                Proxy.newProxyInstance(interfaceKlass.getClassLoader(), <span class="keyword">new</span> Class[]&#123;interfaceKlass&#125;, (target, method, args) -&gt; &#123;</span><br><span class="line">                    RequestArgumentExtractInput input = <span class="keyword">new</span> RequestArgumentExtractInput();</span><br><span class="line">                    input.setInterfaceKlass(interfaceKlass);</span><br><span class="line">                    input.setMethod(method);</span><br><span class="line">                    RequestArgumentExtractOutput output = EXTRACTOR.extract(input);</span><br><span class="line">                    <span class="comment">// 封装请求参数</span></span><br><span class="line">                    RequestMessagePacket packet = <span class="keyword">new</span> RequestMessagePacket();</span><br><span class="line">                    packet.setMagicNumber(ProtocolConstant.MAGIC_NUMBER);</span><br><span class="line">                    packet.setVersion(ProtocolConstant.VERSION);</span><br><span class="line">                    packet.setSerialNumber(SerialNumberUtils.X.generateSerialNumber());</span><br><span class="line">                    packet.setMessageType(MessageType.REQUEST);</span><br><span class="line">                    packet.setInterfaceName(output.getInterfaceName());</span><br><span class="line">                    packet.setMethodName(output.getMethodName());</span><br><span class="line">                    packet.setMethodArgumentSignatures(output.getMethodArgumentSignatures().toArray(<span class="keyword">new</span> String[<span class="number">0</span>]));</span><br><span class="line">                    packet.setMethodArguments(args);</span><br><span class="line">                    Channel channel = ClientChannelHolder.CHANNEL_REFERENCE.get();</span><br><span class="line">                    <span class="comment">// 发起请求</span></span><br><span class="line">                    channel.writeAndFlush(packet);</span><br><span class="line">                    <span class="comment">// 这里方法返回值需要进行同步处理,相对复杂,后面专门开一篇文章讲解,暂时统一返回字符串</span></span><br><span class="line">                    <span class="comment">// 如果契约接口的返回值类型不是字符串,这里方法返回后会抛出异常</span></span><br><span class="line">                    <span class="keyword">return</span> String.format(<span class="string">"[%s#%s]调用成功,发送了[%s]到NettyServer[%s]"</span>, output.getInterfaceName(),</span><br><span class="line">                            output.getMethodName(), JSON.toJSONString(packet), channel.remoteAddress());</span><br><span class="line">                &#125;));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后编写客户端<code>ClientApplication</code>的代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> port = <span class="number">9092</span>;</span><br><span class="line">        EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">        Bootstrap bootstrap = <span class="keyword">new</span> Bootstrap();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            bootstrap.group(workerGroup);</span><br><span class="line">            bootstrap.channel(NioSocketChannel<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            bootstrap.option(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);</span><br><span class="line">            bootstrap.option(ChannelOption.TCP_NODELAY, Boolean.TRUE);</span><br><span class="line">            bootstrap.handler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> LengthFieldBasedFrameDecoder(<span class="number">1024</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">4</span>));</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> LengthFieldPrepender(<span class="number">4</span>));</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> LoggingHandler(LogLevel.DEBUG));</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> RequestMessagePacketEncoder(FastJsonSerializer.X));</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> ResponseMessagePacketDecoder());</span><br><span class="line">                    ch.pipeline().addLast(<span class="keyword">new</span> SimpleChannelInboundHandler&lt;ResponseMessagePacket&gt;() &#123;</span><br><span class="line">                        <span class="meta">@Override</span></span><br><span class="line">                        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">channelRead0</span><span class="params">(ChannelHandlerContext ctx, ResponseMessagePacket packet)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                            Object targetPayload = packet.getPayload();</span><br><span class="line">                            <span class="keyword">if</span> (targetPayload <span class="keyword">instanceof</span> ByteBuf) &#123;</span><br><span class="line">                                ByteBuf byteBuf = (ByteBuf) targetPayload;</span><br><span class="line">                                <span class="keyword">int</span> readableByteLength = byteBuf.readableBytes();</span><br><span class="line">                                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[readableByteLength];</span><br><span class="line">                                byteBuf.readBytes(bytes);</span><br><span class="line">                                targetPayload = FastJsonSerializer.X.decode(bytes, String<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">                                byteBuf.release();</span><br><span class="line">                            &#125;</span><br><span class="line">                            packet.setPayload(targetPayload);</span><br><span class="line">                            log.info(<span class="string">"接收到来自服务端的响应消息,消息内容:&#123;&#125;"</span>, JSON.toJSONString(packet));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            ChannelFuture future = bootstrap.connect(<span class="string">"localhost"</span>, port).sync();</span><br><span class="line">            <span class="comment">// 保存Channel实例,暂时不考虑断连重连</span></span><br><span class="line">            ClientChannelHolder.CHANNEL_REFERENCE.set(future.channel());</span><br><span class="line">            <span class="comment">// 构造契约接口代理类实例</span></span><br><span class="line">            HelloService helloService = ContractProxyFactory.ofProxy(HelloService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            String result = helloService.sayHello(<span class="string">"throwable"</span>);</span><br><span class="line">            log.info(result);</span><br><span class="line">            future.channel().closeFuture().sync();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            workerGroup.shutdownGracefully();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先启动<a href="http://www.throwable.club/2020/01/15/netty-custom-rpc-framework-server" target="_blank" rel="noopener">《基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇》</a>一文中的<code>ServerApplication</code>，再启动<code>ClientApplication</code>，控制台输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 服务端日志</span><br><span class="line">2020-01-16 22:34:51 [main] INFO  c.throwable.server.ServerApplication - 启动NettyServer[9092]成功...</span><br><span class="line">2020-01-16 22:36:35 [nioEventLoopGroup-3-1] INFO  club.throwable.server.ServerHandler - 服务端接收到:RequestMessagePacket(interfaceName=club.throwable.contract.HelloService, methodName=sayHello, methodArgumentSignatures=[java.lang.String], methodArguments=[PooledUnsafeDirectByteBuf(ridx: 0, widx: 11, cap: 11/144)])</span><br><span class="line">2020-01-16 22:36:35 [nioEventLoopGroup-3-1] INFO  club.throwable.server.ServerHandler - 查找目标实现方法成功,目标类:club.throwable.server.contract.DefaultHelloService,宿主类:club.throwable.server.contract.DefaultHelloService,宿主方法:sayHello</span><br><span class="line">2020-01-16 22:36:35 [nioEventLoopGroup-3-1] INFO  club.throwable.server.ServerHandler - 服务端输出:&#123;"attachments":&#123;&#125;,"errorCode":200,"magicNumber":10086,"message":"Success","messageType":"RESPONSE","payload":"\"throwable say hello!\"","serialNumber":"63d386214d30410c9e5f04de03d8b2da","version":1&#125;</span><br><span class="line"></span><br><span class="line">// 客户端日志</span><br><span class="line">2020-01-16 22:36:35 [main] INFO  c.throwable.client.ClientApplication - [club.throwable.contract.HelloService#sayHello]调用成功,发送了[&#123;"attachments":&#123;&#125;,"interfaceName":"club.throwable.contract.HelloService","magicNumber":10086,"messageType":"REQUEST","methodArgumentSignatures":["java.lang.String"],"methodArguments":["throwable"],"methodName":"sayHello","serialNumber":"63d386214d30410c9e5f04de03d8b2da","version":1&#125;]到NettyServer[localhost/127.0.0.1:9092]</span><br><span class="line">2020-01-16 22:36:35 [nioEventLoopGroup-2-1] INFO  c.throwable.client.ClientApplication - 接收到来自服务端的响应消息,消息内容:&#123;"attachments":&#123;&#125;,"errorCode":200,"magicNumber":10086,"message":"Success","messageType":"RESPONSE","payload":"\"throwable say hello!\"","serialNumber":"63d386214d30410c9e5f04de03d8b2da","version":1&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p><code>Client</code>端主要负责契约接口调用转换为发送<code>RPC</code>协议请求这一步，核心技术就是动态代理，在不进行模块封装优化的前提下实现是相对简单的。这里其实<code>Client</code>端还有一个比较大的技术难题没有解决，上面例子中客户端日志输出如果眼尖的伙伴会发现，<code>Client</code>端发送<code>RPC</code>请求的线程（<code>main</code>线程）和<code>Client</code>端接收<code>Server</code>端<code>RPC</code>响应处理的线程（<code>nioEventLoopGroup-2-1</code>线程）并不相同，这一点是<code>Netty</code>处理网络请求之所以能够如此高效的根源（简单来说就是请求和响应是异步的，两个流程本来是互不感知的）。但是更多情况下，我们希望外部请求是同步的，希望发送<code>RPC</code>请求的线程得到响应结果再返回（这里请求和响应有可能依然是异步流程）。下一篇文章会详细分析一下如果对请求-响应做同步化处理。</p>
+<p><code>Demo</code>项目地址：</p>
+<ul>
+<li><a href="https://github.com/zjcscut/netty-tutorials/tree/master/ch0-custom-rpc-protocol" target="_blank" rel="noopener">ch0-custom-rpc-protocol</a></li>
+</ul>
+<p>（c-2-d e-a-20200116）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2020/01/16/netty-custom-rpc-framework-client/>http://throwable.club/2020/01/16/netty-custom-rpc-framework-client/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Netty/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Netty</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2020/01/16/netty-custom-rpc-framework-client/&title=基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前置文章：
+
+《基于Netty和SpringBoot实现一个轻量级RPC框架-协议篇》
+《基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇》
+
+前一篇文章相对简略地介绍了RPC服务端的编写，而这篇博文最要介绍服务端（Client）的实现。RPC调用一般是面向契约编程的，而Client的核心功能就是：把契约接口方法的调用抽象为使用Netty向RPC服务端通过私有协议发送一个请求。这里最底层的实现依赖于动态代理，因此动态代理是动态实现接口的最简单方式（如果字节码研究得比较深入，可以通过字节码编程实现接口）。需要的依赖如下：
+
+JDK1.8+
+Netty:4.1.44.Final
+SpringBoot:2.2.2.RELEASE
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2020/01/16/netty-custom-rpc-framework-client/&title=基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前置文章：
+
+《基于Netty和SpringBoot实现一个轻量级RPC框架-协议篇》
+《基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇》
+
+前一篇文章相对简略地介绍了RPC服务端的编写，而这篇博文最要介绍服务端（Client）的实现。RPC调用一般是面向契约编程的，而Client的核心功能就是：把契约接口方法的调用抽象为使用Netty向RPC服务端通过私有协议发送一个请求。这里最底层的实现依赖于动态代理，因此动态代理是动态实现接口的最简单方式（如果字节码研究得比较深入，可以通过字节码编程实现接口）。需要的依赖如下：
+
+JDK1.8+
+Netty:4.1.44.Final
+SpringBoot:2.2.2.RELEASE
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACnklEQVR42u3aS27bQBAFQN3/0skBLIivf44CFFeCQY1Zs+C0XvfrFV9/ild15c//5eedyxceHh7e6qP/vKf6rckK8+/i4eHh3fGSV3b+Bs7XqW5B/sx4eHh438PrlbnVh07YeHh4eP8Xr1pAR48SlNF4eHh438OrRqh5aFsNGnaDDDw8PLwLXq8g/refT/p7eHh4eMcDAfPgoBoZl58WDw8P74A3b25tldG9e6LnxMPDwzvg9V7Bu3HtZBDh8z14eHh417xCY2mp5J3HwYVDCw8PD2+VV21QVUvhZP1eEy5C4uHh4a3yfmegahIWl38T4OHh4f0KL8Hk4035S3wrjHhogOHh4eEt8arlbx5AVO/sNcMe2mN4eHh4B7ytWrQ3XtA7Qqo/APDw8PDueIl+PgTQCziSLXh4Ejw8PLwlXpVULW2rcUN1yOAhsMDDw8M7401e0PPhgPzsSlYu7B8eHh7egFeNJPIgtbd91WPmobOHh4eHd8ybtL56ce1uCPJmdAAPDw/vgJe3oPJCedLm760TDV3h4eHhHfDyQahqUZ7HGYWuXdLTw8PDw1vlVacM8uGn6rERNbRaoQkeHh7eLq8XJeQRRrIRr9YVFeh4eHh4B7xqMFoIAuJNzA+JPPJ4AOPh4eGNedUwNx+9qoa8yd43jwE8PDy8Y15yGOQNs2q7a7KJeHh4eL/P6w0K9JAXwcSbv+Dh4eGt8npF8OTd2yyLi9uBh4eHd8ebLN0bz+qFuVsbhIeHh7fFq5bLvZB3fgA0Dx48PDy8M97uyzofAtg9x96sg4eHh/fFvDwUqDa38ugWDw8P7zt5n5fLi+885piMNeDh4eHd8apDpZNHn7THyiMIeHh4eAe86o/85PVdLZ2TSPd1d+Hh4eGl11/n2qZLyqC7PQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2020/01/16/netty-custom-rpc-framework-client/&title=基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前置文章：
+
+《基于Netty和SpringBoot实现一个轻量级RPC框架-协议篇》
+《基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇》
+
+前一篇文章相对简略地介绍了RPC服务端的编写，而这篇博文最要介绍服务端（Client）的实现。RPC调用一般是面向契约编程的，而Client的核心功能就是：把契约接口方法的调用抽象为使用Netty向RPC服务端通过私有协议发送一个请求。这里最底层的实现依赖于动态代理，因此动态代理是动态实现接口的最简单方式（如果字节码研究得比较深入，可以通过字节码编程实现接口）。需要的依赖如下：
+
+JDK1.8+
+Netty:4.1.44.Final
+SpringBoot:2.2.2.RELEASE
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACnklEQVR42u3aS27bQBAFQN3/0skBLIivf44CFFeCQY1Zs+C0XvfrFV9/ild15c//5eedyxceHh7e6qP/vKf6rckK8+/i4eHh3fGSV3b+Bs7XqW5B/sx4eHh438PrlbnVh07YeHh4eP8Xr1pAR48SlNF4eHh438OrRqh5aFsNGnaDDDw8PLwLXq8g/refT/p7eHh4eMcDAfPgoBoZl58WDw8P74A3b25tldG9e6LnxMPDwzvg9V7Bu3HtZBDh8z14eHh417xCY2mp5J3HwYVDCw8PD2+VV21QVUvhZP1eEy5C4uHh4a3yfmegahIWl38T4OHh4f0KL8Hk4035S3wrjHhogOHh4eEt8arlbx5AVO/sNcMe2mN4eHh4B7ytWrQ3XtA7Qqo/APDw8PDueIl+PgTQCziSLXh4Ejw8PLwlXpVULW2rcUN1yOAhsMDDw8M7401e0PPhgPzsSlYu7B8eHh7egFeNJPIgtbd91WPmobOHh4eHd8ybtL56ce1uCPJmdAAPDw/vgJe3oPJCedLm760TDV3h4eHhHfDyQahqUZ7HGYWuXdLTw8PDw1vlVacM8uGn6rERNbRaoQkeHh7eLq8XJeQRRrIRr9YVFeh4eHh4B7xqMFoIAuJNzA+JPPJ4AOPh4eGNedUwNx+9qoa8yd43jwE8PDy8Y15yGOQNs2q7a7KJeHh4eL/P6w0K9JAXwcSbv+Dh4eGt8npF8OTd2yyLi9uBh4eHd8ebLN0bz+qFuVsbhIeHh7fFq5bLvZB3fgA0Dx48PDy8M97uyzofAtg9x96sg4eHh/fFvDwUqDa38ugWDw8P7zt5n5fLi+885piMNeDh4eHd8apDpZNHn7THyiMIeHh4eAe86o/85PVdLZ2TSPd1d+Hh4eGl11/n2qZLyqC7PQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2020/01/18/netty-custom-rpc-framework-client-sync/" rel="prev" title="基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理">
+                                  
+                                      基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Netty/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Netty</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2020/01/15/netty-custom-rpc-framework-server/" rel="prev" title="基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇">
+                                    
+                                        基于Netty和SpringBoot实现一个轻量级RPC框架-Server篇
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Netty/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Netty</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态代理的简单使用"><span class="toc-text">动态代理的简单使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Client端代码实现"><span class="toc-text">Client端代码实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

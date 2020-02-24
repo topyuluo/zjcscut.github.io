@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Spring Cloud Gateway-自定义异常处理 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/05/11/spring-cloud-gateway-custom-exception-handler/">
+        Spring Cloud Gateway-自定义异常处理
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T10:19:32+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：8分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>我们平时在用<code>SpringMVC</code>的时候，只要是经过<code>DispatcherServlet</code>处理的请求，可以通过<code>@ControllerAdvice</code>和<code>@ExceptionHandler</code>自定义不同类型异常的处理逻辑，具体可以参考<code>ResponseEntityExceptionHandler</code>和<code>DefaultHandlerExceptionResolver</code>，底层原理很简单，就是发生异常的时候搜索容器中已经存在的异常处理器并且匹配对应的异常类型，匹配成功之后使用该指定的异常处理器返回结果进行<code>Response</code>的渲染，如果找不到默认的异常处理器则用默认的进行兜底(个人认为，Spring在很多功能设计的时候都有这种“有则使用自定义，无则使用默认提供”这种思想十分优雅)。</p>
+<p><code>SpringMVC</code>中提供的自定义异常体系在<code>Spring-WebFlux</code>中并不适用，其实原因很简单，两者底层的运行容器并不相同。<code>WebExceptionHandler</code>是<code>Spring-WebFlux</code>的异常处理器顶层接口，因此追溯到子类可以追踪到<code>DefaultErrorWebExceptionHandler</code>是<code>Spring Cloud Gateway</code>的全局异常处理器，配置类是<code>ErrorWebFluxAutoConfiguration</code>。</p>
+<a id="more"></a>
+<h2 id="为什么要自定义异常处理">为什么要自定义异常处理</h2>
+<p>先画一个假想但是贴近实际架构图，定位一下网关的作用：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201905/s-c-c-e-1.png" alt="s-c-c-e-1.png"></p>
+<p>网关在整个架构中的作用是：</p>
+<ol>
+<li>路由服务端应用的请求到后端应用。</li>
+<li>(聚合)后端应用的响应转发到服务端应用。</li>
+</ol>
+<p>假设网关服务总是正常的前提下：</p>
+<p>对于第1点来说，假设后端应用不能平滑无损上线，会有一定的几率出现网关路由请求到一些后端的“僵尸节点(请求路由过去的时候，应用更好在重启或者刚好停止)”，这个时候会路由会失败抛出异常，一般情况是Connection Refuse。</p>
+<p>对于第2点来说，假设后端应用没有正确处理异常，那么应该会把异常信息经过网关转发回到服务端应用，这种情况理论上不会出现异常。</p>
+<p>其实还有第3点隐藏的问题，网关如果不单单承担路由的功能，还包含了鉴权、限流等功能，如果这些功能开发的时候对异常捕获没有做完善的处理甚至是逻辑本身存在BUG，有可能导致异常没有被正常捕获处理，走了默认的异常处理器<code>DefaultErrorWebExceptionHandler</code>，默认的异常处理器的处理逻辑可能并不符合我们预期的结果。</p>
+<h2 id="如何自定义异常处理">如何自定义异常处理</h2>
+<p>我们可以先看默认的异常处理器的配置类<code>ErrorWebFluxAutoConfiguration</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConditionalOnWebApplication</span>(type = ConditionalOnWebApplication.Type.REACTIVE)</span><br><span class="line"><span class="meta">@ConditionalOnClass</span>(WebFluxConfigurer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureBefore</span>(<span class="title">WebFluxAutoConfiguration</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">EnableConfigurationProperties</span>(</span>&#123; ServerProperties<span class="class">.<span class="keyword">class</span>, <span class="title">ResourceProperties</span>.<span class="title">class</span> &#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ErrorWebFluxAutoConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ServerProperties serverProperties;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ResourceProperties resourceProperties;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> List&lt;ViewResolver&gt; viewResolvers;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ServerCodecConfigurer serverCodecConfigurer;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ErrorWebFluxAutoConfiguration</span><span class="params">(ServerProperties serverProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">			ResourceProperties resourceProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">			ObjectProvider&lt;ViewResolver&gt; viewResolversProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">			ServerCodecConfigurer serverCodecConfigurer,</span></span></span><br><span class="line"><span class="function"><span class="params">			ApplicationContext applicationContext)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.serverProperties = serverProperties;</span><br><span class="line">		<span class="keyword">this</span>.applicationContext = applicationContext;</span><br><span class="line">		<span class="keyword">this</span>.resourceProperties = resourceProperties;</span><br><span class="line">		<span class="keyword">this</span>.viewResolvers = viewResolversProvider.orderedStream()</span><br><span class="line">				.collect(Collectors.toList());</span><br><span class="line">		<span class="keyword">this</span>.serverCodecConfigurer = serverCodecConfigurer;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean</span>(value = ErrorWebExceptionHandler<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">			<span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line">	<span class="meta">@Order</span>(-<span class="number">1</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> ErrorWebExceptionHandler <span class="title">errorWebExceptionHandler</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">			ErrorAttributes errorAttributes)</span> </span>&#123;</span><br><span class="line">		DefaultErrorWebExceptionHandler exceptionHandler = <span class="keyword">new</span> DefaultErrorWebExceptionHandler(</span><br><span class="line">				errorAttributes, <span class="keyword">this</span>.resourceProperties,</span><br><span class="line">				<span class="keyword">this</span>.serverProperties.getError(), <span class="keyword">this</span>.applicationContext);</span><br><span class="line">		exceptionHandler.setViewResolvers(<span class="keyword">this</span>.viewResolvers);</span><br><span class="line">		exceptionHandler.setMessageWriters(<span class="keyword">this</span>.serverCodecConfigurer.getWriters());</span><br><span class="line">		exceptionHandler.setMessageReaders(<span class="keyword">this</span>.serverCodecConfigurer.getReaders());</span><br><span class="line">		<span class="keyword">return</span> exceptionHandler;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean</span>(value = ErrorAttributes<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">			<span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> DefaultErrorAttributes <span class="title">errorAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> DefaultErrorAttributes(</span><br><span class="line">				<span class="keyword">this</span>.serverProperties.getError().isIncludeException());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到两个Bean实例<code>ErrorWebExceptionHandler</code>和<code>DefaultErrorAttributes</code>都使用了<code>@ConditionalOnMissingBean</code>注解，也就是我们可以通过自定义实现去覆盖它们。先自定义一个<code>CustomErrorWebFluxAutoConfiguration</code>（除了<code>ErrorWebExceptionHandler</code>的自定义实现，其他直接拷贝<code>ErrorWebFluxAutoConfiguration</code>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConditionalOnWebApplication</span>(type = ConditionalOnWebApplication.Type.REACTIVE)</span><br><span class="line"><span class="meta">@ConditionalOnClass</span>(WebFluxConfigurer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureBefore</span>(<span class="title">WebFluxAutoConfiguration</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">EnableConfigurationProperties</span>(</span>&#123;ServerProperties<span class="class">.<span class="keyword">class</span>, <span class="title">ResourceProperties</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">CustomErrorWebFluxAutoConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServerProperties serverProperties;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ResourceProperties resourceProperties;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;ViewResolver&gt; viewResolvers;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServerCodecConfigurer serverCodecConfigurer;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CustomErrorWebFluxAutoConfiguration</span><span class="params">(ServerProperties serverProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               ResourceProperties resourceProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               ObjectProvider&lt;ViewResolver&gt; viewResolversProvider,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               ServerCodecConfigurer serverCodecConfigurer,</span></span></span><br><span class="line"><span class="function"><span class="params">                                               ApplicationContext applicationContext)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.serverProperties = serverProperties;</span><br><span class="line">        <span class="keyword">this</span>.applicationContext = applicationContext;</span><br><span class="line">        <span class="keyword">this</span>.resourceProperties = resourceProperties;</span><br><span class="line">        <span class="keyword">this</span>.viewResolvers = viewResolversProvider.orderedStream()</span><br><span class="line">                .collect(Collectors.toList());</span><br><span class="line">        <span class="keyword">this</span>.serverCodecConfigurer = serverCodecConfigurer;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span>(value = ErrorWebExceptionHandler<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">            <span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line">    <span class="meta">@Order</span>(-<span class="number">1</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ErrorWebExceptionHandler <span class="title">errorWebExceptionHandler</span><span class="params">(ErrorAttributes errorAttributes)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO 这里完成自定义ErrorWebExceptionHandler实现逻辑</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span>(value = ErrorAttributes<span class="class">.<span class="keyword">class</span>, <span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> DefaultErrorAttributes <span class="title">errorAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DefaultErrorAttributes(<span class="keyword">this</span>.serverProperties.getError().isIncludeException());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ErrorWebExceptionHandler</code>的实现，可以直接参考<code>DefaultErrorWebExceptionHandler</code>，甚至直接继承<code>DefaultErrorWebExceptionHandler</code>，覆盖对应的方法即可。这里直接把异常信息封装成下面格式的<code>Response</code>返回，最后需要渲染成JSON格式：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"code"</span>: <span class="number">200</span>,</span><br><span class="line">  <span class="attr">"message"</span>: <span class="string">"描述信息"</span>,</span><br><span class="line">  <span class="attr">"path"</span> : <span class="string">"请求路径"</span>,</span><br><span class="line">  <span class="attr">"method"</span>: <span class="string">"请求方法"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要分析一下<code>DefaultErrorWebExceptionHandler</code>中的一些源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 封装异常属性</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Map&lt;String, Object&gt; <span class="title">getErrorAttributes</span><span class="params">(ServerRequest request, <span class="keyword">boolean</span> includeStackTrace)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.errorAttributes.getErrorAttributes(request, includeStackTrace);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 渲染异常Response</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Mono&lt;ServerResponse&gt; <span class="title">renderErrorResponse</span><span class="params">(ServerRequest request)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">boolean</span> includeStackTrace = isIncludeStackTrace(request, MediaType.ALL);</span><br><span class="line">	Map&lt;String, Object&gt; error = getErrorAttributes(request, includeStackTrace);</span><br><span class="line">	<span class="keyword">return</span> ServerResponse.status(getHttpStatus(error))</span><br><span class="line">			.contentType(MediaType.APPLICATION_JSON_UTF8)</span><br><span class="line">			.body(BodyInserters.fromObject(error));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回路由方法基于ServerResponse的对象</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> RouterFunction&lt;ServerResponse&gt; <span class="title">getRoutingFunction</span><span class="params">(ErrorAttributes errorAttributes)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> route(acceptsTextHtml(), <span class="keyword">this</span>::renderErrorView).andRoute(all(), <span class="keyword">this</span>::renderErrorResponse);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// HTTP响应状态码的封装，原来是基于异常属性的status属性进行解析的</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> HttpStatus <span class="title">getHttpStatus</span><span class="params">(Map&lt;String, Object&gt; errorAttributes)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">int</span> statusCode = (<span class="keyword">int</span>) errorAttributes.get(<span class="string">"status"</span>);</span><br><span class="line">	<span class="keyword">return</span> HttpStatus.valueOf(statusCode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>确定三点：</p>
+<ol>
+<li>最后封装到响应体的对象来源于<code>DefaultErrorWebExceptionHandler#getErrorAttributes()</code>，并且结果是一个<code>Map&lt;String, Object&gt;</code>实例转换成的字节序列。</li>
+<li>原来的<code>RouterFunction</code>实现只支持HTML格式返回，我们需要修改为JSON格式返回(或者说支持所有格式返回)。</li>
+<li><code>DefaultErrorWebExceptionHandler#getHttpStatus()</code>是响应状态码的封装，原来的逻辑是基于异常属性<code>getErrorAttributes()</code>的status属性进行解析的。</li>
+</ol>
+<p>自定义的<code>JsonErrorWebExceptionHandler</code>如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JsonErrorWebExceptionHandler</span> <span class="keyword">extends</span> <span class="title">DefaultErrorWebExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">JsonErrorWebExceptionHandler</span><span class="params">(ErrorAttributes errorAttributes,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        ResourceProperties resourceProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        ErrorProperties errorProperties,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        ApplicationContext applicationContext)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(errorAttributes, resourceProperties, errorProperties, applicationContext);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Map&lt;String, Object&gt; <span class="title">getErrorAttributes</span><span class="params">(ServerRequest request, <span class="keyword">boolean</span> includeStackTrace)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 这里其实可以根据异常类型进行定制化逻辑</span></span><br><span class="line">        Throwable error = <span class="keyword">super</span>.getError(request);</span><br><span class="line">        Map&lt;String, Object&gt; errorAttributes = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">        errorAttributes.put(<span class="string">"message"</span>, error.getMessage());</span><br><span class="line">        errorAttributes.put(<span class="string">"code"</span>, HttpStatus.INTERNAL_SERVER_ERROR.value());</span><br><span class="line">        errorAttributes.put(<span class="string">"method"</span>, request.methodName());</span><br><span class="line">        errorAttributes.put(<span class="string">"path"</span>, request.path());</span><br><span class="line">        <span class="keyword">return</span> errorAttributes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> RouterFunction&lt;ServerResponse&gt; <span class="title">getRoutingFunction</span><span class="params">(ErrorAttributes errorAttributes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route(RequestPredicates.all(), <span class="keyword">this</span>::renderErrorResponse);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> HttpStatus <span class="title">getHttpStatus</span><span class="params">(Map&lt;String, Object&gt; errorAttributes)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 这里其实可以根据errorAttributes里面的属性定制HTTP响应码</span></span><br><span class="line">        <span class="keyword">return</span> HttpStatus.INTERNAL_SERVER_ERROR;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置类<code>CustomErrorWebFluxAutoConfiguration</code>添加<code>JsonErrorWebExceptionHandler</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = ErrorWebExceptionHandler<span class="class">.<span class="keyword">class</span>, <span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line"><span class="meta">@Order</span>(-<span class="number">1</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ErrorWebExceptionHandler <span class="title">errorWebExceptionHandler</span><span class="params">(ErrorAttributes errorAttributes)</span> </span>&#123;</span><br><span class="line">    JsonErrorWebExceptionHandler exceptionHandler = <span class="keyword">new</span> JsonErrorWebExceptionHandler(</span><br><span class="line">                errorAttributes,</span><br><span class="line">                resourceProperties,</span><br><span class="line">                <span class="keyword">this</span>.serverProperties.getError(),</span><br><span class="line">                applicationContext);</span><br><span class="line">    exceptionHandler.setViewResolvers(<span class="keyword">this</span>.viewResolvers);</span><br><span class="line">    exceptionHandler.setMessageWriters(<span class="keyword">this</span>.serverCodecConfigurer.getWriters());</span><br><span class="line">    exceptionHandler.setMessageReaders(<span class="keyword">this</span>.serverCodecConfigurer.getReaders());</span><br><span class="line">    <span class="keyword">return</span> exceptionHandler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很简单，这里把异常的HTTP响应状态码统一为<code>HttpStatus.INTERNAL_SERVER_ERROR(500)</code>，改造的东西并不多，只要了解原来异常处理的上下文逻辑即可。</p>
+<h2 id="测试">测试</h2>
+<p><strong>测试场景一</strong>：只启动网关，下游服务不启动的情况下直接调用下游服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:9090/order/host</span><br><span class="line"></span><br><span class="line">// 响应结果</span><br><span class="line">&#123;<span class="string">"path"</span>:<span class="string">"/order/host"</span>,<span class="string">"code"</span>:500,<span class="string">"message"</span>:<span class="string">"Connection refused: no further information: localhost/127.0.0.1:9091"</span>,<span class="string">"method"</span>:<span class="string">"GET"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>测试场景二</strong>：下游服务正常启动和调用，网关自身抛出异常。</p>
+<p>在网关应用自定义一个全局过滤器并且故意抛出异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorGlobalFilter</span> <span class="keyword">implements</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> chain.filter(exchange);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:9090/order/host</span><br><span class="line"></span><br><span class="line">// 响应结果</span><br><span class="line">&#123;<span class="string">"path"</span>:<span class="string">"/order/host"</span>,<span class="string">"code"</span>:500,<span class="string">"message"</span>:<span class="string">"/ by zero"</span>,<span class="string">"method"</span>:<span class="string">"GET"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>响应结果和定制的逻辑一致，并且后台的日志也打印了对应的异常堆栈。</p>
+<h2 id="小结">小结</h2>
+<p>笔者一直认为，做异常分类和按照分类处理是工程里面十分重要的一环。笔者在所在公司负责的系统中，坚持实现异常分类捕获，主要是需要区分可以重试补偿以及无法重试需要及时预警的异常，这样子才能针对可恢复异常定制自愈逻辑，对不能恢复的异常及时预警和人为介入。所以，<code>Spring Cloud Gateway</code>这个技术栈也必须调研其自定义异常的处理逻辑。</p>
+<p>(本文完 c-1-d e-a-20190511)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/05/11/spring-cloud-gateway-custom-exception-handler/>http://throwable.club/2019/05/11/spring-cloud-gateway-custom-exception-handler/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud Gateway</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring Cloud</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/05/11/spring-cloud-gateway-custom-exception-handler/&title=Spring Cloud Gateway-自定义异常处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+我们平时在用SpringMVC的时候，只要是经过DispatcherServlet处理的请求，可以通过@ControllerAdvice和@ExceptionHandler自定义不同类型异常的处理逻辑，具体可以参考ResponseEntityExceptionHandler和DefaultHandlerExceptionResolver，底层原理很简单，就是发生异常的时候搜索容器中已经存在的异常处理器并且匹配对应的异常类型，匹配成功之后使用该指定的异常处理器返回结果进行Response的渲染，如果找不到默认的异常处理器则用默认的进行兜底(个人认为，Spring在很多功能设计的时候都有这种“有则使用自定义，无则使用默认提供”这种思想十分优雅)。
+SpringMVC中提供的自定义异常体系在Spring-WebFlux中并不适用，其实原因很简单，两者底层的运行容器并不相同。WebExceptionHandler是Spring-WebFlux的异常处理器顶层接口，因此追溯到子类可以追踪到DefaultErrorWebExceptionHandler是Spring Cloud Gateway的全局异常处理器，配置类是ErrorWebFluxAutoConfiguration。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/05/11/spring-cloud-gateway-custom-exception-handler/&title=Spring Cloud Gateway-自定义异常处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+我们平时在用SpringMVC的时候，只要是经过DispatcherServlet处理的请求，可以通过@ControllerAdvice和@ExceptionHandler自定义不同类型异常的处理逻辑，具体可以参考ResponseEntityExceptionHandler和DefaultHandlerExceptionResolver，底层原理很简单，就是发生异常的时候搜索容器中已经存在的异常处理器并且匹配对应的异常类型，匹配成功之后使用该指定的异常处理器返回结果进行Response的渲染，如果找不到默认的异常处理器则用默认的进行兜底(个人认为，Spring在很多功能设计的时候都有这种“有则使用自定义，无则使用默认提供”这种思想十分优雅)。
+SpringMVC中提供的自定义异常体系在Spring-WebFlux中并不适用，其实原因很简单，两者底层的运行容器并不相同。WebExceptionHandler是Spring-WebFlux的异常处理器顶层接口，因此追溯到子类可以追踪到DefaultErrorWebExceptionHandler是Spring Cloud Gateway的全局异常处理器，配置类是ErrorWebFluxAutoConfiguration。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLUlEQVR42u3aS24CMRAFwNz/0mQbCTG853YkxpRXoxEYl1m0+vPzE6/Hn/X3zfXz8w7X75+fn7+VvNm2sLGxsW/CflyuV5+53i25uOv3yQmvL+vNmbGxsbGPY+ehZRJOJvtsDp/Y2NjYX8zOP58EkvwNNjY2NvZe9jx1SZKWpGCEjY2NjZ0zkhLP9dH3piLJdW+opWFjY2N/PDvvin7+87/0t7GxsbE/mP0oV5Iq5AWgSfnpMVjY2NjYJ7HzANAO6+xtObSJUHR+bGxs7OPYeckmuYg8BM6/1Y4HYWNjY38Pe1KHyRsG+Rna9kOUimBjY2MfwW5hk+ZrTppcymIYw8bGxr4te1fikTzPm7XtgNHL/bGxsbEPYueFniR0reH3XkpRhMLGxsY+gj0ZkWnTgPxNcp61UIeNjY19Ers9el6yXwsq8+ZB9FdhY2NjH8RO0oO1AZ22QZuvPOEpamnY2NjYt2VPQk5LTcLVWsLTNp6xsbGxT2WvjcW07GSsZ63lXJwEGxsb+zh2XqbPj5sP1rQjnkWgenUd2NjY2Aex825wUlTKmwptmyFJTtqLw8bGxj6DPRnTycs9+ZVNSld1PwQbGxv7IHZesskPNykJTQaJikklbGxs7CPYe0v/exOJJGSulb2wsbGxT2InwSYJM2vjO3lik8PqlgA2Njb2zdntT7bpSp6c5ElLu97859jY2NhHsNfapW3CsPacF7baxAYbGxv7bHYOawcx2zjSjg0tNh6wsbGxb87ODzpJG9p2cvu79TgRNjY29qHsNizlwzFtU2F+KVEtDRsbG/tQdjvE077J04y1vCoqV2FjY2Mfx25DQpvA5MWgeeIRnQ0bGxv7OHZe0P+PIlSSZqyF2w21NGxsbOwPZj/KtZZmrB1uHthe7o+NjY19EDtf86L/2iDO3vZAfQXY2NjYN2FPglaSuuThpP3FPIAtFpWwsbGxb8WeHCIvA62lMXkRqo7J2NjY2F/MnrR+233acZwovGFjY2NjL8WI6wO11LWrxMbGxj6VnRSV8iGePIHJR3nWLmVDewAbGxv749ltKFpr605GPNsiVL4bNjY29s3Zvzq0NQARiziCAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/05/11/spring-cloud-gateway-custom-exception-handler/&title=Spring Cloud Gateway-自定义异常处理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+我们平时在用SpringMVC的时候，只要是经过DispatcherServlet处理的请求，可以通过@ControllerAdvice和@ExceptionHandler自定义不同类型异常的处理逻辑，具体可以参考ResponseEntityExceptionHandler和DefaultHandlerExceptionResolver，底层原理很简单，就是发生异常的时候搜索容器中已经存在的异常处理器并且匹配对应的异常类型，匹配成功之后使用该指定的异常处理器返回结果进行Response的渲染，如果找不到默认的异常处理器则用默认的进行兜底(个人认为，Spring在很多功能设计的时候都有这种“有则使用自定义，无则使用默认提供”这种思想十分优雅)。
+SpringMVC中提供的自定义异常体系在Spring-WebFlux中并不适用，其实原因很简单，两者底层的运行容器并不相同。WebExceptionHandler是Spring-WebFlux的异常处理器顶层接口，因此追溯到子类可以追踪到DefaultErrorWebExceptionHandler是Spring Cloud Gateway的全局异常处理器，配置类是ErrorWebFluxAutoConfiguration。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADLUlEQVR42u3aS24CMRAFwNz/0mQbCTG853YkxpRXoxEYl1m0+vPzE6/Hn/X3zfXz8w7X75+fn7+VvNm2sLGxsW/CflyuV5+53i25uOv3yQmvL+vNmbGxsbGPY+ehZRJOJvtsDp/Y2NjYX8zOP58EkvwNNjY2NvZe9jx1SZKWpGCEjY2NjZ0zkhLP9dH3piLJdW+opWFjY2N/PDvvin7+87/0t7GxsbE/mP0oV5Iq5AWgSfnpMVjY2NjYJ7HzANAO6+xtObSJUHR+bGxs7OPYeckmuYg8BM6/1Y4HYWNjY38Pe1KHyRsG+Rna9kOUimBjY2MfwW5hk+ZrTppcymIYw8bGxr4te1fikTzPm7XtgNHL/bGxsbEPYueFniR0reH3XkpRhMLGxsY+gj0ZkWnTgPxNcp61UIeNjY19Ers9el6yXwsq8+ZB9FdhY2NjH8RO0oO1AZ22QZuvPOEpamnY2NjYt2VPQk5LTcLVWsLTNp6xsbGxT2WvjcW07GSsZ63lXJwEGxsb+zh2XqbPj5sP1rQjnkWgenUd2NjY2Aex825wUlTKmwptmyFJTtqLw8bGxj6DPRnTycs9+ZVNSld1PwQbGxv7IHZesskPNykJTQaJikklbGxs7CPYe0v/exOJJGSulb2wsbGxT2InwSYJM2vjO3lik8PqlgA2Njb2zdntT7bpSp6c5ElLu97859jY2NhHsNfapW3CsPacF7baxAYbGxv7bHYOawcx2zjSjg0tNh6wsbGxb87ODzpJG9p2cvu79TgRNjY29qHsNizlwzFtU2F+KVEtDRsbG/tQdjvE077J04y1vCoqV2FjY2Mfx25DQpvA5MWgeeIRnQ0bGxv7OHZe0P+PIlSSZqyF2w21NGxsbOwPZj/KtZZmrB1uHthe7o+NjY19EDtf86L/2iDO3vZAfQXY2NjYN2FPglaSuuThpP3FPIAtFpWwsbGxb8WeHCIvA62lMXkRqo7J2NjY2F/MnrR+233acZwovGFjY2NjL8WI6wO11LWrxMbGxj6VnRSV8iGePIHJR3nWLmVDewAbGxv749ltKFpr605GPNsiVL4bNjY29s3Zvzq0NQARiziCAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/05/11/mysql-deadlock-troubleshoot-1st/" rel="prev" title="一次MySQL死锁问题的排查与分析(一)">
+                                  
+                                      一次MySQL死锁问题的排查与分析(一)
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/MySQL/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> MySQL</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/05/10/java-algorithm-linked-list-fast-slow-pointer/" rel="prev" title="单链表中间节点搜索和快慢指针">
+                                    
+                                        单链表中间节点搜索和快慢指针
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Algorithm/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Algorithm</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Spring Cloud Gateway-自定义异常处理',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要自定义异常处理"><span class="toc-text">为什么要自定义异常处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何自定义异常处理"><span class="toc-text">如何自定义异常处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

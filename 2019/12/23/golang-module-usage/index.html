@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Go语言基本环境变量与依赖管理 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/12/23/golang-module-usage/">
+        Go语言基本环境变量与依赖管理
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Go/Golang/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Go&nbsp;/&nbsp;Golang</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年12月23日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-12-23T00:36:18+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年12月23日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：11分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>最近开始系统学习一下<code>Golang</code>这么新语言，记录一下它的基本环境变量配置以及依赖管理方式。编写本文的时候使用的<code>Golang</code>版本为<code>go1.13.5 windows/amd64</code>，其他版本不一定保证适合本文的内容。因为习惯，可能有时候把<code>Go</code>语言称为<code>Go</code>，有时候称为<code>Golang</code>。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/Golang.jpg" alt=""></p>
+<a id="more"></a>
+<h2 id="理解一下Golang的环境变量">理解一下Golang的环境变量</h2>
+<p>安装完<code>Golang</code>之后，可以通过<code>go env</code>命令查看环境变量配置，下面是笔者执行此命令的结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">λ go env</span><br><span class="line">set GO111MODULE=</span><br><span class="line">set GOARCH=amd64</span><br><span class="line">set GOBIN=</span><br><span class="line">set GOCACHE=C:\Users\doge\AppData\Local\go-build</span><br><span class="line">set GOENV=C:\Users\doge\AppData\Roaming\go\env</span><br><span class="line">set GOEXE=.exe</span><br><span class="line">set GOFLAGS=</span><br><span class="line">set GOHOSTARCH=amd64</span><br><span class="line">set GOHOSTOS=windows</span><br><span class="line">set GONOPROXY=</span><br><span class="line">set GONOSUMDB=</span><br><span class="line">set GOOS=windows</span><br><span class="line">set GOPATH=C:\Users\doge\go</span><br><span class="line">set GOPRIVATE=</span><br><span class="line">set GOPROXY=https://goproxy.cn,direct</span><br><span class="line">set GOROOT=I:\Environment\Go</span><br><span class="line">set GOSUMDB=sum.golang.org</span><br><span class="line">set GOTMPDIR=</span><br><span class="line">set GOTOOLDIR=I:\Environment\Go\pkg\tool\windows_amd64</span><br><span class="line">set GCCGO=gccgo</span><br><span class="line">set AR=ar</span><br><span class="line">set CC=gcc</span><br><span class="line">set CXX=g++</span><br><span class="line">set CGO_ENABLED=1</span><br><span class="line">set GOMOD=</span><br><span class="line">set CGO_CFLAGS=-g -O2</span><br><span class="line">set CGO_CPPFLAGS=</span><br><span class="line">set CGO_CXXFLAGS=-g -O2</span><br><span class="line">set CGO_FFLAGS=-g -O2</span><br><span class="line">set CGO_LDFLAGS=-g -O2</span><br><span class="line">set PKG_CONFIG=pkg-config</span><br><span class="line">set GOGCCFLAGS=-m64 -mthreads -fmessage-length=0 -fdebug-prefix-map=C:\Users\doge\AppData\Local\Temp\go-build779409438=/tmp/go-build -gno-record-gcc-switches</span><br></pre></td></tr></table></figure>
+<p>在日常开发中，我们需要重点关注<code>GOPROXY</code>、<code>GOROOT</code>、<code>GOPATH</code>和<code>GOBIN</code>，其他配置项可以在需要的时候再查询文档进行配置。</p>
+<h3 id="GOPROXY">GOPROXY</h3>
+<p><code>GOPROXY</code>就是设置<code>Golang</code>的全局代理。在下载依赖包的时候，一般是访问<code>github</code>的仓库，国内的环境很容易被墙，所以最好设置一个速度快的代理。<code>Go</code>在此版本中<code>GOPROXY</code>的默认值为<code>https://proxy.golang.org</code>，国内是无法访问的。因此，这里推荐使用七牛云的代理<a href="https://goproxy.cn" target="_blank" rel="noopener">https://goproxy.cn</a>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure>
+<p>设置完此代理之后，下载依赖的速度就能相对正常。</p>
+<h3 id="GOROOT">GOROOT</h3>
+<p><code>GOROOT</code>其实就是<code>Golang</code>安装的绝对路径，例如笔者把他安装在<code>I:\Environment\Go</code>目录下，所以：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">λ go env</span><br><span class="line">...</span><br><span class="line">set GOROOT=I:\Environment\Go</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><code>GOROOT</code>需要加入到系统变量<code>Path</code>里面，添加成功后才能在命令行使用<code>go [Command]</code>。</p>
+<h3 id="GOPATH和GOBIN">GOPATH和GOBIN</h3>
+<p><code>GOPATH</code>可以简单理解为工作目录，如果用过<code>Eclipse</code>，那么<code>GOPATH</code>可以类比为<code>Eclipse</code>中的<code>WorkSpace</code>的概念。<code>GOPATH</code>目录约定由三个子目录：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$GOPATH</span><br><span class="line">  - src  ---  存放源代码，<span class="keyword">go</span> run、<span class="keyword">go</span> install等命令就是在当前的工作路径中执行（也就是这些命令执行的目标文件夹就是这个src文件夹）</span><br><span class="line">  - pkg  ---  存放编译时生成的中间文件</span><br><span class="line">  - bin  ---  存放编译后生成的可执行文件</span><br></pre></td></tr></table></figure>
+<p><code>GOPATH</code>变量可以设置多个值，多个值之间使用特定的分隔符隔开，例如在<code>Windows</code>系统，分隔符是英文的分号<code>;</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">λ go env</span><br><span class="line">...</span><br><span class="line">set GOPATH=C:\Users\doge\go;I:G-Projects</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>值得注意的是：<code>go get</code>命令下载的依赖包会下载在<code>GOPATH</code>指定的第一个值对应的目录中，也就是<code>$Users/$User/go</code>目录下。</p>
+<p><code>GOBIN</code>用于指定<code>go install</code>目标保存路径，目的是避免将所有工作空间的<code>bin</code>路径添加到<code>PATH</code>环境变量中（因此在使用版本控制时，尽量忽略<code>bin</code>、<code>pkg</code>，建议直接在<code>src</code>，或者具体的子包下创建代码仓库）。于此相反的做法，就是在<code>Linux</code>或者<code>Unix</code>系统中，可以在<code>PATH</code>中添加<code>export PATH=$PATH:${GOPATH//://bin:}/bin</code>下把每个<code>GOPATH</code>下的<code>bin</code>都加入到<code>PATH</code>中。</p>
+<p>重点来了：<code>Module</code>的出现，就是为了弱化<code>GOPATH</code>的概念，使用<code>Module</code>去管理项目的依赖，那么可以基本忽略<code>GOPATH</code>的原有的功能。</p>
+<h2 id="Golang提供的命令">Golang提供的命令</h2>
+<p>可以通过命令行<code>go help</code>查看<code>Go</code>提供的命令行工具：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/go-e-d-m-1.png" alt=""></p>
+<p>这里可以关注一下前面一个栏目的基础命令即可：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">功能</th>
+<th style="text-align:center">使用例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>go bug</code></td>
+<td style="text-align:center">报告一个<code>BUG</code>，会调用系统默认浏览器打开提交<code>BUG</code>报告的页面</td>
+<td style="text-align:center"><code>go bug</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go build</code></td>
+<td style="text-align:center">编译所有的包和依赖</td>
+<td style="text-align:center"><code>go build [-o output] [-i] [build flags] [packages]</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go clean</code></td>
+<td style="text-align:center">清理执行其它命令时产生的一些文件和目录</td>
+<td style="text-align:center"><code>go clean [clean flags] [build flags] [packages]</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go doc</code></td>
+<td style="text-align:center">打印附于<code>Go</code>语言程序实体上的文档</td>
+<td style="text-align:center"><code>go doc pkg.app</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go env</code></td>
+<td style="text-align:center">展示<code>Go</code>的环境变量配置</td>
+<td style="text-align:center"><code>go env</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go fix</code></td>
+<td style="text-align:center">把指定代码包的所有<code>Go</code>语言源码文件中的旧版本代码修正为新版本的代码，这里的版本是指<code>Go</code>的版本</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go fmt</code></td>
+<td style="text-align:center">格式化指定代码为统一的风格</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go generate</code></td>
+<td style="text-align:center">扫描与当前包相关的源代码文件，找出所有包含&quot;//go:generate&quot;的特殊注释，提取并执行该特殊注释后面的命令，命令为可执行程序</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go get</code></td>
+<td style="text-align:center">根据要求和实际情况从互联网上下载或更新指定的代码包及其依赖包，并对它们进行编译和安装</td>
+<td style="text-align:center"><code>go get github.com/x/y</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go install</code></td>
+<td style="text-align:center">编译并安装指定的代码包及它们的依赖包</td>
+<td style="text-align:center"><code>go install</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go list</code></td>
+<td style="text-align:center">列出指定的代码包的信息</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod</code></td>
+<td style="text-align:center"><code>Module</code>相关命令</td>
+<td style="text-align:center">见下文分析</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go run</code></td>
+<td style="text-align:center">编译并运行命令源码文件</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go test</code></td>
+<td style="text-align:center">对<code>Go</code>语言编写的程序进行测试，简单来说就是运行测试代码</td>
+<td style="text-align:center"><code>go test mine_test.go</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go tool</code></td>
+<td style="text-align:center">运行特定的<code>Go</code>提供的工具</td>
+<td style="text-align:center"><code>go tool fix</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go version</code></td>
+<td style="text-align:center">打印<code>Golang</code>的版本</td>
+<td style="text-align:center"><code>go version</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go vet</code></td>
+<td style="text-align:center">检查<code>Go</code>语言源码中静态错误</td>
+<td style="text-align:center"><code>go vet</code></td>
+</tr>
+</tbody>
+</table>
+<p>如果想了解每个命令的详细使用教程可以通过<code>go help 命令Topic</code>得到对应的结果，更多或更详细的用法后面在探究<code>Golang</code>编码和基础知识的时候再深入展开。</p>
+<h2 id="Golang依赖管理">Golang依赖管理</h2>
+<p>之前跟一个前辈讨论对比<code>Java</code>和<code>Golang</code>的生态的时候，笔者指出了<code>Golang</code>在工程化方面对比<code>Java</code>感觉偏弱，最常见的例子就是<code>Java</code>有全球通用的依赖中央仓库，国内也有阿里的<code>Maven</code>仓库做加速，开发者可以很轻易通过<code>GAV</code>（<code>GroupId</code>、<code>ArtifactId</code>和<code>Version</code>）去拉取不同版本的依赖包，这一点在<code>Golang</code>中展现出了弱势。回想起来时间<strong>已经过去一年了</strong>，<code>Golang</code>也在进步，依赖管理也开始完善，笔者的过去狭隘的思维也改变了（其实不能总用<code>Java</code>的角度去学习其他编程语言，否则很难体会到其他语言的精髓，甚至有时候会衍生一些奇怪的想法，例如：总是想<code>Golang</code>中是否存在类似<code>Java</code>中的<code>Spring</code>或者<code>Mybatis</code>这类框架）。</p>
+<p><code>Golang</code>从<code>1.11</code>版本之后引入了<code>Module</code>作为依赖管理工具，从<code>1.13</code>或者之后的版本，<code>Module</code>作为官方默认的依赖管理工具，对应的命令是<code>go mod [Command]</code>。<code>Module</code>功能的启用与否由环境变量中的<code>GO111MODULE</code>决定，而<code>GO111MODULE</code>有三个可选值：</p>
+<ul>
+<li><code>GO111MODULE=off</code>，禁用<code>Module</code>功能，则编译的时候会从<code>GOPATH</code>和<code>vendor</code>文件夹中查找依赖包。</li>
+<li><code>GO111MODULE=on</code>，启用<code>Module</code>功能，则编译的时候会忽略<code>GOPATH</code>和<code>vendor</code>文件夹，编译所需的依赖由<code>go.mod</code>文件描述，从本地缓存<code>$GOPATH/pkg/mod</code>目录中加载。</li>
+<li><code>GO111MODULE=auto</code>，自动判断是否启用<code>Module</code>功能，<strong>此选项是默认值</strong>，当项目在<code>$GOPATH/src</code>外且项目根目录有<code>go.mod</code>文件时，则启用<code>Module</code>功能。</li>
+</ul>
+<p><code>Module</code>存在的意义是：没有必要在<code>GOPATH</code>中创建项目，管理项目依赖的第三方包信息可以独立管理。<code>go mod</code>支持的所有命令如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/go-e-d-m-2.png" alt=""></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><code>go mod</code>命令</th>
+<th style="text-align:center">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>go mod download</code></td>
+<td style="text-align:center">下载依赖的模块到本地缓存中，本地缓存的默认路径是<code>$GOPATH/pkg/mod</code>目录</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod edit</code></td>
+<td style="text-align:center">编辑<code>go.mod</code>文件</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod graph</code></td>
+<td style="text-align:center">打印模块依赖图</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod init</code></td>
+<td style="text-align:center">基于当前文件夹初始化一个新模块,，创建<code>go.mod</code>文件</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod tidy</code></td>
+<td style="text-align:center">添加缺失的模块，移除无用的模块</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod vendor</code></td>
+<td style="text-align:center">把所有依赖拷贝到<code>vendor</code>文件夹中</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod verify</code></td>
+<td style="text-align:center">校验依赖，检查依赖内容是否和预期一致</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod why</code></td>
+<td style="text-align:center">解释为什么需要引入包（<code>packages</code>）和模块（<code>modules</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用Module进行依赖管理">使用Module进行依赖管理</h3>
+<p>先使用<code>JetBrains Goland</code>创建一个新项目，项目里面创建<code>bin</code>、<code>pkg</code>和<code>src</code>三个目录：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/go-e-d-m-3.png" alt=""></p>
+<p>项目创建完成后，根目录中已经存在了一个<code>go.mod</code>文件，也就是<code>JetBrains Goland</code>已经帮我们在当前目录执行过<code>go mod init</code>，文件内容是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">module "module-sample"</span><br></pre></td></tr></table></figure>
+<p><code>src</code>目录下引入一个<code>app.go</code>文件：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"github.com/garyburd/redigo/redis"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	connection, err := redis.Dial(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:6379"</span>, redis.DialDatabase(<span class="number">0</span>))</span><br><span class="line">	<span class="keyword">if</span> <span class="literal">nil</span> != err &#123;</span><br><span class="line">		fmt.Println(<span class="string">"连接到Redis异常"</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> connection.Close()</span><br><span class="line">	n, err := connection.Do(<span class="string">"SET"</span>, <span class="string">"name"</span>, <span class="string">"throwable"</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="literal">nil</span> != err &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="string">"OK"</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"执行Set命令成功"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	value, err := redis.String(connection.Do(<span class="string">"GET"</span>, <span class="string">"name"</span>))</span><br><span class="line">	<span class="keyword">if</span> <span class="literal">nil</span> != err &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">"Get命令执行结果:"</span>, value)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>会发现，整个文件的依赖都是标红的，也就是依赖没有下载和导入：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/go-e-d-m-4.png" alt=""></p>
+<p>此时使用<code>go mod tidy</code>进行依赖整理，执行完毕之后，发现根目录生成了一个新的<code>go.sum</code>，它用于记录锁定的依赖记录（依赖的包、路径、版本以及哈希值）。<code>go.sum</code>文件如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">github.com/garyburd/redigo v1.6.0 h1:0VruCpn7yAIIu7pWVClQC8wxCJEcG3nyzpMSHKi1PQc=</span><br><span class="line">github.com/garyburd/redigo v1.6.0/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=</span><br></pre></td></tr></table></figure>
+<p>而<code>go.mod</code>文件也被修改：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">module module-sample</span><br><span class="line"></span><br><span class="line">go 1.13</span><br><span class="line"></span><br><span class="line">require github.com/garyburd/redigo v1.6.0</span><br></pre></td></tr></table></figure>
+<p>然后使用<code>go mod download</code>下载依赖到本地缓存中，下载完成后，使用<code>go mod vendor</code>把依赖拷贝到当前模块的<code>vendor</code>目录下，那么原来标红的文件就能正常编译了。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201912/go-e-d-m-5.png" alt=""></p>
+<p><code>go mod</code>管理依赖支持<strong>语义化版本号</strong>，例如：</p>
+<ul>
+<li>依赖版本：<strong><code>foo@v1.2.3</code></strong>。</li>
+<li><code>Git</code>分支的<code>Tag</code>：<code>foo@master</code>。</li>
+<li><code>Git</code>提交点的<code>SHA-1</code>值：<code>foo@e3702bed2</code>。</li>
+<li>其他值：如<code>&lt;=v1.1.1</code>、<code>latest</code>等等。</li>
+</ul>
+<p><code>go.mod</code>文件中可以使用如下关键字：</p>
+<ul>
+<li><code>module</code>：模块名。</li>
+<li><code>require</code>：引入所需依赖，注意包名和版本，例如：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require github.com/garyburd/redigo v1.6.0</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>replace</code>：替换依赖，例如：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">replace (</span><br><span class="line">    golang.org/x/crypto v0.0.0-20180820150726-614d502a4dac =&gt; github.com/golang/crypto v0.0.0-20180820150726-614d502a4dac</span><br><span class="line">    golang.org/x/net v0.0.0-20180821023952-922f4815f713 =&gt; github.com/golang/net v0.0.0-20180826012351-8a410e7b638d</span><br><span class="line">    golang.org/x/text v0.3.0 =&gt; github.com/golang/text v0.3.0</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>indirect</code>：指明是间接引用，例如：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">require (</span><br><span class="line">    github.com/garyburd/redigo v1.6.0</span><br><span class="line">    github.com/garyburd/xx v1.0.0  // indirect</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>另外，可以单独使用<code>go get</code>命令下载对应的依赖，而<code>go mod download</code>会下载所有用到的依赖。最后附上一些小技巧：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>go mod edit -fmt</code></td>
+<td style="text-align:center">格式化<code>go.mod</code>文件</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod edit -require=需要的依赖</code></td>
+<td style="text-align:center">添加依赖到<code>go.mod</code>文件</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod edit -droprequire=指定的依赖</code></td>
+<td style="text-align:center">从<code>go.mod</code>文件移除对应的依赖</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>go mod tidy</code>、<code>go mod download</code>、<code>go mod vendor</code></td>
+<td style="text-align:center">三个命令组合使用，相当于全局更新一次所需的依赖</td>
+</tr>
+</tbody>
+</table>
+<p>如果熟练使用这些命令，那么依赖管理就会变得相对容易。</p>
+<h2 id="小结">小结</h2>
+<p>本文简单介绍了<code>Golang</code>的<code>Module</code>依赖管理功能，这里简单记录几个要点：</p>
+<ul>
+<li><code>go mod download</code>下载的依赖包会存放在<code>Go</code>本地缓存中，具体位置是<code>$GOPATH/pkg/mod</code>（这里的<code>GOPATH</code>一般是就是全局的那个<code>GOPATH</code>，值为<code>$Users/$User/go</code>）</li>
+<li>启用<code>Module</code>功能后，模块根目录生成一个<code>go.mod</code>用于记录当前模块的依赖关系。</li>
+<li>启用<code>Module</code>功能后，一旦下载了新的依赖，就会在模块根目录生成一个<code>go.sum</code>用于记录被锁定的依赖记录。</li>
+</ul>
+<p><code>go.mod</code>和<code>go.sum</code>最终决定了一棵锁定好的依赖树，最终编译以及安装都是通过这两个描述文件，关联到本地缓存下载好的依赖包完成后续的工作。</p>
+<p>（本文完 c-1-d e-a-20191222）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/12/23/golang-module-usage/>http://throwable.club/2019/12/23/golang-module-usage/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Go/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Go</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Golang/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Golang</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/12/23/golang-module-usage/&title=Go语言基本环境变量与依赖管理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近开始系统学习一下Golang这么新语言，记录一下它的基本环境变量配置以及依赖管理方式。编写本文的时候使用的Golang版本为go1.13.5 windows/amd64，其他版本不一定保证适合本文的内容。因为习惯，可能有时候把Go语言称为Go，有时候称为Golang。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/12/23/golang-module-usage/&title=Go语言基本环境变量与依赖管理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近开始系统学习一下Golang这么新语言，记录一下它的基本环境变量配置以及依赖管理方式。编写本文的时候使用的Golang版本为go1.13.5 windows/amd64，其他版本不一定保证适合本文的内容。因为习惯，可能有时候把Go语言称为Go，有时候称为Golang。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQW7cMAwF0Nz/0i3QVYFk3P9JKZkCz6uBk5H1vKA4JD8+4uvXn+vz57/vfL4/W232n6sLDw8Pb7T1V1fLe/7Wqzun/vrFK8DDw8O7xsuDcrRogG8PleSQwMPDw3s3Xn4kRA8ukXh4eHj/Iy8vCrSYU3vAw8PD+07evjTQFnA3ZdwrtRY8PDy8mLdpWf3U52/q7+Hh4eGVXfW2MTYL388BPV/ti/Xx8PDwLvDaFtSswNoObOUDB9GBgYeHh3eUNxulaosF+QGQ/LXYCR4eHt4F3vOXZ6MDs6Q8L++2O8TDw8M7y3v+qX8q3O9fRDEokD8eDw8Pb8Tbp795cWFW8M3HDqJzDw8PD2/Na5tVbcqbHxXtClHpBA8PD+8Cb/azf5OOJ+w8XS5Sajw8PLxrvLZ8UOfvcYj/OHXh4eHhHeXloXzzuS1JtKtFQwN4eHh4l3lnU+Q8Nc/T9+gl4uHh4V3gtaF5dmezwv714eHh4Z3l/SMlzZPXsrDbPnfV+sLDw8M7ypsF3Hzcqq2pzg6GYgU8PDy8Ne9GISAHz9Yp9oyHh4d3jZcH4ryM2+a0OaM4rvDw8PAu8J43ummDtd9KRruGQ1p4eHh4F3jJ0EARiEeDBTNGsmc8PDy8G7y2/T87PGaHQVuHjoau8PDw8Na8NtXeDxlsrmPr4+Hh4S14m7A+C/2bZLpuquHh4eFd4+2D+/M6yTVLjqMuHx4eHt4h3uzxp4ai8uJC8uq/2CEeHh7eBd6+MJGnv7NjZlZQPlZ3wcPDw3vsreeHweY9RVMMozLxSzweHh7eNV6SzrZ1jrb0sGmY4eHh4b0zL0ln88GpvNiR/z7Aw8PDex/eLKy3La5ZWfnlcYKHh4d3jZcvkQTltuWfJOWr5hYeHh7eUd6sAZbcydtgbdssL3Pg4eHhHeX9BmZnXpOK3ClwAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/12/23/golang-module-usage/&title=Go语言基本环境变量与依赖管理 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近开始系统学习一下Golang这么新语言，记录一下它的基本环境变量配置以及依赖管理方式。编写本文的时候使用的Golang版本为go1.13.5 windows/amd64，其他版本不一定保证适合本文的内容。因为习惯，可能有时候把Go语言称为Go，有时候称为Golang。
+"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3aQW7cMAwF0Nz/0i3QVYFk3P9JKZkCz6uBk5H1vKA4JD8+4uvXn+vz57/vfL4/W232n6sLDw8Pb7T1V1fLe/7Wqzun/vrFK8DDw8O7xsuDcrRogG8PleSQwMPDw3s3Xn4kRA8ukXh4eHj/Iy8vCrSYU3vAw8PD+07evjTQFnA3ZdwrtRY8PDy8mLdpWf3U52/q7+Hh4eGVXfW2MTYL388BPV/ti/Xx8PDwLvDaFtSswNoObOUDB9GBgYeHh3eUNxulaosF+QGQ/LXYCR4eHt4F3vOXZ6MDs6Q8L++2O8TDw8M7y3v+qX8q3O9fRDEokD8eDw8Pb8Tbp795cWFW8M3HDqJzDw8PD2/Na5tVbcqbHxXtClHpBA8PD+8Cb/azf5OOJ+w8XS5Sajw8PLxrvLZ8UOfvcYj/OHXh4eHhHeXloXzzuS1JtKtFQwN4eHh4l3lnU+Q8Nc/T9+gl4uHh4V3gtaF5dmezwv714eHh4Z3l/SMlzZPXsrDbPnfV+sLDw8M7ypsF3Hzcqq2pzg6GYgU8PDy8Ne9GISAHz9Yp9oyHh4d3jZcH4ryM2+a0OaM4rvDw8PAu8J43ummDtd9KRruGQ1p4eHh4F3jJ0EARiEeDBTNGsmc8PDy8G7y2/T87PGaHQVuHjoau8PDw8Na8NtXeDxlsrmPr4+Hh4S14m7A+C/2bZLpuquHh4eFd4+2D+/M6yTVLjqMuHx4eHt4h3uzxp4ai8uJC8uq/2CEeHh7eBd6+MJGnv7NjZlZQPlZ3wcPDw3vsreeHweY9RVMMozLxSzweHh7eNV6SzrZ1jrb0sGmY4eHh4b0zL0ln88GpvNiR/z7Aw8PDex/eLKy3La5ZWfnlcYKHh4d3jZcvkQTltuWfJOWr5hYeHh7eUd6sAZbcydtgbdssL3Pg4eHhHeX9BmZnXpOK3ClwAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/12/25/java-introspector-usage/" rel="prev" title="聊聊Java内省Introspector">
+                                  
+                                      聊聊Java内省Introspector
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Introspector/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Introspector</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/12/16/mybatis-generator-usage/" rel="prev" title="Mybatis代码生成器Mybatis-Generator使用详解">
+                                    
+                                        Mybatis代码生成器Mybatis-Generator使用详解
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Mybatis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Mybatis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Go语言基本环境变量与依赖管理',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理解一下Golang的环境变量"><span class="toc-text">理解一下Golang的环境变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GOPROXY"><span class="toc-text">GOPROXY</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GOROOT"><span class="toc-text">GOROOT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GOPATH和GOBIN"><span class="toc-text">GOPATH和GOBIN</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang提供的命令"><span class="toc-text">Golang提供的命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang依赖管理"><span class="toc-text">Golang依赖管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用Module进行依赖管理"><span class="toc-text">使用Module进行依赖管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

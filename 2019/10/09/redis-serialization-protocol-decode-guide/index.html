@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>一文彻底理解Redis序列化协议，你也可以编写Redis客户端 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/10/09/redis-serialization-protocol-decode-guide/">
+        一文彻底理解Redis序列化协议，你也可以编写Redis客户端
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Redis/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Redis</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年10月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-11-29T01:01:03+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年11月29日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：7.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：31分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>最近学习<code>Netty</code>的时候想做一个基于<code>Redis</code>服务协议的编码解码模块，过程中顺便阅读了<code>Redis</code>服务序列化协议<code>RESP</code>，结合自己的理解对文档进行了翻译并且简单实现了<code>RESP</code>基于<code>Java</code>语言的解析。编写本文的使用使用的<code>JDK</code>版本为<code>[8+]</code>。</p>
+<a id="more"></a>
+<h2 id="RESP简介">RESP简介</h2>
+<p><code>Redis</code>客户端与<code>Redis</code>服务端基于一个称作<code>RESP</code>的协议进行通信，<code>RESP</code>全称为<code>Redis Serialization Protocol</code>，也就是<code>Redis</code>序列化协议。虽然<code>RESP</code>为<code>Redis</code>设计，但是它也可以应用在其他客户端-服务端（<code>Client-Server</code>）的软件项目中。<code>RESP</code>在设计的时候折中考虑了如下几点：</p>
+<ul>
+<li>易于实现。</li>
+<li>快速解析。</li>
+<li>可读性高。</li>
+</ul>
+<p><code>RESP</code>可以序列化不同的数据类型，如整型、字符串、数组还有一种特殊的<code>Error</code>类型。需要执行的<code>Redis</code>命令会封装为类似于<strong>字符串数组</strong>的请求然后通过<code>Redis</code>客户端发送到<code>Redis</code>服务端。<code>Redis</code>服务端会基于特定的命令类型选择对应的一种数据类型进行回复（这一句是意译，原文是：<code>Redis replies with a command-specific data type</code>）。</p>
+<p><code>RESP</code>是二进制安全的（<code>binary-safe</code>），并且在<code>RESP</code>下不需要处理从一个进程传输到另一个进程的批量数据，因为它使用了前缀长度（<code>prefixed-length</code>，后面会分析，<strong>就是在每个数据块的前缀已经定义好数据块的个数</strong>，类似于<code>Netty</code>里面的定长编码解码）来传输批量数据。</p>
+<p>注意：此处概述的协议仅仅使用在客户端-服务端通信，<code>Redis Cluster</code>使用不同的二进制协议在多个节点之间交换消息（也就是<code>Redis</code>集群中的节点之间并不使用<code>RESP</code>通信）。</p>
+<h3 id="网络层">网络层</h3>
+<p><code>Redis</code>客户端通过创建一个在<code>6379</code>端口的<code>TCP</code>连接，连接到<code>Redis</code>服务端。</p>
+<p>虽然<code>RESP</code>在底层通信协议技术上是非<code>TCP</code>特定的，但在<code>Redis</code>的上下文中，<code>RESP</code>仅用于<code>TCP</code>连接（或类似的面向流的连接，如<code>Unix</code>套接字）。</p>
+<h3 id="请求-响应模型">请求-响应模型</h3>
+<p><code>Redis</code>服务端接收由不同参数组成的命令，接收到命令并将其处理之后会把回复发送回<code>Redis</code>客户端。这是最简单的模型，但是有两种例外的情况：</p>
+<ul>
+<li><code>Redis</code>支持管道（<code>Pipelining</code>，流水线，多数情况下习惯称为管道）操作。使用管道的情况下，<code>Redis</code>客户端可以一次发送多个命令，然后等待一次性的回复（文中的回复是<code>replies</code>，理解为<code>Redis</code>服务端会一次性返回一个批量回复结果）。</li>
+<li>当<code>Redis</code>客户端订阅<code>Pub/Sub</code>信道时，该协议会更改语义并成为推送协议（<code>push protocol</code>），也就是说，客户端不再需要发送命令，因为<code>Redis</code>服务端将自动向客户端（订阅了改信道的客户端）发送新消息（这里的意思是：在订阅/发布模式下，消息是由<code>Redis</code>服务端主动推送给订阅了特定信道的<code>Redis</code>客户端）。</li>
+</ul>
+<p>除了上述两个特例之外，<code>Redis</code>协议是一种简单的请求-响应协议。</p>
+<h2 id="RESP支持的数据类型">RESP支持的数据类型</h2>
+<p><code>RESP</code>在<code>Redis 1.2</code>中引入，在<code>Redis 2.0</code>，<code>RESP</code>正式成为与<code>Redis</code>服务端通信的标准方案。也就是如果需要编写<code>Redis</code>客户端，你就必须在客户端中实现此协议。</p>
+<p><code>RESP</code>本质上是一种序列化协议，它支持的数据类型如下：单行字符串、错误消息、整型数字、定长字符串和<code>RESP</code>数组。</p>
+<p><code>RESP</code>在<code>Redis</code>中用作请求-响应协议的方式如下：</p>
+<ul>
+<li><code>Redis</code>客户端将命令封装为<code>RESP</code>的数组类型（<strong>数组元素都是定长字符串类型</strong>，注意这一点，很重要）发送到<code>Redis</code>服务器。</li>
+<li><code>Redis</code>服务端根据命令实现选择对应的<code>RESP</code>数据类型之一进行回复。</li>
+</ul>
+<p>在<code>RESP</code>中，数据类型取决于数据报的第一个字节：</p>
+<ul>
+<li>单行字符串的第一个字节为<code>+</code>。</li>
+<li>错误消息的第一个字节为<code>-</code>。</li>
+<li>整型数字的第一个字节为<code>:</code>。</li>
+<li>定长字符串的第一个字节为<code>$</code>。</li>
+<li><code>RESP</code>数组的第一个字节为<code>*</code>。</li>
+</ul>
+<p>另外，在<code>RESP</code>中可以使用定长字符串或者数组的特殊变体来表示<code>Null</code>值，后面会提及。在<code>RESP</code>中，<strong>协议的不同部分始终以<code>\r\n</code>（<code>CRLF</code>）终止</strong>。</p>
+<p>目前<code>RESP</code>中5种数据类型的小结如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">数据类型</th>
+<th style="text-align:center">本文翻译名称</th>
+<th style="text-align:center">基本特征</th>
+<th style="text-align:center">例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Simple String</code></td>
+<td style="text-align:center">单行字符串</td>
+<td style="text-align:center">第一个字节是<code>+</code>，最后两个字节是<code>\r\n</code>，其他字节是字符串内容</td>
+<td style="text-align:center"><code>+OK\r\n</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Error</code></td>
+<td style="text-align:center">错误消息</td>
+<td style="text-align:center">第一个字节是<code>-</code>，最后两个字节是<code>\r\n</code>，其他字节是异常消息的文本内容</td>
+<td style="text-align:center"><code>-ERR\r\n</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Integer</code></td>
+<td style="text-align:center">整型数字</td>
+<td style="text-align:center">第一个字节是<code>:</code>，最后两个字节是<code>\r\n</code>，其他字节是数字的文本内容</td>
+<td style="text-align:center"><code>:100\r\n</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Bulk String</code></td>
+<td style="text-align:center">定长字符串</td>
+<td style="text-align:center">第一个字节是<code>$</code>，紧接着的字节是<code>内容字符串长度\r\n</code>，最后两个字节是<code>\r\n</code>，其他字节是字符串内容</td>
+<td style="text-align:center"><code>$4\r\ndoge\r\n</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Array</code></td>
+<td style="text-align:center"><code>RESP</code>数组</td>
+<td style="text-align:center">第一个字节是<code>*</code>，紧接着的字节是<code>元素个数\r\n</code>，最后两个字节是<code>\r\n</code>，其他字节是各个元素的内容，每个元素可以是任意一种数据类型</td>
+<td style="text-align:center"><code>*2\r\n:100\r\n$4\r\ndoge\r\n</code></td>
+</tr>
+</tbody>
+</table>
+<p>下面的小节是对每种数据类型的更细致的分析。</p>
+<h3 id="RESP简单字符串-Simple-String">RESP简单字符串-Simple String</h3>
+<p>简单字符串的编码方式如下：</p>
+<ul>
+<li>（1）第一个字节为<code>+</code>。</li>
+<li>（2）紧接着的是一个不能包含<code>CR</code>或者<code>LF</code>字符的字符串。</li>
+<li>（3）以<code>CRLF</code>终止。</li>
+</ul>
+<p>简单字符串能够保证在最小开销的前提下传输非二进制安全的字符串。例如很多<code>Redis</code>命令执行成功后服务端需要回复<code>OK</code>字符串，此时通过简单字符串编码为5字节的数据报如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+OK\r\n</span><br></pre></td></tr></table></figure>
+<p>如果需要发送二进制安全的字符串，那么需要使用定长字符串。</p>
+<p>当<code>Redis</code>服务端用简单字符串响应时，<code>Redis</code>客户端库应该向调用者返回一个字符串，该响应到调用者的字符串由<code>+</code>之后直到字符串内容末尾的字符组成（其实就是上面提到的第（2）部分的内容），不包括最后的<code>CRLF</code>字节。</p>
+<h3 id="RESP错误消息-Error">RESP错误消息-Error</h3>
+<p>错误消息类型是<code>RESP</code>特定的数据类型。实际上，错误消息类型和简单字符串类型基本一致，只是其第一个字节为<code>-</code>。错误消息类型跟简单字符串类型的最大区别是：错误消息作为<code>Redis</code>服务端响应的时候，对于客户端而言应该感知为异常，而错误消息中的字符串内容应该感知为<code>Redis</code>服务端返回的错误信息。错误消息的编码方式如下：</p>
+<ul>
+<li>（1）第一个字节为<code>-</code>。</li>
+<li>（2）紧接着的是一个不能包含<code>CR</code>或者<code>LF</code>字符的字符串。</li>
+<li>（3）以<code>CRLF</code>终止。</li>
+</ul>
+<p>一个简单的例子如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Error message\r\n</span><br></pre></td></tr></table></figure>
+<p><code>Redis</code>服务端只有在真正发生错误或者感知错误的时候才会回复错误消息，例如尝试对错误的数据类型执行操作或者命令不存在等等。<code>Redis</code>客户端接收到错误消息的时候，应该触发异常（一般情况就是直接抛出异常，可以根据错误消息的内容进行异常分类）。下面是错误消息响应的一些例子：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-ERR unknown command 'foobar'</span><br><span class="line">-WRONGTYPE Operation against a key holding the wrong kind of value</span><br></pre></td></tr></table></figure>
+<p><code>-</code>之后的第一个单词到第一个空格或换行符之间的内容，代表返回的错误类型。这只是<code>Redis</code>使用的约定，不是<code>RESP</code>错误消息格式的一部分。</p>
+<p>例如，<code>ERR</code>是通用错误，<code>WRONGTYPE</code>则是更具体的错误，表示客户端试图针对错误的数据类型执行操作。这种定义方式称为<strong>错误前缀</strong>，是一种使客户端能够理解服务器返回的错误类型的方法，而不必依赖于所给出的确切消息定义，该消息可能会随时间而变化。</p>
+<p>客户端实现可以针对不同的错误类型返回不同种类的异常，或者可以通过将错误类型的名称作为字符串直接提供给调用方来提供捕获错误的通用方法。</p>
+<p>但是，不应该将错误消息分类处理的功能视为至关重要的功能，因为它作用并不巨大，并且有些的客户端实现可能会简单地返回特定值去屏蔽错误消息作为通用的异常处理，例如直接返回<code>false</code>。</p>
+<h3 id="RESP整型数字-Integer">RESP整型数字-Integer</h3>
+<p>整型数字的编码方式如下：</p>
+<ul>
+<li>（1）第一个字节为<code>：</code>。</li>
+<li>（2）紧接着的是一个不能包含<code>CR</code>或者<code>LF</code>字符的字符串，也就是数字要先转换为字符序列，最终要输出为字节。</li>
+<li>（3）以<code>CRLF</code>终止。</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:0\r\n</span><br><span class="line">:1000\r\n</span><br></pre></td></tr></table></figure>
+<p>许多<code>Redis</code>命令返回整型数字，像<code>INCR</code>，<code>LLEN</code>和<code>LASTSAVE</code>命令等等。</p>
+<p>返回的整型数字没有特殊的含义，像<code>INCR</code>返回的是增量的总量，而<code>LASTSAVE</code>是<code>UNIX</code>时间戳。但是<code>Redis</code>服务端保证返回的整型数字在<strong>带符号的64位整数</strong>范围内。</p>
+<p>有些情况下，返回的整型数字会指代<code>true</code>或者<code>false</code>。如<code>EXISTS</code>或者<code>SISMEMBER</code>命令执行返回1代表<code>true</code>，0代表<code>false</code>。</p>
+<p>有些情况下，返回的整型数字会指代命令是否真正产生了效果。如<code>SADD</code>，<code>SREM</code>和<code>SETNX</code>命令执行返回1代表命令执行生效，0代表命令执行不生效（等价于命令没有执行）。</p>
+<p>下面的一组命令执行后都是返回整型数字：<code>SETNX, DEL, EXISTS, INCR, INCRBY, DECR, DECRBY, DBSIZE, LASTSAVE, RENAMENX, MOVE, LLEN, SADD, SREM, SISMEMBER, SCARD</code>。</p>
+<h3 id="RESP定长字符串-Bulk-String">RESP定长字符串-Bulk String</h3>
+<p>定长字符串用于表示一个最大长度为<code>512MB</code>的二进制安全的字符串（<code>Bulk</code>，本身有体积大的含义）。定长字符串的编码方式如下：</p>
+<ul>
+<li>（1）第一个字节为<code>$</code>。</li>
+<li>（2）紧接着的是组成字符串的字节数长度（称为<code>prefixed length</code>，也就是前缀长度），前缀长度分块以<code>CRLF</code>终止。</li>
+<li>（3）然后是一个不能包含<code>CR</code>或者<code>LF</code>字符的字符串，也就是数字要先转换为字符序列，最终要输出为字节。</li>
+<li>（4）以<code>CRLF</code>终止。</li>
+</ul>
+<p>举个例子，<code>doge</code>使用定长字符串编码如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">第一个字节</th>
+<th style="text-align:center">前缀长度</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center">字符串内容</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">定长字符串</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>$</code></td>
+<td style="text-align:center"><code>4</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>doge</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>===&gt;</code></td>
+<td style="text-align:center"><code>$4\r\ndoge\r\n</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>foobar</code>使用定长字符串编码如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">第一个字节</th>
+<th style="text-align:center">前缀长度</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center">字符串内容</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">定长字符串</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>$</code></td>
+<td style="text-align:center"><code>6</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>foobar</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>===&gt;</code></td>
+<td style="text-align:center"><code>$6\r\nfoobar\r\n</code></td>
+</tr>
+</tbody>
+</table>
+<p>表示<strong>空字符串（<code>Empty String</code>，对应Java中的<code>&quot;&quot;</code>）</strong> 的时候，使用定长字符串编码如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">第一个字节</th>
+<th style="text-align:center">前缀长度</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">定长字符串</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>$</code></td>
+<td style="text-align:center"><code>0</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>===&gt;</code></td>
+<td style="text-align:center"><code>$0\r\n\r\n</code></td>
+</tr>
+</tbody>
+</table>
+<p>定长字符串也可以使用特殊的格式来表示<code>Null</code>值，指代值不存在。在这种特殊格式中，前缀长度为-1，并且没有数据，因此使用定长字符串对<code>Null</code>值进行编码如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">第一个字节</th>
+<th style="text-align:center">前缀长度</th>
+<th style="text-align:center"><code>CRLF</code></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">定长字符串</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>$</code></td>
+<td style="text-align:center"><code>-1</code></td>
+<td style="text-align:center"><code>\r\n</code></td>
+<td style="text-align:center"><code>===&gt;</code></td>
+<td style="text-align:center"><code>$-1\r\n</code></td>
+</tr>
+</tbody>
+</table>
+<p>当<code>Redis</code>服务端返回定长字符串编码的<code>Null</code>值的时候，客户端不应该返回空字符串，而应该返回对应编程语言中的<code>Null</code>对象。例如<code>Ruby</code>中对应<code>nil</code>，<code>C</code>语言中对应<code>NULL</code>，<code>Java</code>中对应<code>null</code>，以此类推。</p>
+<h3 id="RESP数组-Array">RESP数组-Array</h3>
+<p><code>Redis</code>客户端使用<code>RESP</code>数组发送命令到<code>Redis</code>服务端。与此相似，某些<code>Redis</code>命令执行完毕后服务端需要使用<code>RESP</code>数组类型将元素集合返回给客户端，如返回一个元素列表的<code>LRANGE</code>命令。<code>RESP</code>数组和我们认知中的数组并不完全一致，它的编码格式如下：</p>
+<ul>
+<li>（1）第一个字节为<code>*</code>。</li>
+<li>（2）紧接着的是组成<code>RESP</code>数组的元素个数（十进制数，但是最终需要转换为字节序列，如10需要转换为<code>1</code>和<code>0</code>两个相邻的字节），元素个数分块以<code>CRLF</code>终止。</li>
+<li>（3）<code>RESP</code>数组的每个元素内容，每个元素可以是任意的<code>RESP</code>数据类型。</li>
+</ul>
+<p>一个空的<code>RESP</code>数组的编码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*0\r\n</span><br></pre></td></tr></table></figure>
+<p>一个包含2个定长字符串元素内容分别为<code>foo</code>和<code>bar</code>的<code>RESP</code>数组的编码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n</span><br></pre></td></tr></table></figure>
+<p>通用格式就是：<code>*&lt;count&gt;CRLF</code>作为<code>RESP</code>数组的前缀部分，而组成<code>RESP</code>数组的其他数据类型的元素只是一个接一个地串联在一起。例如一个包含3个整数类型元素的<code>RESP</code>数组的编码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*3\r\n:1\r\n:2\r\n:3\r\n</span><br></pre></td></tr></table></figure>
+<p><code>RESP</code>数组的元素不一定是同一种数据类型，可以包含混合类型的元素。例如下面是一个包含4个整数类型元素和1个定长字符串类型元素（一共有5个元素）的<code>RESP</code>数组的编码（为了看得更清楚，分多行进行编码，实际上不能这样做）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 元素个数</span></span><br><span class="line">*5\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第1个整型类型的元素</span></span><br><span class="line">:1\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第2个整型类型的元素</span></span><br><span class="line">:2\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第3个整型类型的元素</span></span><br><span class="line">:3\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第4个整型类型的元素</span></span><br><span class="line">:4\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 定长字符串类型的元素</span></span><br><span class="line"><span class="meta">$</span><span class="bash">6\r\n</span></span><br><span class="line">foobar\r\n</span><br></pre></td></tr></table></figure>
+<p><code>Redis</code>服务端响应报的首行<code>*5\r\n</code>定义了后面会紧跟着5个回复数据，然后每个回复数据分别作元素项，构成了用于传输的多元素定长回复（<code>Multi Bulk Reply</code>，感觉比较难翻译，这里的大概意思就是每个回复行都是整个回复报中的一个项）。</p>
+<p>这里可以类比为<code>Java</code>中的<code>ArrayList</code>（泛型擦除），有点类似于下面的伪代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">List encode = <span class="keyword">new</span> ArrayList();</span><br><span class="line"><span class="comment">// 添加元素个数</span></span><br><span class="line">encode.add(elementCount);</span><br><span class="line">encode.add(CRLF);</span><br><span class="line"><span class="comment">// 添加第1个整型类型的元素 - 1</span></span><br><span class="line">encode.add(<span class="string">':'</span>);</span><br><span class="line">encode.add(<span class="number">1</span>);</span><br><span class="line">encode.add(CRLF);</span><br><span class="line"><span class="comment">// 添加第2个整型类型的元素 - 2</span></span><br><span class="line">encode.add(<span class="string">':'</span>);</span><br><span class="line">encode.add(<span class="number">2</span>);</span><br><span class="line">encode.add(CRLF);</span><br><span class="line"><span class="comment">// 添加第3个整型类型的元素 - 3</span></span><br><span class="line">encode.add(<span class="string">':'</span>);</span><br><span class="line">encode.add(<span class="number">3</span>);</span><br><span class="line">encode.add(CRLF);</span><br><span class="line"><span class="comment">// 添加第4个整型类型的元素 - 4</span></span><br><span class="line">encode.add(<span class="string">':'</span>);</span><br><span class="line">encode.add(<span class="number">4</span>);</span><br><span class="line">encode.add(CRLF);</span><br><span class="line"><span class="comment">// 添加定长字符串类型的元素</span></span><br><span class="line">encode.add(<span class="string">'$'</span>);</span><br><span class="line"><span class="comment">// 前缀长度</span></span><br><span class="line">encode.add(<span class="number">6</span>);</span><br><span class="line"><span class="comment">// 字符串内容</span></span><br><span class="line">encode.add(<span class="string">"foobar"</span>);</span><br><span class="line">encode.add(CRLF);</span><br></pre></td></tr></table></figure>
+<p><code>RESP</code>数组中也存在<code>Null</code>值的概念，下面称为<code>RESP Null Array</code>。处于历史原因，<code>RESP</code>数组中采用了另一种特殊的编码格式定义<code>Null</code>值，区别于定长字符串中的<code>Null</code>值字符串。例如，<code>BLPOP</code>命令执行超时的时候，就会返回一个<code>RESP Null Array</code>类型的响应。<code>RESP Null Array</code>的编码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*-1\r\n</span><br></pre></td></tr></table></figure>
+<p>当<code>Redis</code>服务端的回复是<code>RESP Null Array</code>类型的时候，客户端应该返回一个<code>Null</code>对象，而不是一个空数组或者空列表。这一点比较重要，它是区分回复是空数组（也就是命令正确执行完毕，返回结果正常）或者其他原因（如<code>BLPOP</code>命令的超时等）的关键。</p>
+<p><code>RESP</code>数组的元素也可以是<code>RESP</code>数组，下面是一个包含2个<code>RESP</code>数组类型的元素的<code>RESP</code>数组，编码如下（为了看得更清楚，分多行进行编码，实际上不能这样做）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 元素个数</span></span><br><span class="line">*2\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第1个RESP数组元素</span></span><br><span class="line">*3\r\n</span><br><span class="line">:1\r\n</span><br><span class="line">:2\r\n</span><br><span class="line">:3\r\n</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第2个RESP数组元素</span></span><br><span class="line">*2\r\n</span><br><span class="line">+Foo\r\n</span><br><span class="line">-Bar\r\n</span><br></pre></td></tr></table></figure>
+<p>上面的<code>RESP</code>数组的包含2个<code>RESP</code>数组类型的元素，第1个<code>RESP</code>数组元素包含3个整型类型的元素，而第2个<code>RESP</code>数组元素包含1个简单字符串类型的元素和1个错误消息类型的元素。</p>
+<p><strong><code>RESP</code>数组中的Null元素</strong></p>
+<p><code>RESP</code>数组中的单个元素也有<code>Null</code>值的概念，下面称为<code>Null</code>元素。<code>Redis</code>服务端回复如果是<code>RESP</code>数组类型，并且<code>RESP</code>数组中存在<code>Null</code>元素，那么意味着元素丢失，绝对不能用空字符串替代。缺少指定键的前提下，当与<code>GET</code>模式选项一起使用时，<code>SORT</code>命令可能会发生这种情况。</p>
+<p>下面是一个包含<code>Null</code>元素的<code>RESP</code>数组的例子（为了看得更清楚，分多行进行编码，实际上不能这样做）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">*3\r\n</span><br><span class="line"><span class="meta">$</span><span class="bash">3\r\n</span></span><br><span class="line">foo\r\n</span><br><span class="line"><span class="meta">$</span><span class="bash">-1\r\n</span></span><br><span class="line"><span class="meta">$</span><span class="bash">3\r\n</span></span><br><span class="line">bar\r\n</span><br></pre></td></tr></table></figure>
+<p><code>RESP</code>数组中的第2个元素是<code>Null</code>元素，客户端<code>API</code>最终返回的内容应该是：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> Ruby</span></span><br><span class="line">["foo",nil,"bar"]</span><br><span class="line"><span class="meta">#</span><span class="bash"> Java</span></span><br><span class="line">["foo",null,"bar"]</span><br></pre></td></tr></table></figure>
+<h2 id="RESP其他相关内容">RESP其他相关内容</h2>
+<p>主要包括：</p>
+<ul>
+<li>将命令发送到Redis服务端的示例。</li>
+<li>批量命令与管道。</li>
+<li>内联命令（<code>Inline Commands</code>）。</li>
+</ul>
+<p>其实文档中还有一节使用<code>C</code>语言编写高性能<code>RESP</code>解析器，这里不做翻译，因为掌握<code>RESP</code>的相关内容后，可以基于任何语言编写解析器。</p>
+<h3 id="将命令发送到Redis服务端">将命令发送到Redis服务端</h3>
+<p>如果已经相对熟悉<code>RESP</code>中的序列化格式，那么编写<code>Redis</code>客户端类库就会变得很容易。我们可以进一步指定客户端和服务器之间的交互方式：</p>
+<ul>
+<li><code>Redis</code>客户端向<code>Redis</code>服务端发送仅仅包含定长字符串类型元素的<code>RESP</code>数组。</li>
+<li><code>Redis</code>服务端可以采用任意一种<code>RESP</code>数据类型向<code>Redis</code>客户端进行回复，具体的数据类型一般取决于命令类型。</li>
+</ul>
+<p>下面是典型的交互例子：<code>Redis</code>客户端发送命令<code>LLEN mylist</code>以获得<code>KEY</code>为<code>mylist</code>的长度，<code>Redis</code>服务端将以整数类型进行回复，如以下示例所示（<code>C</code>是客户端，<code>S</code>服务器），伪代码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C: *2\r\n</span><br><span class="line">C: $4\r\n</span><br><span class="line">C: LLEN\r\n</span><br><span class="line">C: $6\r\n</span><br><span class="line">C: mylist\r\n</span><br><span class="line"></span><br><span class="line">S: :48293\r\n</span><br></pre></td></tr></table></figure>
+<p>为了简单起见，我们使用换行符来分隔协议的不同部分（这里指上面的代码分行展示），但是实际交互的时候<code>Redis</code>客户端在发送<code>*2\r\n$4\r\nLLEN\r\n$6\r\nmylist\r\n</code>的时候是整体发送的。</p>
+<h3 id="批量命令与管道">批量命令与管道</h3>
+<p><code>Redis</code>客户端可以使用相同的连接发送批量命令。<code>Redis</code>支持管道特性，因此<code>Redis</code>客户端可以通过一次写操作发送多个命令，而无需在发送下一个命令之前读取<code>Redis</code>服务端对上一个命令的回复。批量发送命令之后，所有的回复可以在最后得到（合并为一个回复）。更多相关信息可以查看<a href="https://redis.io/topics/pipelining" target="_blank" rel="noopener">Using pipelining to speedup Redis queries</a>。</p>
+<h3 id="内联命令">内联命令</h3>
+<p>有些场景下，我们可能只有<code>telnet</code>命令可以使用，在这种条件下，我们需要发送命令到<code>Redis</code>服务端。尽管<code>Redis</code>协议易于实现，但在交互式会话中并不理想，并且<code>redis-cli</code>有些情况下不一定可用。处于这类原因，<code>Redis</code>设计了一种专为人类设计的命令格式，称为内联命令（<code>Inline Command</code>格式。</p>
+<p>以下是服务器/客户端使用内联命令进行聊天的示例（S代表服务端，C代表客户端）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C: PING</span><br><span class="line">S: +PONG</span><br></pre></td></tr></table></figure>
+<p>以下是使用内联命令返回整数的另一个示例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C: EXISTS somekey</span><br><span class="line">S: :0</span><br></pre></td></tr></table></figure>
+<p>基本上只需在<code>telnet</code>会话中编写以空格分隔的参数。由于除了统一的请求协议之外没有命令会以<code>*</code>开头，<code>Redis</code>能够检测到这种情况并解析输入的命令。</p>
+<h2 id="基于RESP编写高性能解析器">基于RESP编写高性能解析器</h2>
+<p>因为<code>JDK</code>原生提供的字节缓冲区<code>java.nio.ByteBuffer</code>存在不能自动扩容、需要切换读写模式等等问题，这里直接引入<code>Netty</code>并且使用<code>Netty</code>提供的<code>ByteBuf</code>进行<code>RESP</code>数据类型解析。编写本文的时候（2019-10-09）<code>Netty</code>的最新版本为<code>4.1.42.Final</code>。引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.netty<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>netty-buffer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.1.42.Final<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>定义解码器接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RespDecoder</span>&lt;<span class="title">V</span>&gt;</span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function">V <span class="title">decode</span><span class="params">(ByteBuf buffer)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespConstants</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Charset ASCII = StandardCharsets.US_ASCII;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Charset UTF_8 = StandardCharsets.UTF_8;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> DOLLAR_BYTE = <span class="string">'$'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> ASTERISK_BYTE = <span class="string">'*'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> PLUS_BYTE = <span class="string">'+'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> MINUS_BYTE = <span class="string">'-'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> COLON_BYTE = <span class="string">':'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EMPTY_STRING = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Long ZERO = <span class="number">0L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Long NEGATIVE_ONE = -<span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> CR = (<span class="keyword">byte</span>) <span class="string">'\r'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> LF = (<span class="keyword">byte</span>) <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] CRLF = <span class="string">"\r\n"</span>.getBytes(ASCII);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> ReplyType &#123;</span><br><span class="line"></span><br><span class="line">        SIMPLE_STRING,</span><br><span class="line"></span><br><span class="line">        ERROR,</span><br><span class="line"></span><br><span class="line">        INTEGER,</span><br><span class="line"></span><br><span class="line">        BULK_STRING,</span><br><span class="line"></span><br><span class="line">        RESP_ARRAY</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面的章节中解析模块的实现已经忽略第一个字节的解析，因为第一个字节是决定具体的数据类型。</p>
+<h3 id="解析简单字符串">解析简单字符串</h3>
+<p>简单字符串类型就是单行字符串，它的解析结果对应的就是<code>Java</code>中的<code>String</code>类型。解码器实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 解析单行字符串</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LineStringDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> CodecUtils.X.readLine(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> CodecUtils &#123;</span><br><span class="line"></span><br><span class="line">    X;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findLineEndIndex</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = buffer.forEachByte(ByteProcessor.FIND_LF);</span><br><span class="line">        <span class="keyword">return</span> (index &gt; <span class="number">0</span> &amp;&amp; buffer.getByte(index - <span class="number">1</span>) == <span class="string">'\r'</span>) ? index : -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readLine</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (lineEndIndex &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> lineStartIndex = buffer.readerIndex();</span><br><span class="line">            <span class="comment">// 计算字节长度</span></span><br><span class="line">            <span class="keyword">int</span> size = lineEndIndex - lineStartIndex - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">            buffer.readBytes(bytes);</span><br><span class="line">            <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">            buffer.readerIndex(lineEndIndex + <span class="number">1</span>);</span><br><span class="line">            buffer.markReaderIndex();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> String(bytes, RespConstants.UTF_8);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespSimpleStringDecoder</span> <span class="keyword">extends</span> <span class="title">LineStringDecoder</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里抽取出一个类<code>LineStringDecoder</code>用于解析单行字符串，这样在解析错误消息的时候可以做一次继承即可。测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    <span class="comment">// +OK\r\n</span></span><br><span class="line">    buffer.writeBytes(<span class="string">"+OK"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    String value = RespCodec.X.decode(buffer);</span><br><span class="line">    log.info(<span class="string">"Decode result:&#123;&#125;"</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Decode result:OK</span></span><br></pre></td></tr></table></figure>
+<h3 id="解析错误消息">解析错误消息</h3>
+<p>错误消息的本质也是单行字符串，所以其解码的实现可以和简单字符串的解码实现一致。错误消息数据类型的解码器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespErrorDecoder</span> <span class="keyword">extends</span> <span class="title">LineStringDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    <span class="comment">// -ERR unknown command 'foobar'\r\n</span></span><br><span class="line">    buffer.writeBytes(<span class="string">"-ERR unknown command 'foobar'"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    String value = RespCodec.X.decode(buffer);</span><br><span class="line">    log.info(<span class="string">"Decode result:&#123;&#125;"</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Decode result:ERR unknown command 'foobar'</span></span><br></pre></td></tr></table></figure>
+<h3 id="解析整型数字">解析整型数字</h3>
+<p>整型数字类型，本质就是需要从字节序列中还原出带符号的64<code>bit</code>的长整型，因为是带符号的，类型标识位<code>:</code>后的第一个字节需要判断是否负数字符<code>-</code>，因为是从左向右解析，然后每解析出一个新的位，当前的数字值要乘<code>10</code>。其解码器的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespIntegerDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="comment">// 没有行尾，异常</span></span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> result = <span class="number">0L</span>;</span><br><span class="line">        <span class="keyword">int</span> lineStartIndex = buffer.readerIndex();</span><br><span class="line">        <span class="keyword">boolean</span> negative = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">byte</span> firstByte = buffer.getByte(lineStartIndex);</span><br><span class="line">        <span class="comment">// 负数</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.MINUS_BYTE == firstByte) &#123;</span><br><span class="line">            negative = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> digit = firstByte - <span class="string">'0'</span>;</span><br><span class="line">            result = result * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lineStartIndex + <span class="number">1</span>; i &lt; (lineEndIndex - <span class="number">1</span>); i++) &#123;</span><br><span class="line">            <span class="keyword">byte</span> value = buffer.getByte(i);</span><br><span class="line">            <span class="keyword">int</span> digit = value - <span class="string">'0'</span>;</span><br><span class="line">            result = result * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (negative) &#123;</span><br><span class="line">            result = -result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">        buffer.readerIndex(lineEndIndex + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整型数字类型的解析相对复杂，一定要注意负数判断。测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    <span class="comment">// :-1000\r\n</span></span><br><span class="line">    buffer.writeBytes(<span class="string">":-1000"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    Long value = RespCodec.X.decode(buffer);</span><br><span class="line">    log.info(<span class="string">"Decode result:&#123;&#125;"</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Decode result:-1000</span></span><br></pre></td></tr></table></figure>
+<h3 id="解析定长字符串">解析定长字符串</h3>
+<p>定长字符串类型解析的关键是先读取类型标识符<code>$</code>后的第一个字节序列分块解析成64<code>bit</code>带符号的整数，用来确定后面需要解析的字符串内容的字节长度，然后再按照该长度读取后面的字节。其解码器实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespBulkStringDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 使用RespIntegerDecoder读取长度</span></span><br><span class="line">        Long length = (Long) DefaultRespCodec.DECODERS.get(ReplyType.INTEGER).decode(buffer);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == length) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Bulk Null String</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.NEGATIVE_ONE.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Bulk Empty String</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.ZERO.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> RespConstants.EMPTY_STRING;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 真实字节内容的长度</span></span><br><span class="line">        <span class="keyword">int</span> readLength = (<span class="keyword">int</span>) length.longValue();</span><br><span class="line">        <span class="keyword">if</span> (buffer.readableBytes() &gt; readLength) &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[readLength];</span><br><span class="line">            buffer.readBytes(bytes);</span><br><span class="line">            <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">            buffer.readerIndex(buffer.readerIndex() + <span class="number">2</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> String(bytes, RespConstants.UTF_8);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    <span class="comment">// $6\r\nthrowable\r\n</span></span><br><span class="line">    buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    buffer.writeBytes(<span class="string">"$9"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    buffer.writeBytes(<span class="string">"throwable"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    String value = RespCodec.X.decode(buffer);</span><br><span class="line">    log.info(<span class="string">"Decode result:&#123;&#125;"</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Decode result:throwable</span></span><br></pre></td></tr></table></figure>
+<h3 id="解析RESP数组">解析RESP数组</h3>
+<p><code>RESP</code>数组类型解析的关键：</p>
+<ul>
+<li>先读取类型标识符<code>*</code>后的第一个字节序列分块解析成64<code>bit</code>带符号的整数，确定数组中的元素个数。</li>
+<li>递归解析每个元素。</li>
+</ul>
+<p>参考过不少<code>Redis</code>协议解析框架，不少是用栈或者状态机实现，这里先简单点用递归实现，解码器代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespArrayDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 解析元素个数</span></span><br><span class="line">        Long length = (Long) DefaultRespCodec.DECODERS.get(ReplyType.INTEGER).decode(buffer);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == length) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Null Array</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.NEGATIVE_ONE.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Array Empty List</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.ZERO.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> Lists.newArrayList();</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;Object&gt; result = Lists.newArrayListWithCapacity((<span class="keyword">int</span>) length.longValue());</span><br><span class="line">        <span class="comment">// 递归</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">            result.add(DefaultRespCodec.X.decode(buffer));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    <span class="comment">//*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n</span></span><br><span class="line">    buffer = ByteBufAllocator.DEFAULT.buffer();</span><br><span class="line">    buffer.writeBytes(<span class="string">"*2"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    buffer.writeBytes(<span class="string">"$3"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    buffer.writeBytes(<span class="string">"foo"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    buffer.writeBytes(<span class="string">"$3"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    buffer.writeBytes(<span class="string">"bar"</span>.getBytes(RespConstants.UTF_8));</span><br><span class="line">    buffer.writeBytes(RespConstants.CRLF);</span><br><span class="line">    List value = RespCodec.X.decode(buffer);</span><br><span class="line">    log.info(<span class="string">"Decode result:&#123;&#125;"</span>, value);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Decode result:[foo, bar]</span></span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p>对<code>RESP</code>的内容和其编码解码的过程有相对深刻的认识后，就可以基于<code>Netty</code>编写<code>Redis</code>服务的编码解码模块，作为<code>Netty</code>入门的十分有意义的例子。本文的最后一节只演示了<code>RESP</code>的解码部分，编码模块和更多细节会在另一篇用<code>Netty</code>实现<code>Redis</code>客户端的文章中展示。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://redis.io/topics/protocol" target="_blank" rel="noopener">Redis Protocol specification</a></li>
+</ul>
+<h2 id="附录">附录</h2>
+<p>本文涉及的所有代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespConstants</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Charset ASCII = StandardCharsets.US_ASCII;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Charset UTF_8 = StandardCharsets.UTF_8;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> DOLLAR_BYTE = <span class="string">'$'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> ASTERISK_BYTE = <span class="string">'*'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> PLUS_BYTE = <span class="string">'+'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> MINUS_BYTE = <span class="string">'-'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> COLON_BYTE = <span class="string">':'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String EMPTY_STRING = <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Long ZERO = <span class="number">0L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Long NEGATIVE_ONE = -<span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> CR = (<span class="keyword">byte</span>) <span class="string">'\r'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span> LF = (<span class="keyword">byte</span>) <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] CRLF = <span class="string">"\r\n"</span>.getBytes(ASCII);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> ReplyType &#123;</span><br><span class="line"></span><br><span class="line">        SIMPLE_STRING,</span><br><span class="line"></span><br><span class="line">        ERROR,</span><br><span class="line"></span><br><span class="line">        INTEGER,</span><br><span class="line"></span><br><span class="line">        BULK_STRING,</span><br><span class="line"></span><br><span class="line">        RESP_ARRAY</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> CodecUtils &#123;</span><br><span class="line"></span><br><span class="line">    X;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findLineEndIndex</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index = buffer.forEachByte(ByteProcessor.FIND_LF);</span><br><span class="line">        <span class="keyword">return</span> (index &gt; <span class="number">0</span> &amp;&amp; buffer.getByte(index - <span class="number">1</span>) == <span class="string">'\r'</span>) ? index : -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">readLine</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (lineEndIndex &gt; -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">int</span> lineStartIndex = buffer.readerIndex();</span><br><span class="line">            <span class="comment">// 计算字节长度</span></span><br><span class="line">            <span class="keyword">int</span> size = lineEndIndex - lineStartIndex - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">            buffer.readBytes(bytes);</span><br><span class="line">            <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">            buffer.readerIndex(lineEndIndex + <span class="number">1</span>);</span><br><span class="line">            buffer.markReaderIndex();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> String(bytes, RespConstants.UTF_8);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RespCodec</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    RespCodec X = DefaultRespCodec.X;</span><br><span class="line"></span><br><span class="line">    &lt;IN, OUT&gt; <span class="function">OUT <span class="title">decode</span><span class="params">(ByteBuf buffer)</span></span>;</span><br><span class="line"></span><br><span class="line">    &lt;IN, OUT&gt; <span class="function">ByteBuf <span class="title">encode</span><span class="params">(IN in)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> DefaultRespCodec implements RespCodec &#123;</span><br><span class="line"></span><br><span class="line">    X;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;ReplyType, RespDecoder&gt; DECODERS = Maps.newConcurrentMap();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> RespDecoder DEFAULT_DECODER = <span class="keyword">new</span> DefaultRespDecoder();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        DECODERS.put(ReplyType.SIMPLE_STRING, <span class="keyword">new</span> RespSimpleStringDecoder());</span><br><span class="line">        DECODERS.put(ReplyType.ERROR, <span class="keyword">new</span> RespErrorDecoder());</span><br><span class="line">        DECODERS.put(ReplyType.INTEGER, <span class="keyword">new</span> RespIntegerDecoder());</span><br><span class="line">        DECODERS.put(ReplyType.BULK_STRING, <span class="keyword">new</span> RespBulkStringDecoder());</span><br><span class="line">        DECODERS.put(ReplyType.RESP_ARRAY, <span class="keyword">new</span> RespArrayDecoder());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;IN, OUT&gt; <span class="function">OUT <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (OUT) DECODERS.getOrDefault(determineReplyType(buffer), DEFAULT_DECODER).decode(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> ReplyType <span class="title">determineReplyType</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span> firstByte = buffer.readByte();</span><br><span class="line">        ReplyType replyType;</span><br><span class="line">        <span class="keyword">switch</span> (firstByte) &#123;</span><br><span class="line">            <span class="keyword">case</span> RespConstants.PLUS_BYTE:</span><br><span class="line">                replyType = ReplyType.SIMPLE_STRING;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RespConstants.MINUS_BYTE:</span><br><span class="line">                replyType = ReplyType.ERROR;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RespConstants.COLON_BYTE:</span><br><span class="line">                replyType = ReplyType.INTEGER;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RespConstants.DOLLAR_BYTE:</span><br><span class="line">                replyType = ReplyType.BULK_STRING;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> RespConstants.ASTERISK_BYTE:</span><br><span class="line">                replyType = ReplyType.RESP_ARRAY;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>: &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"first byte:"</span> + firstByte);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> replyType;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> &lt;IN, OUT&gt; <span class="function">ByteBuf <span class="title">encode</span><span class="params">(IN in)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// TODO</span></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException(<span class="string">"encode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RespDecoder</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">V <span class="title">decode</span><span class="params">(ByteBuf buffer)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultRespDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"decoder"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LineStringDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> CodecUtils.X.readLine(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespSimpleStringDecoder</span> <span class="keyword">extends</span> <span class="title">LineStringDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespErrorDecoder</span> <span class="keyword">extends</span> <span class="title">LineStringDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespIntegerDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="comment">// 没有行尾，异常</span></span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> result = <span class="number">0L</span>;</span><br><span class="line">        <span class="keyword">int</span> lineStartIndex = buffer.readerIndex();</span><br><span class="line">        <span class="keyword">boolean</span> negative = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">byte</span> firstByte = buffer.getByte(lineStartIndex);</span><br><span class="line">        <span class="comment">// 负数</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.MINUS_BYTE == firstByte) &#123;</span><br><span class="line">            negative = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> digit = firstByte - <span class="string">'0'</span>;</span><br><span class="line">            result = result * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lineStartIndex + <span class="number">1</span>; i &lt; (lineEndIndex - <span class="number">1</span>); i++) &#123;</span><br><span class="line">            <span class="keyword">byte</span> value = buffer.getByte(i);</span><br><span class="line">            <span class="keyword">int</span> digit = value - <span class="string">'0'</span>;</span><br><span class="line">            result = result * <span class="number">10</span> + digit;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (negative) &#123;</span><br><span class="line">            result = -result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">        buffer.readerIndex(lineEndIndex + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespBulkStringDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Long length = (Long) DefaultRespCodec.DECODERS.get(ReplyType.INTEGER).decode(buffer);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == length) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Bulk Null String</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.NEGATIVE_ONE.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Bulk Empty String</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.ZERO.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> RespConstants.EMPTY_STRING;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 真实字节内容的长度</span></span><br><span class="line">        <span class="keyword">int</span> readLength = (<span class="keyword">int</span>) length.longValue();</span><br><span class="line">        <span class="keyword">if</span> (buffer.readableBytes() &gt; readLength) &#123;</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[readLength];</span><br><span class="line">            buffer.readBytes(bytes);</span><br><span class="line">            <span class="comment">// 重置读游标为\r\n之后的第一个字节</span></span><br><span class="line">            buffer.readerIndex(buffer.readerIndex() + <span class="number">2</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> String(bytes, RespConstants.UTF_8);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RespArrayDecoder</span> <span class="keyword">implements</span> <span class="title">RespDecoder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">decode</span><span class="params">(ByteBuf buffer)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> lineEndIndex = CodecUtils.X.findLineEndIndex(buffer);</span><br><span class="line">        <span class="keyword">if</span> (-<span class="number">1</span> == lineEndIndex) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 解析元素个数</span></span><br><span class="line">        Long length = (Long) DefaultRespCodec.DECODERS.get(ReplyType.INTEGER).decode(buffer);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == length) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Null Array</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.NEGATIVE_ONE.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Array Empty List</span></span><br><span class="line">        <span class="keyword">if</span> (RespConstants.ZERO.equals(length)) &#123;</span><br><span class="line">            <span class="keyword">return</span> Lists.newArrayList();</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;Object&gt; result = Lists.newArrayListWithCapacity((<span class="keyword">int</span>) length.longValue());</span><br><span class="line">        <span class="comment">// 递归</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">            result.add(DefaultRespCodec.X.decode(buffer));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（本文完 e-a-20191009 c-2-d）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/10/09/redis-serialization-protocol-decode-guide/>http://throwable.club/2019/10/09/redis-serialization-protocol-decode-guide/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Redis/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Redis</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/10/09/redis-serialization-protocol-decode-guide/&title=一文彻底理解Redis序列化协议，你也可以编写Redis客户端 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近学习Netty的时候想做一个基于Redis服务协议的编码解码模块，过程中顺便阅读了Redis服务序列化协议RESP，结合自己的理解对文档进行了翻译并且简单实现了RESP基于Java语言的解析。编写本文的使用使用的JDK版本为[8+]。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/10/09/redis-serialization-protocol-decode-guide/&title=一文彻底理解Redis序列化协议，你也可以编写Redis客户端 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近学习Netty的时候想做一个基于Redis服务协议的编码解码模块，过程中顺便阅读了Redis服务序列化协议RESP，结合自己的理解对文档进行了翻译并且简单实现了RESP基于Java语言的解析。编写本文的使用使用的JDK版本为[8+]。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADJElEQVR42u3awXLiQAwE0Pz/T7OXvSWQbslbi4fnExUGxs+piiL1fH3F1yO4vq9/9vrZ+u/vtusvvrCxsbFvwk4wrzd+/ZP8wbWPo90FGxsb+2z2s7/wr9dcVU5el8DZI/jFiI2Njf3B7E2hyvdNiig2NjY2dvt1SbvS8pKmKC912NjY2J/MbknJ9u0wKBla/YdZGjY2Nvbbs9uhzzu//if5NjY2NvYbsx/ltWkt9jvuI+S/n8LGxsY+iD07srMPhtvCkzQ5rwdbP+yIjY2NfQQ7KRj5mnpAH0TIyV75p7CxsbHPY2+GR0WFLG89P8rTgrGxsbHPZrf/1s+ah7ZPyluj/F1sbGzsk9ivj920Oem+jclDhU2Gi42NjX0Sex/WJgUvL0iz0VUeDxdJBTY2Nvat2G3JSf6fn5WfJEjI7+GX3bGxsbGPYOflKvnqWczQNjmz9dFQCRsbG/vm7HZks2lU8r32r58evsTGxsY+gr0Z918VFe+bllWyjY2NjX0cOw99NylE3mzkj6P9OTY2NvZJ7E102h7Z2RTIWbHExsbGxm4j2KvihDZsbqMFbGxs7DPYV311e1gneUCzyCEalmFjY2MfxG4HTDPGHtAGA9jY2Nifxs7LQD6Iz8vYbP3mTrCxsbFPYl81DMpJsxZiXw7r3zM2Njb2Tdh5+rkZBrWvixsdHS3CxsbGPok9G9y3Dys/3NOGwe0vqUhFsLGxsW/FzkPcvGBsDkrOmpPirrCxsbEPYs9uqx3it3HyrDS25RYbGxv7bPYMdlUAnLcus4NE2NjY2Oex80VXHa+8NopYtU/Y2NjYR7DzYU17NGcfD88O4kSlFxsbG/tQ9uy4TN4YzApP3WAkjxIbGxv7CPajvGbjnlmbkeDb4dQPJ5WwsbGxb87OrxbfNiTDYzdxG1MEwNjY2Ng3ZLdF69qDO9dGwvl3YmNjY5/HTgrDrETNWoK6xpYNDDY2NvYns9vQN/n+vBzmEcLFBQwbGxv7w9izsf5mtFQf8cHGxsY+jn3tUCnZeBYDt5+qTyphY2Nj35CdF4P8YbXrN7HufiU2Njb2bdl/ADq3NmGntQBeAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/10/09/redis-serialization-protocol-decode-guide/&title=一文彻底理解Redis序列化协议，你也可以编写Redis客户端 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近学习Netty的时候想做一个基于Redis服务协议的编码解码模块，过程中顺便阅读了Redis服务序列化协议RESP，结合自己的理解对文档进行了翻译并且简单实现了RESP基于Java语言的解析。编写本文的使用使用的JDK版本为[8+]。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADJElEQVR42u3awXLiQAwE0Pz/T7OXvSWQbslbi4fnExUGxs+piiL1fH3F1yO4vq9/9vrZ+u/vtusvvrCxsbFvwk4wrzd+/ZP8wbWPo90FGxsb+2z2s7/wr9dcVU5el8DZI/jFiI2Njf3B7E2hyvdNiig2NjY2dvt1SbvS8pKmKC912NjY2J/MbknJ9u0wKBla/YdZGjY2Nvbbs9uhzzu//if5NjY2NvYbsx/ltWkt9jvuI+S/n8LGxsY+iD07srMPhtvCkzQ5rwdbP+yIjY2NfQQ7KRj5mnpAH0TIyV75p7CxsbHPY2+GR0WFLG89P8rTgrGxsbHPZrf/1s+ah7ZPyluj/F1sbGzsk9ivj920Oem+jclDhU2Gi42NjX0Sex/WJgUvL0iz0VUeDxdJBTY2Nvat2G3JSf6fn5WfJEjI7+GX3bGxsbGPYOflKvnqWczQNjmz9dFQCRsbG/vm7HZks2lU8r32r58evsTGxsY+gr0Z918VFe+bllWyjY2NjX0cOw99NylE3mzkj6P9OTY2NvZJ7E102h7Z2RTIWbHExsbGxm4j2KvihDZsbqMFbGxs7DPYV311e1gneUCzyCEalmFjY2MfxG4HTDPGHtAGA9jY2Nifxs7LQD6Iz8vYbP3mTrCxsbFPYl81DMpJsxZiXw7r3zM2Njb2Tdh5+rkZBrWvixsdHS3CxsbGPok9G9y3Dys/3NOGwe0vqUhFsLGxsW/FzkPcvGBsDkrOmpPirrCxsbEPYs9uqx3it3HyrDS25RYbGxv7bPYMdlUAnLcus4NE2NjY2Oex80VXHa+8NopYtU/Y2NjYR7DzYU17NGcfD88O4kSlFxsbG/tQ9uy4TN4YzApP3WAkjxIbGxv7CPajvGbjnlmbkeDb4dQPJ5WwsbGxb87OrxbfNiTDYzdxG1MEwNjY2Ng3ZLdF69qDO9dGwvl3YmNjY5/HTgrDrETNWoK6xpYNDDY2NvYns9vQN/n+vBzmEcLFBQwbGxv7w9izsf5mtFQf8cHGxsY+jn3tUCnZeBYDt5+qTyphY2Nj35CdF4P8YbXrN7HufiU2Njb2bdl/ADq3NmGntQBeAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/11/14/redis-in-action-ua-pool/" rel="prev" title="使用Redis实现UA池">
+                                  
+                                      使用Redis实现UA池
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/10/07/redis-server-sentinel-install-guide/" rel="prev" title="Redis5.x哨兵搭建手记">
+                                    
+                                        Redis5.x哨兵搭建手记
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '一文彻底理解Redis序列化协议，你也可以编写Redis客户端',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RESP简介"><span class="toc-text">RESP简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#网络层"><span class="toc-text">网络层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#请求-响应模型"><span class="toc-text">请求-响应模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RESP支持的数据类型"><span class="toc-text">RESP支持的数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RESP简单字符串-Simple-String"><span class="toc-text">RESP简单字符串-Simple String</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RESP错误消息-Error"><span class="toc-text">RESP错误消息-Error</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RESP整型数字-Integer"><span class="toc-text">RESP整型数字-Integer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RESP定长字符串-Bulk-String"><span class="toc-text">RESP定长字符串-Bulk String</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RESP数组-Array"><span class="toc-text">RESP数组-Array</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RESP其他相关内容"><span class="toc-text">RESP其他相关内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#将命令发送到Redis服务端"><span class="toc-text">将命令发送到Redis服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#批量命令与管道"><span class="toc-text">批量命令与管道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内联命令"><span class="toc-text">内联命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于RESP编写高性能解析器"><span class="toc-text">基于RESP编写高性能解析器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#解析简单字符串"><span class="toc-text">解析简单字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析错误消息"><span class="toc-text">解析错误消息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析整型数字"><span class="toc-text">解析整型数字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析定长字符串"><span class="toc-text">解析定长字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析RESP数组"><span class="toc-text">解析RESP数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附录"><span class="toc-text">附录</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

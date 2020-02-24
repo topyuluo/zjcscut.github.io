@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>基于Prometheus搭建SpringCloud全方位立体监控体系 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/11/10/spring-cloud-prometheus/">
+        基于Prometheus搭建SpringCloud全方位立体监控体系
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring/Prometheus/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring&nbsp;/&nbsp;Prometheus</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年11月10日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-01-08T22:41:56+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年1月8日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：4.4k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：19分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>基于Prometheus搭建SpringCloud全方位立体监控体系</h1>
+<h2 id="前提">前提</h2>
+<p>最近公司在联合运维做一套全方位监控的系统，应用集群的技术栈是SpringCloud体系。虽然本人没有参与具体基础架构的研发，但是从应用引入的包和一些资料的查阅大致推算出具体的实现方案，这里做一次推演，详细记录一下整个搭建过程。</p>
+<h2 id="Prometheus是什么">Prometheus是什么</h2>
+<p><a href="https://prometheus.io" target="_blank" rel="noopener">Prometheus(普罗米修斯)</a>，是一个开源的系统监控和告警的工具包，其采用Pull方式采集时间序列的度量数据，通过Http协议传输。它的工作方式是被监控的服务需要公开一个Prometheus端点，这端点是一个HTTP接口，该接口公开了度量的列表和当前的值，然后Prometheus应用从此接口定时拉取数据，一般可以存放在时序数据库中，然后通过可视化的Dashboard(例如Promdash或者Grafana)进行数据展示。当然，此文章不打算深入研究这个工具，只做应用层面的展示。这篇文章将会用到下面几个技术栈：</p>
+<ul>
+<li>SpringCloud体系，主要是注册中心和注册客户端。</li>
+<li>spring-boot-starter-actuator，主要是提供了Prometheus端点，不用重复造轮子。</li>
+<li>Prometheus的Java客户端。</li>
+<li>Prometheus应用。</li>
+<li>io.micrometer，SpringBoot标准下使用的度量工具包。</li>
+<li>Grafana，可视化的Dashboard。</li>
+</ul>
+<p>这里所有的软件或者依赖全部使用当前的最新版本，如果有坑踩了再填。其实，Prometheus本身也开发了一套Counter、Gauge、Timer等相关接口，不过SpringBoot中使用了io.micrometer中的套件，所以本文不深入分析Prometheus的Java客户端。</p>
+<h2 id="io-micrometer的使用">io.micrometer的使用</h2>
+<p>在SpringBoot2.X中，spring-boot-starter-actuator引入了<a href="https://micrometer.io/" target="_blank" rel="noopener">io.micrometer</a>，对1.X中的metrics进行了重构，主要特点是支持tag/label，配合支持tag/label的监控系统，使得我们可以更加方便地对metrics进行多维度的统计查询及监控。io.micrometer目前支持Counter、Gauge、Timer、Summary等多种不同类型的度量方式(不知道有没有遗漏)，下面逐个简单分析一下它们的作用和使用方式。 需要在SpringBoot项目下引入下面的依赖：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;io.micrometer&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;micrometer-core&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;$&#123;micrometer.version&#125;&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>目前最新的micrometer.version为1.0.5。注意一点的是：<strong>io.micrometer支持Tag(标签)的概念</strong>，Tag是其metrics是否能够有多维度的支持的基础，Tag必须成对出现，也就是必须配置也就是偶数个Tag，有点类似于K-V的关系。</p>
+<h3 id="Counter">Counter</h3>
+<p>Counter(计数器)简单理解就是一种只增不减的计数器。它通常用于记录服务的请求数量、完成的任务数量、错误的发生数量等等。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Counter;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Metrics;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.simple.SimpleMeterRegistry;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/19 23:10</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CounterSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">//tag必须成对出现，也就是偶数个</span></span><br><span class="line">		Counter counter = Counter.builder(<span class="string">"counter"</span>)</span><br><span class="line">				.tag(<span class="string">"counter"</span>, <span class="string">"counter"</span>)</span><br><span class="line">				.description(<span class="string">"counter"</span>)</span><br><span class="line">				.register(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		counter.increment();</span><br><span class="line">		counter.increment(<span class="number">2</span>D);</span><br><span class="line">		System.out.println(counter.count());</span><br><span class="line">		System.out.println(counter.measure());</span><br><span class="line">		<span class="comment">//全局静态方法</span></span><br><span class="line">		Metrics.addRegistry(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		counter = Metrics.counter(<span class="string">"counter"</span>, <span class="string">"counter"</span>, <span class="string">"counter"</span>);</span><br><span class="line">		counter.increment(<span class="number">10086</span>D);</span><br><span class="line">		counter.increment(<span class="number">10087</span>D);</span><br><span class="line">		System.out.println(counter.count());</span><br><span class="line">		System.out.println(counter.measure());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3.0</span></span><br><span class="line">[Measurement&#123;statistic=<span class="string">'COUNT'</span>, value=<span class="number">3.0</span>&#125;]</span><br><span class="line"><span class="number">20173.0</span></span><br><span class="line">[Measurement&#123;statistic=<span class="string">'COUNT'</span>, value=<span class="number">20173.0</span>&#125;]</span><br></pre></td></tr></table></figure>
+<p>Counter的Measurement的statistic(可以理解为度量的统计角度)只有COUNT，也就是它只具备计数(它只有增量的方法，因此只增不减)，这一点从它的接口定义可知：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">Meter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">increment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        increment(<span class="number">1.0</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">increment</span><span class="params">(<span class="keyword">double</span> amount)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">count</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//忽略其他方法或者成员</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Counter还有一个衍生类型FunctionCounter，它是基于函数式接口ToDoubleFunction进行计数统计的，用法差不多。</p>
+<h3 id="Gauge">Gauge</h3>
+<p>Gauge(仪表)是一个表示单个数值的度量，它可以表示任意地上下移动的数值测量。Gauge通常用于变动的测量值，如当前的内存使用情况，同时也可以测量上下移动的&quot;计数&quot;，比如队列中的消息数量。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Gauge;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Metrics;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.simple.SimpleMeterRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/19 23:30</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GaugeSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		AtomicInteger atomicInteger = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">		Gauge gauge = Gauge.builder(<span class="string">"gauge"</span>, atomicInteger, AtomicInteger::get)</span><br><span class="line">				.tag(<span class="string">"gauge"</span>, <span class="string">"gauge"</span>)</span><br><span class="line">				.description(<span class="string">"gauge"</span>)</span><br><span class="line">				.register(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		atomicInteger.addAndGet(<span class="number">5</span>);</span><br><span class="line">		System.out.println(gauge.value());</span><br><span class="line">		System.out.println(gauge.measure());</span><br><span class="line">		atomicInteger.decrementAndGet();</span><br><span class="line">		System.out.println(gauge.value());</span><br><span class="line">		System.out.println(gauge.measure());</span><br><span class="line">		<span class="comment">//全局静态方法，返回值竟然是依赖值，有点奇怪，暂时不选用</span></span><br><span class="line">		Metrics.addRegistry(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		AtomicInteger other = Metrics.gauge(<span class="string">"gauge"</span>, atomicInteger, AtomicInteger::get);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5.0</span></span><br><span class="line">[Measurement&#123;statistic=<span class="string">'VALUE'</span>, value=<span class="number">5.0</span>&#125;]</span><br><span class="line"><span class="number">4.0</span></span><br><span class="line">[Measurement&#123;statistic=<span class="string">'VALUE'</span>, value=<span class="number">4.0</span>&#125;]</span><br></pre></td></tr></table></figure>
+<p>Gauge关注的度量统计角度是VALUE(值)，它的构建方法中依赖于函数式接口ToDoubleFunction的实例(如例子中的实例方法引用AtomicInteger::get)和一个依赖于ToDoubleFunction改变自身值的实例(如例子中的AtomicInteger实例)，它的接口方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Gauge</span> <span class="keyword">extends</span> <span class="title">Meter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">value</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//忽略其他方法或者成员</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Timer">Timer</h3>
+<p>Timer(计时器)同时测量一个特定的代码逻辑块的调用(执行)速度和它的时间分布。简单来说，就是在调用结束的时间点记录整个调用块执行的总时间，适用于测量短时间执行的事件的耗时分布，例如消息队列消息的消费速率。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Timer;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.simple.SimpleMeterRegistry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/19 23:44</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimerSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		Timer timer = Timer.builder(<span class="string">"timer"</span>)</span><br><span class="line">				.tag(<span class="string">"timer"</span>,<span class="string">"timer"</span>)</span><br><span class="line">				.description(<span class="string">"timer"</span>)</span><br><span class="line">				.register(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		timer.record(()-&gt;&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				TimeUnit.SECONDS.sleep(<span class="number">2</span>);</span><br><span class="line">			&#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</span><br><span class="line">				<span class="comment">//ignore</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">		System.out.println(timer.count());</span><br><span class="line">		System.out.println(timer.measure());</span><br><span class="line">		System.out.println(timer.totalTime(TimeUnit.SECONDS));</span><br><span class="line">		System.out.println(timer.mean(TimeUnit.SECONDS));</span><br><span class="line">		System.out.println(timer.max(TimeUnit.SECONDS));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span></span><br><span class="line">[Measurement&#123;statistic=<span class="string">'COUNT'</span>, value=<span class="number">1.0</span>&#125;, Measurement&#123;statistic=<span class="string">'TOTAL_TIME'</span>, value=<span class="number">2.000603975</span>&#125;, Measurement&#123;statistic=<span class="string">'MAX'</span>, value=<span class="number">2.000603975</span>&#125;]</span><br><span class="line"><span class="number">2.000603975</span></span><br><span class="line"><span class="number">2.000603975</span></span><br><span class="line"><span class="number">2.000603975</span></span><br></pre></td></tr></table></figure>
+<p>Timer的度量统计角度主要包括记录执行的最大时间、总时间、平均时间、执行完成的总任务数，它提供多种的统计方法变体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Timer</span> <span class="keyword">extends</span> <span class="title">Meter</span>, <span class="title">HistogramSupport</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">record</span><span class="params">(<span class="keyword">long</span> amount, TimeUnit unit)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">record</span><span class="params">(Duration duration)</span> </span>&#123;</span><br><span class="line">      record(duration.toNanos(), TimeUnit.NANOSECONDS);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &lt;T&gt; <span class="function">T <span class="title">record</span><span class="params">(Supplier&lt;T&gt; f)</span></span>;</span><br><span class="line">    </span><br><span class="line">  &lt;T&gt; <span class="function">T <span class="title">recordCallable</span><span class="params">(Callable&lt;T&gt; f)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">record</span><span class="params">(Runnable f)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">default</span> Runnable <span class="title">wrap</span><span class="params">(Runnable f)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> () -&gt; record(f);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">default</span> &lt;T&gt; <span class="function">Callable&lt;T&gt; <span class="title">wrap</span><span class="params">(Callable&lt;T&gt; f)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> () -&gt; recordCallable(f);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//忽略其他方法或者成员</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些record或者包装方法可以根据需要选择合适的使用，另外，一些度量属性(如下限和上限)或者单位可以自行配置，具体属性的相关内容可以查看DistributionStatisticConfig类，这里不详细展开。</p>
+<p>另外，Timer有一个衍生类LongTaskTimer，主要是用来记录正在执行但是尚未完成的任务数，用法差不多。</p>
+<h3 id="Summary">Summary</h3>
+<p>Summary(摘要)用于跟踪事件的分布。它类似于一个计时器，但更一般的情况是，它的大小并不一定是一段时间的测量值。在micrometer中，对应的类是DistributionSummary，它的用法有点像Timer，但是记录的值是需要直接指定，而不是通过测量一个任务的执行时间。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.DistributionSummary;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.simple.SimpleMeterRegistry;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/19 23:55</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SummarySample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		DistributionSummary summary = DistributionSummary.builder(<span class="string">"summary"</span>)</span><br><span class="line">				.tag(<span class="string">"summary"</span>, <span class="string">"summary"</span>)</span><br><span class="line">				.description(<span class="string">"summary"</span>)</span><br><span class="line">				.register(<span class="keyword">new</span> SimpleMeterRegistry());</span><br><span class="line">		summary.record(<span class="number">2</span>D);</span><br><span class="line">		summary.record(<span class="number">3</span>D);</span><br><span class="line">		summary.record(<span class="number">4</span>D);</span><br><span class="line">		System.out.println(summary.measure());</span><br><span class="line">		System.out.println(summary.count());</span><br><span class="line">		System.out.println(summary.max());</span><br><span class="line">		System.out.println(summary.mean());</span><br><span class="line">		System.out.println(summary.totalAmount());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[Measurement&#123;statistic=<span class="string">'COUNT'</span>, value=<span class="number">3.0</span>&#125;, Measurement&#123;statistic=<span class="string">'TOTAL'</span>, value=<span class="number">9.0</span>&#125;, Measurement&#123;statistic=<span class="string">'MAX'</span>, value=<span class="number">4.0</span>&#125;]</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">4.0</span></span><br><span class="line"><span class="number">3.0</span></span><br><span class="line"><span class="number">9.0</span></span><br></pre></td></tr></table></figure>
+<p>Summary的度量统计角度主要包括记录过的数据中的最大值、总数值、平均值和总次数。另外，一些度量属性(如下限和上限)或者单位可以自行配置，具体属性的相关内容可以查看DistributionStatisticConfig类，这里不详细展开。</p>
+<h3 id="小结">小结</h3>
+<p>一般情况下，上面的Counter、Gauge、Timer、DistributionSummary例子可以满足日常开发需要，但是有些高级的特性这里没有展开，具体可以参考<code>micrometer-spring-legacy</code>这个依赖包，毕竟源码是老师，源码不会骗人。</p>
+<h2 id="spring-boot-starter-actuator的使用">spring-boot-starter-actuator的使用</h2>
+<p><code>spring-boot-starter-actuator</code>在2.X版本中不仅升级了metrics为io.micrometer，很多配置方式也和1.X完全不同，鉴于前段时间没有维护SpringBoot技术栈的项目，现在重新看了下官网复习一下。引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;springboot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>目前最新的springboot.version为2.0.3.RELEASE。在<code>spring-boot-starter-actuator</code>中，最大的变化就是配置的变化，原来在1.X版本是通过<code>management.security.enabled</code>控制是否可以忽略权限访问所有的监控端点，在2.X版本中，必须显式配置不需要权限验证对外开放的端点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">management.endpoints.web.exposure.include=*</span><br><span class="line">management.endpoints.web.exposure.exclude=env,beans</span><br><span class="line">management.endpoints.jmx.exposure.include=</span><br><span class="line">management.endpoints.jmx.exposure.include=*</span><br></pre></td></tr></table></figure>
+<p>例如上面的配置，访问非/env和非/beans的端点，可以不受权限控制，也就是所有人都可以访问非/env和非/beans的端点。例如，如果我只想暴露/health端点，只需配置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">management.endpoints.web.exposure.include=health</span><br></pre></td></tr></table></figure>
+<p>这一点需要特别注意，其他使用和1.X差不多。还有一点是，2.X中所有监控端点的访问url的默认路径前缀为：<code>http://${host}/${port}/actuator</code>，也就是想访问health端点就要访问<code>http://${host}/${port}/actuator/health</code>，当然也可以修改/actuator这个路径前缀。其他细节区别没有深入研究，可以参考<a href="https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle" target="_blank" rel="noopener">文档</a>。</p>
+<h3 id="搭建SpringCloud应用">搭建SpringCloud应用</h3>
+<p>接着先搭建一个SpringCloud应用群，主要包括注册中心(registry-center)和一个简单的服务节点(cloud-prometheus-sample)，其中注册中心只引入eureka-server的依赖，而服务节点用于对接Prometheus，引入eureka-client、spring-boot-starter-actuator、prometheus等依赖。</p>
+<h3 id="registry-center">registry-center</h3>
+<p>registry-center是一个单纯的服务注册中心，只需要引入eureka-server的依赖，添加一个启动类即可，添加的依赖如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>添加一个启动类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/21 9:06</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RegistryCenterApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(RegistryCenterApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件application.yaml如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 9091</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: registry-center</span><br><span class="line">eureka:</span><br><span class="line">  instance:</span><br><span class="line">    hostname: localhost</span><br><span class="line">  client:</span><br><span class="line">    enabled: true</span><br><span class="line">    register-with-eureka: false</span><br><span class="line">    fetch-registry: false</span><br><span class="line">    service-url:</span><br><span class="line">         defaultZone: http://$&#123;eureka.instance.hostname&#125;:$&#123;server.port&#125;/eureka/</span><br></pre></td></tr></table></figure>
+<p>就是这么简单，启动入口类即可，启动的端口为9091。</p>
+<h3 id="cloud-prometheus-sample">cloud-prometheus-sample</h3>
+<p>cloud-prometheus-sample主要作为eureka-client，接入spring-boot-starter-actuator和prometheus依赖，引入依赖如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.micrometer<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>micrometer-registry-prometheus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里引入的是<code>micrometer-registry-prometheus</code>而不是<code>micrometer-spring-legacy</code>是因为<code>micrometer-spring-legacy</code>是<code>spring-integration</code>(spring系统集成)的依赖，这里没有用到，但是里面很多实现可以参考。<code>micrometer-registry-prometheus</code>提供了基于actuator的端点，路径是…/prometheus。启动类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.eureka.EnableEurekaClient;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/7/21 9:13</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(SampleApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件application.yaml如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 9092</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: cloud-prometheus-sample</span><br><span class="line">eureka:</span><br><span class="line">  instance:</span><br><span class="line">    hostname: localhost</span><br><span class="line">  client:</span><br><span class="line">    service-url: http://localhost:9091/eureka/</span><br></pre></td></tr></table></figure>
+<p>启动端口为9092，eureka的服务注册地址为：<a href="http://localhost:9091/eureka/%EF%BC%8C%E4%B9%9F%E5%B0%B1%E6%98%AF" target="_blank" rel="noopener">http://localhost:9091/eureka/，也就是</a><code>registry-center</code>中指定的默认数据区(defaultZone)的注册地址，先启动<code>registry-center</code>，再启动<code>cloud-prometheus-sample</code>，然后访问http://localhost:9091/：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-1.png" alt="sp-p-1"></p>
+<p>访问http://localhost:9092/actuator/prometheus：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-2.png" alt="sp-p-2"></p>
+<p>这些数据就是实时的度量数据，Prometheus(软件)配置好任务并且启动执行后，就是通过定时拉取/prometheus这个端点返回的数据进行数据聚合和展示的。</p>
+<p>接着，我们先定制一个功能，统计<code>cloud-prometheus-sample</code>所有入站的Http请求数量(包括成功、失败和非法的)，添加如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//请求拦截器</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleMvcInterceptor</span> <span class="keyword">extends</span> <span class="title">HandlerInterceptorAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Counter COUNTER = Counter.builder(<span class="string">"Http请求统计"</span>)</span><br><span class="line">			.tag(<span class="string">"HttpCount"</span>, <span class="string">"HttpCount"</span>)</span><br><span class="line">			.description(<span class="string">"Http请求统计"</span>)</span><br><span class="line">			.register(Metrics.globalRegistry);</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterCompletion</span><span class="params">(HttpServletRequest request, HttpServletResponse response,</span></span></span><br><span class="line"><span class="function"><span class="params">								Object handler, Exception ex)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		COUNTER.increment();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//自定义Mvc配置</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> SampleMvcInterceptor sampleMvcInterceptor;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">		registry.addInterceptor(sampleMvcInterceptor);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启<code>cloud-prometheus-sample</code>，直接访问几次不存在的根节点路径<code>http://localhost:9092</code>，再查看端点统计数据：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-3.png" alt="sp-p-3"></p>
+<h1>安装和使用Prometheus</h1>
+<p>先从<a href="https://prometheus.io/download/" target="_blank" rel="noopener">Prometheus官方下载地址</a>下载软件，这里用Windows10平台演示，直接下载prometheus-2.3.2.windows-amd64.tar.gz，个人有软件洁癖，用软件或者依赖喜欢最高版本，出现坑了自己填。解压后目录如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-4.png" alt="sp-p-4"></p>
+<p>启动的话，直接运行prometheus.exe即可，这里先配置一下prometheus.yml：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">global:</span><br><span class="line">  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.</span><br><span class="line">  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.</span><br><span class="line">alerting:</span><br><span class="line">  alertmanagers:</span><br><span class="line">  - static_configs:</span><br><span class="line">    - targets:</span><br><span class="line">      # - alertmanager:9093</span><br><span class="line">scrape_configs:</span><br><span class="line">  - job_name: 'prometheus'</span><br><span class="line">    metrics_path: /actuator/prometheus</span><br><span class="line">    static_configs:</span><br><span class="line">    - targets: ['localhost:9092']</span><br></pre></td></tr></table></figure>
+<p>我们主要修改的是scrape_configs节点下的配置，这个节点时配置同步任务的，这里配置一个任务为’prometheus’，拉取数据的路径为/actuator/prometheus，目标host-port为’localhost:9092’，也就是<code>cloud-prometheus-sample</code>暴露的prometheus端点，Prometheus(软件)的默认启动端口为9090。启动后，同级目录下会生成一个data目录，实际上起到&quot;时序数据库&quot;的类似作用。访问Prometheus(软件)的控制台<code>http://localhost:9090/targets</code>:</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-5.png" alt="sp-p-5"></p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-6.png" alt="sp-p-6"></p>
+<p>Prometheus度量统计的所有监控项可以在http://localhost:9090/graph中查看到。这里可以观察到HttpCount的统计，但是界面不够炫酷，配置项也少，因此需要引入Grafana。</p>
+<h2 id="安装和接入Grafana">安装和接入Grafana</h2>
+<p>Grafana的安装也十分简单，它也是开箱即用的，就是配置的时候需要熟悉它的语法。先到<a href="https://grafana.com/grafana/download" target="_blank" rel="noopener">Grafana官网下载页面</a>下载一个适合系统的版本，这里选择Windows版本。解压之后，直接运行bin目录下的grafana-server.exe即可，默认的启动端口是3000，访问http://localhost:3000/，初始化账号密码是admin/admin，首次登陆需要修改密码，接着添加一个数据源：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-7.png" alt="sp-p-7"></p>
+<p>接着添加一个新的命名为’sample’的Dashboard，添加一个Graph类型的Panel，配置其属性：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-8.png" alt="sp-p-8"></p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-9.png" alt="sp-p-9"></p>
+<p>A记录(查询命令)就是对应http://localhost:9090/graph中的查询命令的目标：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-10.png" alt="sp-p-10"></p>
+<p>很简单，配置完毕之后，就可以看到高大上的统计图：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-11.png" alt="sp-p-11"></p>
+<p>这里只是介绍了Grafana使用的冰山一角，更多配置和使用命令可以自行查阅它的官方文档。</p>
+<h2 id="原理和扩展">原理和扩展</h2>
+<h3 id="原理">原理</h3>
+<p>下面是Prometheus的工作原理流程图，来源于其官网：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-12.png" alt="sp-p-12"></p>
+<p>在SpringBoot项目中，它的工作原理如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-13.png" alt="sp-p-13"></p>
+<p>这就是为什么能够使用Metrics的静态方法直接进行数据统计，因为Spring内部用MeterRegistryPostProcessor对Metrics内部持有的全局的CompositeMeterRegistry进行了合成操作，也就是所有MeterRegistry类型的Bean都会添加到Metrics内部持有的静态globalRegistry。</p>
+<h3 id="扩展">扩展</h3>
+<p>下面来个相对有生产意义的扩展实现，这篇文章提到SpringCloud体系的监控，我们需要扩展一个功能，记录一下每个有效的请求的执行时间。添加下面几个类或者方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//注解</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Target</span>(ElementType.METHOD)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MethodMetric &#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">description</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line"></span><br><span class="line">	String[] tags() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//切面类</span></span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpMethodCostAspect</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> MeterRegistry meterRegistry;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Pointcut</span>(<span class="string">"@annotation(club.throwable.sample.aspect.MethodMetric)"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pointcut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Around</span>(value = <span class="string">"pointcut()"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">process</span><span class="params">(ProceedingJoinPoint joinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">		Method targetMethod = ((MethodSignature) joinPoint.getSignature()).getMethod();</span><br><span class="line">		<span class="comment">//这里是为了拿到实现类的注解</span></span><br><span class="line">		Method currentMethod = ClassUtils.getUserClass(joinPoint.getTarget().getClass())</span><br><span class="line">				.getDeclaredMethod(targetMethod.getName(), targetMethod.getParameterTypes());</span><br><span class="line">		<span class="keyword">if</span> (currentMethod.isAnnotationPresent(MethodMetric<span class="class">.<span class="keyword">class</span>)) </span>&#123;</span><br><span class="line">			MethodMetric methodMetric = currentMethod.getAnnotation(MethodMetric<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">			<span class="keyword">return</span> processMetric(joinPoint, currentMethod, methodMetric);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> joinPoint.proceed();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> Object <span class="title">processMetric</span><span class="params">(ProceedingJoinPoint joinPoint, Method currentMethod,</span></span></span><br><span class="line"><span class="function"><span class="params">								 MethodMetric methodMetric)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">		String name = methodMetric.name();</span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.hasText(name)) &#123;</span><br><span class="line">			name = currentMethod.getName();</span><br><span class="line">		&#125;</span><br><span class="line">		String desc = methodMetric.description();</span><br><span class="line">		<span class="keyword">if</span> (!StringUtils.hasText(desc)) &#123;</span><br><span class="line">			desc = name;</span><br><span class="line">		&#125;</span><br><span class="line">		String[] tags = methodMetric.tags();</span><br><span class="line">		<span class="keyword">if</span> (tags.length == <span class="number">0</span>) &#123;</span><br><span class="line">			tags = <span class="keyword">new</span> String[<span class="number">2</span>];</span><br><span class="line">			tags[<span class="number">0</span>] = name;</span><br><span class="line">			tags[<span class="number">1</span>] = name;</span><br><span class="line">		&#125;</span><br><span class="line">		Timer timer = Timer.builder(name).tags(tags)</span><br><span class="line">				.description(desc)</span><br><span class="line">				.register(meterRegistry);</span><br><span class="line">		<span class="keyword">return</span> timer.record(() -&gt; &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> joinPoint.proceed();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(throwable);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//启动类里面添加方法</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaClient</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(SampleApplication<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@MethodMetric</span></span><br><span class="line">	<span class="meta">@GetMapping</span>(value = <span class="string">"/hello"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">(@RequestParam(name = <span class="string">"name"</span>, required = <span class="keyword">false</span>, defaultValue = <span class="string">"doge"</span>)</span> String name) </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> String.format(<span class="string">"%s say hello!"</span>, name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置好Grafana的面板，重启项目，多次调用/hello接口：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/sp-p-14.png" alt="sp-p-14"></p>
+<h2 id="后记">后记</h2>
+<p>如果想把监控界面做得更炫酷、更直观、更详细，可以先熟悉一下Prometheus的查询语法和Grafana的面板配置，此外，Grafana或者Prometheus都支持预警功能，可以接入钉钉机器人等以便及时发现问题作出预警。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://prometheus.io/" target="_blank" rel="noopener">https://prometheus.io/</a></li>
+<li><a href="https://spring.io/" target="_blank" rel="noopener">https://spring.io/</a></li>
+<li><a href="https://github.com/percona/grafana-dashboards" target="_blank" rel="noopener">https://github.com/percona/grafana-dashboards</a></li>
+</ul>
+<p>本文Demo项目仓库：<a href="https://github.com/zjcscut/spring-cloud-prometheus-sample" target="_blank" rel="noopener">https://github.com/zjcscut/spring-cloud-prometheus-sample</a></p>
+<p>(本文完 c-5-d e-a-20180721 r-a-201918)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/11/10/spring-cloud-prometheus/>http://throwable.club/2018/11/10/spring-cloud-prometheus/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Spring/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Spring</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/SpringCloud/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>SpringCloud</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/11/10/spring-cloud-prometheus/&title=基于Prometheus搭建SpringCloud全方位立体监控体系 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/11/10/spring-cloud-prometheus/&title=基于Prometheus搭建SpringCloud全方位立体监控体系 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAAC0klEQVR42u3awW7bQAwE0Pz/T7tAr7XkGVKbpMDTqUhiaZ8K7NJDfn3F1+vvdfWT1z9X8tn7TyVreOzCw8PDGy39/pHJb6/uuXkpV09J1oyHh4d3mne/ESfs2fadHCRX64kODzw8PLwf5bUFcfLb/GjBw8PD+3957ff9Nnr44YMBDw8PL+blcUP+N3nR3AYNR7IWPDw8vMmeHEUGv+HfB/t7eHh4eIuueh7d3t+zDXDbY+BytXh4eHgHeHmJPItok4Xel9T5kVB8Y8DDw8Nb8Gaxwia8yAcU2tf65ul4eHh4x3h5ALGPbmd5Sd7uevONAQ8PD+9RXn6LJJJoW1Zt+npwPgIPDw+v5BVFaryg2VLaWCQ6bPDw8PAe5eXDT/vZhLaRNvvP+PCNAQ8PD2/NS0rYJMBtX9Bso2/XiYeHh3eCNwsOZo3/zUDV8PXh4eHhHd6ZNzedlc4tOG+MFXkJHh4eXslrN+hNE2s2CtCCL4eu8PDw8B7i5d2itqRut/58hGtVUuPh4eE9xLtvcbW3Ljbr8on5nfHw8PDO8fKsYh/Cbu4Q9fGuUmo8PDy8A7zkwcNseLTRb17xm4MBDw8P7xivLX/zw2DWGJu90MuDAQ8PD+9beJuW//1C8wC3HRd4k7Lg4eHhPcrLC9980U/9fDgikIwO4OHh4a15+YjAfunJCMLmQPowOoCHh4e35iW3S2BtMR1FCeVnowYYHh4e3qO8pIB+dnNPouH8iKqzFjw8PLwRb9O8nzXM2le2GVPAw8PDO8F7ldd+m0428Tx0+DCggIeHh3eAN9tw2xK8HQuYjRdsjhM8PDy8ltceBnljbP/3ecwxLKzx8PDwFrz9YbAJZ/MDIMlX8PDw8H4PLx812AxszWLlyyfi4eHh/RrebLAgD3BnMcdlGIGHh4d3gPdUENDOLLTlePKy8PDw8E7zZg2wtmhuF3ewm4eHh4c35/0BeM4DJzsRpS4AAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/11/10/spring-cloud-prometheus/&title=基于Prometheus搭建SpringCloud全方位立体监控体系 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAAC0klEQVR42u3awW7bQAwE0Pz/T7tAr7XkGVKbpMDTqUhiaZ8K7NJDfn3F1+vvdfWT1z9X8tn7TyVreOzCw8PDGy39/pHJb6/uuXkpV09J1oyHh4d3mne/ESfs2fadHCRX64kODzw8PLwf5bUFcfLb/GjBw8PD+3957ff9Nnr44YMBDw8PL+blcUP+N3nR3AYNR7IWPDw8vMmeHEUGv+HfB/t7eHh4eIuueh7d3t+zDXDbY+BytXh4eHgHeHmJPItok4Xel9T5kVB8Y8DDw8Nb8Gaxwia8yAcU2tf65ul4eHh4x3h5ALGPbmd5Sd7uevONAQ8PD+9RXn6LJJJoW1Zt+npwPgIPDw+v5BVFaryg2VLaWCQ6bPDw8PAe5eXDT/vZhLaRNvvP+PCNAQ8PD2/NS0rYJMBtX9Bso2/XiYeHh3eCNwsOZo3/zUDV8PXh4eHhHd6ZNzedlc4tOG+MFXkJHh4eXslrN+hNE2s2CtCCL4eu8PDw8B7i5d2itqRut/58hGtVUuPh4eE9xLtvcbW3Ljbr8on5nfHw8PDO8fKsYh/Cbu4Q9fGuUmo8PDy8A7zkwcNseLTRb17xm4MBDw8P7xivLX/zw2DWGJu90MuDAQ8PD+9beJuW//1C8wC3HRd4k7Lg4eHhPcrLC9980U/9fDgikIwO4OHh4a15+YjAfunJCMLmQPowOoCHh4e35iW3S2BtMR1FCeVnowYYHh4e3qO8pIB+dnNPouH8iKqzFjw8PLwRb9O8nzXM2le2GVPAw8PDO8F7ldd+m0428Tx0+DCggIeHh3eAN9tw2xK8HQuYjRdsjhM8PDy8ltceBnljbP/3ecwxLKzx8PDwFrz9YbAJZ/MDIMlX8PDw8H4PLx812AxszWLlyyfi4eHh/RrebLAgD3BnMcdlGIGHh4d3gPdUENDOLLTlePKy8PDw8E7zZg2wtmhuF3ewm4eHh4c35/0BeM4DJzsRpS4AAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/11/17/jvm-micrometer-prometheus/" rel="prev" title="JVM应用度量框架Micrometer实战">
+                                  
+                                      JVM应用度量框架Micrometer实战
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Framework/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Framework</a> <a class="tag" href="/blog/tags/Micrometer/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Micrometer</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/11/04/annotation-implementation/" rel="prev" title="JDK中注解的底层实现">
+                                    
+                                        JDK中注解的底层实现
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Annotation/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Annotation</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '基于Prometheus搭建SpringCloud全方位立体监控体系',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prometheus是什么"><span class="toc-text">Prometheus是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#io-micrometer的使用"><span class="toc-text">io.micrometer的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Counter"><span class="toc-text">Counter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Gauge"><span class="toc-text">Gauge</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Timer"><span class="toc-text">Timer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Summary"><span class="toc-text">Summary</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring-boot-starter-actuator的使用"><span class="toc-text">spring-boot-starter-actuator的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#搭建SpringCloud应用"><span class="toc-text">搭建SpringCloud应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#registry-center"><span class="toc-text">registry-center</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cloud-prometheus-sample"><span class="toc-text">cloud-prometheus-sample</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装和接入Grafana"><span class="toc-text">安装和接入Grafana</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原理和扩展"><span class="toc-text">原理和扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-text">原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#扩展"><span class="toc-text">扩展</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后记"><span class="toc-text">后记</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

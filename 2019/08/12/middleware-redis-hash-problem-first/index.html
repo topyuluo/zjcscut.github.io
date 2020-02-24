@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>使用Redis的HSCAN命令遇到的一个问题 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/08/12/middleware-redis-hash-problem-first/">
+        使用Redis的HSCAN命令遇到的一个问题
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Redis/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Redis</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年8月12日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-08-12T22:12:21+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年8月12日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：5分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>笔者最近在做一个项目时候使用<code>Redis</code>存放客户端展示的订单列表，列表需要进行分页。由于笔者先前对<code>Redis</code>的各种数据类型的使用场景并不是十分熟悉，于是先入为主地看到<code>Hash</code>类型：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">USER_ID</span>:<span class="string">1</span></span><br><span class="line">   <span class="attr">ORDER_ID</span>:<span class="string">ORDER_XX: &#123;"amount": "100","orderId":"ORDER_XX"&#125;</span></span><br><span class="line">   <span class="attr">ORDER_ID</span>:<span class="string">ORDER_YY: &#123;"amount": "200","orderId":"ORDER_YY"&#125;</span></span><br></pre></td></tr></table></figure>
+<p>感觉<code>Hash</code>类型完全满足需求实现的场景。然后想当然地考虑使用<code>HSCAN</code>命令进行分页，引发了后面遇到的问题。</p>
+<a id="more"></a>
+<h2 id="SCAN和HSCAN命令">SCAN和HSCAN命令</h2>
+<p><code>SCAN</code>命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SCAN cursor [MATCH pattern] [COUNT count] [TYPE type]</span><br><span class="line">// 返回值如下：</span><br><span class="line">// 1. cursor，数值类型，下一轮的起始游标值，0代表遍历结束</span><br><span class="line">// 2. 遍历的结果集合，列表</span><br></pre></td></tr></table></figure>
+<p><code>SCAN</code>命令在<code>Redis</code>2.8.0版本中新增，时间复杂度计算如下：每一轮遍历的时间复杂度为<code>O(1)</code>，所有元素遍历完毕直到游标<code>cursor</code>返回0的时间复杂度为<code>O(N)</code>，其中<code>N</code>为集合内元素的数量。<code>SCAN</code>是针对整个<code>Database</code>内的所有KEY进行渐进式的遍历，它不会阻塞<code>Redis</code>，也就是使用<code>SCAN</code>命令遍历KEY的性能会优于<code>KEY *</code>命令。对于<code>Hash</code>类型有一个衍生的命令<code>HSCAN</code>专门用于遍历<code>Hash</code>类型及其相关属性(<code>Field</code>)的字段：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HSCAN key cursor [MATCH pattern] [COUNT count]</span><br><span class="line">// 返回值如下：</span><br><span class="line">// 1. cursor，数值类型，下一轮的起始游标值，0代表遍历结束</span><br><span class="line">// 2. 遍历的结果集合，是一个映射</span><br></pre></td></tr></table></figure>
+<p>笔者当时没有详细查阅<code>Redis</code>的官方文档，想当然地认为<code>Hash</code>类型的分页简单如下（假设每页数据只有1条）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 第一页</span><br><span class="line">HSCAN USER_ID:1 0 COUNT 1    &lt;= 这里认为返回的游标值为1</span><br><span class="line">// 第二页</span><br><span class="line">HSCAN USER_ID:1 1 COUNT 1    &lt;= 这里认为返回的游标值为0，结束迭代</span><br></pre></td></tr></table></figure>
+<p>实际上，执行的结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">HSCAN USER_ID:1 0 COUNT 1</span><br><span class="line"></span><br><span class="line">// 结果</span><br><span class="line">0 </span><br><span class="line"> ORDER_ID:ORDER_XX</span><br><span class="line"> &#123;"amount": "100","orderId":"ORDER_XX"&#125;</span><br><span class="line"> ORDER_ID:ORDER_YY</span><br><span class="line"> &#123;"amount": "200","orderId":"ORDER_YY"&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是在第一轮遍历的时候，KEY对应的所有<code>Field-Value</code>已经全量返回。笔者尝试增加哈希集合KEY = <code>USER_ID:1</code>里面的元素，但是数据量相对较大的时候，依然没有达到预期的分页效果；另一个方面，尝试修改命令中的<code>COUNT</code>值，发现无论如何修改<code>COUNT</code>值都不会对遍历的结果产生任何影响（也就是还是在第一轮迭代返回全部结果）。百思不得其解的情况下，只能仔细翻阅官方文档寻找解决方案。在<code>SCAN</code>命令的<code>COUNT</code>属性描述中找到了原因：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201908/r-h-p-1.png" alt="r-h-p-1"></p>
+<p>简单翻译理解一下：</p>
+<p><code>SCAN</code>命令以及其衍生命令并不保证每一轮迭代返回的元素数量，但是可以使用<code>COUNT</code>属性凭经验调整<code>SCAN</code>命令的行为。<code>COUNT</code>指定每次调用应该完成遍历的元素的数量，以便于遍历集合，本质只是一个提示值。</p>
+<ol>
+<li><code>COUNT</code>默认值为10。</li>
+<li>当遍历的目标<code>Set</code>、<code>Hash</code>、<code>Sorted Set</code>或者<code>Key</code>空间足够大可以使用一个哈希表表示并且不使用<code>MATCH</code>属性的前提下，<code>Redis</code>服务端会返回<code>COUNT</code>或者比<code>COUNT</code>大的遍历元素结果集合。</li>
+<li>当遍历只包含<code>Integer</code>值的<code>Set</code>集合（也称为<code>intsets</code>），或者<code>ziplists</code>类型编码的<code>Hash</code>或者<code>Sorted Set</code>集合（说明这些集合里面的元素占用的空间足够小），那么<code>SCAN</code>命令会返回集合中的所有元素，直接忽略<code>COUNT</code>属性。</li>
+</ol>
+<p>注意第3点，这个就是在<code>Hash</code>集合中使用<code>HSCAN</code>命令<code>COUNT</code>属性失效的根本原因。<code>Redis</code>配置中有两个和<code>Hash</code>类型<code>ziplist</code>编码的相关配置值：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">hash-max-ziplist-entries</span> <span class="string">512</span></span><br><span class="line"><span class="meta">hash-max-ziplist-value</span> <span class="string">64</span></span><br></pre></td></tr></table></figure>
+<p>在如下两个条件之一满足的时候，<code>Hash</code>集合的编码会由<code>ziplist</code>会转成<code>dict</code>：</p>
+<ul>
+<li>当<code>Hash</code>集合中的数据项（即<code>Field-Value</code>对）的数目超过512的时候。</li>
+<li>当<code>Hash</code>集合中插入的任意一个<code>Field-Value</code>对中的<code>Value</code>长度超过64。</li>
+</ul>
+<p>当<code>Hash</code>集合的编码会由<code>ziplist</code>会转成<code>dict</code>，<code>Redis</code>为<code>Hash</code>类型的内存空间占用优化相当于失败了，降级为相对消耗更多内存的字典类型编码，这个时候，<code>HSCAN</code>命令<code>COUNT</code>属性才会起效。</p>
+<h2 id="案例验证">案例验证</h2>
+<p>简单验证一下上一节得出的结论，写入一个测试数据如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 70个X</span><br><span class="line">HSET USER_ID:2 ORDER_ID:ORDER_XXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   </span><br><span class="line">// 70个Y</span><br><span class="line">HSET USER_ID:2 ORDER_ID:ORDER_YYY YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</span><br></pre></td></tr></table></figure>
+<p>接着开始测试一下<code>HSCAN</code>命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 查看编码</span><br><span class="line">object encoding USER_ID:2</span><br><span class="line">// 编码结果</span><br><span class="line">hashtable</span><br><span class="line"></span><br><span class="line">// 第一轮迭代</span><br><span class="line">HSCAN USER_ID:2 0 COUNT 1</span><br><span class="line">// 第一轮迭代返回结果</span><br><span class="line">2 </span><br><span class="line"> ORDER_ID:ORDER_YYY</span><br><span class="line"> YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</span><br><span class="line"></span><br><span class="line">// 第二轮迭代 </span><br><span class="line">HSCAN USER_ID:2 2 COUNT 1</span><br><span class="line">0 </span><br><span class="line"> ORDER_ID:ORDER_XXX</span><br><span class="line"> XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</span><br></pre></td></tr></table></figure>
+<p>测试案例中故意让两个值的长度为70，大于64，也就是让<code>Hash</code>集合转变为<code>dict(hashtable)</code>类型，使得<code>COUNT</code>属性生效。但是，这种做法是放弃了<code>Redis</code>为<code>Hash</code>集合的内存优化。显然，<code>HSCAN</code>命令天然不是为了做数据分页而设计的，而是为了渐进式的迭代（也就是如果需要迭代的集合很大，也不会阻塞<code>Redis</code>服务）。所以笔者最后放弃了使用<code>HSCAN</code>命令，寻找更适合做数据分页查询的其他<code>Redis</code>命令。</p>
+<h2 id="小结">小结</h2>
+<p>通过这简单的踩坑案例，笔者得到一些经验：</p>
+<ul>
+<li>切忌先入为主，使用中间件的时候要结合实际的场景。</li>
+<li>使用工具的之前要仔细阅读工具的使用手册。</li>
+<li>要通过一些案例验证自己的猜想或者推导的结果。</li>
+</ul>
+<p><code>Redis</code>提供的API十分丰富，后面应该还会遇到更多的踩坑经验。</p>
+<h2 id="附件">附件</h2>
+<ul>
+<li>Markdown文件：<a href="https://github.com/zjcscut/blog-article-file/tree/master/20190812/middleware-redis-hash-problem-first" target="_blank" rel="noopener">https://github.com/zjcscut/blog-article-file/tree/master/20190812/middleware-redis-hash-problem-first</a></li>
+</ul>
+<p>（本文完 e-a-20190812 c-1-d）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/08/12/middleware-redis-hash-problem-first/>http://throwable.club/2019/08/12/middleware-redis-hash-problem-first/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Redis/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Redis</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/08/12/middleware-redis-hash-problem-first/&title=使用Redis的HSCAN命令遇到的一个问题 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+笔者最近在做一个项目时候使用Redis存放客户端展示的订单列表，列表需要进行分页。由于笔者先前对Redis的各种数据类型的使用场景并不是十分熟悉，于是先入为主地看到Hash类型：
+123USER_ID:1   ORDER_ID:ORDER_XX: &#123;"amount": "100","orderId":"ORDER_XX"&#125;   ORDER_ID:ORDER_YY: &#123;"amount": "200","orderId":"ORDER_YY"&#125;
+感觉Hash类型完全满足需求实现的场景。然后想当然地考虑使用HSCAN命令进行分页，引发了后面遇到的问题。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/08/12/middleware-redis-hash-problem-first/&title=使用Redis的HSCAN命令遇到的一个问题 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+笔者最近在做一个项目时候使用Redis存放客户端展示的订单列表，列表需要进行分页。由于笔者先前对Redis的各种数据类型的使用场景并不是十分熟悉，于是先入为主地看到Hash类型：
+123USER_ID:1   ORDER_ID:ORDER_XX: &#123;"amount": "100","orderId":"ORDER_XX"&#125;   ORDER_ID:ORDER_YY: &#123;"amount": "200","orderId":"ORDER_YY"&#125;
+感觉Hash类型完全满足需求实现的场景。然后想当然地考虑使用HSCAN命令进行分页，引发了后面遇到的问题。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqklEQVR42u3aQXLCMBAEQP7/aVKVazCZ0UqGQ/tEOQGrdfBuzerxiK/n75Xcv7rz97r66/vvPk5ceHh4eEtLTxZx9TkHrLHXnouHh4d3mvf+pZ98Tt7JJ37hHwseHh7eR3n5Y/Km/H3xSLYbDw8P75t5a//fRhiTgoSHh4d3J28StraBbFIMPpC14OHh4cW8tiH+hs8H53t4eHh4g6l6ciUv/ckLPf/ui1/Dw8PDO8DLI9Q8UMgb7rWYuI6S8fDw8Lby3gcHSVObvLjzYdgk5nhxBw8PD+8YL2fMA9/kTrLF0Qbh4eHhHeC1UULbjrdbtnYAqwhz8fDw8Ma8dmyfLKItIRta56v14OHh4R3gzY86tQP+SZO9ls3i4eHh7eW1r/t5hNEGvpONwMPDwzvBmwQTeXlImu/RovHw8PBu5O0a9rfHrfJwIT+m8GLL8PDw8A7z1gpDS22PJkzWgIeHh3eC1365+NEyqiiGWGUggoeHh7eX15aEnNG26WtHEIqTEXh4eHjHeLsGY+2hhElhuCxveHh4eMd4SfyaT5dycHsMqy1LeHh4eKd5a0HqfFS29pTFlAUPDw9vzMujhHZktTdiGLX1eHh4eFt5ecw6mrDF7fhaFHK5xXh4eHgHeHl5eARXAq6HWINwBA8PD+9OXj7anwzPJkUo33Q8PDy8E7zJg5OINi85k/b6cs14eHh4t/Mmo6x2zJY30Mna8PDw8E7wnuWVLGJtZJVEyW35wcPDwzvBm0QVbSzbxsR54RllMHh4eHhLvPbwUxvjrg37k4MC9fkIPDw8vK289ihAHqe2Lfu2lAUPDw/va3iTwpA36G2RwMPDw/tOXl4S1pY+LyR4eHh4d/Lan1hriNsodttwCw8PD28rrx2A5VFvWxLapnxervDw8PBK3g9+jgMnjP3bgwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/08/12/middleware-redis-hash-problem-first/&title=使用Redis的HSCAN命令遇到的一个问题 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+笔者最近在做一个项目时候使用Redis存放客户端展示的订单列表，列表需要进行分页。由于笔者先前对Redis的各种数据类型的使用场景并不是十分熟悉，于是先入为主地看到Hash类型：
+123USER_ID:1   ORDER_ID:ORDER_XX: &#123;"amount": "100","orderId":"ORDER_XX"&#125;   ORDER_ID:ORDER_YY: &#123;"amount": "200","orderId":"ORDER_YY"&#125;
+感觉Hash类型完全满足需求实现的场景。然后想当然地考虑使用HSCAN命令进行分页，引发了后面遇到的问题。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqklEQVR42u3aQXLCMBAEQP7/aVKVazCZ0UqGQ/tEOQGrdfBuzerxiK/n75Xcv7rz97r66/vvPk5ceHh4eEtLTxZx9TkHrLHXnouHh4d3mvf+pZ98Tt7JJ37hHwseHh7eR3n5Y/Km/H3xSLYbDw8P75t5a//fRhiTgoSHh4d3J28StraBbFIMPpC14OHh4cW8tiH+hs8H53t4eHh4g6l6ciUv/ckLPf/ui1/Dw8PDO8DLI9Q8UMgb7rWYuI6S8fDw8Lby3gcHSVObvLjzYdgk5nhxBw8PD+8YL2fMA9/kTrLF0Qbh4eHhHeC1UULbjrdbtnYAqwhz8fDw8Ma8dmyfLKItIRta56v14OHh4R3gzY86tQP+SZO9ls3i4eHh7eW1r/t5hNEGvpONwMPDwzvBmwQTeXlImu/RovHw8PBu5O0a9rfHrfJwIT+m8GLL8PDw8A7z1gpDS22PJkzWgIeHh3eC1365+NEyqiiGWGUggoeHh7eX15aEnNG26WtHEIqTEXh4eHjHeLsGY+2hhElhuCxveHh4eMd4SfyaT5dycHsMqy1LeHh4eKd5a0HqfFS29pTFlAUPDw9vzMujhHZktTdiGLX1eHh4eFt5ecw6mrDF7fhaFHK5xXh4eHgHeHl5eARXAq6HWINwBA8PD+9OXj7anwzPJkUo33Q8PDy8E7zJg5OINi85k/b6cs14eHh4t/Mmo6x2zJY30Mna8PDw8E7wnuWVLGJtZJVEyW35wcPDwzvBm0QVbSzbxsR54RllMHh4eHhLvPbwUxvjrg37k4MC9fkIPDw8vK289ihAHqe2Lfu2lAUPDw/va3iTwpA36G2RwMPDw/tOXl4S1pY+LyR4eHh4d/Lan1hriNsodttwCw8PD28rrx2A5VFvWxLapnxervDw8PBK3g9+jgMnjP3bgwAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/08/15/middleware-redis-set-command-distributed-lock/" rel="prev" title="Redis的复合SET命令和简易的分布式锁优化">
+                                  
+                                      Redis的复合SET命令和简易的分布式锁优化
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/08/07/java-functional-programming-optional/" rel="prev" title="Java函数式编程之Optional">
+                                    
+                                        Java函数式编程之Optional
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Optional/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Optional</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '使用Redis的HSCAN命令遇到的一个问题',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SCAN和HSCAN命令"><span class="toc-text">SCAN和HSCAN命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例验证"><span class="toc-text">案例验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附件"><span class="toc-text">附件</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

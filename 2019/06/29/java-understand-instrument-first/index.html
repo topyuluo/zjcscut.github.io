@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>深入理解Instrument(一) | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/06/29/java-understand-instrument-first/">
+        深入理解Instrument(一)
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Instrument/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Instrument</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年6月29日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-30T10:29:22+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月30日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3.8k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：15分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/instrument-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>很早之前就了解到目前主流的<code>APM</code>开源框架如<code>Pinpoint</code>、<code>SkyWalking</code>等等都是通过<code>java.lang.instrument</code>包提供的字节码增强功能来实现的。趁着对这块的热情还没消退，抽时间分析一下<code>java.lang.instrument</code>包的使用方式，记录下来写成一个系列的文章。本系列博文针对的是JDK11，其他版本的JDK可能不适合。</p>
+<a id="more"></a>
+<h2 id="instrument简介">instrument简介</h2>
+<p><code>java.lang.instrument</code>包的结构如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">java.lang.instrument</span><br><span class="line">    - ClassDefinition</span><br><span class="line">    - ClassFileTransformer</span><br><span class="line">    - IllegalClassFormatException</span><br><span class="line">    - Instrumentation</span><br><span class="line">    - UnmodifiableClassException</span><br><span class="line">    - UnmodifiableModuleException</span><br></pre></td></tr></table></figure>
+<p>其中，核心功能由接口<code>java.lang.instrument.Instrumentation</code>提供，这里可以通过<code>Instrumentation</code>类的API注释来理解一下什么是<code>instrument</code>：</p>
+<blockquote>
+<p><code>Instrumentation</code>类提供控制Java语言程序代码的服务。<code>Instrumentation</code>可以实现在方法插入额外的字节码从而达到收集使用中的数据到指定工具的目的。由于插入的字节码是附加的，这些更变不会修改原来程序的状态或者行为。通过这种方式实现的良性工具包括监控代理、分析器、覆盖分析程序和事件日志记录程序等等。</p>
+</blockquote>
+<p>也就是说，<code>java.lang.instrument</code>包的最大功能就是可以<strong>在已有的类上附加（修改）字节码来实现增强的逻辑</strong>，如果良性使用当然不会影响程序的正常行为，如果恶性使用就可能产生一些负面的影响（其实很多商用Java程序如IntelliJ IDEA的License的破解都可以基于<code>Instrumentation</code>的功能实现，前提是找到程序认证License的入口）。</p>
+<h3 id="instrument原理">instrument原理</h3>
+<p><code>instrument</code>的底层实现依赖于<code>JVMTI</code>，也就是<code>JVM Tool Interface</code>，它是JVM暴露出来的一些供用户扩展的接口集合，JVMTI是基于事件驱动的，JVM每执行到一定的逻辑就会调用一些事件的回调接口（如果有的话），这些接口可以供开发者去扩展自己的逻辑。<code>JVMTIAgent</code>是一个利用<code>JVMTI</code>暴露出来的接口提供了代理启动时加载(agent on load)、代理通过attach形式加载(agent on attach)和代理卸载(agent on unload)功能的动态库。而<code>instrument agent</code>可以理解为一类<code>JVMTIAgent</code>动态库，别名是<code>JPLISAgent(Java Programming Language Instrumentation Services Agent)</code>，也就是<strong>专门为java语言编写的插桩服务提供支持的代理</strong>。因为涉及到源码分析，笔者暂时没能力展开，可以详细阅读参考资料中<strong>你假笨</strong>大神的那篇专门分析JVM相关源码实现的文章。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-j-l-i-1.png" alt="j-j-l-i-1.png"></p>
+<p>其中，VM启动时加载Agent可以使用命令行参数<code>-javaagent:yourAgent.jar</code>的形式实现。</p>
+<h2 id="Instrumentation接口详解">Instrumentation接口详解</h2>
+<ul>
+<li><strong><code>void addTransformer(ClassFileTransformer transformer, boolean canRetransform)</code></strong></li>
+</ul>
+<p>注册<code>ClassFileTransformer</code>实例，注册多个会按照注册顺序进行调用。所有的类被加载完毕之后会调用<code>ClassFileTransformer</code>实例，相当于它们通过了<code>redefineClasses</code>方法进行重定义。布尔值参数<code>canRetransform</code>决定这里被重定义的类是否能够通过<code>retransformClasses</code>方法进行回滚。</p>
+<ul>
+<li><strong><code>void addTransformer(ClassFileTransformer transformer)</code></strong></li>
+</ul>
+<p>相当于<code>addTransformer(transformer, false)</code>，也就是通过<code>ClassFileTransformer</code>实例重定义的类不能进行回滚。</p>
+<ul>
+<li><strong><code>boolean removeTransformer(ClassFileTransformer transformer)</code></strong></li>
+</ul>
+<p>移除(反注册)<code>ClassFileTransformer</code>实例。</p>
+<ul>
+<li><strong><code>boolean isRetransformClassesSupported()</code></strong></li>
+</ul>
+<p>返回当前JVM配置是否支持类重新转换的特性。</p>
+<ul>
+<li><strong><code>void retransformClasses(Class&lt;?&gt;... classes) throws UnmodifiableClassException</code></strong></li>
+</ul>
+<p>已加载类进行重新转换的方法，重新转换的类会被回调到<code>ClassFileTransformer</code>的列表中进行处理，想深入理解建议阅读API注释。</p>
+<ul>
+<li><strong><code>boolean isRedefineClassesSupported()</code></strong></li>
+</ul>
+<p>返回当前JVM配置是否支持重定义类（修改类的字节码）的特性。</p>
+<ul>
+<li><strong><code>void redefineClasses(ClassDefinition... definitions) throws  ClassNotFoundException, UnmodifiableClassException</code></strong></li>
+</ul>
+<p>重定义类，也就是对已经加载的类进行重定义，<code>ClassDefinition</code>类型的入参包括了对应的类型<code>Class&lt;?&gt;</code>对象和字节码文件对应的字节数组。</p>
+<p><strong>其他功能：</strong></p>
+<ul>
+<li><code>boolean isModifiableClass(Class&lt;?&gt; theClass)</code>：判断对应类是否被修改过。</li>
+<li><code>Class[] getAllLoadedClasses()</code>：获取所有已经被加载的类。</li>
+<li><code>Class[] getInitiatedClasses(ClassLoader loader)</code>：获取所有已经被初始化过了的类。</li>
+<li><code>long getObjectSize(Object objectToSize)</code>：获取某个对象的(字节)大小，注意嵌套对象或者对象中的属性引用需要另外单独计算。</li>
+<li><code>void appendToBootstrapClassLoaderSearch(JarFile jarfile)</code>：将某个jar加入到Bootstrap Classpath里优先其他jar被加载。</li>
+<li><code>void appendToSystemClassLoaderSearch(JarFile jarfile)</code>：将某个jar加入到Classpath里供AppClassloard去加载。</li>
+<li><code>void setNativeMethodPrefix(ClassFileTransformer transformer, String prefix)</code>：设置某些native方法的前缀，主要在找native方法的时候做规则匹配。</li>
+<li><code>boolean isNativeMethodPrefixSupported()</code>：是否支持设置native方法的前缀。</li>
+<li><code>void redefineModule(...)</code>：重定义<code>Module</code>。</li>
+<li><code>boolean isModifiableModule(Module module)</code>：判断指定<code>Module</code>是否重定义过。</li>
+</ul>
+<h2 id="如何使用Instrumentation">如何使用Instrumentation</h2>
+<p><code>Instrumentation</code>类在API注释中有十分简洁的使用方式描述：</p>
+<blockquote>
+<p>有两种方式可以获取<code>Instrumentation</code>接口的实例：</p>
+<ol>
+<li>JVM在指定代理的方式下启动，此时<code>Instrumentation</code>实例会传递到代理类的premain方法。</li>
+<li>JVM提供一种在启动之后的某个时刻启动代理的机制，此时<code>Instrumentation</code>实例会传递到代理类代码的agentmain方法。</li>
+</ol>
+</blockquote>
+<p>首先我们知道<code>Instrumentation</code>的实现类是<code>sun.instrument.InstrumentationImpl</code>，在JDK9之后，由于模块权限控制，不可能通过反射构造其实例，一般情况下反射做不到的东西只能通过JVM实现。而且根据上面简洁的API注释我们是无法得知如何使用<code>Instrumentation</code>。其实，<code>premain</code>对应的就是VM启动时的<code>Instrument Agent</code>加载，也就是上文提到的<code>agent on load</code>，而<code>agentmain</code>对应的是VM运行时的<code>Instrument Agent</code>加载，也就是上文提到的<code>agent on attach</code>。两种加载形式所加载的<code>Instrument Agent</code>都关注同一个<code>JVMTI</code>事件 – <code>ClassFileLoadHook</code>事件，而这个事件是在读取字节码文件之后回调时用。换言之，<strong><code>premain</code>和<code>agentmain</code>方式的回调时机都是类文件字节码读取之后（或者说是类加载之后）</strong>。</p>
+<p>实际上，<code>premain</code>和<code>agentmain</code>两种方式最终的目的都是为了回调<code>Instrumentation</code>实例并且激活<code>sun.instrument.InstrumentationImpl#transform()</code>从而回调注册到<code>Instrumentation</code>中的<code>ClassFileTransformer</code>实现字节码修改，本质功能上没有很大区别。两者的非本质功能的区别如下：</p>
+<ul>
+<li><code>premain</code>需要通过命令行使用外部代理jar包；而<code>agentmain</code>则可以通过<code>attach</code>机制直接附着到目标VM中加载代理，也就是使用<code>agentmain</code>方式下，操作<code>attach</code>的程序和被代理的程序可以是完全不同的两个程序。</li>
+<li><code>premain</code>方式回调到<code>ClassFileTransformer</code>中的类是虚拟机加载的所有类，这个是由于代理加载的顺序比较靠前决定的，在开发者逻辑看来就是：所有类首次加载并且进入程序<code>main()</code>方法之前，<code>premain</code>方法会被激活，然后所有被加载的类都会执行<code>ClassFileTransformer</code>列表中的回调。</li>
+<li><code>agentmain</code>方式由于是采用<code>attach</code>机制，被代理的目标程序VM有可能很早之前已经启动，当然其所有类已经被加载完成，这个时候需要借助<code>Instrumentation#retransformClasses(Class&lt;?&gt;... classes)</code>让对应的类可以重新转换，从而激活重新转换的类执行<code>ClassFileTransformer</code>列表中的回调。</li>
+<li><code>premain</code>方式是JDK1.5引入的，而<code>agentmain</code>方式是JDK1.6引入的，也就是JDK1.6之后可以自行选择使用<code>premain</code>或者<code>agentmain</code>。</li>
+</ul>
+<h3 id="premain使用方式">premain使用方式</h3>
+<p><code>premain</code>方式依赖独立的<code>javaagent</code>，也就是单独建立一个项目编写好代码之后打成jar包供另一个使用程序通过代理形式引入。简单的步骤如下：</p>
+<ol>
+<li><strong>编写<code>premain</code>函数，也就是编写一个普通的Java类，包含下面两个方法的其中之一</strong>。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">premain</span><span class="params">(String agentArgs, Instrumentation inst)</span></span>;  [<span class="number">1</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">premain</span><span class="params">(String agentArgs)</span></span>; [<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p>[1]的回调优先级会比[2]高，也就是[1]和[2]同时存在的情况下，只有[1]会被回调。而<code>agentArgs</code>是<code>premain</code>函数得到的程序参数，通过<code>– javaagent</code>命令行参数传入。</p>
+<ol start="2">
+<li><strong>代理服务打包为Jar</strong>。</li>
+</ol>
+<p><code>Agent</code>一般是一个普通的Java服务，只是需要编写<code>premain</code>函数，并且该Jar包的<code>manifest</code>(也就是<code>MANIFEST.MF</code>文件)属性中需要加入<code>Premain-Class</code>来指定步骤1中编写好<code>premain</code>函数的那个Java类。</p>
+<ol start="3">
+<li><strong>通过指定<code>Agent</code>运行</strong>。</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -javaagent:代理Jar包的路径 [=传入premain的参数] yourTarget.jar</span><br></pre></td></tr></table></figure>
+<p>简单例子如下：</p>
+<p>新建一个<code>premain-agent</code>的项目，新建一个类<code>club.throwable.permain.PermainAgent</code>如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PermainAgent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Instrumentation INST;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">premain</span><span class="params">(String agentArgs, Instrumentation inst)</span> </span>&#123;</span><br><span class="line">        INST = inst;</span><br><span class="line">        process();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        INST.addTransformer(<span class="keyword">new</span> ClassFileTransformer() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">byte</span>[] transform(ClassLoader loader, String className,</span><br><span class="line">                                    Class&lt;?&gt; clazz,</span><br><span class="line">                                    ProtectionDomain protectionDomain,</span><br><span class="line">                                    <span class="keyword">byte</span>[] byteCode) <span class="keyword">throws</span> IllegalClassFormatException &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"Process by ClassFileTransformer,target class = %s"</span>, className));</span><br><span class="line">                <span class="keyword">return</span> byteCode;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>引入<code>Maven</code>插件<code>maven-jar-plugin</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jar-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">archive</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">manifestEntries</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">Premain-Class</span>&gt;</span>club.throwable.permain.PermainAgent<span class="tag">&lt;/<span class="name">Premain-Class</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">Can-Redefine-Classes</span>&gt;</span>true<span class="tag">&lt;/<span class="name">Can-Redefine-Classes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">Can-Retransform-Classes</span>&gt;</span>true<span class="tag">&lt;/<span class="name">Can-Retransform-Classes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">manifestEntries</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">archive</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>通过<code>mvn package</code>命令打包即可得到<code>premain-agent.jar</code>（笔者发现该插件未支持JDK11，所以降级到JDK8）。接着可以使用该代理Jar：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个是样品类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        System.out.println(String.format(<span class="string">"%s say hello!"</span>, name));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main函数，vm参数：-javaagent:I:\J-Projects\instrument-sample\premain-agent\target\premain-agent.jar</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PermainMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= sun/nio/cs/ThreadLocalCoders</span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= sun/nio/cs/ThreadLocalCoders$<span class="number">1</span></span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= sun/nio/cs/ThreadLocalCoders$Cache</span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= sun/nio/cs/ThreadLocalCoders$<span class="number">2</span></span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= com/intellij/rt/execution/application/AppMainV2$Agent</span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= com/intellij/rt/execution/application/AppMainV2</span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= com/intellij/rt/execution/application/AppMainV2$<span class="number">1</span></span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= java/lang/reflect/InvocationTargetException</span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= java/net/InetAddress$<span class="number">1</span></span><br><span class="line">Process by ClassFileTransformer,target <span class="class"><span class="keyword">class</span> </span>= java/lang/ClassValue</span><br><span class="line"><span class="comment">// ... 省略大量其他输出</span></span><br></pre></td></tr></table></figure>
+<p>实际上，如果我们要定制功能需要排除掉一些<code>java.lang</code>包和<code>sun</code>包的类，当然这里仅仅作为演示所以无伤大雅。</p>
+<h3 id="agentmain使用方式">agentmain使用方式</h3>
+<p><code>agentmain</code>的使用方式和<code>permain</code>十分相似，包括编写<code>MANIFEST.MF</code>和生成代理Jar包。但是，它并不需要通过<code>-javaagent</code>命令行形式引入代理Jar，而是在运行时通过<code>attach</code>工具激活指定代理即可。简单的步骤如下：</p>
+<ol>
+<li><strong>编写<code>premain</code>函数，也就是编写一个普通的Java类，包含下面两个方法的其中之一</strong>。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">agentmain</span><span class="params">(String agentArgs, Instrumentation inst)</span></span>;  [<span class="number">1</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">agentmain</span><span class="params">(String agentArgs)</span></span>; [<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p>[1]的回调优先级会比[2]高，也就是[1]和[2]同时存在的情况下，只有[1]会被回调。而<code>agentArgs</code>是<code>agentmain</code>函数得到的程序参数，通过<code>com.sun.tools.attach.VirtualMachine#loadAgent(var1,var2)</code>中的var2传入，var1就是代理Jar的绝对路径。</p>
+<ol start="2">
+<li><strong>代理服务打包为Jar</strong>。</li>
+</ol>
+<p><code>Agent</code>一般是一个普通的Java服务，只是需要编写<code>agentmain</code>函数，并且该Jar包的<code>manifest</code>(也就是<code>MANIFEST.MF</code>文件)属性中需要加入<code>Agent-Class</code>来指定步骤1中编写好<code>agentmain</code>函数的那个Java类。</p>
+<ol start="3">
+<li><strong>通过<code>attach</code>工具直接加载<code>Agent</code>，执行<code>attach</code>的程序和需要被代理的程序可以是两个完全不同的程序</strong>。</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 列出所有VM实例</span></span><br><span class="line">List&lt;VirtualMachineDescriptor&gt; list = VirtualMachine.list();</span><br><span class="line"><span class="comment">// attach目标VM</span></span><br><span class="line">VirtualMachine.attach(descriptor.id());</span><br><span class="line"><span class="comment">// 目标VM加载Agent</span></span><br><span class="line">VirtualMachine#loadAgent("代理Jar路径","命令参数");</span><br></pre></td></tr></table></figure>
+<p>举个简单的例子：编写<code>agentmain</code>函数的类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AgentmainAgent</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Instrumentation INST;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">agentmain</span><span class="params">(String agentArgs, Instrumentation inst)</span> </span>&#123;</span><br><span class="line">        INST = inst;</span><br><span class="line">        process();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        INST.addTransformer(<span class="keyword">new</span> ClassFileTransformer() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">byte</span>[] transform(ClassLoader loader, String className,</span><br><span class="line">                                    Class&lt;?&gt; clazz,</span><br><span class="line">                                    ProtectionDomain protectionDomain,</span><br><span class="line">                                    <span class="keyword">byte</span>[] byteCode) <span class="keyword">throws</span> IllegalClassFormatException &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"Agentmain process by ClassFileTransformer,target class = %s"</span>, className));</span><br><span class="line">                <span class="keyword">return</span> byteCode;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            INST.retransformClasses(Class.forName(<span class="string">"club.throwable.instrument.AgentTargetSample"</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>更改<code>Maven</code>插件<code>maven-jar-plugin</code>的配置，然后通过<code>mvn pacakge</code>打包：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-jar-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.1.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">archive</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">manifestEntries</span>&gt;</span></span><br><span class="line">                    <span class="comment">&lt;!-- 主要改这个配置项 --&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">Agent-Class</span>&gt;</span>club.throwable.agentmain.AgentmainAgent<span class="tag">&lt;/<span class="name">Premain-Class</span>&gt;</span> </span><br><span class="line">                    <span class="tag">&lt;<span class="name">Can-Redefine-Classes</span>&gt;</span>true<span class="tag">&lt;/<span class="name">Can-Redefine-Classes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">Can-Retransform-Classes</span>&gt;</span>true<span class="tag">&lt;/<span class="name">Can-Retransform-Classes</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">manifestEntries</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">archive</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>负责<code>attach</code>工作的程序<code>AgentmainAttachMain</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AgentmainAttachMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        List&lt;VirtualMachineDescriptor&gt; list = VirtualMachine.list();</span><br><span class="line">        <span class="keyword">for</span> (VirtualMachineDescriptor descriptor : list) &#123;</span><br><span class="line">            <span class="keyword">if</span> (descriptor.displayName().endsWith(<span class="string">"AgentTargetSample"</span>)) &#123;</span><br><span class="line">                VirtualMachine virtualMachine = VirtualMachine.attach(descriptor.id());</span><br><span class="line">                virtualMachine.loadAgent(<span class="string">"I:\\J-Projects\\instrument-sample\\premain-agent\\target\\premain-agent.jar"</span>, <span class="string">"arg1"</span>);</span><br><span class="line">                virtualMachine.detach();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>被代理的目标程序<code>AgentTargetSample</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AgentTargetSample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        System.out.println(String.format(<span class="string">"%s say hello!"</span>, name));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        AgentTargetSample sample = <span class="keyword">new</span> AgentTargetSample();</span><br><span class="line">        <span class="keyword">for</span> (; ; ) &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            sample.sayHello(Thread.currentThread().getName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着先启动<code>AgentTargetSample</code>，然后再启动<code>AgentmainAttachMain</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">Agentmain process by ClassFileTransformer,target class = club/throwable/instrument/AgentTargetSample</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br><span class="line">main say hello!</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PS：如果没有找到<code>VirtualMachineDescriptor</code>或者<code>VirtualMachine</code>，只需要把<code>${JAVA_HONE}/lib/tools.jar</code>拷贝到<code>${JAVA_HONE}/jre/lib</code>目录下即可。</p>
+</blockquote>
+<h2 id="Instrumentation的局限性">Instrumentation的局限性</h2>
+<p>大多数情况下，我们使用<code>Instrumentation</code>都是使用其字节码插桩的功能，或者笼统说就是类重定义(<code>Class Redefine</code>)的功能，但是有以下的局限性：</p>
+<ul>
+<li><code>premain</code>和<code>agentmain</code>两种方式修改字节码的时机都是类文件加载之后，也就是说必须要带有<code>Class</code>类型的参数，不能通过字节码文件和自定义的类名重新定义一个本来不存在的类。</li>
+<li>类的字节码修改称为类转换(Class Transform)，类转换其实最终都回归到类重定义<code>Instrumentation#redefineClasses()</code>方法，此方法有以下限制：
+<ul>
+<li>新类和老类的父类必须相同。</li>
+<li>新类和老类实现的接口数也要相同，并且是相同的接口。</li>
+<li>新类和老类访问符必须一致。</li>
+<li>新类和老类字段数和字段名要一致。</li>
+<li>新类和老类新增或删除的方法必须是<code>private static/final</code>修饰的。</li>
+<li>可以修改方法体。</li>
+</ul>
+</li>
+</ul>
+<p>除了上面的方式，如果想要重新定义一个类，可以考虑基于<strong>类加载器隔离</strong>的方式：创建一个新的自定义类加载器去通过新的字节码去定义一个全新的类，不过也存在只能通过反射调用该全新类的局限性。</p>
+<h2 id="小结">小结</h2>
+<p>本文仅仅简单分析<code>instrument</code>的原理和基本使用，可以体会到<code>instrument</code>让Java具有了更强的动态控制、解释能力，从而让Java语言变得更加灵活多变。在JDK1.6之后，使用<code>Instrumentation</code>，开发者可以构建一个独立于应用程序的代理程序，用来监测和协助运行在JVM上的程序，可以远程重新转换指定JVM实例里面的已经加载的类，这一点实现从开发者角度来看就像是从JVM级别支持了AOP编程。下一篇文章将会结合实际的场景和字节码改造进行更深入的探究。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="http://lovestblog.cn/blog/2015/09/14/javaagent/" target="_blank" rel="noopener">JVM源码分析之javaagent原理完全解读 - By你假笨</a></li>
+<li>JDK11相关源码</li>
+<li><a href="https://www.jianshu.com/p/1ca23d884e7f" target="_blank" rel="noopener">动手写一个javaagent</a></li>
+</ul>
+<p>（本文完 c-3-d e-a-20190629 6月份过完了，这个月没有什么产出，o(╯□╰)o）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/06/29/java-understand-instrument-first/>http://throwable.club/2019/06/29/java-understand-instrument-first/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Instrument/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Instrument</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/06/29/java-understand-instrument-first/&title=深入理解Instrument(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+很早之前就了解到目前主流的APM开源框架如Pinpoint、SkyWalking等等都是通过java.lang.instrument包提供的字节码增强功能来实现的。趁着对这块的热情还没消退，抽时间分析一下java.lang.instrument包的使用方式，记录下来写成一个系列的文章。本系列博文针对的是JDK11，其他版本的JDK可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/06/29/java-understand-instrument-first/&title=深入理解Instrument(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+很早之前就了解到目前主流的APM开源框架如Pinpoint、SkyWalking等等都是通过java.lang.instrument包提供的字节码增强功能来实现的。趁着对这块的热情还没消退，抽时间分析一下java.lang.instrument包的使用方式，记录下来写成一个系列的文章。本系列博文针对的是JDK11，其他版本的JDK可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqUlEQVR42u3aS26DQBAFQN//0sk2UgR+/RmbRbGynABTRGI6r/v1io+fi+P/7yTf/P3+/+f7n75OHHh4eHhLS7+6cY7Meck1e+vBw8PDO8e7eqMmC81/Wr1XdZPAw8PDez7vvoK9v1peXvceEx4eHt4zeZP8I3lAj9j38PDw8AZhxCTYzZf7tawFDw8PL+ZVX+JP+Hykv4eHh4c37qr3IoPqUu5f+qPV4uHh4R3g5UvpNfWr31RL9mideHh4eKu8vJBNbpO/4vN4YtRIw8PDwzvGyyPR5Ja7w1vVMa9yGIGHh4dX5CWt93ywYF4W9wCFshsPDw/vAG8rPqiW6dVRqlGvDw8PD2/Ay8PW+wVVY4WctJy14OHh4Y15OaMaMeTbSTWwqF4ZDw8Pb5fXCxSqDyUf4eptKs19Dw8PD2+Jl0QAecxaHdXqhctvimk8PDy8VV4+YjUZI+hdIQ8jyn9DPDw8vDGvWsj2GvmTwno+sIWHh4e3xev9qz9pR00Gp6pNODw8PLzTvK0yOllEslXc3zEaF8PDw8M7zGtW4vFC82HT6gO6/IyHh4f3EV61LJ4X3L0NIHpkeHh4eMd4uw2t3ihAdUuIzsXDw8M7zJuMOs03m+Sao5kyPDw8vCVe3ieaDARUQ9heZHx5Fh4eHt5hXrJhTF73vTZYr3DHw8PD+yQvL15720byOKrl9eVZeHh4eMd41cC0FyJMBhSazTA8PDy8VV4vgKgOB2wNCpTLbjw8PLwDvK1L94ryScNsdyPBw8PDq/KqkUFv89gaC8iHw/Dw8PBO83qtph6s+oD2ghc8PDy87/B6i6jGGb2z3jTA8PDw8L7KyyOGXsk+iSrw8PDwPsOrjk9VG2BbYUSS1uLh4eGd5lUL4uojyIPg/K1+MLDAw8PDuzt+ATiW5Cm0ueAeAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/06/29/java-understand-instrument-first/&title=深入理解Instrument(一) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=
+前提
+很早之前就了解到目前主流的APM开源框架如Pinpoint、SkyWalking等等都是通过java.lang.instrument包提供的字节码增强功能来实现的。趁着对这块的热情还没消退，抽时间分析一下java.lang.instrument包的使用方式，记录下来写成一个系列的文章。本系列博文针对的是JDK11，其他版本的JDK可能不适合。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACqUlEQVR42u3aS26DQBAFQN//0sk2UgR+/RmbRbGynABTRGI6r/v1io+fi+P/7yTf/P3+/+f7n75OHHh4eHhLS7+6cY7Meck1e+vBw8PDO8e7eqMmC81/Wr1XdZPAw8PDez7vvoK9v1peXvceEx4eHt4zeZP8I3lAj9j38PDw8AZhxCTYzZf7tawFDw8PL+ZVX+JP+Hykv4eHh4c37qr3IoPqUu5f+qPV4uHh4R3g5UvpNfWr31RL9mideHh4eKu8vJBNbpO/4vN4YtRIw8PDwzvGyyPR5Ja7w1vVMa9yGIGHh4dX5CWt93ywYF4W9wCFshsPDw/vAG8rPqiW6dVRqlGvDw8PD2/Ay8PW+wVVY4WctJy14OHh4Y15OaMaMeTbSTWwqF4ZDw8Pb5fXCxSqDyUf4eptKs19Dw8PD2+Jl0QAecxaHdXqhctvimk8PDy8VV4+YjUZI+hdIQ8jyn9DPDw8vDGvWsj2GvmTwno+sIWHh4e3xev9qz9pR00Gp6pNODw8PLzTvK0yOllEslXc3zEaF8PDw8M7zGtW4vFC82HT6gO6/IyHh4f3EV61LJ4X3L0NIHpkeHh4eMd4uw2t3ihAdUuIzsXDw8M7zJuMOs03m+Sao5kyPDw8vCVe3ieaDARUQ9heZHx5Fh4eHt5hXrJhTF73vTZYr3DHw8PD+yQvL15720byOKrl9eVZeHh4eMd41cC0FyJMBhSazTA8PDy8VV4vgKgOB2wNCpTLbjw8PLwDvK1L94ryScNsdyPBw8PDq/KqkUFv89gaC8iHw/Dw8PBO83qtph6s+oD2ghc8PDy87/B6i6jGGb2z3jTA8PDw8L7KyyOGXsk+iSrw8PDwPsOrjk9VG2BbYUSS1uLh4eGd5lUL4uojyIPg/K1+MLDAw8PDuzt+ATiW5Cm0ueAeAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/07/02/java-concurrency-listenable-future/" rel="prev" title="JUC线程池扩展可回调的Future">
+                                  
+                                      JUC线程池扩展可回调的Future
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/ListenableFuture/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> ListenableFuture</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/06/23/java-concurrency-thread-state/" rel="prev" title="Java线程生命周期与状态切换">
+                                    
+                                        Java线程生命周期与状态切换
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Thread/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Thread</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '深入理解Instrument(一)',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#instrument简介"><span class="toc-text">instrument简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#instrument原理"><span class="toc-text">instrument原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Instrumentation接口详解"><span class="toc-text">Instrumentation接口详解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用Instrumentation"><span class="toc-text">如何使用Instrumentation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#premain使用方式"><span class="toc-text">premain使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#agentmain使用方式"><span class="toc-text">agentmain使用方式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Instrumentation的局限性"><span class="toc-text">Instrumentation的局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

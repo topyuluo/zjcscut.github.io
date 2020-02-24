@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>第九章：JobStores | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/03/30/quartz-doc-translation-lesson-9/">
+        第九章：JobStores
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Quartz/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Quartz</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年3月30日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-03-30T11:14:52+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年3月30日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：7分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>第九章：JobStores</h1>
+<p>JobStore负责记录你提供到调度器的所有“工作数据”：所有的Job、所有的Trigger、所有的Calendar(org.quartz.Calendar)等等。为你的Quartz调度器选择一个合适的JobStore是一个重要的步骤。幸运的是，一旦你明白不同的JobStore之间的差异，那么作出合适的选择是十分简单的。</p>
+<p>你声明你提供给用于生成调度器实例对应的SchedulerFactory实例时候用到的属性文件（或对象）中，应该指定你的调度器应使用哪个类型的JobStore（以及它的相关配置）。注意一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">切勿在代码中直接使用JobStore实例。由于某些原因，许多使用者试图这样做。JobStore应该只用于Quartz的后台。你必须告诉Quartz（通过配置）使用哪个类型的JobStore，你在代码中应该只能使用Scheduler接口。</span><br></pre></td></tr></table></figure>
+<h2 id="RAMJobStore">RAMJobStore</h2>
+<p>RAMJobStore是使用最简单的JobStore，它也是性能最高的（在CPU时间方面）。RAMJobStore的功能显然和它的名字相关：它将其所有数据保存在RAM(内存)中，这就是为什么它是闪电般的快，也是为什么它的的配置这么简单。缺点是当你的应用程序结束（或崩溃）时，所有调度信息都将丢失 - 这意味着RAMJobStore无法履行作业和Trigger上的“非易失性”设置。对于某些应用程序，这是可以接受的 - 甚至是所需的行为，但对于其他应用程序，这可能是灾难性的。</p>
+<p>要使用RAMJobStore（并假设您使用的是StdSchedulerFactory），只需将Quartz的JobStore类属性配置指定为org.quartz.simpl.RAMJobStore：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore<span class="class">.<span class="keyword">class</span> </span>= org.quartz.simpl.RAMJobStore</span><br></pre></td></tr></table></figure>
+<p>除此之外没有其他需要担心的配置项。</p>
+<h2 id="JDBCJobStore">JDBCJobStore</h2>
+<p>JDBCJobStore的命名也相当恰当 - 它通过JDBC将其所有数据保存在数据库中。因此，它配置比RAMJobStore要复杂一点，而且也不是那么快。但是，它性能下降并不是很糟糕，特别是如果你使用的数据库表在相应的主键或者外键加上索引。在相对主流的并且有一个像样的局域网（在调度器和数据库之间）的机器上，检索和更新一个触发中的Trigger的时间通常将小于10毫秒。</p>
+<p>JDBCJobStore几乎可以在任何类型的任何数据库中使用，已被广泛应用于Oracle，PostgreSQL，MySQL，MS SQLServer，HSQLDB和DB2。要使用JDBCJobStore，必须首先创建一组数据库表以供Quartz使用。你可以在Quartz发行版的&quot;docs/dbTables&quot;目录中找到表创建SQL脚本。如果你的数据库类型尚未有脚本，请查看其中一个脚本，然后以数据库所需的任何方式进行修改。需要注意的一点是，在这些脚本中，所有的表都以前缀&quot;QRTZ_“开始（如表&quot;QRTZ_TRIGGERS&quot;和&quot;QRTZ_JOB_DETAIL”）。你可以通知JDBCJobStore表的前缀是什么（在你的Quartz属性配置中），也就是你也可以修改这个表前缀的值。对于多个调度程序实例，使用不同的前缀可能有助于同一个数据库中的多个调度器实例创建多组表。</p>
+<p>创建表后，在配置和启动JDBCJobStore之前，你还有一个重要的决定。你需要确定应用程序需要哪种类型的事务。如果你不需要将调度命令（例如添加和删除Trigger）绑定到其他代码逻辑的事务中，那么可以通过使用JobStoreTX对JobStore进行事务管理（这是最常见的选择）。</p>
+<p>如果你需要Quartz与其他事务（即J2EE应用程序服务器）一起工作，那么你应该使用JobStoreCMT - 在这种情况下，Quartz将让应用程序服务器容器管理事务。</p>
+<p>最后一个难题是设置一个DataSource，使得JDBCJobStore可以从中获取数据库的连接。定义Quartz的DataSource有下面的几种方式。一种方法是让Quartz创建和管理DataSource本身 - 通过提供数据库的所有连接信息。另一种方法是通过提供JDBCJobStore的DataSource的JNDI名称，让Quartz使用由Quartz正在运行的应用程序服务器来管理DataSource。有关属性的详细信息，请参阅发行版本中&quot;docs/config&quot;文件夹中的示例配置文件。</p>
+<p>要使用JDBCJobStore（假设你使用的是StdSchedulerFactory），首先需要将Quartz配置文件中的的JobStore类属性设置为org.quartz.impl.jdbcjobstore.JobStoreTX或org.quartz.impl.jdbcjobstore.JobStoreCMT - 具体可以参考上一段文字的描述，不过决定权还是在你手中。</p>
+<p><strong>配置Quartz以使用JobStoreTx</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore<span class="class">.<span class="keyword">class</span> </span>= org.quartz.impl.jdbcjobstore.JobStoreTX</span><br></pre></td></tr></table></figure>
+<p>接下来，你需要为JobStore选择一个DriverDelegate。DriverDelegate负责执行特定数据库可能需要的任何JDBC相关的工作。StdJDBCDelegate是一个使用“vanilla(原意识香草味的，这里大概的意思是原生的)”JDBC代码（和SQL语句）来工作的。如果Quartz没有为你的数据库类型提供特定的DriverDelegate，请尝试使用此DriverDelegate - 我们仅仅为那些使用StdJDBCDelegate(几乎是最常使用)出现了问题的数据库类型提供了特殊的订造的DriverDelegate。其他DriverDelegate可以在&quot;org.quartz.impl.jdbcjobstore&quot;包或其子包中找到。其他DriverDelegate包括DB2v6Delegate（用于DB2版本6及更早版本），HSQLDBDelegate（用于HSQLDB），MSSQLDelegate（用于Microsoft SQLServer），PostgreSQLDelegate（用于PostgreSQL）），WeblogicDelegate（用于使用Weblogic创建的JDBC驱动程序）。</p>
+<p>一旦你选择了DriverDelegate后，将其类名设置为JDBCJobStore的对应属性以便JDBCJobStore能够使用它。</p>
+<p><strong>为JDBCJobStore配置DriverDelegate</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore.driverDelegateClass = org.quartz.impl.jdbcjobstore.StdJDBCDelegate</span><br></pre></td></tr></table></figure>
+<p>接下来，你需要通知JobStore你正在使用的表前缀（如上所述）。</p>
+<p><strong>配置JDBCJobStore对应的表前缀</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore.tablePrefix = QRTZ_</span><br></pre></td></tr></table></figure>
+<p>最后，你需要设置JobStore应该使用哪个DataSource。DataSource的命名也必须在Quartz配置文件中的属性中定义。在这种情况下，我们指定Quartz应该使用DataSource名称&quot;myDS&quot;（在配置属性中的其他位置也是用这个名称去定义）。</p>
+<p><strong>配置JDBCJobStore对应的DataSource</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore.dataSource = myDS</span><br></pre></td></tr></table></figure>
+<p>注意事项一：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果你的调度器一直处于忙碌的状态(满负载)（正在执行的Job数量几乎与线程池大小相同），那么你应该将DataSource中的连接数设置为线程池容量+<span class="number">2</span>。</span><br></pre></td></tr></table></figure>
+<p>注意事项二：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以将<span class="string">"org.quartz.jobStore.useProperties"</span>配置参数设置为<span class="string">"true"</span>（默认为<span class="keyword">false</span>），以指示JDBCJobStore将JobDataMap中的所有值都作为字符串，从而JobDataMap中的属性可以作为键值对存储，而不是使用BLOB类型，因为BLOB类型是为了以其序列化形式存储更多复杂的对象。从长远来看，这是更安全的，因为你避免了将非String类序列化为BLOB类型的版本问题。</span><br></pre></td></tr></table></figure>
+<h2 id="TerracottaJobStore">TerracottaJobStore</h2>
+<p>TerracottaJobStore提供了一种伸缩性和鲁棒性的手段，它并不使用数据库。这意味着你的数据库可以免受Quartz的负载，可以将数据库所有资源分配给应用程序的其余部分。</p>
+<p>TerracottaJobStore可以运行在群集或非群集环境在集群或者非集群环境下，TerracottaJobStore都可以为应用程序的作业数据提供存储介质，即便是应用程序重启的间隙，因为数据是存储在Terracotta服务器中。它的性能比基于使用数据库的JDBCJobStore要好得多（约一个数量级），但比RAMJobStore要慢。</p>
+<p>要使用TerracottaJobStore（假设你使用的是StdSchedulerFactory），只需将配置文件中的类名称org.quartz.jobStore.class = org.terracotta.quartz.TerracottaJobStore指定为Quartz的JobStore类属性，并添加一个额外的配置项来指定Terracotta服务器的位置即可：</p>
+<p><strong>使用TerracottaJobStore配置Quartz</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">org.quartz.jobStore<span class="class">.<span class="keyword">class</span> </span>= org.terracotta.quartz.TerracottaJobStore</span><br><span class="line">org.quartz.jobStore.tcConfigUrl = localhost:<span class="number">9510</span></span><br></pre></td></tr></table></figure>
+<p>更多关于JobStore和Terracotta的内容可以参阅<code>http://www.terracotta.org/quartz</code>。</p>
+<p>原文链接：<a href="http://www.quartz-scheduler.org/documentation/quartz-2.2.x/tutorials/tutorial-lesson-09.html" target="_blank" rel="noopener">tutorial-lesson-09</a></p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/03/30/quartz-doc-translation-lesson-9/>http://throwable.club/2019/03/30/quartz-doc-translation-lesson-9/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Quartz/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Quartz</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/03/30/quartz-doc-translation-lesson-9/&title=第九章：JobStores | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/03/30/quartz-doc-translation-lesson-9/&title=第九章：JobStores | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3awW7rMAwEwPz/T/ddC+Ql3SUlwIfxqWhiW6MCJEvq9Yqvn7fr0+9/f/r7O+8/f/r00/ff7z124eHh4a2X/p3x6QnfnzwjJXd931w8PDy8e7zkcbO7vm9Nsh15ksDDw8N7Ju9UuM8L6FnywMPDw3saL19inhiSxgceHh7ec3hJMyJZRB76vy8r2cTDvRY8PDy8mJcH6+f8fGW+h4eHh7eequfHBfLwvU8exWrx8PDwLvDygHu24N6Q6hEaHh4e3lHe7KBVe6SgTTmzJsV/noOHh4d3gTf753/TYN2X3XWrAg8PD+8ob1/45i9OALNDXX+0IfDw8PCO8tpw34bsFpxs8XAwhoeHh3eIlwTW9pVJy3XfAj7Qa8HDw8O7xtuH9XbR7RYUzQg8PDy8Na8dUCUvSFJCmzZWqQgPDw/vKG82MZuN/9u79mkDDw8P7wZv0/mcJY/Z8aw2zuPh4eHd5iVlbh6+8yDejtza8h0PDw/vNq9tT+SBux2MtWkmakng4eHhHeLl7YB67HRoiFUkgPfv4+Hh4V3m7RsEs4TRbmVSlOPh4eHd4+UDpLzY3RyfulFw4+Hh4d3mzYJ4ftSgbea25f7HARgeHh7eIV77mlmS2DR282FY9HfDw8PDW/Ny5KzpkG9Hvk2rZgQeHh7eBd6sKk+WsjlesBqS4eHh4V3jRUE2bhnkJe/m7UnCwMPDw7vHa1sAedm9P0Dwiq+ipMbDw8Mb8X7Ka3OMYDZUaw8Z4OHh4d3mbfJJnjbaAwTDQdfmwsPDwyt5s1FT3sydHQuYNSn+6LXg4eHhHeXlQbkN9PmCTmU2PDw8vKfxZgeh9olhWGrj4eHhPYyXP+dUy7gt2fHw8PDu8fav2RwXyBdd34uHh4d3q0atk0cbrGfBfTZ4w8PDw7vG+wfEQCIWijV1fQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/03/30/quartz-doc-translation-lesson-9/&title=第九章：JobStores | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3awW7rMAwEwPz/T/ddC+Ql3SUlwIfxqWhiW6MCJEvq9Yqvn7fr0+9/f/r7O+8/f/r00/ff7z124eHh4a2X/p3x6QnfnzwjJXd931w8PDy8e7zkcbO7vm9Nsh15ksDDw8N7Ju9UuM8L6FnywMPDw3saL19inhiSxgceHh7ec3hJMyJZRB76vy8r2cTDvRY8PDy8mJcH6+f8fGW+h4eHh7eequfHBfLwvU8exWrx8PDwLvDygHu24N6Q6hEaHh4e3lHe7KBVe6SgTTmzJsV/noOHh4d3gTf753/TYN2X3XWrAg8PD+8ob1/45i9OALNDXX+0IfDw8PCO8tpw34bsFpxs8XAwhoeHh3eIlwTW9pVJy3XfAj7Qa8HDw8O7xtuH9XbR7RYUzQg8PDy8Na8dUCUvSFJCmzZWqQgPDw/vKG82MZuN/9u79mkDDw8P7wZv0/mcJY/Z8aw2zuPh4eHd5iVlbh6+8yDejtza8h0PDw/vNq9tT+SBux2MtWkmakng4eHhHeLl7YB67HRoiFUkgPfv4+Hh4V3m7RsEs4TRbmVSlOPh4eHd4+UDpLzY3RyfulFw4+Hh4d3mzYJ4ftSgbea25f7HARgeHh7eIV77mlmS2DR282FY9HfDw8PDW/Ny5KzpkG9Hvk2rZgQeHh7eBd6sKk+WsjlesBqS4eHh4V3jRUE2bhnkJe/m7UnCwMPDw7vHa1sAedm9P0Dwiq+ipMbDw8Mb8X7Ka3OMYDZUaw8Z4OHh4d3mbfJJnjbaAwTDQdfmwsPDwyt5s1FT3sydHQuYNSn+6LXg4eHhHeXlQbkN9PmCTmU2PDw8vKfxZgeh9olhWGrj4eHhPYyXP+dUy7gt2fHw8PDu8fav2RwXyBdd34uHh4d3q0atk0cbrGfBfTZ4w8PDw7vG+wfEQCIWijV1fQAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/03/30/quartz-doc-translation-lesson-10/" rel="prev" title="第十章：配置、资源的使用以及SchedulerFactory">
+                                  
+                                      第十章：配置、资源的使用以及SchedulerFactory
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Quartz/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Quartz</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/03/30/quartz-doc-translation-lesson-8/" rel="prev" title="第八章：Scheduler监听器">
+                                    
+                                        第八章：Scheduler监听器
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Quartz/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Quartz</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '第九章：JobStores',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RAMJobStore"><span class="toc-text">RAMJobStore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JDBCJobStore"><span class="toc-text">JDBCJobStore</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TerracottaJobStore"><span class="toc-text">TerracottaJobStore</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

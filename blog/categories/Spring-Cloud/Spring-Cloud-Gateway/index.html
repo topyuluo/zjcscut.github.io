@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Category: Spring Cloud Gateway | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover  half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      
+<div class='l_main'>
+  
+    
+      
+  <section class="post-list ">
+    
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+    
+    
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/25/spring-cloud-gateway-hystrix/">
+      Spring Cloud Gateway-使用自定义过滤器通过Hystrix实现降级处理
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月25日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.1k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：10分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T09:53:47+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>在微服务架构中，下游依赖出现问题如果上游调用方不做请求降级处理，下游的异常依赖没有被隔离，很有可能出现因为一两个服务或者小到一两个接口异常导致上游所有服务不可用，甚至影响整个业务线。请求降级处理目前比较主流的依然是<code>Netfilx</code>出品的<code>Hystrix</code>。<code>Hystrix</code>的工作原理是：</p>
+<ul>
+<li>把请求基于线程池或者信号量隔离，一旦下游服务在指定配置的超时时间内无法响应会进入预设或者默认的降级实现。</li>
+<li>每个请求的状态都会记录下来，在一个滑动窗口内处理失败的比率超过设定的阈值就会触发熔断器(Circle Breaker)开启，熔断器开启之后所有请求都会直接进入预设或者默认的降级逻辑。</li>
+<li>熔断器打开后，且距离熔断器打开的时间或上一次试探请求放行的时间超过设定值，熔断器器进入半开状态，允许放行一个试探请求。</li>
+<li>请求成功率提高后，基于统计数据确定对熔断器进行关闭，所有请求正常放行。</li>
+</ul>
+<p>这里不对<code>Hystrix</code>的细节做更深入分析，而是接着谈谈<code>Spring Cloud Gateway</code>中如何使用<code>Hystrix</code>，主要包括内置的<code>Hystrix</code>过滤器和定制过滤器结合<code>Hystrix</code>实现我们想要的功能。除了要引入<code>spring-cloud-starter-gateway</code>依赖之外，还需要引入<code>spring-cloud-starter-netflix-hystrix</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/25/spring-cloud-gateway-hystrix/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/18/spring-cloud-gateway-modify-request-response/">
+      Spring Cloud Gateway-ServerWebExchange核心方法与请求或者响应内容的修改
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月18日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：9.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：47分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T10:08:24+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<ul>
+<li>本文编写的时候使用的<code>Spring Cloud Gateway</code>版本为当时最新的版本<code>Greenwich.SR1</code>。</li>
+</ul>
+<p>我们在使用<code>Spring Cloud Gateway</code>的时候，注意到过滤器（包括<code>GatewayFilter</code>、<code>GlobalFilter</code>和过滤器链<code>GatewayFilterChain</code>），都依赖到<code>ServerWebExchange</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GlobalFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GatewayFilter</span> <span class="keyword">extends</span> <span class="title">ShortcutConfigurable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GatewayFilterChain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">Mono&lt;Void&gt; <span class="title">filter</span><span class="params">(ServerWebExchange exchange)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的设计和<code>Servlet</code>中的<code>Filter</code>是相似的，当前过滤器可以决定是否执行下一个过滤器的逻辑，由<code>GatewayFilterChain#filter()</code>是否被调用来决定。而<code>ServerWebExchange</code>就相当于当前请求和响应的上下文。<code>ServerWebExchange</code>实例不单存储了<code>Request</code>和<code>Response</code>对象，还提供了一些扩展方法，如果想实现改造请求参数或者响应参数，就必须深入了解<code>ServerWebExchange</code>。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/18/spring-cloud-gateway-modify-request-response/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/11/spring-cloud-gateway-custom-exception-handler/">
+      Spring Cloud Gateway-自定义异常处理
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：8分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-02T10:19:32+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>我们平时在用<code>SpringMVC</code>的时候，只要是经过<code>DispatcherServlet</code>处理的请求，可以通过<code>@ControllerAdvice</code>和<code>@ExceptionHandler</code>自定义不同类型异常的处理逻辑，具体可以参考<code>ResponseEntityExceptionHandler</code>和<code>DefaultHandlerExceptionResolver</code>，底层原理很简单，就是发生异常的时候搜索容器中已经存在的异常处理器并且匹配对应的异常类型，匹配成功之后使用该指定的异常处理器返回结果进行<code>Response</code>的渲染，如果找不到默认的异常处理器则用默认的进行兜底(个人认为，Spring在很多功能设计的时候都有这种“有则使用自定义，无则使用默认提供”这种思想十分优雅)。</p>
+<p><code>SpringMVC</code>中提供的自定义异常体系在<code>Spring-WebFlux</code>中并不适用，其实原因很简单，两者底层的运行容器并不相同。<code>WebExceptionHandler</code>是<code>Spring-WebFlux</code>的异常处理器顶层接口，因此追溯到子类可以追踪到<code>DefaultErrorWebExceptionHandler</code>是<code>Spring Cloud Gateway</code>的全局异常处理器，配置类是<code>ErrorWebFluxAutoConfiguration</code>。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/11/spring-cloud-gateway-custom-exception-handler/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/05/spring-cloud-gateway-custom-gateway-filter/">
+      Spring Cloud Gateway-自定义GatewayFilter
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：6分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-11T23:21:52+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p><code>GatewayFilter</code>的作用域是指定的路由配置，路由配置选项里面需要通过filters指定想要使用的<code>GatewayFilter</code>列表。我们可以通过自定义<code>GatewayFilter</code>，做额外的扩展，实现一些内建<code>GatewayFilter</code>不存在的功能，并且应用到我们的路由配置中。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/05/spring-cloud-gateway-custom-gateway-filter/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/05/spring-cloud-gateway-custom-global-filter/">
+      Spring Cloud Gateway-自定义GlobalFilter
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月5日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：946字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：4分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-11T23:21:34+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p><code>GlobalFilter</code>的作用域是所有的路由配置，我们可以通过自定义<code>GlobalFilter</code>，做额外的扩展，用来实现一些全局的功能。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/05/spring-cloud-gateway-custom-global-filter/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/03/spring-cloud-gateway-guide/">
+      Spring Cloud Gateway入坑记
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月3日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Spring Cloud&nbsp;/&nbsp;Spring Cloud Gateway</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：4.6k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：19分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-11T23:21:05+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月11日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/spring-cloud-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近在做老系统的重构，重构完成后新系统中需要引入一个网关服务，作为新系统和老系统接口的适配和代理。之前，很多网关应用使用的是<code>Spring-Cloud-Netfilx</code>基于<code>Zuul1.x</code>版本实现的那套方案，但是鉴于<code>Zuul1.x</code>已经停止迭代，它使用的是比较传统的阻塞(B)IO + 多线程的实现方案，其实性能不太好。后来Spring团队干脆自己重新研发了一套网关组件，这个就是本次要调研的<code>Spring-Cloud-Gateway</code>。</p>
+<h2 id="简介">简介</h2>
+<p><font color=green size=5>Spring Cloud Gateway</font>依赖于<a href="https://spring.io/projects/spring-boot#learn" target="_blank" rel="noopener">Spring Boot 2.0</a>, <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html" target="_blank" rel="noopener">Spring WebFlux</a>,和<a href="https://projectreactor.io/docs" target="_blank" rel="noopener">Project Reactor</a>。许多熟悉的同步类库(例如<code>Spring-Data</code>和<code>Spring-Security</code>)和同步编程模式在<code>Spring Cloud Gateway</code>中并不适用，所以最好先阅读一下上面提到的三个框架的文档。</p>
+<p><code>Spring Cloud Gateway</code>依赖于<code>Spring Boot</code>和<code>Spring WebFlux</code>提供的基于<code>Netty</code>的运行时环境，它并非构建为一个WAR包或者运行在传统的<code>Servlet</code>容器中。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/03/spring-cloud-gateway-guide/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Spring-Cloud-Gateway/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud Gateway</a>
+        
+          <a href="/blog/tags/Spring-Cloud/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Spring Cloud</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+    
+  </section>
+  
+    
+    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+    
+    
+
+  
+
+
+    
+  
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+          <section class='widget card-shadow  blogger'>
+  <div class='content'>
+    
+      <div class='avatar'>
+        <img class='avatar' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg'/>
+      </div>
+    
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="/atom.xml"
+              class="social fas fa-rss fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="mailto:739805340@qq.com"
+              class="social fas fa-envelope fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/zjcscut"
+              class="social fab fa-github fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  category'>
+    <header>
+  <div>
+    
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i><span class='name'>文章分类</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/categories/"
+    title="categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <ul class="entry navigation">
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Framework/" href="/blog/categories/Framework/"
+            id="blogcategoriesFramework"
+            ><div class='name'>Framework</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Archunit/" href="/blog/categories/Framework/Archunit/"
+            id="blogcategoriesFrameworkArchunit"
+            ><div class='name'>Archunit</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Cglib/" href="/blog/categories/Framework/Cglib/"
+            id="blogcategoriesFrameworkCglib"
+            ><div class='name'>Cglib</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Hystrix/" href="/blog/categories/Framework/Hystrix/"
+            id="blogcategoriesFrameworkHystrix"
+            ><div class='name'>Hystrix</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Micrometer/" href="/blog/categories/Framework/Micrometer/"
+            id="blogcategoriesFrameworkMicrometer"
+            ><div class='name'>Micrometer</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Mybatis/" href="/blog/categories/Framework/Mybatis/"
+            id="blogcategoriesFrameworkMybatis"
+            ><div class='name'>Mybatis</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Zuul/" href="/blog/categories/Framework/Zuul/"
+            id="blogcategoriesFrameworkZuul"
+            ><div class='name'>Zuul</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Go/" href="/blog/categories/Go/"
+            id="blogcategoriesGo"
+            ><div class='name'>Go</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Go/Golang/" href="/blog/categories/Go/Golang/"
+            id="blogcategoriesGoGolang"
+            ><div class='name'>Golang</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/In-Action/" href="/blog/categories/In-Action/"
+            id="blogcategoriesIn-Action"
+            ><div class='name'>In Action</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/In-Action/Distributed-Transaction/" href="/blog/categories/In-Action/Distributed-Transaction/"
+            id="blogcategoriesIn-ActionDistributed-Transaction"
+            ><div class='name'>Distributed Transaction</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Java/" href="/blog/categories/Java/"
+            id="blogcategoriesJava"
+            ><div class='name'>Java</div><div class='badge'>(37)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Algorithm/" href="/blog/categories/Java/Algorithm/"
+            id="blogcategoriesJavaAlgorithm"
+            ><div class='name'>Algorithm</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Annotation/" href="/blog/categories/Java/Annotation/"
+            id="blogcategoriesJavaAnnotation"
+            ><div class='name'>Annotation</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Concurrency/" href="/blog/categories/Java/Concurrency/"
+            id="blogcategoriesJavaConcurrency"
+            ><div class='name'>Concurrency</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Design-Pattern/" href="/blog/categories/Java/Design-Pattern/"
+            id="blogcategoriesJavaDesign-Pattern"
+            ><div class='name'>Design Pattern</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Enum/" href="/blog/categories/Java/Enum/"
+            id="blogcategoriesJavaEnum"
+            ><div class='name'>Enum</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Functional-Programming/" href="/blog/categories/Java/Functional-Programming/"
+            id="blogcategoriesJavaFunctional-Programming"
+            ><div class='name'>Functional Programming</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Instrument/" href="/blog/categories/Java/Instrument/"
+            id="blogcategoriesJavaInstrument"
+            ><div class='name'>Instrument</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Introspector/" href="/blog/categories/Java/Introspector/"
+            id="blogcategoriesJavaIntrospector"
+            ><div class='name'>Introspector</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/JVM/" href="/blog/categories/Java/JVM/"
+            id="blogcategoriesJavaJVM"
+            ><div class='name'>JVM</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Lambda/" href="/blog/categories/Java/Lambda/"
+            id="blogcategoriesJavaLambda"
+            ><div class='name'>Lambda</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Netty/" href="/blog/categories/Java/Netty/"
+            id="blogcategoriesJavaNetty"
+            ><div class='name'>Netty</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Reflection/" href="/blog/categories/Java/Reflection/"
+            id="blogcategoriesJavaReflection"
+            ><div class='name'>Reflection</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Life/" href="/blog/categories/Life/"
+            id="blogcategoriesLife"
+            ><div class='name'>Life</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Middleware/" href="/blog/categories/Middleware/"
+            id="blogcategoriesMiddleware"
+            ><div class='name'>Middleware</div><div class='badge'>(34)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Quartz/" href="/blog/categories/Middleware/Quartz/"
+            id="blogcategoriesMiddlewareQuartz"
+            ><div class='name'>Quartz</div><div class='badge'>(14)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/RabbitMQ/" href="/blog/categories/Middleware/RabbitMQ/"
+            id="blogcategoriesMiddlewareRabbitMQ"
+            ><div class='name'>RabbitMQ</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Redis/" href="/blog/categories/Middleware/Redis/"
+            id="blogcategoriesMiddlewareRedis"
+            ><div class='name'>Redis</div><div class='badge'>(10)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Zookeeper/" href="/blog/categories/Middleware/Zookeeper/"
+            id="blogcategoriesMiddlewareZookeeper"
+            ><div class='name'>Zookeeper</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/MySQL/" href="/blog/categories/MySQL/"
+            id="blogcategoriesMySQL"
+            ><div class='name'>MySQL</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Netty/" href="/blog/categories/Netty/"
+            id="blogcategoriesNetty"
+            ><div class='name'>Netty</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Netty/Java/" href="/blog/categories/Netty/Java/"
+            id="blogcategoriesNettyJava"
+            ><div class='name'>Java</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SOFAStack/" href="/blog/categories/SOFAStack/"
+            id="blogcategoriesSOFAStack"
+            ><div class='name'>SOFAStack</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SOFAStack/Nacos/" href="/blog/categories/SOFAStack/Nacos/"
+            id="blogcategoriesSOFAStackNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring-Cloud/" href="/blog/categories/Spring-Cloud/"
+            id="blogcategoriesSpring-Cloud"
+            ><div class='name'>Spring Cloud</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/" href="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/"
+            id="blogcategoriesSpring-CloudSpring-Cloud-Gateway"
+            ><div class='name'>Spring Cloud Gateway</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring/" href="/blog/categories/Spring/"
+            id="blogcategoriesSpring"
+            ><div class='name'>Spring</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/Prometheus/" href="/blog/categories/Spring/Prometheus/"
+            id="blogcategoriesSpringPrometheus"
+            ><div class='name'>Prometheus</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringBoot/" href="/blog/categories/Spring/SpringBoot/"
+            id="blogcategoriesSpringSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringMVC/" href="/blog/categories/Spring/SpringMVC/"
+            id="blogcategoriesSpringSpringMVC"
+            ><div class='name'>SpringMVC</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SpringBoot/" href="/blog/categories/SpringBoot/"
+            id="blogcategoriesSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SpringBoot/Nacos/" href="/blog/categories/SpringBoot/Nacos/"
+            id="blogcategoriesSpringBootNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/hexo/" href="/blog/categories/hexo/"
+            id="blogcategorieshexo"
+            ><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  tagcloud'>
+    <header>
+  <div>
+    
+      <i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/tags/"
+    title="tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <a href="/blog/tags/AQS/" style="font-size: 14px; color: #999">AQS</a> <a href="/blog/tags/Algorithm/" style="font-size: 14px; color: #999">Algorithm</a> <a href="/blog/tags/Annotation/" style="font-size: 14px; color: #999">Annotation</a> <a href="/blog/tags/Archunit/" style="font-size: 14px; color: #999">Archunit</a> <a href="/blog/tags/Cglib/" style="font-size: 14.83px; color: #939393">Cglib</a> <a href="/blog/tags/Concurrency/" style="font-size: 14.83px; color: #939393">Concurrency</a> <a href="/blog/tags/Design-Pattern/" style="font-size: 14px; color: #999">Design Pattern</a> <a href="/blog/tags/Distributed-Transaction/" style="font-size: 14.83px; color: #939393">Distributed Transaction</a> <a href="/blog/tags/Enum/" style="font-size: 14px; color: #999">Enum</a> <a href="/blog/tags/ExecutorService/" style="font-size: 14px; color: #999">ExecutorService</a> <a href="/blog/tags/Framework/" style="font-size: 17.33px; color: #828282">Framework</a> <a href="/blog/tags/Go/" style="font-size: 14px; color: #999">Go</a> <a href="/blog/tags/Golang/" style="font-size: 14px; color: #999">Golang</a> <a href="/blog/tags/Hystrix/" style="font-size: 14px; color: #999">Hystrix</a> <a href="/blog/tags/In-Action/" style="font-size: 16.5px; color: #888">In Action</a> <a href="/blog/tags/Instrument/" style="font-size: 14px; color: #999">Instrument</a> <a href="/blog/tags/Introspector/" style="font-size: 14px; color: #999">Introspector</a> <a href="/blog/tags/JSR-310/" style="font-size: 17.33px; color: #828282">JSR-310</a> <a href="/blog/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/blog/tags/Java/" style="font-size: 24px; color: #555">Java</a> <a href="/blog/tags/Lambda/" style="font-size: 14px; color: #999">Lambda</a> <a href="/blog/tags/Life/" style="font-size: 14px; color: #999">Life</a> <a href="/blog/tags/ListenableFuture/" style="font-size: 14px; color: #999">ListenableFuture</a> <a href="/blog/tags/Micrometer/" style="font-size: 14.83px; color: #939393">Micrometer</a> <a href="/blog/tags/Middleware/" style="font-size: 23.17px; color: #5b5b5b">Middleware</a> <a href="/blog/tags/MySQL/" style="font-size: 14px; color: #999">MySQL</a> <a href="/blog/tags/Mybatis/" style="font-size: 14px; color: #999">Mybatis</a> <a href="/blog/tags/Nacos/" style="font-size: 14.83px; color: #939393">Nacos</a> <a href="/blog/tags/Netty/" style="font-size: 18.17px; color: #7d7d7d">Netty</a> <a href="/blog/tags/Object/" style="font-size: 14px; color: #999">Object</a> <a href="/blog/tags/Optional/" style="font-size: 14px; color: #999">Optional</a> <a href="/blog/tags/Quartz/" style="font-size: 22.33px; color: #606060">Quartz</a> <a href="/blog/tags/RabbitMQ/" style="font-size: 20.67px; color: #6c6c6c">RabbitMQ</a> <a href="/blog/tags/Redis/" style="font-size: 21.5px; color: #666">Redis</a> <a href="/blog/tags/Reference/" style="font-size: 14px; color: #999">Reference</a> <a href="/blog/tags/Reflection/" style="font-size: 19.83px; color: #717171">Reflection</a> <a href="/blog/tags/SOFAStack/" style="font-size: 14px; color: #999">SOFAStack</a> <a href="/blog/tags/Security/" style="font-size: 14px; color: #999">Security</a> <a href="/blog/tags/Spring/" style="font-size: 17.33px; color: #828282">Spring</a> <a href="/blog/tags/Spring-Cloud/" style="font-size: 18.17px; color: #7d7d7d">Spring Cloud</a> <a href="/blog/tags/Spring-Cloud-Gateway/" style="font-size: 19px; color: #777">Spring Cloud Gateway</a> <a href="/blog/tags/SpringBoot/" style="font-size: 15.67px; color: #8e8e8e">SpringBoot</a> <a href="/blog/tags/SpringCloud/" style="font-size: 14px; color: #999">SpringCloud</a> <a href="/blog/tags/SpringMVC/" style="font-size: 14.83px; color: #939393">SpringMVC</a> <a href="/blog/tags/Thread/" style="font-size: 14.83px; color: #939393">Thread</a> <a href="/blog/tags/ThreadLocal/" style="font-size: 14px; color: #999">ThreadLocal</a> <a href="/blog/tags/ThreadPoolExecutor/" style="font-size: 14px; color: #999">ThreadPoolExecutor</a> <a href="/blog/tags/Zookeeper/" style="font-size: 14px; color: #999">Zookeeper</a> <a href="/blog/tags/Zuul/" style="font-size: 14px; color: #999">Zuul</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/hexo-theme/" style="font-size: 14px; color: #999">hexo theme</a>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

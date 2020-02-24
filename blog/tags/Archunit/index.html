@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Tag: Archunit | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover  half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      
+<div class='l_main'>
+  
+    
+      
+  <section class="post-list ">
+    
+      
+        
+          
+        
+      
+    
+    
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/02/16/java-archunit-research/">
+      项目架构级别规约框架Archunit调研
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年2月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Framework/Archunit/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Framework&nbsp;/&nbsp;Archunit</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3.4k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：14分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-02-16T22:44:09+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年2月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <h1>项目架构级别规约框架Archunit调研</h1>
+<h2 id="背景">背景</h2>
+<p>最近在做一个新项目的时候引入了一个架构方面的需求，就是需要检查项目的编码规范、模块分类规范、类依赖规范等，刚好接触到，正好做个调研。</p>
+<p>很多时候，我们会制定项目的规范，例如：</p>
+<ul>
+<li>硬性规定项目包结构中service层不能引用controller层的类(这个例子有点极端)。</li>
+<li>硬性规定定义在controller包下的Controller类的类名称以&quot;Controller&quot;结尾，方法的入参类型命名以&quot;Request&quot;结尾，返回参数命名以&quot;Response&quot;结尾。</li>
+<li>枚举类型必须放在common.constant包下，以类名称Enum结尾。</li>
+</ul>
+<p>还有很多其他可能需要定制的规范，最终可能会输出一个文档。但是，谁能保证所有参数开发的人员都会按照文档的规范进行开发？为了保证规范的实行，Archunit以单元测试的形式通过扫描类路径(甚至Jar)包下的所有类，通过单元测试的形式对各个规范进行代码编写，如果项目代码中有违背对应的单测规范，那么单元测试将会不通过，这样就可以从CI/CD层面彻底把控项项目架构和编码规范。</p>
+<h2 id="简介">简介</h2>
+<p><a href="https://www.archunit.org" target="_blank" rel="noopener">Archunit</a>是一个免费、简单、可扩展的类库，用于检查Java代码的体系结构。提供检查包和类的依赖关系、调用层次和切面的依赖关系、循环依赖检查等其他功能。它通过导入所有类的代码结构，基于Java字节码分析实现这一点。<strong>的主要关注点是使用任何普通的Java单元测试框架自动测试代码体系结构和编码规则</strong>。</p>
+<h2 id="引入依赖">引入依赖</h2>
+<p>一般来说，目前常用的测试框架是Junit4，需要引入Junit4和archunit：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.tngtech.archunit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>archunit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>junit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>由于<code>junit4</code>中依赖到slf4j，因此最好在测试依赖中引入一个slf4j的实现，例如logback：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>ch.qos.logback<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>logback-classic<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="如何使用">如何使用</h2>
+<p>主要从下面的两个方面介绍一下的使用：</p>
+<ul>
+<li>指定参数进行类扫描。</li>
+<li>内建规则定义。</li>
+</ul>
+<h3 id="指定参数进行类扫描">指定参数进行类扫描</h3>
+<p>需要对代码或者依赖规则进行判断前提是要导入所有需要分析的类，类扫描导入依赖于<code>ClassFileImporter</code>，底层依赖于ASM字节码框架针对类文件的字节码进行解析，性能会比基于反射的类扫描框架高很多。<code>ClassFileImporter</code>的构造可选参数为<code>ImportOption(s)</code>，扫描规则可以通过<code>ImportOption</code>接口实现，默认提供可选的规则有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 不包含测试类</span></span><br><span class="line">ImportOption.Predefined.DONT_INCLUDE_TESTS</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不包含Jar包里面的类</span></span><br><span class="line">ImportOption.Predefined.DONT_INCLUDE_JARS</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不包含Jar和Jrt包里面的类，JDK9的特性</span></span><br><span class="line">ImportOption.Predefined.DONT_INCLUDE_ARCHIVES</span><br></pre></td></tr></table></figure>
+<p>举个例子，我们实现一个自定义的<code>ImportOption</code>实现，用于指定需要排除扫描的包路径：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DontIncludePackagesImportOption</span> <span class="keyword">implements</span> <span class="title">ImportOption</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Set&lt;Pattern&gt; EXCLUDED_PATTERN;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DontIncludePackagesImportOption</span><span class="params">(String... packages)</span> </span>&#123;</span><br><span class="line">        EXCLUDED_PATTERN = <span class="keyword">new</span> HashSet&lt;&gt;(<span class="number">8</span>);</span><br><span class="line">        <span class="keyword">for</span> (String eachPackage : packages) &#123;</span><br><span class="line">            EXCLUDED_PATTERN.add(Pattern.compile(String.format(<span class="string">".*/%s/.*"</span>, eachPackage.replace(<span class="string">"/"</span>, <span class="string">"."</span>))));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">includes</span><span class="params">(Location location)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (Pattern pattern : EXCLUDED_PATTERN) &#123;</span><br><span class="line">            <span class="keyword">if</span> (location.matches(pattern)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ImportOption</code>接口只有一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">includes</span><span class="params">(Location location)</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>Location</code>包含了路径信息、是否Jar文件等判断属性的元数据，方便使用正则表达式或者直接的逻辑判断。</p>
+<p>接着我们可以通过上面实现的<code>DontIncludePackagesImportOption</code>去构造<code>ClassFileImporter</code>实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ImportOptions importOptions = <span class="keyword">new</span> ImportOptions()</span><br><span class="line">        <span class="comment">// 不扫描jar包</span></span><br><span class="line">        .with(ImportOption.Predefined.DONT_INCLUDE_JARS)</span><br><span class="line">        <span class="comment">// 排除不扫描的包</span></span><br><span class="line">        .with(<span class="keyword">new</span> DontIncludePackagesImportOption(<span class="string">"com.sample..support"</span>));</span><br><span class="line">ClassFileImporter classFileImporter = <span class="keyword">new</span> ClassFileImporter(importOptions);</span><br></pre></td></tr></table></figure>
+<p>得到<code>ClassFileImporter</code>实例后我们可以通过对应的方法导入项目中的类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定类型导入单个类</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClass <span class="title">importClass</span><span class="params">(Class&lt;?&gt; clazz)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 指定类型导入多个类</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importClasses</span><span class="params">(Class&lt;?&gt;... classes)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importClasses</span><span class="params">(Collection&lt;Class&lt;?&gt;&gt; classes)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 通过指定路径导入类</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importUrl</span><span class="params">(URL url)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importUrls</span><span class="params">(Collection&lt;URL&gt; urls)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importLocations</span><span class="params">(Collection&lt;Location&gt; locations)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 通过类路径导入类</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importClasspath</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importClasspath</span><span class="params">(ImportOptions options)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 通过文件路径导入类</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPath</span><span class="params">(String path)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPath</span><span class="params">(Path path)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPaths</span><span class="params">(String... paths)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPaths</span><span class="params">(Path... paths)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPaths</span><span class="params">(Collection&lt;Path&gt; paths)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 通过Jar文件对象导入类</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importJar</span><span class="params">(JarFile jar)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importJars</span><span class="params">(JarFile... jarFiles)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importJars</span><span class="params">(Iterable&lt;JarFile&gt; jarFiles)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 通过包路径导入类 - 这个是比较常用的方法</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPackages</span><span class="params">(Collection&lt;String&gt; packages)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPackages</span><span class="params">(String... packages)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPackagesOf</span><span class="params">(Class&lt;?&gt;... classes)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JavaClasses <span class="title">importPackagesOf</span><span class="params">(Collection&lt;Class&lt;?&gt;&gt; classes)</span></span></span><br></pre></td></tr></table></figure>
+<p>导入类的方法提供了多维度的参数，用起来会十分便捷。例如想导入<code>com.sample</code>包下面的所有类，只需要这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassFileImporterTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testImportBootstarpClass</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ImportOptions importOptions = <span class="keyword">new</span> ImportOptions()</span><br><span class="line">                <span class="comment">// 不扫描jar包</span></span><br><span class="line">                .with(ImportOption.Predefined.DONT_INCLUDE_JARS)</span><br><span class="line">                <span class="comment">// 排除不扫描的包</span></span><br><span class="line">                .with(<span class="keyword">new</span> DontIncludePackagesImportOption(<span class="string">"com.sample..support"</span>));</span><br><span class="line">        ClassFileImporter classFileImporter = <span class="keyword">new</span> ClassFileImporter(importOptions);</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        JavaClasses javaClasses = classFileImporter.importPackages(<span class="string">"com.sample"</span>);</span><br><span class="line">        <span class="keyword">long</span> end = System.currentTimeMillis();</span><br><span class="line">        System.out.println(String.format(<span class="string">"Found %d classes,cost %d ms"</span>, javaClasses.size(), end - start));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到的<code>JavaClasses</code>是<code>JavaClass</code>的集合，可以简单类比为反射中<code>Class</code>的集合，后面使用的代码规则和依赖规则判断都是强依赖于<code>JavaClasses</code>或者<code>JavaClass</code>。</p>
+<h3 id="内建规则定义">内建规则定义</h3>
+<p>类扫描和类导入完成之后，我们需要定检查规则，然后应用于所有导入的类，这样子就能完成对所有的类进行规则的过滤 - 或者说把规则应用于所有类并且进行断言。</p>
+<p>规则定义依赖于<code>ArchRuleDefinition</code>类，创建出来的规则是<code>ArchRule</code>实例，规则实例的创建过程一般使用<code>ArchRuleDefinition</code>类的流式方法，这些流式方法定义上符合人类思考的思维逻辑，上手比较简单，举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.noClasses()</span><br><span class="line">    <span class="comment">// 在service包下的所有类</span></span><br><span class="line">    .that().resideInAPackage(<span class="string">"..service.."</span>)</span><br><span class="line">    <span class="comment">// 不能调用controller包下的任意类</span></span><br><span class="line">    .should().accessClassesThat().resideInAPackage(<span class="string">"..controller.."</span>)</span><br><span class="line">    <span class="comment">// 断言描述 - 不满足规则的时候打印出来的原因</span></span><br><span class="line">    .because(<span class="string">"不能在service包中调用controller中的类"</span>);</span><br><span class="line">    <span class="comment">// 对所有的JavaClasses进行判断</span></span><br><span class="line">archRule.check(classes);</span><br></pre></td></tr></table></figure>
+<p>上面展示了自定义新的<code>ArchRule</code>的例子，中已经为我们内置了一些常用的<code>ArchRule</code>实现，它们位于<code>GeneralCodingRules</code>中：</p>
+<ul>
+<li>NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS：不能调用System.out、System.err或者(Exception.)printStackTrace。</li>
+<li>NO_CLASSES_SHOULD_THROW_GENERIC_EXCEPTIONS：类不能直接抛出通用异常Throwable、Exception或者RuntimeException。</li>
+<li>NO_CLASSES_SHOULD_USE_JAVA_UTIL_LOGGING：不能使用<code>java.util.logging</code>包路径下的日志组件。</li>
+</ul>
+<p>更多内建的<code>ArchRule</code>或者通用的内置规则使用，可以参考<a href="https://github.com/TNG/ArchUnit-Examples" target="_blank" rel="noopener">官方例子</a>。</p>
+<h2 id="基本使用例子">基本使用例子</h2>
+<p>基本使用例子，主要从一些常见的编码规范或者项目规范编写规则对项目所有类进行检查。</p>
+<h3 id="包依赖关系检查">包依赖关系检查</h3>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-1.png" alt="j-a-r-u-1"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.noClasses()</span><br><span class="line">    .that().resideInAPackage(<span class="string">"..com.source.."</span>)</span><br><span class="line">    .should().dependOnClassesThat().resideInAPackage(<span class="string">"..com.target.."</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-2.png" alt="j-a-r-u-2"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().resideInAPackage(<span class="string">"..com.foo.."</span>)</span><br><span class="line">    .should().onlyAccessClassesThat().resideInAnyPackage(<span class="string">"..com.source.."</span>, <span class="string">"..com.foo.."</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="类依赖关系检查">类依赖关系检查</h3>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-3.png" alt="j-a-r-u-3"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().haveNameMatching(<span class="string">".*Bar"</span>)</span><br><span class="line">    .should().onlyBeAccessed().byClassesThat().haveSimpleName(<span class="string">"Bar"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="类包含于包的关系检查">类包含于包的关系检查</h3>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-4.png" alt="j-a-r-u-4"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().haveSimpleNameStartingWith(<span class="string">"Foo"</span>)</span><br><span class="line">    .should().resideInAPackage(<span class="string">"com.foo"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="继承关系检查">继承关系检查</h3>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-5.png" alt="j-a-r-u-5"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().implement(Collection<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line">    .should().haveSimpleNameEndingWith("Connection");</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-6.png" alt="j-a-r-u-6"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().areAssignableTo(EntityManager<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line">    .should().onlyBeAccessed().byAnyPackage("..persistence..");</span><br></pre></td></tr></table></figure>
+<h3 id="注解检查">注解检查</h3>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/j-a-r-u-7.png" alt="j-a-r-u-7"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArchRule archRule = ArchRuleDefinition.classes()</span><br><span class="line">    .that().areAssignableTo(EntityManager<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    .<span class="title">should</span>().<span class="title">onlyBeAccessed</span>().<span class="title">byClassesThat</span>().<span class="title">areAnnotatedWith</span>(<span class="title">Transactional</span>.<span class="title">class</span>)</span></span><br></pre></td></tr></table></figure>
+<h3 id="逻辑层调用关系检查">逻辑层调用关系检查</h3>
+<p>例如项目结构如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- com.myapp.controller</span><br><span class="line">    SomeControllerOne<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class">    <span class="title">SomeControllerTwo</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">- <span class="title">com</span>.<span class="title">myapp</span>.<span class="title">service</span></span></span><br><span class="line"><span class="class">    <span class="title">SomeServiceOne</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">    <span class="title">SomeServiceTwo</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">- <span class="title">com</span>.<span class="title">myapp</span>.<span class="title">persistence</span></span></span><br><span class="line"><span class="class">    <span class="title">SomePersistenceManager</span></span></span><br></pre></td></tr></table></figure>
+<p>例如我们规定：</p>
+<ul>
+<li>包路径<code>com.myapp.controller</code>中的类不能被其他层级包引用。</li>
+<li>包路径<code>com.myapp.service</code>中的类只能被<code>com.myapp.controller</code>中的类引用。</li>
+<li>包路径<code>com.myapp.persistence</code>中的类只能被<code>com.myapp.service</code>中的类引用。</li>
+</ul>
+<p>编写规则如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">layeredArchitecture()</span><br><span class="line">    .layer(<span class="string">"Controller"</span>).definedBy(<span class="string">"..controller.."</span>)</span><br><span class="line">    .layer(<span class="string">"Service"</span>).definedBy(<span class="string">"..service.."</span>)</span><br><span class="line">    .layer(<span class="string">"Persistence"</span>).definedBy(<span class="string">"..persistence.."</span>)</span><br><span class="line"></span><br><span class="line">    .whereLayer(<span class="string">"Controller"</span>).mayNotBeAccessedByAnyLayer()</span><br><span class="line">    .whereLayer(<span class="string">"Service"</span>).mayOnlyBeAccessedByLayers(<span class="string">"Controller"</span>)</span><br><span class="line">    .whereLayer(<span class="string">"Persistence"</span>).mayOnlyBeAccessedByLayers(<span class="string">"Service"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="循环依赖关系检查">循环依赖关系检查</h3>
+<p>例如项目结构如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- com.myapp.moduleone</span><br><span class="line">    ClassOneInModuleOne<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class">    <span class="title">ClassTwoInModuleOne</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">- <span class="title">com</span>.<span class="title">myapp</span>.<span class="title">moduletwo</span></span></span><br><span class="line"><span class="class">    <span class="title">ClassOneInModuleTwo</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">    <span class="title">ClassTwoInModuleTwo</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">- <span class="title">com</span>.<span class="title">myapp</span>.<span class="title">modulethree</span></span></span><br><span class="line"><span class="class">    <span class="title">ClassOneInModuleThree</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">    <span class="title">ClassTwoInModuleThree</span>.<span class="title">class</span></span></span><br></pre></td></tr></table></figure>
+<p>例如我们规定：<code>com.myapp.moduleone</code>、<code>com.myapp.moduletwo</code>和<code>com.myapp.modulethree</code>三个包路径中的类不能形成一个循环依赖缓，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ClassOneInModuleOne -&gt; ClassOneInModuleTwo -&gt; ClassOneInModuleThree -&gt; ClassOneInModuleOne</span><br></pre></td></tr></table></figure>
+<p>编写规则如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slices().matching(<span class="string">"com.myapp.(*).."</span>).should().beFreeOfCycles()</span><br></pre></td></tr></table></figure>
+<h2 id="核心API">核心API</h2>
+<p>把API分为三层，最重要的是&quot;Core&quot;层、&quot;Lang&quot;层和&quot;Library&quot;层。</p>
+<h3 id="Core层API">Core层API</h3>
+<p>ArchUnit的Core层API大部分类似于Java原生反射API，例如<code>JavaMethod</code>和<code>JavaField</code>对应于原生反射中的<code>Method</code>和<code>Field</code>，它们提供了诸如<code>getName()</code>、<code>getMethods()</code>、<code>getType()</code>和<code>getParameters()</code>等方法。</p>
+<p>此外ArchUnit扩展一些API用于描述依赖代码之间关系，例如<code>JavaMethodCall</code>， <code>JavaConstructorCall</code>或<code>JavaFieldAccess</code>。还提供了例如Java类与其他Java类之间的导入访问关系的API如<code>JavaClass#getAccessesFromSelf()</code>。</p>
+<p>而需要导入类路径下或者Jar包中已经编译好的Java类，ArchUnit提供了<code>ClassFileImporter</code>完成此功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JavaClasses classes = <span class="keyword">new</span> ClassFileImporter().importPackages(<span class="string">"com.mycompany.myapp"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="Lang层API">Lang层API</h3>
+<p>Core层的API十分强大，提供了需要关于Java程序静态结构的信息，但是直接使用Core层的API对于单元测试会缺乏表现力，特别表现在架构规则方面。</p>
+<p>出于这个原因，ArchUnit提供了Lang层的API，它提供了一种强大的语法来以抽象的方式表达规则。Lang层的API大多数是采用流式编程方式定义方法，例如指定包定义和调用关系的规则如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ArchRule rule =</span><br><span class="line">    classes()</span><br><span class="line">         <span class="comment">// 定义在service包下的所欲类</span></span><br><span class="line">        .that().resideInAPackage(<span class="string">"..service.."</span>)</span><br><span class="line">         <span class="comment">// 只能被controller包或者service包中的类访问</span></span><br><span class="line">        .should().onlyBeAccessed().byAnyPackage(<span class="string">"..controller.."</span>, <span class="string">"..service.."</span>);</span><br></pre></td></tr></table></figure>
+<p>编写好规则后就可以基于导入所有编译好的类进行扫描：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JavaClasses classes = <span class="keyword">new</span> ClassFileImporter().importPackage(<span class="string">"com.myapp"</span>);</span><br><span class="line">ArchRule rule = <span class="comment">// 定义的规则</span></span><br><span class="line">rule.check(classes);</span><br></pre></td></tr></table></figure>
+<h3 id="Library层API">Library层API</h3>
+<p>Library层API通过静态工厂方法提供了更多复杂而强大的预定义规则，入口类是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.tngtech.archunit.library.Architectures</span><br></pre></td></tr></table></figure>
+<p>目前，这只能为分层架构提供方便的检查，但将来可能会扩展为六边形架构\管道和过滤器，业务逻辑和技术基础架构的分离等样式。</p>
+<p>还有其他几个相对强大的功能：</p>
+<ul>
+<li>代码切片功能，入口是<code>com.tngtech.archunit.library.dependencies.SlicesRuleDefinition</code>。</li>
+<li>一般编码规则，入口是<code>com.tngtech.archunit.library.GeneralCodingRules</code>。</li>
+<li>PlantUML组件支持，功能位于包路径<code>com.tngtech.archunit.library.plantuml</code>下。</li>
+</ul>
+<h2 id="编写复杂的规则">编写复杂的规则</h2>
+<p>一般来说，内建的规则不一定能够满足一些复杂的规范校验规则，因此需要编写自定义的规则。这里仅仅举一个前文提到的相对复杂的规则：</p>
+<ul>
+<li>定义在controller包下的Controller类的类名称以&quot;Controller&quot;结尾，方法的入参类型命名以&quot;Request&quot;结尾，返回参数命名以&quot;Response&quot;结尾。</li>
+</ul>
+<p>官方提供的自定义规则的例子如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">DescribedPredicate&lt;JavaClass&gt; haveAFieldAnnotatedWithPayload =</span><br><span class="line">    <span class="keyword">new</span> DescribedPredicate&lt;JavaClass&gt;(<span class="string">"have a field annotated with @Payload"</span>)&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">apply</span><span class="params">(JavaClass input)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">boolean</span> someFieldAnnotatedWithPayload = <span class="comment">// iterate fields and check for @Payload</span></span><br><span class="line">            <span class="keyword">return</span> someFieldAnnotatedWithPayload;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">ArchCondition&lt;JavaClass&gt; onlyBeAccessedBySecuredMethods =</span><br><span class="line">    <span class="keyword">new</span> ArchCondition&lt;JavaClass&gt;(<span class="string">"only be accessed by @Secured methods"</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">check</span><span class="params">(JavaClass item, ConditionEvents events)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (JavaMethodCall call : item.getMethodCallsToSelf()) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!call.getOrigin().isAnnotatedWith(Secured<span class="class">.<span class="keyword">class</span>)) </span>&#123;</span><br><span class="line">                    String message = String.format(</span><br><span class="line">                        <span class="string">"Method %s is not @Secured"</span>, call.getOrigin().getFullName());</span><br><span class="line">                    events.add(SimpleConditionEvent.violated(call, message));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">classes().that(haveAFieldAnnotatedWithPayload).should(onlyBeAccessedBySecuredMethods);</span><br></pre></td></tr></table></figure>
+<p>我们只需要模仿它的实现即可，具体如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArchunitTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">controller_class_rule</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		JavaClasses classes = <span class="keyword">new</span> ClassFileImporter().importPackages(<span class="string">"club.throwable"</span>);</span><br><span class="line">		DescribedPredicate&lt;JavaClass&gt; predicate =</span><br><span class="line">				<span class="keyword">new</span> DescribedPredicate&lt;JavaClass&gt;(<span class="string">"定义在club.throwable.controller包下的所有类"</span>) &#123;</span><br><span class="line">					<span class="meta">@Override</span></span><br><span class="line">					<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">apply</span><span class="params">(JavaClass input)</span> </span>&#123;</span><br><span class="line">						<span class="keyword">return</span> <span class="keyword">null</span> != input.getPackageName() &amp;&amp; input.getPackageName().contains(<span class="string">"club.throwable.controller"</span>);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;;</span><br><span class="line">		ArchCondition&lt;JavaClass&gt; condition1 = <span class="keyword">new</span> ArchCondition&lt;JavaClass&gt;(<span class="string">"类名称以Controller结尾"</span>) &#123;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">check</span><span class="params">(JavaClass javaClass, ConditionEvents conditionEvents)</span> </span>&#123;</span><br><span class="line">				String name = javaClass.getName();</span><br><span class="line">				<span class="keyword">if</span> (!name.endsWith(<span class="string">"Controller"</span>)) &#123;</span><br><span class="line">					conditionEvents.add(SimpleConditionEvent.violated(javaClass, String.format(<span class="string">"当前控制器类[%s]命名不以\"Controller\"结尾"</span>, name)));</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">		ArchCondition&lt;JavaClass&gt; condition2 = <span class="keyword">new</span> ArchCondition&lt;JavaClass&gt;(<span class="string">"方法的入参类型命名以\"Request\"结尾，返回参数命名以\"Response\"结尾"</span>) &#123;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">check</span><span class="params">(JavaClass javaClass, ConditionEvents conditionEvents)</span> </span>&#123;</span><br><span class="line">				Set&lt;JavaMethod&gt; javaMethods = javaClass.getMethods();</span><br><span class="line">				String className = javaClass.getName();</span><br><span class="line">				<span class="comment">// 其实这里要做严谨一点需要考虑是否使用了泛型参数，这里暂时简化了</span></span><br><span class="line">				<span class="keyword">for</span> (JavaMethod javaMethod : javaMethods) &#123;</span><br><span class="line">					Method method = javaMethod.reflect();</span><br><span class="line">					Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();</span><br><span class="line">					<span class="keyword">for</span> (Class parameterType : parameterTypes) &#123;</span><br><span class="line">						<span class="keyword">if</span> (!parameterType.getName().endsWith(<span class="string">"Request"</span>)) &#123;</span><br><span class="line">							conditionEvents.add(SimpleConditionEvent.violated(method,</span><br><span class="line">									String.format(<span class="string">"当前控制器类[%s]的[%s]方法入参不以\"Request\"结尾"</span>, className, method.getName())));</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">					Class&lt;?&gt; returnType = method.getReturnType();</span><br><span class="line">					<span class="keyword">if</span> (!returnType.getName().endsWith(<span class="string">"Response"</span>)) &#123;</span><br><span class="line">						conditionEvents.add(SimpleConditionEvent.violated(method,</span><br><span class="line">								String.format(<span class="string">"当前控制器类[%s]的[%s]方法返回参数不以\"Response\"结尾"</span>, className, method.getName())));</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;;</span><br><span class="line">		ArchRuleDefinition.classes()</span><br><span class="line">				.that(predicate)</span><br><span class="line">				.should(condition1)</span><br><span class="line">				.andShould(condition2)</span><br><span class="line">				.because(<span class="string">"定义在controller包下的Controller类的类名称以\"Controller\"结尾，方法的入参类型命名以\"Request\"结尾，返回参数命名以\"Response\"结尾"</span>)</span><br><span class="line">				.check(classes);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为导入了所有需要的编译好的类的静态属性，基本上是可以编写所有能够想出来的规约，更多的内容或者实现可以自行摸索。</p>
+<h2 id="小结">小结</h2>
+<p>通过最近的一个项目引入了Archunit，并且进行了一些编码规范和架构规范的规约，起到了十分明显的效果。之前口头或者书面文档的规范可以通过单元测试直接控制，项目构建的时候强制必须执行单元测试，只有所有单测通过才能构建和打包(禁止使用<code>-Dmaven.test.skip=true</code>参数)，起到了十分明显的成效。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://www.archunit.org/userguide/html/000_Index.html" target="_blank" rel="noopener">User Guide</a></li>
+</ul>
+<p>(e-a-2019216 c-1-d)</p>
+
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Framework/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Framework</a>
+        
+          <a href="/blog/tags/Archunit/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Archunit</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+    
+  </section>
+  
+    
+    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+    
+    
+
+  
+
+
+    
+  
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+          <section class='widget card-shadow  blogger'>
+  <div class='content'>
+    
+      <div class='avatar'>
+        <img class='avatar' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg'/>
+      </div>
+    
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="/atom.xml"
+              class="social fas fa-rss fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="mailto:739805340@qq.com"
+              class="social fas fa-envelope fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/zjcscut"
+              class="social fab fa-github fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  category'>
+    <header>
+  <div>
+    
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i><span class='name'>文章分类</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/categories/"
+    title="categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <ul class="entry navigation">
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Framework/" href="/blog/categories/Framework/"
+            id="blogcategoriesFramework"
+            ><div class='name'>Framework</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Archunit/" href="/blog/categories/Framework/Archunit/"
+            id="blogcategoriesFrameworkArchunit"
+            ><div class='name'>Archunit</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Cglib/" href="/blog/categories/Framework/Cglib/"
+            id="blogcategoriesFrameworkCglib"
+            ><div class='name'>Cglib</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Hystrix/" href="/blog/categories/Framework/Hystrix/"
+            id="blogcategoriesFrameworkHystrix"
+            ><div class='name'>Hystrix</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Micrometer/" href="/blog/categories/Framework/Micrometer/"
+            id="blogcategoriesFrameworkMicrometer"
+            ><div class='name'>Micrometer</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Mybatis/" href="/blog/categories/Framework/Mybatis/"
+            id="blogcategoriesFrameworkMybatis"
+            ><div class='name'>Mybatis</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Zuul/" href="/blog/categories/Framework/Zuul/"
+            id="blogcategoriesFrameworkZuul"
+            ><div class='name'>Zuul</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Go/" href="/blog/categories/Go/"
+            id="blogcategoriesGo"
+            ><div class='name'>Go</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Go/Golang/" href="/blog/categories/Go/Golang/"
+            id="blogcategoriesGoGolang"
+            ><div class='name'>Golang</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/In-Action/" href="/blog/categories/In-Action/"
+            id="blogcategoriesIn-Action"
+            ><div class='name'>In Action</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/In-Action/Distributed-Transaction/" href="/blog/categories/In-Action/Distributed-Transaction/"
+            id="blogcategoriesIn-ActionDistributed-Transaction"
+            ><div class='name'>Distributed Transaction</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Java/" href="/blog/categories/Java/"
+            id="blogcategoriesJava"
+            ><div class='name'>Java</div><div class='badge'>(37)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Algorithm/" href="/blog/categories/Java/Algorithm/"
+            id="blogcategoriesJavaAlgorithm"
+            ><div class='name'>Algorithm</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Annotation/" href="/blog/categories/Java/Annotation/"
+            id="blogcategoriesJavaAnnotation"
+            ><div class='name'>Annotation</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Concurrency/" href="/blog/categories/Java/Concurrency/"
+            id="blogcategoriesJavaConcurrency"
+            ><div class='name'>Concurrency</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Design-Pattern/" href="/blog/categories/Java/Design-Pattern/"
+            id="blogcategoriesJavaDesign-Pattern"
+            ><div class='name'>Design Pattern</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Enum/" href="/blog/categories/Java/Enum/"
+            id="blogcategoriesJavaEnum"
+            ><div class='name'>Enum</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Functional-Programming/" href="/blog/categories/Java/Functional-Programming/"
+            id="blogcategoriesJavaFunctional-Programming"
+            ><div class='name'>Functional Programming</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Instrument/" href="/blog/categories/Java/Instrument/"
+            id="blogcategoriesJavaInstrument"
+            ><div class='name'>Instrument</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Introspector/" href="/blog/categories/Java/Introspector/"
+            id="blogcategoriesJavaIntrospector"
+            ><div class='name'>Introspector</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/JVM/" href="/blog/categories/Java/JVM/"
+            id="blogcategoriesJavaJVM"
+            ><div class='name'>JVM</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Lambda/" href="/blog/categories/Java/Lambda/"
+            id="blogcategoriesJavaLambda"
+            ><div class='name'>Lambda</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Netty/" href="/blog/categories/Java/Netty/"
+            id="blogcategoriesJavaNetty"
+            ><div class='name'>Netty</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Reflection/" href="/blog/categories/Java/Reflection/"
+            id="blogcategoriesJavaReflection"
+            ><div class='name'>Reflection</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Life/" href="/blog/categories/Life/"
+            id="blogcategoriesLife"
+            ><div class='name'>Life</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Middleware/" href="/blog/categories/Middleware/"
+            id="blogcategoriesMiddleware"
+            ><div class='name'>Middleware</div><div class='badge'>(34)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Quartz/" href="/blog/categories/Middleware/Quartz/"
+            id="blogcategoriesMiddlewareQuartz"
+            ><div class='name'>Quartz</div><div class='badge'>(14)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/RabbitMQ/" href="/blog/categories/Middleware/RabbitMQ/"
+            id="blogcategoriesMiddlewareRabbitMQ"
+            ><div class='name'>RabbitMQ</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Redis/" href="/blog/categories/Middleware/Redis/"
+            id="blogcategoriesMiddlewareRedis"
+            ><div class='name'>Redis</div><div class='badge'>(10)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Zookeeper/" href="/blog/categories/Middleware/Zookeeper/"
+            id="blogcategoriesMiddlewareZookeeper"
+            ><div class='name'>Zookeeper</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/MySQL/" href="/blog/categories/MySQL/"
+            id="blogcategoriesMySQL"
+            ><div class='name'>MySQL</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Netty/" href="/blog/categories/Netty/"
+            id="blogcategoriesNetty"
+            ><div class='name'>Netty</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Netty/Java/" href="/blog/categories/Netty/Java/"
+            id="blogcategoriesNettyJava"
+            ><div class='name'>Java</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SOFAStack/" href="/blog/categories/SOFAStack/"
+            id="blogcategoriesSOFAStack"
+            ><div class='name'>SOFAStack</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SOFAStack/Nacos/" href="/blog/categories/SOFAStack/Nacos/"
+            id="blogcategoriesSOFAStackNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring-Cloud/" href="/blog/categories/Spring-Cloud/"
+            id="blogcategoriesSpring-Cloud"
+            ><div class='name'>Spring Cloud</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/" href="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/"
+            id="blogcategoriesSpring-CloudSpring-Cloud-Gateway"
+            ><div class='name'>Spring Cloud Gateway</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring/" href="/blog/categories/Spring/"
+            id="blogcategoriesSpring"
+            ><div class='name'>Spring</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/Prometheus/" href="/blog/categories/Spring/Prometheus/"
+            id="blogcategoriesSpringPrometheus"
+            ><div class='name'>Prometheus</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringBoot/" href="/blog/categories/Spring/SpringBoot/"
+            id="blogcategoriesSpringSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringMVC/" href="/blog/categories/Spring/SpringMVC/"
+            id="blogcategoriesSpringSpringMVC"
+            ><div class='name'>SpringMVC</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SpringBoot/" href="/blog/categories/SpringBoot/"
+            id="blogcategoriesSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SpringBoot/Nacos/" href="/blog/categories/SpringBoot/Nacos/"
+            id="blogcategoriesSpringBootNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/hexo/" href="/blog/categories/hexo/"
+            id="blogcategorieshexo"
+            ><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  tagcloud'>
+    <header>
+  <div>
+    
+      <i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/tags/"
+    title="tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <a href="/blog/tags/AQS/" style="font-size: 14px; color: #999">AQS</a> <a href="/blog/tags/Algorithm/" style="font-size: 14px; color: #999">Algorithm</a> <a href="/blog/tags/Annotation/" style="font-size: 14px; color: #999">Annotation</a> <a href="/blog/tags/Archunit/" style="font-size: 14px; color: #999">Archunit</a> <a href="/blog/tags/Cglib/" style="font-size: 14.83px; color: #939393">Cglib</a> <a href="/blog/tags/Concurrency/" style="font-size: 14.83px; color: #939393">Concurrency</a> <a href="/blog/tags/Design-Pattern/" style="font-size: 14px; color: #999">Design Pattern</a> <a href="/blog/tags/Distributed-Transaction/" style="font-size: 14.83px; color: #939393">Distributed Transaction</a> <a href="/blog/tags/Enum/" style="font-size: 14px; color: #999">Enum</a> <a href="/blog/tags/ExecutorService/" style="font-size: 14px; color: #999">ExecutorService</a> <a href="/blog/tags/Framework/" style="font-size: 17.33px; color: #828282">Framework</a> <a href="/blog/tags/Go/" style="font-size: 14px; color: #999">Go</a> <a href="/blog/tags/Golang/" style="font-size: 14px; color: #999">Golang</a> <a href="/blog/tags/Hystrix/" style="font-size: 14px; color: #999">Hystrix</a> <a href="/blog/tags/In-Action/" style="font-size: 16.5px; color: #888">In Action</a> <a href="/blog/tags/Instrument/" style="font-size: 14px; color: #999">Instrument</a> <a href="/blog/tags/Introspector/" style="font-size: 14px; color: #999">Introspector</a> <a href="/blog/tags/JSR-310/" style="font-size: 17.33px; color: #828282">JSR-310</a> <a href="/blog/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/blog/tags/Java/" style="font-size: 24px; color: #555">Java</a> <a href="/blog/tags/Lambda/" style="font-size: 14px; color: #999">Lambda</a> <a href="/blog/tags/Life/" style="font-size: 14px; color: #999">Life</a> <a href="/blog/tags/ListenableFuture/" style="font-size: 14px; color: #999">ListenableFuture</a> <a href="/blog/tags/Micrometer/" style="font-size: 14.83px; color: #939393">Micrometer</a> <a href="/blog/tags/Middleware/" style="font-size: 23.17px; color: #5b5b5b">Middleware</a> <a href="/blog/tags/MySQL/" style="font-size: 14px; color: #999">MySQL</a> <a href="/blog/tags/Mybatis/" style="font-size: 14px; color: #999">Mybatis</a> <a href="/blog/tags/Nacos/" style="font-size: 14.83px; color: #939393">Nacos</a> <a href="/blog/tags/Netty/" style="font-size: 18.17px; color: #7d7d7d">Netty</a> <a href="/blog/tags/Object/" style="font-size: 14px; color: #999">Object</a> <a href="/blog/tags/Optional/" style="font-size: 14px; color: #999">Optional</a> <a href="/blog/tags/Quartz/" style="font-size: 22.33px; color: #606060">Quartz</a> <a href="/blog/tags/RabbitMQ/" style="font-size: 20.67px; color: #6c6c6c">RabbitMQ</a> <a href="/blog/tags/Redis/" style="font-size: 21.5px; color: #666">Redis</a> <a href="/blog/tags/Reference/" style="font-size: 14px; color: #999">Reference</a> <a href="/blog/tags/Reflection/" style="font-size: 19.83px; color: #717171">Reflection</a> <a href="/blog/tags/SOFAStack/" style="font-size: 14px; color: #999">SOFAStack</a> <a href="/blog/tags/Security/" style="font-size: 14px; color: #999">Security</a> <a href="/blog/tags/Spring/" style="font-size: 17.33px; color: #828282">Spring</a> <a href="/blog/tags/Spring-Cloud/" style="font-size: 18.17px; color: #7d7d7d">Spring Cloud</a> <a href="/blog/tags/Spring-Cloud-Gateway/" style="font-size: 19px; color: #777">Spring Cloud Gateway</a> <a href="/blog/tags/SpringBoot/" style="font-size: 15.67px; color: #8e8e8e">SpringBoot</a> <a href="/blog/tags/SpringCloud/" style="font-size: 14px; color: #999">SpringCloud</a> <a href="/blog/tags/SpringMVC/" style="font-size: 14.83px; color: #939393">SpringMVC</a> <a href="/blog/tags/Thread/" style="font-size: 14.83px; color: #939393">Thread</a> <a href="/blog/tags/ThreadLocal/" style="font-size: 14px; color: #999">ThreadLocal</a> <a href="/blog/tags/ThreadPoolExecutor/" style="font-size: 14px; color: #999">ThreadPoolExecutor</a> <a href="/blog/tags/Zookeeper/" style="font-size: 14px; color: #999">Zookeeper</a> <a href="/blog/tags/Zuul/" style="font-size: 14px; color: #999">Zuul</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/hexo-theme/" style="font-size: 14px; color: #999">hexo theme</a>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

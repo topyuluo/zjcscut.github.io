@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JSR310新日期API(一)-时区与时间偏移量 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/12/23/java-jsr310-zone-id/">
+        JSR310新日期API(一)-时区与时间偏移量
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年12月23日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-01-01T22:04:05+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年1月1日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3.2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：12分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>JSR310新日期API(一)-时区与时间偏移量</h1>
+<h2 id="前提">前提</h2>
+<p>最近刚好有新项目使用到JSR-310(JDK8)中引入的新日期API，打算做一下总结。本文编写基于JDK11，部分API可能是JDK9之后新增的。</p>
+<h2 id="地理知识补充">地理知识补充</h2>
+<p>主要补充一下一些地理知识：时区、UTC、GMT、CST、DST和ISO-8601的相关概念。</p>
+<h3 id="时区">时区</h3>
+<p>时区(Time Zone)是地球上的区域使用同一个时间定义。1884年在华盛顿召开国际经度会议时，为了克服时间上的混乱，规定将全球划分为24个时区。造成时间上的混乱是由于世界各个国家位于地球不同位置上，因此不同国家，特别是东西跨度大的国家日出、日落时间必定有所偏差(<strong>这个偏差我们通常叫做时差</strong>)。</p>
+<p>前边提到全球共分为24个时区(<strong>东、西各12个时区</strong>)，也就是每个时区的经度宽度为15度，其中本初子午线(0度经线)为0时区的中心线，而东、西12时区合并为一个时区，这些时区的经度分布如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">时区</th>
+<th style="text-align:center">时区经度范围</th>
+<th style="text-align:center">时区中心线</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">UTC(0时区)</td>
+<td style="text-align:center">7.5°W~7.5°E</td>
+<td style="text-align:center">0°</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+1(东1区)</td>
+<td style="text-align:center">7.5°E~22.5°E</td>
+<td style="text-align:center">15°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+2(东2区)</td>
+<td style="text-align:center">22.5°E~37.5°E</td>
+<td style="text-align:center">30°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+3(东3区)</td>
+<td style="text-align:center">37.5°E~52.5°E</td>
+<td style="text-align:center">45°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+4(东4区)</td>
+<td style="text-align:center">52.5°E~67.5°E</td>
+<td style="text-align:center">60°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+5(东5区)</td>
+<td style="text-align:center">67.5°E~82.5°E</td>
+<td style="text-align:center">75°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+6(东6区)</td>
+<td style="text-align:center">82.5°E~97.5°E</td>
+<td style="text-align:center">90°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+7(东7区)</td>
+<td style="text-align:center">97.5°E~112.5°E</td>
+<td style="text-align:center">105°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+8(东8区)</td>
+<td style="text-align:center">112.5°E~127.5°E</td>
+<td style="text-align:center">120°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+9(东9区)</td>
+<td style="text-align:center">127.5°E~142.5°E</td>
+<td style="text-align:center">135°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+10(东10区)</td>
+<td style="text-align:center">142.5°E~157.5°E</td>
+<td style="text-align:center">150°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC+11(东11区)</td>
+<td style="text-align:center">157.5°E~172.5°E</td>
+<td style="text-align:center">165°E</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC12(东、西12区)</td>
+<td style="text-align:center">172.5°E~172.5°W</td>
+<td style="text-align:center">180°</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-11(西11区)</td>
+<td style="text-align:center">172.5°W~157.5°W</td>
+<td style="text-align:center">165°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-10(西10区)</td>
+<td style="text-align:center">157.5°W~142.5°W</td>
+<td style="text-align:center">150°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-9(西9区)</td>
+<td style="text-align:center">142.5°W~127.5°W</td>
+<td style="text-align:center">135°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-8(西8区)</td>
+<td style="text-align:center">127.5°W~112.5°W</td>
+<td style="text-align:center">120°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-7(西7区)</td>
+<td style="text-align:center">112.5°W~97.5°W</td>
+<td style="text-align:center">105°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-6(西6区)</td>
+<td style="text-align:center">97.5°W~82.5°W</td>
+<td style="text-align:center">90°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-5(西5区)</td>
+<td style="text-align:center">82.5°W~67.5°W</td>
+<td style="text-align:center">75°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-4(西4区)</td>
+<td style="text-align:center">67.5°W~52.5°W</td>
+<td style="text-align:center">60°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-3(西3区)</td>
+<td style="text-align:center">52.5°W~37.5°W</td>
+<td style="text-align:center">45°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-2(西2区)</td>
+<td style="text-align:center">37.5°W~22.5°W</td>
+<td style="text-align:center">30°W</td>
+</tr>
+<tr>
+<td style="text-align:center">UTC-1(西1区)</td>
+<td style="text-align:center">22.5°W~7.5°W</td>
+<td style="text-align:center">15°W</td>
+</tr>
+</tbody>
+</table>
+<p>但是实际上，通常1个国家或1个省份同时跨着多个时区，是因为为了照顾到行政上的方便，常将1个国家或1个省份划在同一个时区。例如，中国跨5个时区，但为了使用方便简单并且全国统一使用一个区时，实际上在中国使用东8区的区时一般称为北京时间作为标准时间。全球的标准时区划分如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201812/Standard_World_Time_Zones.png" alt="Standard_World_Time_Zones"></p>
+<h3 id="UTC、GMT、CST、DST与ISO-8601">UTC、GMT、CST、DST与ISO-8601</h3>
+<p><strong>GMT</strong>，Greenwich Mean Time，格林尼治(或者有时候翻译为格林威治)标准时间，是指位于伦敦郊区的皇家格林尼治天文台的标准时间。<strong>格林尼治所在地的标准时间也叫世界时UT</strong>。以地球自转为基础的时间计量系统。地球自转的角度可用地方子午线相对于地球上的基本参考点的运动来度量。为了测量地球自转，人们在地球上选取了两个基本参考点：春分点(见分至点)和平太阳，由此确定的时间分别称为恒星时和平太阳时。对于世界上发生的重大事件，都以格林尼治的地方时间记录下来。一旦知道了格林尼治时间，人们就很容易推算出相对应的本地时间。指位于英国伦敦郊区的皇家格林尼治天文台的标准时间，因为本初子午线被定义在通过那里的经线。 自1924年2月5日开始，格林尼治天文台每隔一小时会向全世界发放调时信息。 格林威治子午线上的地方时，或零时区（中时区）的区时叫做格林威治时间(又译为&quot;格林尼治时间&quot;)，也叫&quot;世界时&quot;。原是采用格林威治的平正午作为一个平太阳日的开始，但在使用中有些不便。因此，国际天文学联合会于1928年决定，将由格林威治平子夜起算的平太阳时作为世界时，也就是通常所说的<strong>格林威治时间</strong>。格林威治时间所在时区为0时区，可以推算出使用GMT+8表示中国的时间，是因为中国位于东八区，时间上比格林威治时间快8个小时。</p>
+<p><strong>UTC</strong>，Coordinated Universal Time，也就是协调世界时，由于英文(CUT)和法文(TUC)的缩写不同，作为妥协，简称UTC。协调世界时是以原子时秒长为基础，在时刻上尽量接近于世界时的一种时间计量系统(<strong>由实验室用足够精确的铯原子钟导出的时间作为原子时，原子时的精确度极高，精度可以达到每2000万年才误差1秒</strong>)。国际原子时的准确度为每日数纳秒，而世界时的准确度为每日数毫秒。许多应用部门要求时间系统接近世界时UT，对于这种情况，一种称为协调世界时的折衷时标于1972年面世。为确保协调世界时与世界时相差不会超过0.9秒，在有需要的情况下会在协调世界时内加上正或负闰秒。因此协调世界时与国际原子时之间会出现若干整数秒的差别，两者之差逐年积累，便采用跳秒(闰秒)的方法使协调时与世界时的时刻相接近，其差不超过1s。<strong>通常将GMT和UTC视作等同</strong>，但UTC更加科学更加精确，它是以原子时为基础，在时刻上尽量接近世界时的一种时间计量系统。类似的，可以使用UTC+8表示中国的时间。</p>
+<p><strong>CST</strong>，China Standard Time，也就是中国标准时间，当格林威治时间为凌晨0:00时，中国标准时间正好为上午8:00，也就是CST实际上是参照于UTC，通用公式为：CST = UTC/GMT +8。</p>
+<p><strong>DST</strong>，Daylight Saving Time，阳光节约时，在我国称为夏时制，又称夏令时，是一种为节约能源而人为调整地方时间的制度。有些国家DST的使用时间较长，(如美国长达7个月)跨越了春夏秋等三个季节，因此简单地用夏时制的概念已经不能完全表达DST的确切含义了，所以有人也称其为节能时。所谓的DST，就是利用夏季天亮得早这一自然现象，人为地将时间提前一小时。这样就可以使人们早起早睡，以充分利用光照资源，减少照明时间，从而节约照明用电。目前中国已经弃用DST。</p>
+<p><strong>ISO-8601</strong>，是国际标准化组织的日期和时间的表示方法，全称为《数据存储和交换形式·信息交换·日期和时间的表示方法》。目前是2004年12月1日发行的第三版&quot;ISO8601:2004&quot;以替代1998年的第一版&quot;ISO8601:1988&quot;与2000年的第二版&quot;ISO8601:2000&quot;。该表示方法规定：年由4位数字组成YYYY，或者带正负号的四或五位数字表示±YYYYY，月、日用两位数字表示：MM、DD。只使用数字为基本格式。使用短横线&quot;-“间隔开年、月、日为扩展格式。时间只使用数字为基本格式。使用冒号”:&quot;间隔开小时、分、秒的为扩展格式。小时、分和秒都用2位数表示。合并表示时，要在时间前面加一大写字母T，如要表示北京时间2004年5月3日下午5点30分8秒，可以写成2004-05-03T17:30:08+08:00或20040503T173008+08。如果时间在零时区，并恰好与协调世界时相同，那么(不加空格地)在时间最后加一个大写字母Z。Z是相对协调世界时时间0偏移的代号。如下午2点30分5秒表示为14:30:05Z或143005Z；只表示小时和分，为1430Z或14:30Z；只表示小时，则为14Z或14Z。其他时区用实际时间加时差表示，当时的UTC+8时间表示为22:30:05+08:00或223005+0800，也可以简化成223005+08。Java中已存在的类<code>java.util.Date</code>默认就是使用ISO-8601表示的。</p>
+<h2 id="ZoneId">ZoneId</h2>
+<p>JSR-310中引入了抽象类<code>java.time.ZoneId</code>表示时区ID，它是旧API<code>java.util.TimeZone</code>的替代。<code>ZoneRulesProvider</code>用于加载Zone Rule(时区规则，ZoneRules)，自定义实现是可以通过系统变量设置<code>java.time.zone.DefaultZoneRulesProvider=全类名</code>为<code>ZoneRulesProvider</code>自定义的提供类，或者通过SPI加载，默认的实现类是<code>TzdbZoneRulesProvider</code>，<code>TzdbZoneRulesProvider</code>会加载${JAVA_HONE}/lib/tzdb.dat文件(可以打开这个文件看下里面是怎么定义和描述时区的相应规则，这里不做详细分析，实际上如果深入了解这个规则文件的定义可以自行编写规则文件和实现加载类加载自定义的规则)，这个DAT文件中存放着时区的规则映射。<code>ZoneId</code>就是时区ID主要用于定制<code>Instant</code>和<code>LocalDateTime</code>之间的转换规则的。时区ID一共有两种不同的类型：</p>
+<ul>
+<li>固定时间偏移量(Fixed Offset) - 实际上对应<code>ZoneOffset</code>。</li>
+<li>地理区域(Geographical Region) - 实际上对应<code>ZoneRegion</code>。</li>
+</ul>
+<p>静态方法<code>ZoneId#of(String zoneId)</code>会根据入参自动适配最终的时区ID到底表示固定时间偏移量还是地理区域，此方法支持如下的参数：</p>
+<ul>
+<li>
+<p>地理区域参数，形式是：洲(州、国家)/城市，如<code>ZoneId.of(&quot;Asia/Shanghia&quot;)</code>，值得注意的是默认加载的规则里面没有北京。</p>
+</li>
+<li>
+<p>固定时间偏移量格式(offset-style)，支持的格式比较多：</p>
+<ul>
+<li>UTC或者GMT。</li>
+<li>Z(相当于UTC)。</li>
+<li>+h或者-h。</li>
+<li>+hh或者-hh。</li>
+<li>+hh:mm或者-hh:mm。</li>
+<li>+hh:mm:ss或者-hh:mm:ss。</li>
+<li>+hhmmss或者-hhmmss。</li>
+</ul>
+</li>
+</ul>
+<p>基于固定时间偏移量格式举几个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ZoneId z;</span><br><span class="line">z = ZoneId.of(<span class="string">"Z"</span>); <span class="comment">//for UTC</span></span><br><span class="line">z = ZoneId.of(<span class="string">"+02:00"</span>);</span><br><span class="line">z = ZoneId.of(<span class="string">"-02:00"</span>);</span><br><span class="line"></span><br><span class="line">ZoneId.of(<span class="string">"GMT+2"</span>);</span><br><span class="line">ZoneId.of(<span class="string">"UTC"</span>);</span><br><span class="line">ZoneId.of(<span class="string">"UT+01:00"</span>);</span><br><span class="line"></span><br><span class="line">ZoneId.of(<span class="string">"Asia/Aden"</span>);</span><br><span class="line">ZoneId.of(<span class="string">"Etc/GMT+9"</span>);</span><br><span class="line">ZoneId.of(<span class="string">"Asia/Aqtau"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="固定时间偏移量-ZoneOffset">固定时间偏移量-ZoneOffset</h3>
+<p><code>java.time.ZoneOffset</code>是<code>java.time.ZoneId</code>实现类，表示固定时间偏移量，这个偏移量是以格林尼治(GMT)/协调世界时(UTC)为基准的偏移时间量。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZoneOffsetMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ZoneOffset zoneOffset = ZoneOffset.of(<span class="string">"+02:00"</span>);</span><br><span class="line">		System.out.println(zoneOffset);</span><br><span class="line">		zoneOffset = ZoneOffset.of(<span class="string">"-02:00"</span>);</span><br><span class="line">		System.out.println(zoneOffset);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>ZoneOffset.of(&quot;+02:00&quot;)</code>表示UTC下2小时的时间偏移(简单理解为东2区)，<code>ZoneOffset.of(&quot;-02:00&quot;)</code>表示UTC下-2小时的时间偏移(简单理解为西2区)。</p>
+<h3 id="地理区域-ZoneRegion">地理区域-ZoneRegion</h3>
+<p><code>java.time.ZoneRegion</code>是<code>java.time.ZoneId</code>实现类(不过其修饰符为default，因此无法直接访问，只能通过<code>ZoneId</code>操作)，表示地理区域，格式是：洲(州、国家)/城市。注释中提到：最常见的区域分类是时区数据库(TZDB)，TZDB使用Europe/Paris’和’Asia/Tokyo’等形式区分地区。举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZoneRegionMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ZoneId zoneId = ZoneId.systemDefault();</span><br><span class="line">		System.out.println(zoneId);</span><br><span class="line">		Set&lt;String&gt; availableZoneIds = ZoneId.getAvailableZoneIds();</span><br><span class="line">		<span class="keyword">for</span> (String z : availableZoneIds) &#123;</span><br><span class="line">			<span class="keyword">if</span> (z.contains(<span class="string">"Beijing"</span>) || z.contains(<span class="string">"BeiJing"</span>)) &#123;</span><br><span class="line">				System.out.println(z);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行后控制台输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Asia/Shanghai</span><br></pre></td></tr></table></figure>
+<p>实际上，执行这个方法的时候，笔者在广州，得到的系统默认zoneId是Asia/Shanghai，并且默认加载的地理区域中没有北京相关的zoneId。</p>
+<h2 id="小结">小结</h2>
+<p>JSR-310中引入的时间API类<code>ZoneId</code>表示时区ID，具体有两种类型：固定时间偏移量-<code>ZoneOffset</code>和地理区域-<code>ZoneRegion</code>，这两种类型可以再细分为三种表示方式：</p>
+<ul>
+<li>地理区域表示，如：<code>ZoneId.of(&quot;Asia/Aden&quot;)</code>。</li>
+<li>GMT/UTC偏移量详细表示，如：<code>ZoneId.of(&quot;UTC&quot;)</code>、<code>ZoneId.of(&quot;GMT+2&quot;)</code>。</li>
+<li>GMT/UTC偏移量简单表示，如：<code>ZoneId.of(&quot;Z&quot;)</code>、<code>ZoneId.of(&quot;+2:00&quot;)</code>。</li>
+</ul>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Time_zone" target="_blank" rel="noopener">维基百科-Time zone</a></li>
+<li><a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank" rel="noopener">维基百科-ISO 8601</a></li>
+<li>Bing互动百科相关资料</li>
+<li><a href="https://stackoverflow.com/questions/32931871/java-8-how-to-derive-a-zoneid-from-zoneoffset" target="_blank" rel="noopener">Java 8: how to derive a ZoneId from ZoneOffset</a></li>
+<li>JDK11相关源码</li>
+</ul>
+<p>(本文完 c-1-d e-a-20181223)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/12/23/java-jsr310-zone-id/>http://throwable.club/2018/12/23/java-jsr310-zone-id/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/JSR-310/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>JSR-310</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/12/23/java-jsr310-zone-id/&title=JSR310新日期API(一)-时区与时间偏移量 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/12/23/java-jsr310-zone-id/&title=JSR310新日期API(一)-时区与时间偏移量 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuUlEQVR42u3aS24cMQwFQN//0hMg23h63iMlJwGqV8b0TyUDIpvU11d8vH4fz7+//jje3ft8dnbl6sDDw8MbDf3dkQ8ief3zdOzPfjMGPDw8vGu8fFF+96B3vyRBYjY1UQDDw8PD+6u8lnQ2tODh4eH9j7z60THm4hjw8PDwrvHyj//k3qSAuynjXqm14OHh4cW8tgH2L/x9sb+Hh4eHt+iq54v+89I8CzltMPjm+Xh4eHgXeG0LKi9A5It7PnFtIQMPDw/vNq9t7ecNraRYkJ9tJxQPDw/vBi8psM5ekIeBfPryzQp4eHh4N3izxbpNf9uSRBJOog8APDw8vMu8NjC0SfDs+W1IeBsY8PDw8A7xZsizYWNT5qgTazw8PLxDvDwhbksY7aDbpLm4Cw8PD+8ab1ZimG1B2Bdwi2vw8PDwDvFmae5mEW9T8AM9PTw8PLyjvHyhb5tVmxR8VuD4UGvBw8PDO8Tbl1yTJDiZpjYpT7Zz4eHh4d3mbZr6eRR6/j1P96OpwcPDw7vAa4eVT8GsHHwqMHzYGYGHh4e34OXL8WyTQTLcvBiRN8zw8PDw7vFa2Kx51jbSnhnttjA8PDy8s7x8QHmqfQp2YFsDHh4e3gXerFDbNqva57Sp84eR4OHh4V3jnXpZPhGzDVttoo+Hh4d3g1cUQ8tmWJt250ElnxQ8PDy8G7xTpYH9NqlhueFZhIeHh3eZlwxltiWrXdZnxY7iiwEPDw9vxHuVR5JwJ0PcF46jqcfDw8O7wJu1rNqFe1aeaLdYrUoeeHh4eCUvLz1syrtFs7+898P04eHh4V3jJelscv0+Qd9s5Io2DeDh4eH9OC9vd+3z2/btBwIDHh4e3lHepsKRlzNmoaV4MR4eHt4hXrtBaoaZLferhBsPDw/vAm8/3Dz5Tu7Kr9/8A/Dw8PBGvF8uM88UEW6olAAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/12/23/java-jsr310-zone-id/&title=JSR310新日期API(一)-时区与时间偏移量 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuUlEQVR42u3aS24cMQwFQN//0hMg23h63iMlJwGqV8b0TyUDIpvU11d8vH4fz7+//jje3ft8dnbl6sDDw8MbDf3dkQ8ief3zdOzPfjMGPDw8vGu8fFF+96B3vyRBYjY1UQDDw8PD+6u8lnQ2tODh4eH9j7z60THm4hjw8PDwrvHyj//k3qSAuynjXqm14OHh4cW8tgH2L/x9sb+Hh4eHt+iq54v+89I8CzltMPjm+Xh4eHgXeG0LKi9A5It7PnFtIQMPDw/vNq9t7ecNraRYkJ9tJxQPDw/vBi8psM5ekIeBfPryzQp4eHh4N3izxbpNf9uSRBJOog8APDw8vMu8NjC0SfDs+W1IeBsY8PDw8A7xZsizYWNT5qgTazw8PLxDvDwhbksY7aDbpLm4Cw8PD+8ab1ZimG1B2Bdwi2vw8PDwDvFmae5mEW9T8AM9PTw8PLyjvHyhb5tVmxR8VuD4UGvBw8PDO8Tbl1yTJDiZpjYpT7Zz4eHh4d3mbZr6eRR6/j1P96OpwcPDw7vAa4eVT8GsHHwqMHzYGYGHh4e34OXL8WyTQTLcvBiRN8zw8PDw7vFa2Kx51jbSnhnttjA8PDy8s7x8QHmqfQp2YFsDHh4e3gXerFDbNqva57Sp84eR4OHh4V3jnXpZPhGzDVttoo+Hh4d3g1cUQ8tmWJt250ElnxQ8PDy8G7xTpYH9NqlhueFZhIeHh3eZlwxltiWrXdZnxY7iiwEPDw9vxHuVR5JwJ0PcF46jqcfDw8O7wJu1rNqFe1aeaLdYrUoeeHh4eCUvLz1syrtFs7+898P04eHh4V3jJelscv0+Qd9s5Io2DeDh4eH9OC9vd+3z2/btBwIDHh4e3lHepsKRlzNmoaV4MR4eHt4hXrtBaoaZLferhBsPDw/vAm8/3Dz5Tu7Kr9/8A/Dw8PBGvF8uM88UEW6olAAAAABJRU5ErkJggg=='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/01/01/java-jsr310-time-api/" rel="prev" title="JSR310新日期API(二)-日期时间API">
+                                  
+                                      JSR310新日期API(二)-日期时间API
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/12/18/rabbitmq-extension-exchange-binding/" rel="prev" title="RabbitMQ扩展之交换器间的绑定">
+                                    
+                                        RabbitMQ扩展之交换器间的绑定
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JSR310新日期API(一)-时区与时间偏移量',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#地理知识补充"><span class="toc-text">地理知识补充</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#时区"><span class="toc-text">时区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#UTC、GMT、CST、DST与ISO-8601"><span class="toc-text">UTC、GMT、CST、DST与ISO-8601</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZoneId"><span class="toc-text">ZoneId</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#固定时间偏移量-ZoneOffset"><span class="toc-text">固定时间偏移量-ZoneOffset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#地理区域-ZoneRegion"><span class="toc-text">地理区域-ZoneRegion</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

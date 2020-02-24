@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JDK安全模块JCE核心Cipher使用详解 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/02/16/java-security-cipher/">
+        JDK安全模块JCE核心Cipher使用详解
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年2月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-02-16T23:05:55+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年2月16日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：8k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：33分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>JDK安全模块JCE核心Cipher使用详解</h1>
+<h2 id="前提">前提</h2>
+<p><code>javax.crypto.Cipher</code>，翻译为密码，其实叫做<strong>密码器</strong>更加合适。Cipher是JCA(Java Cryptographic Extension，Java加密扩展)的核心，提供基于多种加解密算法的加解密功能。在不了解Cipher之前，我们在完成一些需要加解密的模块的时候总是需要到处拷贝代码，甚至有些错误的用法也被无数次拷贝，踩坑之后又要拷贝补坑的代码。为什么不尝试理解Cipher然后合理地使用呢？</p>
+<h2 id="Cipher初始化transformation-转换模式-的一些知识补充">Cipher初始化transformation(转换模式)的一些知识补充</h2>
+<p>转换模式transformation一般由三个部分组成，格式是：<strong>算法/工作模式/填充模式(algorithm/mode/padding)</strong>。例如：DES/CBC/PKCS5Padding。</p>
+<h3 id="算法">算法</h3>
+<p>算法就是指具体加解密算法的名称英文字符串，例如&quot;SHA-256&quot;、&quot;RSA&quot;等，这里不对具体算法的实现原理做具体展开。</p>
+<h3 id="工作模式">工作模式</h3>
+<p>工作模式其实主要是针对分组密码。分组密码是将明文消息编码表示后的数字（简称明文数字）序列，划分成长度为n的组（可看成长度为n的矢量），每组分别在密钥的控制下变换成等长的输出数字（简称密文数字）序列。工作模式的出现主要基于下面原因：</p>
+<ul>
+<li>当需要加密的明文长度十分大(例如文件内容)，由于硬件或者性能原因需要分组加密。</li>
+<li>多次使用相同的密钥对多个分组加密，会引发许多安全问题。</li>
+</ul>
+<p>从本质上讲，工作模式是一项增强密码算法或者使算法适应具体应用的技术，例如将分组密码应用于数据块组成的序列或者数据流。目前主要包括下面五种由NIST定义的工作模式：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">模式</th>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">描述</th>
+<th style="text-align:center">典型应用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">电子密码本(ECB)</td>
+<td style="text-align:center">Electronic CodeBook</td>
+<td style="text-align:center">用相同的密钥分别对明文分组独立加密</td>
+<td style="text-align:center">单个数据的安全传输(例如一个加密密钥)</td>
+</tr>
+<tr>
+<td style="text-align:center">密码分组链接(CBC)</td>
+<td style="text-align:center">Cipher Block Chaining</td>
+<td style="text-align:center">加密算法的输入是上一个密文组合下一个明文组的异或</td>
+<td style="text-align:center">面向分组的通用传输或者认证</td>
+</tr>
+<tr>
+<td style="text-align:center">密文反馈(CFB)</td>
+<td style="text-align:center">Cipher FeedBack</td>
+<td style="text-align:center">一次处理s位，上一块密文作为加密算法的输入，产生的伪随机数输出与明文异或作为下一单元的密文</td>
+<td style="text-align:center">面向分组的通用传输或者认证</td>
+</tr>
+<tr>
+<td style="text-align:center">输出反馈(OFB)</td>
+<td style="text-align:center">Output FeedBack</td>
+<td style="text-align:center">与CFB类似，只是加密算法的输入是上一次加密的输出，并且使用整个分组</td>
+<td style="text-align:center">噪声信道上的数据流的传输(如卫星通信)</td>
+</tr>
+<tr>
+<td style="text-align:center">计数器(CTR)</td>
+<td style="text-align:center">Counter</td>
+<td style="text-align:center">每个明文分组都与一个经过加密的计数器相异或。对每个后续分组计数器递增</td>
+<td style="text-align:center">面向分组的通用传输或者用于高速需求</td>
+</tr>
+</tbody>
+</table>
+<p>上面五种工作模式可以用于3DES和AES在内的任何分组密码，至于选择哪一种工作模式需要结合实际情况分析。</p>
+<h3 id="填充模式">填充模式</h3>
+<p>Padding指的是：块加密算法要求原文数据长度为固定块大小的整数倍，如果原文数据长度大于固定块大小，则需要在固定块填充数据直到整个块的数据是完整的。例如我们约定块的长度为128，但是需要加密的原文长度为129，那么需要分成两个加密块，第二个加密块需要填充127长度的数据，填充模式决定怎么填充数据。</p>
+<p>对数据在加密时进行填充、解密时去除填充则是通信双方需要重点考虑的因素。对原文进行填充，主要基于以下原因：</p>
+<ul>
+<li>首先，考虑安全性。由于对原始数据进行了填充，使原文能够“伪装”在填充后的数据中，使得攻击者很难找到真正的原文位置。</li>
+<li>其次，由于块加密算法要求原文数据长度为固定块大小的整数倍，如果加密原文不满足这个条件，则需要在加密前填充原文数据至固定块大小的整数倍。</li>
+<li>另外，填充也为发送方与接收方提供了一种标准的形式以约束加密原文的大小。只有加解密双方知道填充方式，才可知道如何准确移去填充的数据并进行解密。</li>
+</ul>
+<p>常用的填充方式至少有5种，不同编程语言实现加解密时用到的填充多数来自于这些方式或它们的变种方式。以下五种填充模式摘抄自参考资料的论文：</p>
+<p><strong>1.填充数据为填充字节序列的长度</strong>：</p>
+<p>这种填充方式中，填充字符串由一个字节序列组成，每个字节填充该字节序列的长度。假定块长度为8，原文数据长度为9，则填充字节数 等于0x07；如果明文数据长度为8的整数倍，则填充字节数为0x08。填充字符串如下：</p>
+<ul>
+<li>原文数据1: FF FF FF FF FF FF FF FF FF</li>
+<li>填充后数据1:FF FF FF FF FF FF FF FF FF 07 07 07 07 07 07 07</li>
+<li>==========================================================</li>
+<li>原文数据2:FF FF FF FF FF FF FF FF</li>
+<li>填充后数据2:FF FF FF FF FF FF FF FF 08 08 08 08 08 08 08 08</li>
+</ul>
+<p><strong>2.填充数据为0x80后加0x00</strong>：</p>
+<p>这种填充方式中，填充字符串的第一个字节数是0x80，后面的每个字节是0x00。假定块长度为8，原文数据长度为9或者为8的整数倍，则 填充字符串如下：</p>
+<ul>
+<li>原文数据1: FF FF FF FF FF FF FF FF FF</li>
+<li>填充后数据1:FF FF FF FF FF FF FF FF FF 80 00 00 00 00 00 00</li>
+<li>==========================================================</li>
+<li>原文数据2:FF FF FF FF FF FF FF FF</li>
+<li>填充后数据2:FF FF FF FF FF FF FF FF 80 00 00 00 00 00 00 00</li>
+</ul>
+<p><strong>3.填充数据的最后一个字节为填充字节序列的长度</strong>：</p>
+<p>这种填充方式中，填充字符串的最后一个字节为该序列的长度，而前面的字节可以是0x00，也可以是随机的字节序列。假定块长度为8，原文数据长度为9或者为8的整数倍，则填充字符串如下：</p>
+<ul>
+<li>原文数据1:FF FF FF FF FF FF FF FF FF</li>
+<li>填充后数据1:FF FF FF FF FF FF FF FF FF 00 00 00 00 00 00 07或FF FF FF FF FF FF FF FF FF 0A B0 0C 08 05 09 07</li>
+<li>===============================================================================</li>
+<li>原文数据2:FF FF FF FF FF FF FF FF</li>
+<li>填充后数据2:FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 08或FF FF FF FF FF FF FF FF 80 06 AB EA 03 02 01 08</li>
+</ul>
+<p><strong>4.填充数据为空格</strong>：</p>
+<p>这种填充方式中，填充字符串的每个字节为空格对应的字节数0x20。假定块长度为8，原文数据长度为9或者为8的整数倍，则填充字符串如下：</p>
+<ul>
+<li>原文数据1: FF FF FF FF FF FF FF FF FF</li>
+<li>填充后数据1:FF FF FF FF FF FF FF FF FF 20 20 20 20 20 20 20</li>
+<li>===============================================================================</li>
+<li>原文数据2:FF FF FF FF FF FF FF FF</li>
+<li>填充后数据2:FF FF FF FF FF FF FF FF 20 20 20 20 20 20 20 20</li>
+</ul>
+<p><strong>5.填充数据为0x00</strong>：</p>
+<p>这种填充方式中，填充字符串的每个字节为0x00。假定块长度为8，原文数据长度为9或者8的整数倍，则填充字符串如下：</p>
+<ul>
+<li>原文数据1: FF FF FF FF FF FF FF FF FF</li>
+<li>填充后数据1:FF FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00</li>
+<li>===============================================================================</li>
+<li>原文数据2:FF FF FF FF FF FF FF FF</li>
+<li>填充后数据2:FF FF FF FF FF FF FF FF 00 00 00 00 00 00 00 00</li>
+</ul>
+<h2 id="transformation小结">transformation小结</h2>
+<p>SunJCE Provider支持的Cipher的部分详细信息如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">algorithm(算法)</th>
+<th style="text-align:center">mode(工作模式)</th>
+<th style="text-align:center">padding(填充模式)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">AES</td>
+<td style="text-align:center">EBC、CBC、PCBC、CTR、CTS、CFB、CFB8-CFB128等</td>
+<td style="text-align:center">NoPadding、ISO10126Padding、PKCS5Padding</td>
+</tr>
+<tr>
+<td style="text-align:center">AESWrap</td>
+<td style="text-align:center">EBC</td>
+<td style="text-align:center">NoPadding</td>
+</tr>
+<tr>
+<td style="text-align:center">ARCFOUR</td>
+<td style="text-align:center">EBC</td>
+<td style="text-align:center">NoPadding</td>
+</tr>
+<tr>
+<td style="text-align:center">Blowfish、DES、DESede、RC2</td>
+<td style="text-align:center">EBC、CBC、PCBC、CTR、CTS、CFB、CFB8-CFB128等</td>
+<td style="text-align:center">NoPadding、ISO10126Padding、PKCS5Padding</td>
+</tr>
+<tr>
+<td style="text-align:center">DESedeWrap</td>
+<td style="text-align:center">CBC</td>
+<td style="text-align:center">NoPadding</td>
+</tr>
+<tr>
+<td style="text-align:center">PBEWithMD5AndDES、PBEWithMD5AndTripleDES、PBEWithSHA1AndDESede、PBEWithSHA1AndRC2_40</td>
+<td style="text-align:center">CBC</td>
+<td style="text-align:center">PKCS5Padding</td>
+</tr>
+<tr>
+<td style="text-align:center">RSA</td>
+<td style="text-align:center">ECB、NONE</td>
+<td style="text-align:center">NoPadding、PKCS1Padding等</td>
+</tr>
+</tbody>
+</table>
+<p>Java原生支持的Padding(Cipher)汇总如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">填充模式</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">NoPadding</td>
+<td style="text-align:center">不采用填充模式</td>
+</tr>
+<tr>
+<td style="text-align:center">ISO10126Padding</td>
+<td style="text-align:center">XML加密语法和处理文档中有详细描述</td>
+</tr>
+<tr>
+<td style="text-align:center">OAEPPadding, OAEPWith&lt;digest&gt;And&lt;mgf&gt;Padding</td>
+<td style="text-align:center">PKCS1中定义的最优非对称加密填充方案，digest代表消息摘要类型，mgf代表掩码生成函数，例如：OAEPWithMD5AndMGF1Padding或者OAEPWithSHA-512AndMGF1Padding</td>
+</tr>
+<tr>
+<td style="text-align:center">PKCS1Padding</td>
+<td style="text-align:center">PKCS1，RSA算法使用</td>
+</tr>
+<tr>
+<td style="text-align:center">PKCS5Padding</td>
+<td style="text-align:center">PKCS5，RSA算法使用</td>
+</tr>
+<tr>
+<td style="text-align:center">SSL3Padding</td>
+<td style="text-align:center">见SSL Protocol Version 3.0的定义</td>
+</tr>
+</tbody>
+</table>
+<p>其他Padding需要第三方Provider提供。</p>
+<h2 id="Cipher的属性和方法">Cipher的属性和方法</h2>
+<h3 id="Cipher的七个主要公有属性">Cipher的七个主要公有属性</h3>
+<ul>
+<li>1、ENCRYPT_MODE，整型值1，加密模式，用于Cipher的初始化。</li>
+<li>2、DECRYPT_MODE，整型值2，解密模式，用于Cipher的初始化。</li>
+<li>3、WRAP_MODE，整型值3，包装密钥模式，用于Cipher的初始化。</li>
+<li>4、UNWRAP_MODE，整型值4，解包装密钥模式，用于Cipher的初始化。</li>
+<li>5、PUBLIC_KEY，整型值1，解包装密钥模式下指定密钥类型为公钥。</li>
+<li>6、PRIVATE_KEY，整型值2，解包装密钥模式下指定密钥类型为私钥。</li>
+<li>7、SECRET_KEY，整型值3，解包装密钥模式下指定密钥类型为密钥，主要用于不是非对称加密的密钥(只有一个密钥，不包含私钥和公钥)。</li>
+</ul>
+<h3 id="getInstance方法">getInstance方法</h3>
+<p>Cipher提供三个静态工厂方法<code>getInstance()</code>用于构建其实例，三个方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Cipher <span class="title">getInstance</span><span class="params">(String transformation)</span></span></span><br><span class="line"><span class="function">                                <span class="keyword">throws</span> NoSuchAlgorithmException,</span></span><br><span class="line"><span class="function">                                       NoSuchPaddingException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Cipher <span class="title">getInstance</span><span class="params">(String transformation,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       String provider)</span></span></span><br><span class="line"><span class="function">                                <span class="keyword">throws</span> NoSuchAlgorithmException,</span></span><br><span class="line"><span class="function">                                       NoSuchProviderException,</span></span><br><span class="line"><span class="function">                                       NoSuchPaddingException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Cipher <span class="title">getInstance</span><span class="params">(String transformation,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       Provider provider)</span></span></span><br><span class="line"><span class="function">                                <span class="keyword">throws</span> NoSuchAlgorithmException,</span></span><br><span class="line"><span class="function">                                       NoSuchPaddingException</span></span><br></pre></td></tr></table></figure>
+<p>其中transformation，这里称为<strong>转换(模式)</strong>，是核心参数，见前面一个小节的解析。另外，有两个工厂方法要求必须传入java.security.Provider的全类名或者实例，因为Cipher要从对应的提供商中获取指定转换模式的实现，第一个工厂方法只有单参数transformation，它会从现成所有的<code>java.security.Provider</code>中匹配取出第一个满足transformation的服务，从中实例化<code>CipherSpi</code>(<strong>要理解Cipher委托到内部持有的CipherSpi实例完成具体的加解密功能</strong>)。实际上Cipher实例的初始化必须依赖于转换模式和提供商。</p>
+<h3 id="init方法">init方法</h3>
+<p><code>init()</code>方法一共有八个变体方法，此方法主要用于初始化Cipher。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//额外参数是Key(密钥)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Key(密钥)和SecureRandom(随机源)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key,</span></span></span><br><span class="line"><span class="function"><span class="params">                       SecureRandom random)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Key(密钥)和AlgorithmParameterSpec(算法参数透明定义)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key,</span></span></span><br><span class="line"><span class="function"><span class="params">                       AlgorithmParameterSpec params)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException,</span></span><br><span class="line"><span class="function">                       InvalidAlgorithmParameterException </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Key(密钥)、AlgorithmParameterSpec(算法参数透明定义)和SecureRandom(随机源)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key,</span></span></span><br><span class="line"><span class="function"><span class="params">                       AlgorithmParameterSpec params,</span></span></span><br><span class="line"><span class="function"><span class="params">                       SecureRandom random)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException,</span></span><br><span class="line"><span class="function">                       InvalidAlgorithmParameterException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Key(密钥)、AlgorithmParameters(算法参数)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key,</span></span></span><br><span class="line"><span class="function"><span class="params">                       AlgorithmParameters params)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException,</span></span><br><span class="line"><span class="function">                       InvalidAlgorithmParameterException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Key(密钥)、AlgorithmParameters(算法参数)、SecureRandom(随机源)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Key key,</span></span></span><br><span class="line"><span class="function"><span class="params">                       AlgorithmParameters params,</span></span></span><br><span class="line"><span class="function"><span class="params">                       SecureRandom random)</span></span></span><br><span class="line"><span class="function">                    <span class="keyword">throws</span> InvalidKeyException,</span></span><br><span class="line"><span class="function">                       InvalidAlgorithmParameterException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Certificate(证书)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Certificate certificate)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//额外参数是Certificate(证书)、SecureRandom(随机源)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> opmode,</span></span></span><br><span class="line"><span class="function"><span class="params">                       Certificate certificate,</span></span></span><br><span class="line"><span class="function"><span class="params">                       SecureRandom random)</span></span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> InvalidKeyException</span></span><br></pre></td></tr></table></figure>
+<p>opmode(操作模式)是必须参数，可选值是ENCRYPT_MODE、DECRYPT_MODE、WRAP_MODE和UNWRAP_MODE。Key类型参数如果不是非对称加密，对应的类型是SecretKey，如果是非对称加密，可以是PublicKey或者PrivateKey。SecureRandom是随机源，因为有些算法需要每次加密结果都不相同，这个时候需要依赖系统或者传入的随机源，一些要求每次加解密结果相同的算法如AES不能使用此参数。Certificate是带有密钥的证书实现。算法参数主要包括IV(initialization vector，初始化向量)等等。</p>
+<h3 id="wrap方法和unwrap方法">wrap方法和unwrap方法</h3>
+<p>wrap方法用于包装一个密钥。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] wrap(Key key)</span><br><span class="line">                  <span class="keyword">throws</span> IllegalBlockSizeException,</span><br><span class="line">                         InvalidKeyException</span><br></pre></td></tr></table></figure>
+<p>wrap方法使用的时候需要注意Cipher的opmode要初始化为WRAP_MODE。</p>
+<p>unwrap方法用于解包装一个密钥。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Key <span class="title">unwrap</span><span class="params">(<span class="keyword">byte</span>[] wrappedKey,</span></span></span><br><span class="line"><span class="function"><span class="params">                        String wrappedKeyAlgorithm,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">int</span> wrappedKeyType)</span></span></span><br><span class="line"><span class="function">                 <span class="keyword">throws</span> InvalidKeyException,</span></span><br><span class="line"><span class="function">                        NoSuchAlgorithmException</span></span><br></pre></td></tr></table></figure>
+<p>unwrap方法使用的时候需要注意Cipher的opmode要初始化为UNWRAP_MODE，在调用unwrap方法时候，需要指定之前包装密钥的算法和Key的类型。</p>
+<p>其实wrap和unwrap是一个互逆的操作：</p>
+<ul>
+<li>wrap方法的作用是把原始的密钥通过某种加密算法包装为加密后的密钥，这样就可以避免在传递密钥的时候泄漏了密钥的明文。</li>
+<li>unwrap方法的作用是把包装(加密)后的密钥解包装为原始的密钥，得到密钥的明文。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EncryptUtils &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    SINGLETON;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SECRECT = <span class="string">"passwrod"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">wrap</span><span class="params">(String keyString)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        <span class="comment">//初始化密钥生成器，指定密钥长度为128，指定随机源的种子为指定的密钥(这里是"passward")</span></span><br><span class="line">        keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRECT.getBytes()));</span><br><span class="line">        SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">        SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">        Cipher cipher = Cipher.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        cipher.init(Cipher.WRAP_MODE, secretKeySpec);</span><br><span class="line">        SecretKeySpec key = <span class="keyword">new</span> SecretKeySpec(keyString.getBytes(), <span class="string">"AES"</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = cipher.wrap(key);</span><br><span class="line">        <span class="keyword">return</span> Hex.encodeHexString(bytes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">unwrap</span><span class="params">(String keyString)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] rawKey = Hex.decodeHex(keyString);</span><br><span class="line">        KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        <span class="comment">//初始化密钥生成器，指定密钥长度为128，指定随机源的种子为指定的密钥(这里是"passward")</span></span><br><span class="line">        keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRECT.getBytes()));</span><br><span class="line">        SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">        SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">        Cipher cipher = Cipher.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        cipher.init(Cipher.UNWRAP_MODE, secretKeySpec);</span><br><span class="line">        SecretKey key = (SecretKey) cipher.unwrap(rawKey, <span class="string">"AES"</span>, Cipher.SECRET_KEY);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String(key.getEncoded());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String wrapKey = EncryptUtils.SINGLETON.wrap(<span class="string">"doge"</span>);</span><br><span class="line">        System.out.println(wrapKey);</span><br><span class="line">        System.out.println(EncryptUtils.SINGLETON.unwrap(wrapKey));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子是通过AES对密钥进行包装和解包装，调用main方法，输出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">77050742188</span>d4b97a1d401db902b864d</span><br><span class="line">doge</span><br></pre></td></tr></table></figure>
+<h3 id="update方法">update方法</h3>
+<p>update方法有多个变体，其实意义相差无几：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] update(<span class="keyword">byte</span>[] input)</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] update(<span class="keyword">byte</span>[] input,</span><br><span class="line">                           <span class="keyword">int</span> inputOffset,</span><br><span class="line">                           <span class="keyword">int</span> inputLen)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(<span class="keyword">byte</span>[] input,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">int</span> inputOffset,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">int</span> inputLen,</span></span></span><br><span class="line"><span class="function"><span class="params">                        <span class="keyword">byte</span>[] output)</span></span></span><br><span class="line"><span class="function">                 <span class="keyword">throws</span> ShortBufferException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(ByteBuffer input,</span></span></span><br><span class="line"><span class="function"><span class="params">                        ByteBuffer output)</span></span></span><br><span class="line"><span class="function">                 <span class="keyword">throws</span> ShortBufferException</span></span><br></pre></td></tr></table></figure>
+<p>update方法主要用于部分加密或者部分解密，至于加密或是解密取决于Cipher初始化时候的opmode。即使它有多个变体，但是套路是一样的：依赖于一个输入的缓冲区(带有需要被加密或者被解密的数据)、返回值或者参数是一个输出的缓冲区，一些额外的参数可以通过偏移量和长度控制加密或者解密操作的数据段。部分加密或者解密操作完毕后，必须要调用<code>Cipher#doFinal()</code>方法来结束加密或者解密操作。</p>
+<h3 id="doFinal方法">doFinal方法</h3>
+<p><code>doFinal()</code>方法也存在多个变体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 结束多部分加密或者解密操作。</span></span><br><span class="line"><span class="comment"> * 此方法需要在update调用链执行完毕之后调用，返回的结果是加密或者解密结果的一部分。</span></span><br><span class="line"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] doFinal()</span><br><span class="line">                     <span class="keyword">throws</span> IllegalBlockSizeException,</span><br><span class="line">                            BadPaddingException</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 结束多部分加密或者解密操作。</span></span><br><span class="line"><span class="comment"> * 此方法需要在update调用链执行完毕之后调用，传入的output作为缓冲区接收加密或者解密结果的一部分。</span></span><br><span class="line"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">doFinal</span><span class="params">(<span class="keyword">byte</span>[] output,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> outputOffset)</span></span></span><br><span class="line"><span class="function">                  <span class="keyword">throws</span> IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                         ShortBufferException,</span></span><br><span class="line"><span class="function">                         BadPaddingException                         </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">/**</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 结束单部分加密或者解密操作。</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法接收需要加密或者解密的完整报文，返回处理结果</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span></span><br><span class="line"><span class="function"><span class="comment"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] <span class="title">doFinal</span><span class="params">(<span class="keyword">byte</span>[] input)</span></span></span><br><span class="line"><span class="function">                     <span class="keyword">throws</span> IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                            BadPaddingException</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">/**</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 结束单部分或者多部分加密或者解密操作。</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 参数inputOffset为需要加解密的报文byte数组的起始位置，inputLen为需要加密或者解密的字节长度</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span></span><br><span class="line"><span class="function"><span class="comment"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">byte</span>[] <span class="title">doFinal</span><span class="params">(<span class="keyword">byte</span>[] input,</span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> inputOffset,</span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> inputLen)</span></span></span><br><span class="line"><span class="function">                     <span class="keyword">throws</span> IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                            BadPaddingException      </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">/**</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 结束单部分或者多部分加密或者解密操作。</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 参数inputOffset为需要加解密的报文byte数组的起始位置，inputLen为需要加密或者解密的字节长度，output用于接收加解密的结果</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span></span><br><span class="line"><span class="function"><span class="comment"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">doFinal</span><span class="params">(<span class="keyword">byte</span>[] input,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> inputOffset,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> inputLen,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">byte</span>[] output)</span></span></span><br><span class="line"><span class="function">                  <span class="keyword">throws</span> ShortBufferException,</span></span><br><span class="line"><span class="function">                         IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                         BadPaddingException                                                         </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">/**</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 结束单部分或者多部分加密或者解密操作。</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 参数inputOffset为需要加解密的报文byte数组的起始位置，inputLen为需要加密或者解密的字节长度，</span></span></span><br><span class="line"><span class="function"><span class="comment"> * output用于接收加解密的结果，outputOffset用于设置output的起始位置</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span></span><br><span class="line"><span class="function"><span class="comment"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">doFinal</span><span class="params">(<span class="keyword">byte</span>[] input,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> inputOffset,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> inputLen,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">byte</span>[] output,</span></span></span><br><span class="line"><span class="function"><span class="params">                         <span class="keyword">int</span> outputOffset)</span></span></span><br><span class="line"><span class="function">                  <span class="keyword">throws</span> ShortBufferException,</span></span><br><span class="line"><span class="function">                         IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                         BadPaddingException </span></span><br><span class="line"><span class="function"><span class="comment">/**</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 结束单部分或者多部分加密或者解密操作。</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 参数input为输入缓冲区，output为输出缓冲区</span></span></span><br><span class="line"><span class="function"><span class="comment"> * 此方法正常调用结束之后Cipher会重置为初始化状态。</span></span></span><br><span class="line"><span class="function"><span class="comment"> */</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">doFinal</span><span class="params">(ByteBuffer input,</span></span></span><br><span class="line"><span class="function"><span class="params">                         ByteBuffer output)</span></span></span><br><span class="line"><span class="function">                  <span class="keyword">throws</span> ShortBufferException,</span></span><br><span class="line"><span class="function">                         IllegalBlockSizeException,</span></span><br><span class="line"><span class="function">                         BadPaddingException</span></span><br></pre></td></tr></table></figure>
+<p><code>doFinal()</code>主要功能是结束单部分或者多部分加密或者解密操作。单部分加密或者解密适用于需要处理的报文长度较短无需分块的情况，这个时候直接使用<code>byte[] doFinal(byte[] input)</code>方法即可。多部分加密或者解密适用于需要处理的报文长度长度较大，需要进行分块的情况，这个时候需要调用多次<code>update</code>方法变体进行部分块的加解密，最后调用<code>doFinal</code>方法变体进行部分加解密操作的结束。举个例子，例如处理块的大小为8，实际需要加密的报文长度为23，那么需要分三块进行加密，前面2块长度为8的报文需要调用update进行部分加密，部分加密的结果可以从update的返回值获取到，最后的7长度(其实一般会填充到长度为块长度8)的报文则调用doFinal进行加密，结束整个部分加密的操作。另外，值得注意的是只要Cipher正常调用完任一个<code>doFinal</code>变体方法(过程中不抛出异常)，那么Cipher会重置为初始化状态，可以继续使用，这个可复用的特性可以降低创建Cipher实例的性能损耗。</p>
+<h3 id="updateADD方法">updateADD方法</h3>
+<p>首先ADD的意思是Additional Authentication Data(额外的身份认证数据)。<code>updateADD()</code>也有三个方法变体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">updateAAD</span><span class="params">(<span class="keyword">byte</span>[] src)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">updateAAD</span><span class="params">(<span class="keyword">byte</span>[] src,</span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> offset,</span></span></span><br><span class="line"><span class="function"><span class="params">                            <span class="keyword">int</span> len)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">updateAAD</span><span class="params">(ByteBuffer src)</span></span></span><br></pre></td></tr></table></figure>
+<p>它的方法变体都只依赖一个输入缓冲区，带有额外的身份认证数据，一般使用在<code>GCM</code>或者<code>CCM</code>加解密算法中。如果使用此方法，它的调用必须在Cipher的<code>update</code>和<code>doFinal</code>变体方法之前调用，其实理解起来也很简单，身份验证必须在实际的加解密操作之前进行。目前，<code>updateADD</code>的资料比较少，笔者在生产环境找那个也尚未实践过，所以不做展开分析。</p>
+<h3 id="其他方法">其他方法</h3>
+<p>其他方法主要是Getter方法，用于获取Cipher的相关信息。</p>
+<ul>
+<li><code>public final Provider getProvider()</code>：获取Cipher的提供商。</li>
+<li><code>public final String getAlgorithm()</code>：获取Cipher使用的算法名称。</li>
+<li><code>public final int getBlockSize()</code>：分组加密中，每一组都有固定的长度，也称为块，此方法是返回块的大小（以字节为单位）。</li>
+<li><code>public final int getOutputSize(int inputLen)</code>：根据给定的输入长度inputLen（以字节为单位），返回保存下一个update或doFinal操作结果所需的输出缓冲区长度（以字节为单位）。</li>
+<li><code>public final byte[] getIV()</code>：返回Cipher中的初始化向量的字节数组。</li>
+<li><code>public final AlgorithmParameters getParameters()</code>：返回Cipher使用的算法参数。</li>
+<li><code>public final ExemptionMechanism getExemptionMechanism()</code>：返回Cipher使用的豁免(exemption)机制对象。</li>
+<li><code>public static final int getMaxAllowedKeyLength(String transformation)</code>：根据所安装的JCE策略文件，返回指定转换的最大密钥长度。</li>
+<li><code>public static final AlgorithmParameterSpec getMaxAllowedParameterSpec(String transformation)</code>：根据JCE策略文件，返回Cipher指定transformation下最大的AlgorithmParameterSpec对象。</li>
+</ul>
+<h2 id="Cipher的工作流程">Cipher的工作流程</h2>
+<p>下面画一个图来详细分析一下Cipher的工作流程：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/cipher-1.png" alt="cipher-1"></p>
+<p>当然上图只分析了Cipher的使用过程，其实还有一个重要的步骤就是密钥的处理，但是密钥的处理和具体的算法使用是相关的，所以图中没有体现。再放一张官方描述Cipher加载的流程：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/cipher-2.png" alt="cipher-2"></p>
+<p>主要过程包括：</p>
+<ul>
+<li>1、创建Cipher实例，这个时候会从平台中所有的提供商(Provider)中根据transformation匹配第一个可以使用的CipherSpi实例，&quot;算法/工作模式/填充模式&quot;必须完全匹配才能选中。</li>
+</ul>
+<blockquote>
+<p>在${JAVA_HONE}/jre/lib/security中的java.security文件中可以看到默认加载的提供商。如果需要添加额外或者自实现的Provider，可以通过java.security.Security的静态方法addProvider添加。</p>
+</blockquote>
+<ul>
+<li>2、通过Cipher实例的init方法初始化Cipher，主要参数是opmode和密钥。</li>
+<li>3、根据初始化的方式和是否需要分组处理，选择合适的方法进行调用，一般以<code>doFinal()</code>方法作结得到返回结果。</li>
+</ul>
+<h2 id="Cipher的使用">Cipher的使用</h2>
+<p>为了方便Cipher的使用，最好先引入<code>apache-codec</code>依赖，这样能简化Hex、Base64等操作。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-codec<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-codec<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.11<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>大多数情况下，加密后的byte数组的中元素取值不在Unicode码点的范围内，表面上看到的就是乱码，实际上它们是有意义的，因此需要考虑把这种byte数组转换为非乱码的字符串以便传输，常见的方式有Hex(二进制转换为十六进制)、Base64等等。下面举例中没有针对异常类型进行处理统一外抛，切勿模仿，还有，所有的字符串转化为字节数组都没有指定字符编码，因此只能使用非中文的明文进行处理。</p>
+<h3 id="加密模式">加密模式</h3>
+<p>加密模式下，Cipher只能用于加密，主要由<code>init()</code>方法中的opmode决定。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">encryptByAes</span><span class="params">(String content, String password)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	<span class="comment">//这里指定了算法为AES_128，工作模式为EBC，填充模式为NoPadding</span></span><br><span class="line">	Cipher cipher = Cipher.getInstance(<span class="string">"AES_128/ECB/NoPadding"</span>);</span><br><span class="line">	KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">	<span class="comment">//因为AES要求密钥的长度为128，我们需要固定的密码，因此随机源的种子需要设置为我们的密码数组</span></span><br><span class="line">	keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(password.getBytes()));</span><br><span class="line">	SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">	SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">	<span class="comment">//基于加密模式和密钥初始化Cipher</span></span><br><span class="line">	cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);</span><br><span class="line">	<span class="comment">//单部分加密结束，重置Cipher</span></span><br><span class="line">	<span class="keyword">byte</span>[] bytes = cipher.doFinal(content.getBytes());</span><br><span class="line">	<span class="comment">//加密后的密文由二进制序列转化为十六进制序列，依赖apache-codec包</span></span><br><span class="line">	<span class="keyword">return</span> Hex.encodeHexString(bytes);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实整个过程Cipher的使用都很简单，比较复杂的反而是密钥生成的过程。上面的例子需要注意，因为使用了填充模式为NoPadding，输入的需要加密的报文长度必须是16(128bit)的倍数。</p>
+<h3 id="解密模式">解密模式</h3>
+<p>解密模式的使用大致和加密模式是相同的，把处理过程逆转过来就行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">decryptByAes</span><span class="params">(String content, String password)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	<span class="comment">//这里要把十六进制的序列转化回二进制的序列，依赖apache-codec包</span></span><br><span class="line">	<span class="keyword">byte</span>[] bytes = Hex.decodeHex(content);</span><br><span class="line">	<span class="comment">//这里指定了算法为AES_128，工作模式为EBC，填充模式为NoPadding</span></span><br><span class="line">	Cipher cipher = Cipher.getInstance(<span class="string">"AES_128/ECB/NoPadding"</span>);</span><br><span class="line">	KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">	<span class="comment">//因为AES要求密钥的长度为128，我们需要固定的密码，因此随机源的种子需要设置为我们的密码数组</span></span><br><span class="line">	keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(password.getBytes()));</span><br><span class="line">	SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">	SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">	<span class="comment">//基于解密模式和密钥初始化Cipher</span></span><br><span class="line">	cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);</span><br><span class="line">	<span class="comment">//单部分加密结束，重置Cipher</span></span><br><span class="line">	<span class="keyword">byte</span>[] result = cipher.doFinal(bytes);</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> String(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子需要注意，因为使用了填充模式为NoPadding，输入的需要加密的报文长度必须是16(128bit)的倍数。</p>
+<h3 id="包装密钥模式和解包装密钥模式">包装密钥模式和解包装密钥模式</h3>
+<p>密钥的包装和解包装模式是一对互逆的操作，主要作用是通过算法对密钥进行加解密，从而提高密钥泄漏的难度。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EncryptUtils &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 单例</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    SINGLETON;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SECRECT = <span class="string">"passwrod"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">wrap</span><span class="params">(String keyString)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        <span class="comment">//初始化密钥生成器，指定密钥长度为128，指定随机源的种子为指定的密钥(这里是"passward")</span></span><br><span class="line">        keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRECT.getBytes()));</span><br><span class="line">        SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">        SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">        Cipher cipher = Cipher.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        cipher.init(Cipher.WRAP_MODE, secretKeySpec);</span><br><span class="line">        SecretKeySpec key = <span class="keyword">new</span> SecretKeySpec(keyString.getBytes(), <span class="string">"AES"</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = cipher.wrap(key);</span><br><span class="line">        <span class="keyword">return</span> Hex.encodeHexString(bytes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">unwrap</span><span class="params">(String keyString)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] rawKey = Hex.decodeHex(keyString);</span><br><span class="line">        KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        <span class="comment">//初始化密钥生成器，指定密钥长度为128，指定随机源的种子为指定的密钥(这里是"passward")</span></span><br><span class="line">        keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRECT.getBytes()));</span><br><span class="line">        SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">        SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">        Cipher cipher = Cipher.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">        cipher.init(Cipher.UNWRAP_MODE, secretKeySpec);</span><br><span class="line">        SecretKey key = (SecretKey) cipher.unwrap(rawKey, <span class="string">"AES"</span>, Cipher.SECRET_KEY);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String(key.getEncoded());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String wrapKey = EncryptUtils.SINGLETON.wrap(<span class="string">"doge"</span>);</span><br><span class="line">        System.out.println(wrapKey);</span><br><span class="line">        System.out.println(EncryptUtils.SINGLETON.unwrap(wrapKey));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="分组-部分-加密和分组解密">分组(部分)加密和分组解密</h3>
+<p>当一个需要加密的报文十分长的时候，我们可以考虑把报文切割成多个小段，然后针对每个小段进行加密，这就是分组加密。分组解密的过程类同，可以看作是分组加密的逆向过程。下面还是用AES算法为例举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.codec.binary.Hex;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.crypto.Cipher;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.KeyGenerator;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.SecretKey;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.SecretKeySpec;</span><br><span class="line"><span class="keyword">import</span> java.security.SecureRandom;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> throwable</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> v1.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 2018/8/15 1:06</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Part &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * SINGLETON</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	SINGLETON;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PASSWORD = <span class="string">"throwable"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> Cipher <span class="title">createCipher</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Cipher.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">encrypt</span><span class="params">(String content)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Cipher cipher = createCipher();</span><br><span class="line">		KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">		<span class="comment">//因为AES要求密钥的长度为128，我们需要固定的密码，因此随机源的种子需要设置为我们的密码数组</span></span><br><span class="line">		keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(PASSWORD.getBytes()));</span><br><span class="line">		SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">		SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">		<span class="comment">//基于加密模式和密钥初始化Cipher</span></span><br><span class="line">		cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);</span><br><span class="line">		<span class="keyword">byte</span>[] raw = content.getBytes();</span><br><span class="line">		StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		<span class="comment">//[0,9]</span></span><br><span class="line">		<span class="keyword">byte</span>[] first = cipher.update(raw, <span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		builder.append(Hex.encodeHexString(first));</span><br><span class="line">		<span class="comment">//[10,19]</span></span><br><span class="line">		<span class="keyword">byte</span>[] second = cipher.update(raw, <span class="number">10</span>, <span class="number">10</span>);</span><br><span class="line">		builder.append(Hex.encodeHexString(second));</span><br><span class="line">		<span class="comment">//[20,25]</span></span><br><span class="line">		<span class="keyword">byte</span>[] third = cipher.update(raw, <span class="number">20</span>, <span class="number">6</span>);</span><br><span class="line">		builder.append(Hex.encodeHexString(third));</span><br><span class="line">		<span class="comment">//多部分加密结束，得到最后一段加密的结果，重置Cipher</span></span><br><span class="line">		<span class="keyword">byte</span>[] bytes = cipher.doFinal();</span><br><span class="line">		String last = Hex.encodeHexString(bytes);</span><br><span class="line">		builder.append(last);</span><br><span class="line">		<span class="keyword">return</span> builder.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">decrypt</span><span class="params">(String content)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">byte</span>[] raw = Hex.decodeHex(content);</span><br><span class="line">		Cipher cipher = createCipher();</span><br><span class="line">		KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AES"</span>);</span><br><span class="line">		<span class="comment">//因为AES要求密钥的长度为128，我们需要固定的密码，因此随机源的种子需要设置为我们的密码数组</span></span><br><span class="line">		keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(PASSWORD.getBytes()));</span><br><span class="line">		SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">		SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AES"</span>);</span><br><span class="line">		<span class="comment">//基于解密模式和密钥初始化Cipher</span></span><br><span class="line">		cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);</span><br><span class="line">		StringBuilder builder = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">		<span class="comment">//[0,14]</span></span><br><span class="line">		<span class="keyword">byte</span>[] first = cipher.update(raw, <span class="number">0</span>, <span class="number">15</span>);</span><br><span class="line">		builder.append(<span class="keyword">new</span> String(first));</span><br><span class="line">		<span class="comment">//[15,29]</span></span><br><span class="line">		<span class="keyword">byte</span>[] second = cipher.update(raw, <span class="number">15</span>, <span class="number">15</span>);</span><br><span class="line">		builder.append(<span class="keyword">new</span> String(second));</span><br><span class="line">		<span class="comment">//[30,31]</span></span><br><span class="line">		<span class="keyword">byte</span>[] third = cipher.update(raw, <span class="number">30</span>, <span class="number">2</span>);</span><br><span class="line">		builder.append(<span class="keyword">new</span> String(third));</span><br><span class="line">		<span class="comment">//多部分解密结束，得到最后一段解密的结果，重置Cipher</span></span><br><span class="line">		<span class="keyword">byte</span>[] bytes = cipher.doFinal();</span><br><span class="line">		builder.append(<span class="keyword">new</span> String(bytes));</span><br><span class="line">		<span class="keyword">return</span> builder.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		String raw = <span class="string">"abcdefghijklmnopqrstyuwxyz"</span>;</span><br><span class="line">		String e = Part.SINGLETON.encrypt(raw);</span><br><span class="line">		System.out.println(e);</span><br><span class="line">		System.out.println(Part.SINGLETON.decrypt(e));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的分段下标已经在注释中给出，分段的规则由实际情况考虑，一般AES加解密报文不大的时候可以直接单部分加解密即可，这里仅仅是为了做展示。</p>
+<h3 id="查看当前JDK中Cipher的所有提供商">查看当前JDK中Cipher的所有提供商</h3>
+<p>我们可以直接查看当前的使用的JDK中Cipher的所有提供商和支持的加解密服务，简单写个main函数就行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.security.Provider;</span><br><span class="line"><span class="keyword">import</span> java.security.Security;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Provider[] providers = Security.getProviders();</span><br><span class="line">		<span class="keyword">if</span> (<span class="keyword">null</span> != providers) &#123;</span><br><span class="line">			<span class="keyword">for</span> (Provider provider : providers) &#123;</span><br><span class="line">				Set&lt;Provider.Service&gt; services = provider.getServices();</span><br><span class="line">				<span class="keyword">for</span> (Provider.Service service : services) &#123;</span><br><span class="line">					<span class="keyword">if</span> (<span class="string">"Cipher"</span>.equals(service.getType())) &#123;</span><br><span class="line">						System.out.println(String.format(<span class="string">"provider:%s,type:%s,algorithm:%s"</span>, service.getProvider(), service.getType(), service.getAlgorithm()));</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>笔者编写这篇文章的时候使用的JDK是JDK8的最后一个更新的版本8u181(1.8.0_181)，运行main函数输出如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:RSA</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:DES</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:DESede</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:DESedeWrap</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:PBEWithMD5AndDES</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:PBEWithMD5AndTripleDES</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:PBEWithSHA1AndDESede</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:PBEWithSHA1AndRC2_40</span><br><span class="line">provider:SunJCE version <span class="number">1.8</span>,type:Cipher,algorithm:PBEWithSHA1AndRC2_128</span><br><span class="line">.....输出内容太多忽略剩余部分</span><br></pre></td></tr></table></figure>
+<h2 id="扩展">扩展</h2>
+<p>因为Java原生支持的transformation是有限的，有些时候我们需要使用一些算法其他工作模式或者填充模式原生无法支持，这个时候我们需要引入第三方的Provider甚至自己实现Provider。常见的第三方Provider是bouncycastle(BC)，目前BC的最新依赖为：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.bouncycastle<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>bcprov-jdk15on<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.60<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>举个例子，Java原生是不支持AESWRAP算法的，因此可以引入BC的依赖，再使用转换模式AESWRAP。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.codec.binary.Hex;</span><br><span class="line"><span class="keyword">import</span> org.bouncycastle.jce.provider.BouncyCastleProvider;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.crypto.Cipher;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.KeyGenerator;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.SecretKey;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.SecretKeySpec;</span><br><span class="line"><span class="keyword">import</span> java.security.MessageDigest;</span><br><span class="line"><span class="keyword">import</span> java.security.SecureRandom;</span><br><span class="line"><span class="keyword">import</span> java.security.Security;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> EncryptUtils &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * SINGLETON</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	SINGLETON;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SECRET = <span class="string">"throwable"</span>;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CHARSET = <span class="string">"UTF-8"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//装载BC提供商</span></span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		Security.addProvider(<span class="keyword">new</span> BouncyCastleProvider());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> Cipher <span class="title">createAesCipher</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Cipher.getInstance(<span class="string">"AESWRAP"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">encryptByAes</span><span class="params">(String raw)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Cipher aesCipher = createAesCipher();</span><br><span class="line">		KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AESWRAP"</span>);</span><br><span class="line">		keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRET.getBytes(CHARSET)));</span><br><span class="line">		SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">		SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AESWRAP"</span>);</span><br><span class="line">		aesCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);</span><br><span class="line">		<span class="keyword">byte</span>[] bytes = aesCipher.doFinal(raw.getBytes(CHARSET));</span><br><span class="line">		<span class="keyword">return</span> Hex.encodeHexString(bytes);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">decryptByAes</span><span class="params">(String raw)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="keyword">byte</span>[] bytes = Hex.decodeHex(raw);</span><br><span class="line">		Cipher aesCipher = createAesCipher();</span><br><span class="line">		KeyGenerator keyGenerator = KeyGenerator.getInstance(<span class="string">"AESWRAP"</span>);</span><br><span class="line">		keyGenerator.init(<span class="number">128</span>, <span class="keyword">new</span> SecureRandom(SECRET.getBytes(CHARSET)));</span><br><span class="line">		SecretKey secretKey = keyGenerator.generateKey();</span><br><span class="line">		SecretKeySpec secretKeySpec = <span class="keyword">new</span> SecretKeySpec(secretKey.getEncoded(), <span class="string">"AESWRAP"</span>);</span><br><span class="line">		aesCipher.init(Cipher.DECRYPT_MODE, secretKeySpec);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> String(aesCipher.doFinal(bytes), CHARSET);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		String raw = <span class="string">"throwable-a-doge"</span>;</span><br><span class="line">		String en = EncryptUtils.SINGLETON.encryptByAes(raw);</span><br><span class="line">		System.out.println(en);</span><br><span class="line">		String de = EncryptUtils.SINGLETON.decryptByAes(en);</span><br><span class="line">		System.out.println(de);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子需要注意，因为使用了AESWRAP算法，输入的需要加密的报文长度必须是8的倍数。</p>
+<h2 id="小结">小结</h2>
+<p>熟练掌握Cipher的用法、转换模式transformation的一些知识之后，影响我们编写加解密模块代码的主要因素就是加解密算法的原理或者使用，这些需要我们去学习专门的加解密算法相关的知识。另外，<strong>有些时候我们发现不同平台或者不同语言使用同一个加密算法不能相互解密加密</strong>，其实原因很简单，绝大部分原因是工作模式选取或者填充模式选取的不同导致的，排除掉这两点，剩下的可能性就是算法的实现不相同，依据这三点因素(或者说就是transformation这唯一的因素)去判断和寻找解决方案即可。关于加解密算法原理、工作模式等相关知识可以参考下面的资料。</p>
+<p>参考资料：</p>
+<ul>
+<li>《密码编码学与网络安全-原理与实践(第六版)》</li>
+<li>《信息安全原理与实践(第2版)》</li>
+<li>《关于加密数据的填充方式的研究》</li>
+<li>JDK8文档</li>
+</ul>
+<p>另外，一些特殊的方法例如<code>Ciper#updateADD()</code>暂时没遇到使用场景，这里就不写没实践过的Demo。</p>
+<p>(本文完 e-a-20190216 c-7-d)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/02/16/java-security-cipher/>http://throwable.club/2019/02/16/java-security-cipher/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Security/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Security</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/02/16/java-security-cipher/&title=JDK安全模块JCE核心Cipher使用详解 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/02/16/java-security-cipher/&title=JDK安全模块JCE核心Cipher使用详解 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsUlEQVR42u3awVIjMQwEUP7/p9mqPVEVSFptC3J4c6JgJvHzYSxa+viIr8//19efv/7m8Z7HOx//mn9L/gnlhYeHh1ct/fnH5bxkQdN7cvw3n4aHh4e3xkte09OjIn82WUl+Jx4eHt778Kav8vyvdzcCDw8P7314yVPTRXdrwMPDw3sHXhJGJDFEfqhMo4r1rAUPDw8v5nUNsL/9eb2/h4eHh1d11buXb9f66gKRFyvEw8PDW+DlAesUMC18uzujAwMPDw9vgXcrMO0GtqaHTYJ5kVXj4eHhXeJNm14XwtODSCI5MPDw8PD2eOejTt2owbS87gYX8PDw8O7yutJ2uk15dDslRQEuHh4e3gIv/8rurdstehoif6PAw8PDW+PlUWxefJ8UzdNW3MfJSYWHh4c35N2iTpEnhXt54eHh4V3i5WMB0/B3elRMM9ioTMfDw8Nb4D0vcM+XMh01mD4brRkPDw/vKm8axXat/XxZXUn947N4eHh4C7z8pZyHC3lDay8UxsPDw9vjJQ90GemtqGK6Nd+U1Hh4eHhrvPOhga7RlYcd4/IdDw8Pb4HXRRJdOyrZghw8eBYPDw/vKi8PW/OSNz9m8qscWcDDw8P7dV535fFudzjlTTg8PDy8Dd60td8FDV0LrevjRW0wPDw8vGPeeMpgGONOQ+Hzka8yD8bDw8OLecmrdjoicBJzTMOOF6vFw8PDW+adtL5OiuNkm47SETw8PLxLvK4R1bX289A22ayoyMbDw8Nb4J23tU5400A2L7Wvde3w8PDwng4Q5IdBHsJuHDN5NIyHh4e3zcsPg/P2VX4AdEcXHh4e3nvyuiGtrizO22A/ltR4eHh4f8Q7HwLIt6CLlfHw8PB+k9d9cf5C78YFrjW38PDw8K7yun/1P6trWrKfbzEeHh7eVd4/q4k1yn9yFdYAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/02/16/java-security-cipher/&title=JDK安全模块JCE核心Cipher使用详解 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsUlEQVR42u3awVIjMQwEUP7/p9mqPVEVSFptC3J4c6JgJvHzYSxa+viIr8//19efv/7m8Z7HOx//mn9L/gnlhYeHh1ct/fnH5bxkQdN7cvw3n4aHh4e3xkte09OjIn82WUl+Jx4eHt778Kav8vyvdzcCDw8P7314yVPTRXdrwMPDw3sHXhJGJDFEfqhMo4r1rAUPDw8v5nUNsL/9eb2/h4eHh1d11buXb9f66gKRFyvEw8PDW+DlAesUMC18uzujAwMPDw9vgXcrMO0GtqaHTYJ5kVXj4eHhXeJNm14XwtODSCI5MPDw8PD2eOejTt2owbS87gYX8PDw8O7yutJ2uk15dDslRQEuHh4e3gIv/8rurdstehoif6PAw8PDW+PlUWxefJ8UzdNW3MfJSYWHh4c35N2iTpEnhXt54eHh4V3i5WMB0/B3elRMM9ioTMfDw8Nb4D0vcM+XMh01mD4brRkPDw/vKm8axXat/XxZXUn947N4eHh4C7z8pZyHC3lDay8UxsPDw9vjJQ90GemtqGK6Nd+U1Hh4eHhrvPOhga7RlYcd4/IdDw8Pb4HXRRJdOyrZghw8eBYPDw/vKi8PW/OSNz9m8qscWcDDw8P7dV535fFudzjlTTg8PDy8Dd60td8FDV0LrevjRW0wPDw8vGPeeMpgGONOQ+Hzka8yD8bDw8OLecmrdjoicBJzTMOOF6vFw8PDW+adtL5OiuNkm47SETw8PLxLvK4R1bX289A22ayoyMbDw8Nb4J23tU5400A2L7Wvde3w8PDwng4Q5IdBHsJuHDN5NIyHh4e3zcsPg/P2VX4AdEcXHh4e3nvyuiGtrizO22A/ltR4eHh4f8Q7HwLIt6CLlfHw8PB+k9d9cf5C78YFrjW38PDw8K7yun/1P6trWrKfbzEeHh7eVd4/q4k1yn9yFdYAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/02/17/java-concurrency-threadlocal-source-code/" rel="prev" title="ThreadLocal源码分析-黄金分割数的使用">
+                                  
+                                      ThreadLocal源码分析-黄金分割数的使用
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/ThreadLocal/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> ThreadLocal</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/02/16/java-archunit-research/" rel="prev" title="项目架构级别规约框架Archunit调研">
+                                    
+                                        项目架构级别规约框架Archunit调研
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Framework/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Framework</a> <a class="tag" href="/blog/tags/Archunit/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Archunit</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JDK安全模块JCE核心Cipher使用详解',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cipher初始化transformation-转换模式-的一些知识补充"><span class="toc-text">Cipher初始化transformation(转换模式)的一些知识补充</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#算法"><span class="toc-text">算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#工作模式"><span class="toc-text">工作模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#填充模式"><span class="toc-text">填充模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#transformation小结"><span class="toc-text">transformation小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cipher的属性和方法"><span class="toc-text">Cipher的属性和方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Cipher的七个主要公有属性"><span class="toc-text">Cipher的七个主要公有属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getInstance方法"><span class="toc-text">getInstance方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#init方法"><span class="toc-text">init方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wrap方法和unwrap方法"><span class="toc-text">wrap方法和unwrap方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#update方法"><span class="toc-text">update方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#doFinal方法"><span class="toc-text">doFinal方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#updateADD方法"><span class="toc-text">updateADD方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他方法"><span class="toc-text">其他方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cipher的工作流程"><span class="toc-text">Cipher的工作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cipher的使用"><span class="toc-text">Cipher的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#加密模式"><span class="toc-text">加密模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解密模式"><span class="toc-text">解密模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#包装密钥模式和解包装密钥模式"><span class="toc-text">包装密钥模式和解包装密钥模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分组-部分-加密和分组解密"><span class="toc-text">分组(部分)加密和分组解密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看当前JDK中Cipher的所有提供商"><span class="toc-text">查看当前JDK中Cipher的所有提供商</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-text">扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

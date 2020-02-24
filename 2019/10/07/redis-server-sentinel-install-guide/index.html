@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Redis5.x哨兵搭建手记 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/10/07/redis-server-sentinel-install-guide/">
+        Redis5.x哨兵搭建手记
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Redis/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Redis</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年10月7日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-11-29T01:01:08+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年11月29日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.6k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：10分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p><code>Redis5.x</code>之后，单机、哨兵、集群搭建的难度已经简化。鉴于目前看到太多文章都是复制粘贴以往一些<code>3.x</code>版本的一些内容，所以打算基于当前<code>Redis</code>的最新版本做一次单机、哨兵和集群的搭建，记录一下过程步骤和遇到的问题。编写本文的时间是2019年10月6日（国庆假期…），当前<code>Redis</code>的最新版本为<strong>5.0.5</strong>。操作系统用的是虚拟机里面安装的<code>CentOS 7</code>。先确定已经安装好<code>Redis</code>服务，可以参考笔者写的前一篇文章：<a href="http://www.throwable.club/2019/10/06/redis-server-single-install-guide" target="_blank" rel="noopener">《Redis5.x单机服务搭建手记》</a>。出于书写习惯，本文有可能把哨兵称为<code>Sentinel</code>、<code>Redis Sentinel</code>、哨兵或者<code>Redis</code>哨兵，这四个名词是等价的。</p>
+<a id="more"></a>
+<h2 id="哨兵简介">哨兵简介</h2>
+<p>一定要有一个概念：哨兵实例也是特殊的<code>Redis</code>实例，也就是哨兵实例是独立的进程，多个哨兵实例可以搭建主从（<code>Master-Slave</code>），它们承担的职责和普通的<code>Redis</code>实例不一样。下面是官方文档中对哨兵的介绍：</p>
+<p><code>Redis</code>哨兵为<code>Redis</code>提供了高可用性，意味着可以使用哨兵创建<code>Redis</code>服务部署，该部署可以在无需人工干预的情况下抵御某些类型的故障。<code>Redis</code>哨兵还提供其他功能，如监视、通知，并且为客户端提供配置入口（<code>acts as a configuration provider for clients</code>）。下面是<code>Redis</code>哨兵提供的完整功能列表：</p>
+<ul>
+<li>监控（<code>Monitoring</code>）：<code>Sentinel</code>会不断检查<code>Master</code>实例和<code>Slave</code>实例是否按预期工作。</li>
+<li>通知（<code>Notification</code>）：<code>Sentinel</code>可以通过API进行通知受监控的<code>Redis</code>实例出现问题。</li>
+<li>自动故障转移（<code>Automatic Failover</code>）：如果<code>Master</code>实例未按预期工作，则<code>Sentinel</code>可以启动故障转移程序，在该过程中，会将一个<code>Slave</code>实例提升为<code>Master</code>实例，将其他<code>Slave</code>实例重新配置为使用新的<code>Master</code>实例，并且会通知使用<code>Redis</code>实例的应用程序获取新的地址、连接信息。</li>
+<li>提供配置入口（<code>Configuration provider</code>）：<code>Sentinel</code>充当客户端服务发现的授权来源（<code>a source of authority</code>）：客户端连接到<code>Sentinel</code>，可以询问<code>Redis</code>服务群中的<code>Master</code>实例的地址。如果发生故障转移，<code>Sentinel</code>将通知客户端新的<code>Master</code>实例的地址。</li>
+</ul>
+<p><strong>Sentinel的分布式性质</strong></p>
+<p><code>Redis Sentinel</code>是一个分布式系统，<code>Sentinel</code>采用同一份配置多个<code>Sentinel</code>进程共同协作运行的设计，多<code>Sentinel</code>进程协作的优势如下：</p>
+<ul>
+<li>多个<code>Sentinel</code>实例就给定的主机不再可用这一事实达成共识时，将执行故障检测，从而降低了误报的可能性。</li>
+<li><code>Sentinel</code>群中即使不是所有<code>Sentinel</code>处于可用状态，<code>Sentinel</code>群仍然能够正常工作，进行故障转移。</li>
+</ul>
+<h2 id="哨兵搭建">哨兵搭建</h2>
+<p>当前的<code>Redis</code>哨兵版本称为<strong>哨兵2</strong>，哨兵版本1是<code>Redis 2.6</code>的时候引入，现在已经过期，不推荐使用。官方文档中部署哨兵的示例中指出：<strong>一个健壮的部署至少需要三个Sentinel实例</strong>。再加上一般情况下，普通的<code>Redis</code>服务实例为了保证健壮性需要搭建<strong>树状主从</strong>，至少建议部署三个实例。这里的部署拓扑图如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-1.png" alt=""></p>
+<h3 id="环境配置">环境配置</h3>
+<p>按照部署拓扑图，一共部署6个<code>Redis</code>实例，3个普通的<code>Redis</code>实例组成<code>Master-Slave</code>，并且是<strong>树状主从</strong>，3个<code>Redis</code>哨兵实例。为了简单起见，6个<code>Redis</code>实例部署在同一个虚拟机中，注意在生产或者测试环境要分散机器部署，避免所有鸡蛋放在同一个篮子出现机器单点故障。具体信息如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">实例标识</th>
+<th style="text-align:center">角色</th>
+<th style="text-align:center">主机IP</th>
+<th style="text-align:center">端口</th>
+<th style="text-align:center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>Sentinel-1</code></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">26379</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Sentinel-2</code></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">26380</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Sentinel-3</code></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">26381</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Redis-1</code></td>
+<td style="text-align:center"><code>Master</code></td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">6380</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Redis-11</code></td>
+<td style="text-align:center"><code>Slave</code></td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">6381</td>
+<td style="text-align:center"><code>Redis-1</code>的从节点</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>Redis-111</code></td>
+<td style="text-align:center"><code>Slave</code></td>
+<td style="text-align:center"><code>192.168.56.200</code></td>
+<td style="text-align:center">6382</td>
+<td style="text-align:center"><code>Redis-11</code>的从节点</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Sentinel配置和配置文件创建">Sentinel配置和配置文件创建</h3>
+<p>先看样板配置文件<code>sentinel.conf</code>的内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize no</span><br><span class="line">pidfile /var/run/redis-sentinel.pid</span><br><span class="line">logfile ""</span><br><span class="line">dir /tmp</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2</span><br><span class="line">sentinel down-after-milliseconds mymaster 30000</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line">sentinel deny-scripts-reconfig yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> sentinel auth-pass mymaster 123456</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">bind</span> 127.0.0.1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ......</span></span><br></pre></td></tr></table></figure>
+<p>完整的配置属性列表比较少，而<code>port</code>、<code>daemonize</code>、<code>pidfile</code>、<code>logfile</code>、<code>dir</code>、<code>bind</code>等属性上一篇文章已经分析过，这里不再复述。</p>
+<p><strong><code>sentinel monitor &lt;master-group-name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</code></strong></p>
+<ul>
+<li><code>master-group-name</code>：被监控的目标<code>Master</code>实例的名称，这个值可以自定义。</li>
+<li><code>ip</code>：被监控的目标<code>Master</code>实例的服务器地址。</li>
+<li><code>port</code>：被监控的目标<code>Master</code>实例的端口。</li>
+<li><code>quorum</code>：仲裁参数，设置需要多少个<code>Sentinel</code>实例同意才能判断一个被监控的<code>Redis</code>实例失效。换言之，一个 <code>Sentinel</code>群需要获得系统中多数<code>Sentinel</code>的支持， 才能发起一次自动故障迁移。如果我们使用3个<code>Sentinel</code>实例，那么这个值可以定义为2。</li>
+</ul>
+<p><code>sentinel monitor</code>配置项比较特殊，主要用来指定<code>Master</code>角色<code>Redis</code>服务的链接信息。其他5个配置项采用下面的格式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel &lt;option_name&gt; &lt;master-group-name&gt; &lt;option_value&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>down-after-milliseconds</code>：定了<code>Sentinel</code>认为被监控的<code>Redis</code>服务已经断线的总毫秒数。如果在指定的毫秒数之内，被监控的<code>Redis</code>服务没有向<code>Sentinel</code>回复<code>PING</code>信息或者回复了<code>Error</code>信息，那么<code>Sentinel</code>会开始认为被监控的<code>Redis</code>服务下线（其实这里是主观下线（<code>subjectively down</code>，简称<code>SDOWN</code>）。</li>
+<li><code>parallel-syncs</code>：指定了在执行故障转移时，最多可以有多少<code>Slave</code>实例同时对新的<code>Master</code>实例进行同步，这个数字越小，完成故障转移所需的时间就越长。这里建议参考样板配置中的值，设置为1。</li>
+<li><code>failover-timeout</code>：故障转移超时时间，单位为毫秒。</li>
+<li><code>deny-scripts-reconfig</code>：是否禁用<code>SENTINEL SET</code>命令运行时修改<code>notification-script</code>和<code>client-reconfig-script</code>，默认值为<code>yes</code>。</li>
+<li><code>auth-pass</code>：配置连接<code>Master</code>实例的认证密码，如果<code>Master</code>实例没有设置密码，可以不配置此项属性。</li>
+</ul>
+<p>创建3份<code>Sentinel</code>配置文件<code>26379.conf</code>、<code>26380.conf</code>、<code>26381.conf</code>，它们的内容十分相似，这里只列出<code>26379.conf</code>的内容（<strong>192.168.56.200是笔者虚拟机的主机地址</strong>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">protected-mode no</span><br><span class="line">pidfile /var/run/sentinel-26379.pid</span><br><span class="line">logfile "/data/redis/sentinel-26379.log"</span><br><span class="line">dir /data/redis</span><br><span class="line">sentinel monitor doge-master 192.168.56.200 6380 2</span><br><span class="line">sentinel down-after-milliseconds doge-master 30000</span><br><span class="line">sentinel parallel-syncs doge-master 1</span><br><span class="line">sentinel failover-timeout doge-master 180000</span><br></pre></td></tr></table></figure>
+<p>另外，创建3份<code>Redis</code>服务的配置文件<code>6380.conf</code>、<code>6381.conf</code>、<code>6382.conf</code>，它们的内容十分相似，这里只列出<code>6380.conf（主节点）</code>的内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">port 6380</span><br><span class="line">daemonize yes</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">protected-mode no</span><br><span class="line">pidfile /var/run/redis-6380.pid</span><br><span class="line">logfile "/data/redis/redis-6380.log"</span><br><span class="line">dir /data/redis</span><br><span class="line">dbfilename "dump-6380.rdb"</span><br></pre></td></tr></table></figure>
+<p><code>6381.conf（从节点）</code>尾部添加额外配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slaveof 192.168.56.200 6380</span><br></pre></td></tr></table></figure>
+<p><code>6382.conf（从节点）</code>尾部添加额外配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slaveof 192.168.56.200 6381</span><br></pre></td></tr></table></figure>
+<p>每份配置记得替换好对应的端口号，都准备好了之后，依次启动主节点、两个从节点和3个<code>Sentinel</code>（可以把命令写成一个<code>start.sh</code>，调用<code>sh start.sh</code>）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/data/redis/redis-5.0.5/src/redis-server /data/redis/6380.conf</span><br><span class="line">/data/redis/redis-5.0.5/src/redis-server /data/redis/6381.conf</span><br><span class="line">/data/redis/redis-5.0.5/src/redis-server /data/redis/6382.conf</span><br><span class="line"></span><br><span class="line">/data/redis/redis-5.0.5/src/redis-sentinel /data/redis/26379.conf</span><br><span class="line">/data/redis/redis-5.0.5/src/redis-sentinel /data/redis/26380.conf</span><br><span class="line">/data/redis/redis-5.0.5/src/redis-sentinel /data/redis/26381.conf</span><br></pre></td></tr></table></figure>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-2.png" alt=""></p>
+<p>此时查看哨兵的配置，发现被<code>Redis</code>修改，新增了发现的主从信息和哨兵实例信息：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-3.png" alt=""></p>
+<p>查看一下哨兵实例的日志：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-4.png" alt=""></p>
+<p>目前哨兵和<code>Redis</code>服务都正常运作。</p>
+<h3 id="模拟故障转移">模拟故障转移</h3>
+<p>官方文档中建议使用测试命令让<code>Redis</code>实例<code>Sleep</code>一个时间，从而触发故障转移：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p [port] DEBUG sleep 30</span><br></pre></td></tr></table></figure>
+<p>先查看当前的<code>Master</code>实例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# redis-cli -p 26379 </span><br><span class="line">127.0.0.1:26379&gt; SENTINEL get-master-addr-by-name doge-master</span><br><span class="line">1) "127.0.0.1"</span><br><span class="line">2) "6380"</span><br></pre></td></tr></table></figure>
+<p>再对<code>Master</code>实例执行<code>Sleep</code>命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 6380 DEBUG sleep 40</span><br></pre></td></tr></table></figure>
+<p>该命令会阻塞直到40秒后，控制台释放后，再查看当前的<code>Master</code>实例：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:26379&gt; SENTINEL get-master-addr-by-name doge-master</span><br><span class="line">1) "127.0.0.1"</span><br><span class="line">2) "6381"</span><br><span class="line">127.0.0.1:26379&gt;</span><br></pre></td></tr></table></figure>
+<p>可见，已经成功切换<code>Master</code>实例为<code>6381</code>。那么，当前的<code>Master-Slave</code>的拓扑关系到底是怎么样的？这个时候先看一下<code>Sentinel</code>的日志：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-5.png" alt=""></p>
+<p>这里可以看出了，恢复后的<code>6380</code>实例重新成为了<code>Slave</code>角色，感觉有点翻车了，<strong>原来的树状主从部署变回了一主多从</strong>，笔者开始不相信，于是从当前的<code>Master</code>实例查看了一下主从信息：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-6.png" alt=""></p>
+<p>确实如此，再检查了一下旧的主节点<code>6380</code>的配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">port 6380</span><br><span class="line">daemonize yes</span><br><span class="line">bind 0.0.0.0</span><br><span class="line">protected-mode no</span><br><span class="line">pidfile "/var/run/redis-6380.pid"</span><br><span class="line">logfile "/data/redis/redis-6380.log"</span><br><span class="line">dir "/data/redis"</span><br><span class="line">dbfilename "dump-6380.rdb"</span><br><span class="line"><span class="meta">#</span><span class="bash"> Generated by CONFIG REWRITE</span></span><br><span class="line">replicaof 192.168.56.200 6381</span><br></pre></td></tr></table></figure>
+<p>发现，最后一行被新增了内容，它成为了从节点。这一点如果不实践，恐怕不知道会衍生出这种结果。画了个图表明一下整个过程：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201910/r-s-i-g-7.png" alt=""></p>
+<p>这个问题暂时不深入探究，目前知道结果如此即可。</p>
+<h2 id="客户端代码测试">客户端代码测试</h2>
+<p>既然哨兵搭建完了，可以用<code>Java</code>客户端连接进行一些简单的操作。使用的是<code>Lettuce</code>驱动：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.lettuce<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lettuce-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.1.8.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>测试代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSentinel</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    RedisURI uri = RedisURI.builder()</span><br><span class="line">            .withSentinelMasterId(<span class="string">"doge-master"</span>)</span><br><span class="line">            .withSentinel(<span class="string">"192.168.56.200"</span>, <span class="number">26379</span>)</span><br><span class="line">            .build();</span><br><span class="line">    RedisClient redisClient = RedisClient.create(uri);</span><br><span class="line">    StatefulRedisMasterSlaveConnection&lt;String, String&gt; connection = MasterSlave.connect(redisClient, <span class="keyword">new</span> Utf8StringCodec(), uri);</span><br><span class="line">    connection.setReadFrom(ReadFrom.SLAVE_PREFERRED);</span><br><span class="line">    RedisCommands&lt;String, String&gt; commands = connection.sync();</span><br><span class="line">    String result = commands.ping();</span><br><span class="line">    log.info(<span class="string">"PING:&#123;&#125;"</span>, result);</span><br><span class="line">    commands.setex(<span class="string">"name"</span>, <span class="number">5</span>, <span class="string">"throwable"</span>);</span><br><span class="line">    result = commands.get(<span class="string">"name"</span>);</span><br><span class="line">    log.info(<span class="string">"Get value:&#123;&#125;"</span>, result);</span><br><span class="line">    connection.close();</span><br><span class="line">    redisClient.shutdown();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PING:PONG</span><br><span class="line">Get value:throwable</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p><code>Redis</code>哨兵搭建相对简单，但是需要注意<code>Redis</code>主从配置和<code>Sentinel</code>配置，一些命令可以直接写成<code>shell</code>脚本方便一键<code>shutdown</code>或者重启。在测试故障转移的时候发现了树状主从会变成一主多从，这个问题后面会分析。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://redis.io/topics/sentinel" target="_blank" rel="noopener">Redis Sentinel Documentation</a></li>
+</ul>
+<p>（本文完 c-1-d e-a-20191007）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/10/07/redis-server-sentinel-install-guide/>http://throwable.club/2019/10/07/redis-server-sentinel-install-guide/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Redis/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Redis</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/10/07/redis-server-sentinel-install-guide/&title=Redis5.x哨兵搭建手记 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+Redis5.x之后，单机、哨兵、集群搭建的难度已经简化。鉴于目前看到太多文章都是复制粘贴以往一些3.x版本的一些内容，所以打算基于当前Redis的最新版本做一次单机、哨兵和集群的搭建，记录一下过程步骤和遇到的问题。编写本文的时间是2019年10月6日（国庆假期…），当前Redis的最新版本为5.0.5。操作系统用的是虚拟机里面安装的CentOS 7。先确定已经安装好Redis服务，可以参考笔者写的前一篇文章：《Redis5.x单机服务搭建手记》。出于书写习惯，本文有可能把哨兵称为Sentinel、Redis Sentinel、哨兵或者Redis哨兵，这四个名词是等价的。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/10/07/redis-server-sentinel-install-guide/&title=Redis5.x哨兵搭建手记 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+Redis5.x之后，单机、哨兵、集群搭建的难度已经简化。鉴于目前看到太多文章都是复制粘贴以往一些3.x版本的一些内容，所以打算基于当前Redis的最新版本做一次单机、哨兵和集群的搭建，记录一下过程步骤和遇到的问题。编写本文的时间是2019年10月6日（国庆假期…），当前Redis的最新版本为5.0.5。操作系统用的是虚拟机里面安装的CentOS 7。先确定已经安装好Redis服务，可以参考笔者写的前一篇文章：《Redis5.x单机服务搭建手记》。出于书写习惯，本文有可能把哨兵称为Sentinel、Redis Sentinel、哨兵或者Redis哨兵，这四个名词是等价的。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACxElEQVR42u3aQY7jMAwEwPz/05kHJM50U5LhQ/m0CGLHpQEobZOvV3y9P67Pzz+/nzzh6jnvi+t14sLDw8NbfvWrH8tfPWG0v5XgvywBHh4e3jHeVUXNH93e2248v5f48nM8PDy8B/B+n11z5O8jdfsEPDw8vGfyZiW+DRFmx3o8PDy8+3lJQNBiToQOB7MWPDw8vJiXF+vn/PtIfw8PDw9vuaueFNyk3K/HxMO3xcPDwzvAm7XzkzKds/MlSGLfL3fh4eHhbeXlba0ZJmlrtZjkaXh4eHj38JJ2V17W8yNve3Av4gk8PDy8A7yVLDTfQpKCnjfb8vACDw8P7wSvfaHfR9g2YG1HARIwHh4e3mle8tX25VYGEdbbZpdHbTw8PLxNvFnw2jbG8gWaRSHDvxgeHh7eJl60h5Qbyaw91m4Yr21bJB4eHt5qb2g2HNDGwcloQn4ox8PDwzvNm40FzAYFVjp1+aJ8yarx8PDwNvGSI2++t7TlO/nddtu47O/h4eHhbeIl5bUNXmcxRP553YTDw8PD28prS3N+aG43hpXo9vL98fDw8A7wdt0QZR7lvcnwAR4eHt79vFkYMdseZofmWbtuKWvBw8PDC3izcLaNEtoWVw6+/D4eHh7eMV5eiPMSP3vO7Oh8eRceHh7eAd5KdJsPDSTI9VGD+m+Ih4eHt8ybDRO0yzFrg+WLUs+C4eHh4W3izUapZsNYeXiRbB5fPsfDw8M7zMuP13nhnkW6+dEcDw8P707eu7xWfr44BMfR7T//JcDDw8M7wGtLbR5G5CMF7dPykBcPDw/vHG8WEyTlu22AzY71RX8PDw8Pbyuvfek22M3D2W0pCx4eHt5jeO3Y06z0J8MN0aLg4eHhPYC3km3MNph2QfHw8PDu4e0ah5qNWK03tzbHuHh4eHibGmB51Z1tPPmL7tqo8PDw8EreH0dng9Cfwmw0AAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/10/07/redis-server-sentinel-install-guide/&title=Redis5.x哨兵搭建手记 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+Redis5.x之后，单机、哨兵、集群搭建的难度已经简化。鉴于目前看到太多文章都是复制粘贴以往一些3.x版本的一些内容，所以打算基于当前Redis的最新版本做一次单机、哨兵和集群的搭建，记录一下过程步骤和遇到的问题。编写本文的时间是2019年10月6日（国庆假期…），当前Redis的最新版本为5.0.5。操作系统用的是虚拟机里面安装的CentOS 7。先确定已经安装好Redis服务，可以参考笔者写的前一篇文章：《Redis5.x单机服务搭建手记》。出于书写习惯，本文有可能把哨兵称为Sentinel、Redis Sentinel、哨兵或者Redis哨兵，这四个名词是等价的。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACxElEQVR42u3aQY7jMAwEwPz/05kHJM50U5LhQ/m0CGLHpQEobZOvV3y9P67Pzz+/nzzh6jnvi+t14sLDw8NbfvWrH8tfPWG0v5XgvywBHh4e3jHeVUXNH93e2248v5f48nM8PDy8B/B+n11z5O8jdfsEPDw8vGfyZiW+DRFmx3o8PDy8+3lJQNBiToQOB7MWPDw8vJiXF+vn/PtIfw8PDw9vuaueFNyk3K/HxMO3xcPDwzvAm7XzkzKds/MlSGLfL3fh4eHhbeXlba0ZJmlrtZjkaXh4eHj38JJ2V17W8yNve3Av4gk8PDy8A7yVLDTfQpKCnjfb8vACDw8P7wSvfaHfR9g2YG1HARIwHh4e3mle8tX25VYGEdbbZpdHbTw8PLxNvFnw2jbG8gWaRSHDvxgeHh7eJl60h5Qbyaw91m4Yr21bJB4eHt5qb2g2HNDGwcloQn4ox8PDwzvNm40FzAYFVjp1+aJ8yarx8PDwNvGSI2++t7TlO/nddtu47O/h4eHhbeIl5bUNXmcxRP553YTDw8PD28prS3N+aG43hpXo9vL98fDw8A7wdt0QZR7lvcnwAR4eHt79vFkYMdseZofmWbtuKWvBw8PDC3izcLaNEtoWVw6+/D4eHh7eMV5eiPMSP3vO7Oh8eRceHh7eAd5KdJsPDSTI9VGD+m+Ih4eHt8ybDRO0yzFrg+WLUs+C4eHh4W3izUapZsNYeXiRbB5fPsfDw8M7zMuP13nhnkW6+dEcDw8P707eu7xWfr44BMfR7T//JcDDw8M7wGtLbR5G5CMF7dPykBcPDw/vHG8WEyTlu22AzY71RX8PDw8Pbyuvfek22M3D2W0pCx4eHt5jeO3Y06z0J8MN0aLg4eHhPYC3km3MNph2QfHw8PDu4e0ah5qNWK03tzbHuHh4eHibGmB51Z1tPPmL7tqo8PDw8EreH0dng9Cfwmw0AAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/10/09/redis-serialization-protocol-decode-guide/" rel="prev" title="一文彻底理解Redis序列化协议，你也可以编写Redis客户端">
+                                  
+                                      一文彻底理解Redis序列化协议，你也可以编写Redis客户端
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/10/06/redis-server-single-install-guide/" rel="prev" title="Redis5.x单机服务搭建手记">
+                                    
+                                        Redis5.x单机服务搭建手记
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Redis5.x哨兵搭建手记',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#哨兵简介"><span class="toc-text">哨兵简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#哨兵搭建"><span class="toc-text">哨兵搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境配置"><span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sentinel配置和配置文件创建"><span class="toc-text">Sentinel配置和配置文件创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#模拟故障转移"><span class="toc-text">模拟故障转移</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端代码测试"><span class="toc-text">客户端代码测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

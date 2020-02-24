@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>使用Redis实现延时任务(二) | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/09/01/redis-delay-task-second/">
+        使用Redis实现延时任务(二)
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Redis/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Redis</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年9月1日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-11-29T01:00:53+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年11月29日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：4.9k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：25分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>前一篇文章通过<code>Redis</code>的有序集合<code>Sorted Set</code>和调度框架<code>Quartz</code>实例一版简单的延时任务，但是有两个相对重要的问题没有解决：</p>
+<ol>
+<li>分片。</li>
+<li>监控。</li>
+</ol>
+<p>这篇文章的内容就是要完善这两个方面的功能。前置文章：<a href="http://www.throwable.club/2019/08/21/redis-delay-task-first" target="_blank" rel="noopener">使用Redis实现延时任务(一)</a>。</p>
+<a id="more"></a>
+<h2 id="为什么需要分片">为什么需要分片</h2>
+<p>这里重新贴一下查询脚本<code>dequeue.lua</code>的内容：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 参考jesque的部分Lua脚本实现</span></span><br><span class="line"><span class="keyword">local</span> zset_key = KEYS[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">local</span> hash_key = KEYS[<span class="number">2</span>]</span><br><span class="line"><span class="keyword">local</span> min_score = ARGV[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">local</span> max_score = ARGV[<span class="number">2</span>]</span><br><span class="line"><span class="keyword">local</span> offset = ARGV[<span class="number">3</span>]</span><br><span class="line"><span class="keyword">local</span> limit = ARGV[<span class="number">4</span>]</span><br><span class="line"><span class="comment">-- TYPE命令的返回结果是&#123;'ok':'zset'&#125;这样子,这里利用next做一轮迭代</span></span><br><span class="line"><span class="keyword">local</span> <span class="built_in">status</span>, <span class="built_in">type</span> = <span class="built_in">next</span>(redis.call(<span class="string">'TYPE'</span>, zset_key))</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">status</span> ~= <span class="literal">nil</span> <span class="keyword">and</span> <span class="built_in">status</span> == <span class="string">'ok'</span> <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span> == <span class="string">'zset'</span> <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">local</span> list = redis.call(<span class="string">'ZREVRANGEBYSCORE'</span>, zset_key, max_score, min_score, <span class="string">'LIMIT'</span>, offset, limit)</span><br><span class="line">        <span class="keyword">if</span> list ~= <span class="literal">nil</span> <span class="keyword">and</span> #list &gt; <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">            <span class="comment">-- unpack函数能把table转化为可变参数</span></span><br><span class="line">            redis.call(<span class="string">'ZREM'</span>, zset_key, <span class="built_in">unpack</span>(list))</span><br><span class="line">            <span class="keyword">local</span> result = redis.call(<span class="string">'HMGET'</span>, hash_key, <span class="built_in">unpack</span>(list))</span><br><span class="line">            redis.call(<span class="string">'HDEL'</span>, hash_key, <span class="built_in">unpack</span>(list))</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<p>这个脚本一共用到了四个命令<code>ZREVRANGEBYSCORE</code>、<code>ZREM</code>、<code>HMGET</code>和<code>HDEL</code>（<code>TYPE</code>命令的时间复杂度可以忽略）：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th style="text-align:center">时间复杂度</th>
+<th style="text-align:center">参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>ZREVRANGEBYSCORE</code></td>
+<td style="text-align:center"><code>O(log(N)+M)</code></td>
+<td style="text-align:center"><code>N</code>是有序集合中的元素总数，<code>M</code>是返回的元素的数量</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>ZREM</code></td>
+<td style="text-align:center"><code>O(M*log(N))</code></td>
+<td style="text-align:center"><code>N</code>是有序集合中的元素总数，<code>M</code>是成功移除的元素的数量</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>HMGET</code></td>
+<td style="text-align:center"><code>O(L)</code></td>
+<td style="text-align:center"><code>L</code>是成功返回的域的数量</td>
+</tr>
+<tr>
+<td style="text-align:center"><code>HDEL</code></td>
+<td style="text-align:center"><code>O(L)</code></td>
+<td style="text-align:center"><code>L</code>是要删除的域的数量</td>
+</tr>
+</tbody>
+</table>
+<p>接下来需要结合场景和具体参数分析，假如在生产环境，有序集合的元素总量维持在10000每小时（也就是说业务量是每小时下单1万笔），由于查询<code>Sorted Set</code>和<code>Hash</code>的数据同时做了删除，那么30分钟内常驻在这两个集合中的数据有5000条，也就是上面表中的<code>N = 5000</code>。假设我们初步定义查询的<code>LIMIT</code>值为100，也就是上面的<code>M</code>值为100，假设<code>Redis</code>中每个操作单元的耗时简单认为是<code>T</code>，那么分析一下5000条数据处理的耗时：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">序号</th>
+<th style="text-align:center">集合基数</th>
+<th style="text-align:center"><code>ZREVRANGEBYSCORE</code></th>
+<th style="text-align:center"><code>ZREM</code></th>
+<th style="text-align:center"><code>HMGET</code></th>
+<th style="text-align:center"><code>HDEL</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><code>5000</code></td>
+<td style="text-align:center"><code>log(5000T) + 100T</code></td>
+<td style="text-align:center"><code>log(5000T) * 100</code></td>
+<td style="text-align:center"><code>100T</code></td>
+<td style="text-align:center"><code>100T</code></td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center"><code>4900</code></td>
+<td style="text-align:center"><code>log(4900T) + 100T</code></td>
+<td style="text-align:center"><code>log(4900T) * 100</code></td>
+<td style="text-align:center"><code>100T</code></td>
+<td style="text-align:center"><code>100T</code></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center"><code>4800</code></td>
+<td style="text-align:center"><code>log(4800T) + 100T</code></td>
+<td style="text-align:center"><code>log(4800T) * 100</code></td>
+<td style="text-align:center"><code>100T</code></td>
+<td style="text-align:center"><code>100T</code></td>
+</tr>
+<tr>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+<td style="text-align:center">…</td>
+</tr>
+</tbody>
+</table>
+<p>理论上，脚本用到的四个命令中，<code>ZREM</code>命令的耗时是最大的，而<code>ZREVRANGEBYSCORE</code>和<code>ZREM</code>的时间复杂度函数都是<code>M * log(N)</code>，因此控制集合元素基数<code>N</code>对于降低<code>Lua</code>脚本运行的耗时是有一定帮助的。</p>
+<h2 id="分片">分片</h2>
+<p>上面分析了<code>dequeue.lua</code>的时间复杂度，准备好的分片方案有两个：</p>
+<ul>
+<li>方案一：单<code>Redis</code>实例，对<code>Sorted Set</code>和<code>Hash</code>两个集合的数据进行分片。</li>
+<li>方案二：基于多个<code>Redis</code>实例（可以是哨兵或者集群），实施方案一的分片操作。</li>
+</ul>
+<p><strong>为了简单起见，后面的例子中分片的数量（<code>shardingCount</code>）设计为<font color=red>2</font></strong>，生产中分片数量应该根据实际情况定制。预设使用长整型的用户ID字段<code>userId</code>取模进行分片，假定测试数据中的<code>userId</code>是均匀分布的。</p>
+<p>通用实体：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String orderId;</span><br><span class="line">    <span class="keyword">private</span> BigDecimal amount;</span><br><span class="line">    <span class="keyword">private</span> Long userId;</span><br><span class="line">    <span class="keyword">private</span> String timestamp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>延迟队列接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderDelayQueue</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(OrderMessage message)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(String min, String max, String offset, String limit, <span class="keyword">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">enqueueSha</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">dequeueSha</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="单Redis实例分片">单Redis实例分片</h3>
+<p>单<code>Redis</code>实例分片比较简单，示意图如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201909/r-d-t-2nd-1.png" alt="r-d-t-2nd-1"></p>
+<p>编写队列实现代码如下（<strong>部分参数写死，仅供参考，切勿照搬到生产中</strong>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisOrderDelayQueue</span> <span class="keyword">implements</span> <span class="title">OrderDelayQueue</span>, <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String MIN_SCORE = <span class="string">"0"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String OFFSET = <span class="string">"0"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LIMIT = <span class="string">"10"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 分片数量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> SHARDING_COUNT = <span class="number">2L</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_QUEUE_PREFIX = <span class="string">"ORDER_QUEUE_"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_DETAIL_QUEUE_PREFIX = <span class="string">"ORDER_DETAIL_QUEUE_"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ENQUEUE_LUA_SCRIPT_LOCATION = <span class="string">"/lua/enqueue.lua"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEQUEUE_LUA_SCRIPT_LOCATION = <span class="string">"/lua/dequeue.lua"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;String&gt; ENQUEUE_LUA_SHA = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicReference&lt;String&gt; DEQUEUE_LUA_SHA = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(OrderMessage message)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; args = Lists.newArrayList();</span><br><span class="line">        args.add(message.getOrderId());</span><br><span class="line">        args.add(String.valueOf(System.currentTimeMillis()));</span><br><span class="line">        args.add(message.getOrderId());</span><br><span class="line">        args.add(JSON.toJSONString(message));</span><br><span class="line">        List&lt;String&gt; keys = Lists.newArrayList();</span><br><span class="line">        <span class="keyword">long</span> index = message.getUserId() % SHARDING_COUNT;</span><br><span class="line">        keys.add(ORDER_QUEUE_PREFIX + index);</span><br><span class="line">        keys.add(ORDER_DETAIL_QUEUE_PREFIX + index);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide()) &#123;</span><br><span class="line">            jedis.evalsha(ENQUEUE_LUA_SHA.get(), keys, args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 30分钟之前</span></span><br><span class="line">        String maxScore = String.valueOf(System.currentTimeMillis() - <span class="number">30</span> * <span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line">        <span class="keyword">return</span> dequeue(MIN_SCORE, maxScore, OFFSET, LIMIT, index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(String min, String max, String offset, String limit, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; args = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        args.add(min);</span><br><span class="line">        args.add(max);</span><br><span class="line">        args.add(offset);</span><br><span class="line">        args.add(limit);</span><br><span class="line">        List&lt;OrderMessage&gt; result = Lists.newArrayList();</span><br><span class="line">        List&lt;String&gt; keys = Lists.newArrayList();</span><br><span class="line">        keys.add(ORDER_QUEUE_PREFIX + index);</span><br><span class="line">        keys.add(ORDER_DETAIL_QUEUE_PREFIX + index);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide()) &#123;</span><br><span class="line">            List&lt;String&gt; eval = (List&lt;String&gt;) jedis.evalsha(DEQUEUE_LUA_SHA.get(), keys, args);</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != eval) &#123;</span><br><span class="line">                <span class="keyword">for</span> (String e : eval) &#123;</span><br><span class="line">                    result.add(JSON.parseObject(e, OrderMessage<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">enqueueSha</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ENQUEUE_LUA_SHA.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">dequeueSha</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> DEQUEUE_LUA_SHA.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 加载Lua脚本</span></span><br><span class="line">        loadLuaScript();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadLuaScript</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide()) &#123;</span><br><span class="line">            ClassPathResource resource = <span class="keyword">new</span> ClassPathResource(ENQUEUE_LUA_SCRIPT_LOCATION);</span><br><span class="line">            String luaContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);</span><br><span class="line">            String sha = jedis.scriptLoad(luaContent);</span><br><span class="line">            ENQUEUE_LUA_SHA.compareAndSet(<span class="keyword">null</span>, sha);</span><br><span class="line">            resource = <span class="keyword">new</span> ClassPathResource(DEQUEUE_LUA_SCRIPT_LOCATION);</span><br><span class="line">            luaContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);</span><br><span class="line">            sha = jedis.scriptLoad(luaContent);</span><br><span class="line">            DEQUEUE_LUA_SHA.compareAndSet(<span class="keyword">null</span>, sha);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消费者定时任务的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">DisallowConcurrentExecution</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderMessageConsumer</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(OrderMessageConsumer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicInteger COUNTER = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化业务线程池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ExecutorService BUSINESS_WORKER_POOL = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), r -&gt; &#123;</span><br><span class="line">        Thread thread = <span class="keyword">new</span> Thread(r);</span><br><span class="line">        thread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">        thread.setName(<span class="string">"OrderMessageConsumerWorker-"</span> + COUNTER.getAndIncrement());</span><br><span class="line">        <span class="keyword">return</span> thread;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> OrderDelayQueue orderDelayQueue;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext context)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">// 这里为了简单起见，分片的下标暂时使用Quartz的任务执行上下文存放</span></span><br><span class="line">        <span class="keyword">int</span> shardingIndex = context.getMergedJobDataMap().getInt(<span class="string">"shardingIndex"</span>);</span><br><span class="line">        LOGGER.info(<span class="string">"订单消息消费者定时任务开始执行,shardingIndex:[&#123;&#125;]..."</span>, shardingIndex);</span><br><span class="line">        List&lt;OrderMessage&gt; dequeue = orderDelayQueue.dequeue(shardingIndex);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != dequeue) &#123;</span><br><span class="line">            <span class="keyword">final</span> CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line">            BUSINESS_WORKER_POOL.execute(<span class="keyword">new</span> ConsumeTask(latch, dequeue, shardingIndex));</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                latch.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ignore) &#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        LOGGER.info(<span class="string">"订单消息消费者定时任务执行完毕,shardingIndex:[&#123;&#125;]..."</span>, shardingIndex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumeTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> CountDownLatch latch;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> List&lt;OrderMessage&gt; messages;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> shardingIndex;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (OrderMessage message : messages) &#123;</span><br><span class="line">                    LOGGER.info(<span class="string">"shardingIndex:[&#123;&#125;],处理订单消息,内容:&#123;&#125;"</span>, shardingIndex, JSON.toJSONString(message));</span><br><span class="line">                    <span class="comment">// 模拟耗时</span></span><br><span class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">50</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ignore) &#123;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                latch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动定时任务和写入测试数据的<code>CommandLineRunner</code>实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzJobStartCommandLineRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Scheduler scheduler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> shardingCount = <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// 准备测试数据</span></span><br><span class="line">        prepareOrderMessageData(shardingCount);</span><br><span class="line">        <span class="keyword">for</span> (ConsumerTask task : prepareConsumerTasks(shardingCount)) &#123;</span><br><span class="line">            scheduler.scheduleJob(task.getJobDetail(), task.getTrigger());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">prepareOrderMessageData</span><span class="params">(<span class="keyword">int</span> shardingCount)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        DateTimeFormatter f = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss.SSS"</span>);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide()) &#123;</span><br><span class="line">            List&lt;OrderMessage&gt; messages = Lists.newArrayList();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">                OrderMessage message = <span class="keyword">new</span> OrderMessage();</span><br><span class="line">                message.setAmount(BigDecimal.valueOf(i));</span><br><span class="line">                message.setOrderId(<span class="string">"ORDER_ID_"</span> + i);</span><br><span class="line">                message.setUserId((<span class="keyword">long</span>) i);</span><br><span class="line">                message.setTimestamp(LocalDateTime.now().format(f));</span><br><span class="line">                messages.add(message);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (OrderMessage message : messages) &#123;</span><br><span class="line">                <span class="comment">// 30分钟前</span></span><br><span class="line">                Double score = Double.valueOf(String.valueOf(System.currentTimeMillis() - <span class="number">30</span> * <span class="number">60</span> * <span class="number">1000</span>));</span><br><span class="line">                <span class="keyword">long</span> index = message.getUserId() % shardingCount;</span><br><span class="line">                jedis.hset(<span class="string">"ORDER_DETAIL_QUEUE_"</span> + index, message.getOrderId(), JSON.toJSONString(message));</span><br><span class="line">                jedis.zadd(<span class="string">"ORDER_QUEUE_"</span> + index, score, message.getOrderId());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> List&lt;ConsumerTask&gt; <span class="title">prepareConsumerTasks</span><span class="params">(<span class="keyword">int</span> shardingCount)</span> </span>&#123;</span><br><span class="line">        List&lt;ConsumerTask&gt; tasks = Lists.newArrayList();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; shardingCount; i++) &#123;</span><br><span class="line">            JobDetail jobDetail = JobBuilder.newJob(OrderMessageConsumer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line">                    .withIdentity("OrderMessageConsumer-" + i, "DelayTask")</span><br><span class="line">                    .usingJobData(<span class="string">"shardingIndex"</span>, i)</span><br><span class="line">                    .build();</span><br><span class="line">            Trigger trigger = TriggerBuilder.newTrigger()</span><br><span class="line">                    .withIdentity(<span class="string">"OrderMessageConsumerTrigger-"</span> + i, <span class="string">"DelayTask"</span>)</span><br><span class="line">                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(<span class="number">10</span>).repeatForever())</span><br><span class="line">                    .build();</span><br><span class="line">            tasks.add(<span class="keyword">new</span> ConsumerTask(jobDetail, trigger));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> tasks;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerTask</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> JobDetail jobDetail;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Trigger trigger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动应用，输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">2019-08-28 00:13:20.648  INFO 50248 --- [           main] c.t.s.s.NoneJdbcSpringApplication        : Started NoneJdbcSpringApplication in 1.35 seconds (JVM running for 5.109)</span><br><span class="line">2019-08-28 00:13:20.780  INFO 50248 --- [ryBean_Worker-1] c.t.s.sharding.OrderMessageConsumer      : 订单消息消费者定时任务开始执行,shardingIndex:[0]...</span><br><span class="line">2019-08-28 00:13:20.781  INFO 50248 --- [ryBean_Worker-2] c.t.s.sharding.OrderMessageConsumer      : 订单消息消费者定时任务开始执行,shardingIndex:[1]...</span><br><span class="line">2019-08-28 00:13:20.788  INFO 50248 --- [onsumerWorker-1] c.t.s.sharding.OrderMessageConsumer      : shardingIndex:[1],处理订单消息,内容:&#123;"amount":99,"orderId":"ORDER_ID_99","timestamp":"2019-08-28 00:13:20.657","userId":99&#125;</span><br><span class="line">2019-08-28 00:13:20.788  INFO 50248 --- [onsumerWorker-0] c.t.s.sharding.OrderMessageConsumer      : shardingIndex:[0],处理订单消息,内容:&#123;"amount":98,"orderId":"ORDER_ID_98","timestamp":"2019-08-28 00:13:20.657","userId":98&#125;</span><br><span class="line">2019-08-28 00:13:20.840  INFO 50248 --- [onsumerWorker-1] c.t.s.sharding.OrderMessageConsumer      : shardingIndex:[1],处理订单消息,内容:&#123;"amount":97,"orderId":"ORDER_ID_97","timestamp":"2019-08-28 00:13:20.657","userId":97&#125;</span><br><span class="line">2019-08-28 00:13:20.840  INFO 50248 --- [onsumerWorker-0] c.t.s.sharding.OrderMessageConsumer      : shardingIndex:[0],处理订单消息,内容:&#123;"amount":96,"orderId":"ORDER_ID_96","timestamp":"2019-08-28 00:13:20.657","userId":96&#125;</span><br><span class="line">// ... 省略大量输出</span><br><span class="line">2019-08-28 00:13:21.298  INFO 50248 --- [ryBean_Worker-1] c.t.s.sharding.OrderMessageConsumer      : 订单消息消费者定时任务执行完毕,shardingIndex:[0]...</span><br><span class="line">2019-08-28 00:13:21.298  INFO 50248 --- [ryBean_Worker-2] c.t.s.sharding.OrderMessageConsumer      : 订单消息消费者定时任务执行完毕,shardingIndex:[1]...</span><br><span class="line">// ... 省略大量输出</span><br></pre></td></tr></table></figure>
+<h3 id="多Redis实例分片">多Redis实例分片</h3>
+<p>单<code>Redis</code>实例分片其实存在一个问题，就是<code>Redis</code>实例总是单线程处理客户端的命令，即使客户端是多个线程执行<code>Redis</code>命令，示意图如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201909/r-d-t-2nd-2.png" alt="r-d-t-2nd-2"></p>
+<p>这种情况下，虽然通过分片降低了<code>Lua</code>脚本命令的复杂度，但是<code>Redis</code>的命令处理模型（<strong>单线程</strong>）也有可能成为另一个性能瓶颈隐患。因此，可以考虑基于多<code>Redis</code>实例进行分片。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201909/r-d-t-2nd-3.png" alt="r-d-t-2nd-3"></p>
+<p>这里为了简单起见，用两个单点的<code>Redis</code>实例做编码示例。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Jedis提供者</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JedisProvider</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Long, JedisPool&gt; pools = Maps.newConcurrentMap();</span><br><span class="line">    <span class="keyword">private</span> JedisPool defaultPool;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        JedisPool pool = <span class="keyword">new</span> JedisPool(<span class="string">"localhost"</span>);</span><br><span class="line">        defaultPool = pool;</span><br><span class="line">        pools.put(<span class="number">0L</span>, pool);</span><br><span class="line">        <span class="comment">// 这个是虚拟机上的redis实例</span></span><br><span class="line">        pool = <span class="keyword">new</span> JedisPool(<span class="string">"192.168.56.200"</span>);</span><br><span class="line">        pools.put(<span class="number">1L</span>, pool);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Jedis <span class="title">provide</span><span class="params">(Long index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> pools.getOrDefault(index, defaultPool).getResource();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订单消息</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderMessage</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String orderId;</span><br><span class="line">    <span class="keyword">private</span> BigDecimal amount;</span><br><span class="line">    <span class="keyword">private</span> Long userId;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订单延时队列接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderDelayQueue</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(OrderMessage message)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(String min, String max, String offset, String limit, <span class="keyword">long</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(<span class="keyword">long</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">enqueueSha</span><span class="params">(<span class="keyword">long</span> index)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">dequeueSha</span><span class="params">(<span class="keyword">long</span> index)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 延时队列实现</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisOrderDelayQueue</span> <span class="keyword">implements</span> <span class="title">OrderDelayQueue</span>, <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String MIN_SCORE = <span class="string">"0"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String OFFSET = <span class="string">"0"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String LIMIT = <span class="string">"10"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> SHARDING_COUNT = <span class="number">2L</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_QUEUE = <span class="string">"ORDER_QUEUE"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ORDER_DETAIL_QUEUE = <span class="string">"ORDER_DETAIL_QUEUE"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ENQUEUE_LUA_SCRIPT_LOCATION = <span class="string">"/lua/enqueue.lua"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEQUEUE_LUA_SCRIPT_LOCATION = <span class="string">"/lua/dequeue.lua"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ConcurrentMap&lt;Long, String&gt; ENQUEUE_LUA_SHA = Maps.newConcurrentMap();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ConcurrentMap&lt;Long, String&gt; DEQUEUE_LUA_SHA = Maps.newConcurrentMap();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(OrderMessage message)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; args = Lists.newArrayList();</span><br><span class="line">        args.add(message.getOrderId());</span><br><span class="line">        args.add(String.valueOf(System.currentTimeMillis() - <span class="number">30</span> * <span class="number">60</span> * <span class="number">1000</span>));</span><br><span class="line">        args.add(message.getOrderId());</span><br><span class="line">        args.add(JSON.toJSONString(message));</span><br><span class="line">        List&lt;String&gt; keys = Lists.newArrayList();</span><br><span class="line">        <span class="keyword">long</span> index = message.getUserId() % SHARDING_COUNT;</span><br><span class="line">        keys.add(ORDER_QUEUE);</span><br><span class="line">        keys.add(ORDER_DETAIL_QUEUE);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide(index)) &#123;</span><br><span class="line">            jedis.evalsha(ENQUEUE_LUA_SHA.get(index), keys, args);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(<span class="keyword">long</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 30分钟之前</span></span><br><span class="line">        String maxScore = String.valueOf(System.currentTimeMillis() - <span class="number">30</span> * <span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line">        <span class="keyword">return</span> dequeue(MIN_SCORE, maxScore, OFFSET, LIMIT, index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(String min, String max, String offset, String limit, <span class="keyword">long</span> index)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; args = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        args.add(min);</span><br><span class="line">        args.add(max);</span><br><span class="line">        args.add(offset);</span><br><span class="line">        args.add(limit);</span><br><span class="line">        List&lt;OrderMessage&gt; result = Lists.newArrayList();</span><br><span class="line">        List&lt;String&gt; keys = Lists.newArrayList();</span><br><span class="line">        keys.add(ORDER_QUEUE);</span><br><span class="line">        keys.add(ORDER_DETAIL_QUEUE);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide(index)) &#123;</span><br><span class="line">            List&lt;String&gt; eval = (List&lt;String&gt;) jedis.evalsha(DEQUEUE_LUA_SHA.get(index), keys, args);</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != eval) &#123;</span><br><span class="line">                <span class="keyword">for</span> (String e : eval) &#123;</span><br><span class="line">                    result.add(JSON.parseObject(e, OrderMessage<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">enqueueSha</span><span class="params">(<span class="keyword">long</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ENQUEUE_LUA_SHA.get(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">dequeueSha</span><span class="params">(<span class="keyword">long</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> DEQUEUE_LUA_SHA.get(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 加载Lua脚本</span></span><br><span class="line">        loadLuaScript();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadLuaScript</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; SHARDING_COUNT; i++) &#123;</span><br><span class="line">            <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide(i)) &#123;</span><br><span class="line">                ClassPathResource resource = <span class="keyword">new</span> ClassPathResource(ENQUEUE_LUA_SCRIPT_LOCATION);</span><br><span class="line">                String luaContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);</span><br><span class="line">                String sha = jedis.scriptLoad(luaContent);</span><br><span class="line">                ENQUEUE_LUA_SHA.put(i, sha);</span><br><span class="line">                resource = <span class="keyword">new</span> ClassPathResource(DEQUEUE_LUA_SCRIPT_LOCATION);</span><br><span class="line">                luaContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);</span><br><span class="line">                sha = jedis.scriptLoad(luaContent);</span><br><span class="line">                DEQUEUE_LUA_SHA.put(i, sha);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 消费者</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderMessageConsumer</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(OrderMessageConsumer<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicInteger COUNTER = <span class="keyword">new</span> AtomicInteger();</span><br><span class="line">    <span class="comment">// 初始化业务线程池</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ExecutorService businessWorkerPool = Executors.newSingleThreadExecutor(r -&gt; &#123;</span><br><span class="line">        Thread thread = <span class="keyword">new</span> Thread(r);</span><br><span class="line">        thread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">        thread.setName(<span class="string">"OrderMessageConsumerWorker-"</span> + COUNTER.getAndIncrement());</span><br><span class="line">        <span class="keyword">return</span> thread;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> OrderDelayQueue orderDelayQueue;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext context)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> shardingIndex = context.getMergedJobDataMap().getLong(<span class="string">"shardingIndex"</span>);</span><br><span class="line">        LOGGER.info(<span class="string">"订单消息消费者定时任务开始执行,shardingIndex:[&#123;&#125;]..."</span>, shardingIndex);</span><br><span class="line">        List&lt;OrderMessage&gt; dequeue = orderDelayQueue.dequeue(shardingIndex);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != dequeue) &#123;</span><br><span class="line">            <span class="comment">// 这里的倒数栅栏，在线程池资源充足的前提下可以去掉</span></span><br><span class="line">            <span class="keyword">final</span> CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line">            businessWorkerPool.execute(<span class="keyword">new</span> ConsumeTask(latch, dequeue, shardingIndex));</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                latch.await();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException ignore) &#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        LOGGER.info(<span class="string">"订单消息消费者定时任务执行完毕,shardingIndex:[&#123;&#125;]..."</span>, shardingIndex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumeTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> CountDownLatch latch;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> List&lt;OrderMessage&gt; messages;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> shardingIndex;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (OrderMessage message : messages) &#123;</span><br><span class="line">                    LOGGER.info(<span class="string">"shardingIndex:[&#123;&#125;],处理订单消息,内容:&#123;&#125;"</span>, shardingIndex, JSON.toJSONString(message));</span><br><span class="line">                    <span class="comment">// 模拟处理耗时50毫秒</span></span><br><span class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">50</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ignore) &#123;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                latch.countDown();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 配置</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AutowiredSupportQuartzJobFactory <span class="title">autowiredSupportQuartzJobFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AutowiredSupportQuartzJobFactory();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SchedulerFactoryBean <span class="title">schedulerFactoryBean</span><span class="params">(AutowiredSupportQuartzJobFactory autowiredSupportQuartzJobFactory)</span> </span>&#123;</span><br><span class="line">        SchedulerFactoryBean factory = <span class="keyword">new</span> SchedulerFactoryBean();</span><br><span class="line">        factory.setSchedulerName(<span class="string">"RamScheduler"</span>);</span><br><span class="line">        factory.setAutoStartup(<span class="keyword">true</span>);</span><br><span class="line">        factory.setJobFactory(autowiredSupportQuartzJobFactory);</span><br><span class="line">        <span class="keyword">return</span> factory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AutowiredSupportQuartzJobFactory</span> <span class="keyword">extends</span> <span class="title">AdaptableJobFactory</span> <span class="keyword">implements</span> <span class="title">BeanFactoryAware</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> AutowireCapableBeanFactory autowireCapableBeanFactory;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanFactory</span><span class="params">(BeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.autowireCapableBeanFactory = (AutowireCapableBeanFactory) beanFactory;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Object <span class="title">createJobInstance</span><span class="params">(@Nonnull TriggerFiredBundle bundle)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            Object jobInstance = <span class="keyword">super</span>.createJobInstance(bundle);</span><br><span class="line">            autowireCapableBeanFactory.autowireBean(jobInstance);</span><br><span class="line">            <span class="keyword">return</span> jobInstance;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// CommandLineRunner</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartzJobStartCommandLineRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Scheduler scheduler;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> shardingCount = <span class="number">2</span>;</span><br><span class="line">        prepareData(shardingCount);</span><br><span class="line">        <span class="keyword">for</span> (ConsumerTask task : prepareConsumerTasks(shardingCount)) &#123;</span><br><span class="line">            scheduler.scheduleJob(task.getJobDetail(), task.getTrigger());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">prepareData</span><span class="params">(<span class="keyword">long</span> shardingCount)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0L</span>; i &lt; shardingCount; i++) &#123;</span><br><span class="line">            Map&lt;String, Double&gt; z = Maps.newHashMap();</span><br><span class="line">            Map&lt;String, String&gt; h = Maps.newHashMap();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; <span class="number">100</span>; k++) &#123;</span><br><span class="line">                OrderMessage message = <span class="keyword">new</span> OrderMessage();</span><br><span class="line">                message.setAmount(BigDecimal.valueOf(k));</span><br><span class="line">                message.setUserId((<span class="keyword">long</span>) k);</span><br><span class="line">                message.setOrderId(<span class="string">"ORDER_ID_"</span> + k);</span><br><span class="line">                <span class="comment">// 30 min ago</span></span><br><span class="line">                z.put(message.getOrderId(), Double.valueOf(String.valueOf(System.currentTimeMillis() - <span class="number">30</span> * <span class="number">60</span> * <span class="number">1000</span>)));</span><br><span class="line">                h.put(message.getOrderId(), JSON.toJSONString(message));</span><br><span class="line">            &#125;</span><br><span class="line">            Jedis jedis = jedisProvider.provide(i);</span><br><span class="line">            jedis.hmset(<span class="string">"ORDER_DETAIL_QUEUE"</span>, h);</span><br><span class="line">            jedis.zadd(<span class="string">"ORDER_QUEUE"</span>, z);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> List&lt;ConsumerTask&gt; <span class="title">prepareConsumerTasks</span><span class="params">(<span class="keyword">long</span> shardingCount)</span> </span>&#123;</span><br><span class="line">        List&lt;ConsumerTask&gt; tasks = Lists.newArrayList();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0</span>; i &lt; shardingCount; i++) &#123;</span><br><span class="line">            JobDetail jobDetail = JobBuilder.newJob(OrderMessageConsumer<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line">                    .withIdentity("OrderMessageConsumer-" + i, "DelayTask")</span><br><span class="line">                    .usingJobData(<span class="string">"shardingIndex"</span>, i)</span><br><span class="line">                    .build();</span><br><span class="line">            Trigger trigger = TriggerBuilder.newTrigger()</span><br><span class="line">                    .withIdentity(<span class="string">"OrderMessageConsumerTrigger-"</span> + i, <span class="string">"DelayTask"</span>)</span><br><span class="line">                    .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(<span class="number">10</span>).repeatForever())</span><br><span class="line">                    .build();</span><br><span class="line">            tasks.add(<span class="keyword">new</span> ConsumerTask(jobDetail, trigger));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> tasks;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsumerTask</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> JobDetail jobDetail;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Trigger trigger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新增一个启动函数并且启动，控制台输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// ...省略大量输出</span><br><span class="line">2019-09-01 14:08:27.664  INFO 13056 --- [           main] c.t.multi.NoneJdbcSpringApplication      : Started NoneJdbcSpringApplication in 1.333 seconds (JVM running for 5.352)</span><br><span class="line">2019-09-01 14:08:27.724  INFO 13056 --- [eduler_Worker-2] c.throwable.multi.OrderMessageConsumer   : 订单消息消费者定时任务开始执行,shardingIndex:[1]...</span><br><span class="line">2019-09-01 14:08:27.724  INFO 13056 --- [eduler_Worker-1] c.throwable.multi.OrderMessageConsumer   : 订单消息消费者定时任务开始执行,shardingIndex:[0]...</span><br><span class="line">2019-09-01 14:08:27.732  INFO 13056 --- [onsumerWorker-1] c.throwable.multi.OrderMessageConsumer   : shardingIndex:[1],处理订单消息,内容:&#123;"amount":99,"orderId":"ORDER_ID_99","userId":99&#125;</span><br><span class="line">2019-09-01 14:08:27.732  INFO 13056 --- [onsumerWorker-0] c.throwable.multi.OrderMessageConsumer   : shardingIndex:[0],处理订单消息,内容:&#123;"amount":99,"orderId":"ORDER_ID_99","userId":99&#125;</span><br><span class="line">2019-09-01 14:08:27.782  INFO 13056 --- [onsumerWorker-0] c.throwable.multi.OrderMessageConsumer   : shardingIndex:[0],处理订单消息,内容:&#123;"amount":98,"orderId":"ORDER_ID_98","userId":98&#125;</span><br><span class="line">2019-09-01 14:08:27.782  INFO 13056 --- [onsumerWorker-1] c.throwable.multi.OrderMessageConsumer   : shardingIndex:[1],处理订单消息,内容:&#123;"amount":98,"orderId":"ORDER_ID_98","userId":98&#125;</span><br><span class="line">// ...省略大量输出</span><br><span class="line">2019-09-01 14:08:28.239  INFO 13056 --- [eduler_Worker-2] c.throwable.multi.OrderMessageConsumer   : 订单消息消费者定时任务执行完毕,shardingIndex:[1]...</span><br><span class="line">2019-09-01 14:08:28.240  INFO 13056 --- [eduler_Worker-1] c.throwable.multi.OrderMessageConsumer   : 订单消息消费者定时任务执行完毕,shardingIndex:[0]...</span><br><span class="line">// ...省略大量输出</span><br></pre></td></tr></table></figure>
+<p>生产中应该避免<code>Redis</code>服务单点，一般常用<strong>哨兵配合树状主从的部署方式（参考《Redis开发与运维》）</strong>，2套<code>Redis</code>哨兵的部署示意图如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201909/r-d-t-2nd-4.png" alt="r-d-t-2nd-4"></p>
+<h2 id="需要什么监控项">需要什么监控项</h2>
+<p>我们需要相对实时地知道<code>Redis</code>中的延时队列集合有多少积压数据，每次出队的耗时大概是多少等等监控项参数，这样我们才能更好地知道延时队列模块是否正常运行、是否存在性能瓶颈等等。具体的监控项，需要按需定制，这里为了方便举例，只做两个监控项的监控：</p>
+<ul>
+<li>有序集合<code>Sorted Set</code>中积压的元素数量。</li>
+<li>每次调用<code>dequeue.lua</code>的耗时。</li>
+</ul>
+<p>采用的是应用实时上报数据的方式，依赖于<code>spring-boot-starter-actuator</code>、<code>Prometheus</code>、<code>Grafana</code>搭建的监控体系，如果并不熟悉这个体系可以看两篇前置文章：</p>
+<ul>
+<li><a href="http://www.throwable.club/2018/11/17/jvm-micrometer-prometheus" target="_blank" rel="noopener">JVM应用度量框架Micrometer实战</a></li>
+<li><a href="http://www.throwable.club/2019/04/14/jvm-micrometer-thread-pool-monitor" target="_blank" rel="noopener">通过micrometer实时监控线程池的各项指标</a></li>
+</ul>
+<h2 id="监控">监控</h2>
+<p>引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.micrometer<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>micrometer-registry-prometheus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这里选用<code>Gauge</code>的<code>Meter</code>进行监控数据收集，添加监控类<code>OrderDelayQueueMonitor</code>：。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OrderDelayQueueMonitor</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderDelayQueueMonitor</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> SHARDING_COUNT = <span class="number">2L</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ConcurrentMap&lt;Long, AtomicLong&gt; remain = Maps.newConcurrentMap();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ConcurrentMap&lt;Long, AtomicLong&gt; lua = Maps.newConcurrentMap();</span><br><span class="line">    <span class="keyword">private</span> ScheduledExecutorService executor;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        executor = Executors.newSingleThreadScheduledExecutor(r -&gt; &#123;</span><br><span class="line">            Thread thread = <span class="keyword">new</span> Thread(r, <span class="string">"OrderDelayQueueMonitor"</span>);</span><br><span class="line">            thread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">return</span> thread;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0L</span>; i &lt; SHARDING_COUNT; i++) &#123;</span><br><span class="line">            AtomicLong l = <span class="keyword">new</span> AtomicLong();</span><br><span class="line">            Metrics.gauge(<span class="string">"order.delay.queue.lua.cost"</span>, Collections.singleton(Tag.of(<span class="string">"index"</span>, String.valueOf(i))),</span><br><span class="line">                    l, AtomicLong::get);</span><br><span class="line">            lua.put(i, l);</span><br><span class="line">            AtomicLong r = <span class="keyword">new</span> AtomicLong();</span><br><span class="line">            Metrics.gauge(<span class="string">"order.delay.queue.remain"</span>, Collections.singleton(Tag.of(<span class="string">"index"</span>, String.valueOf(i))),</span><br><span class="line">                    r, AtomicLong::get);</span><br><span class="line">            remain.put(i, r);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 每五秒上报一次集合中的剩余数据</span></span><br><span class="line">        executor.scheduleWithFixedDelay(<span class="keyword">new</span> MonitorTask(jedisProvider), <span class="number">0</span>, <span class="number">5</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recordRemain</span><span class="params">(Long index, <span class="keyword">long</span> count)</span> </span>&#123;</span><br><span class="line">        remain.get(index).set(count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recordLuaCost</span><span class="params">(Long index, <span class="keyword">long</span> count)</span> </span>&#123;</span><br><span class="line">        lua.get(index).set(count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MonitorTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> JedisProvider jedisProvider;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">long</span> i = <span class="number">0L</span>; i &lt; SHARDING_COUNT; i++) &#123;</span><br><span class="line">                <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide(i)) &#123;</span><br><span class="line">                    recordRemain(i, jedis.zcount(<span class="string">"ORDER_QUEUE"</span>, <span class="string">"-inf"</span>, <span class="string">"+inf"</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原来的<code>RedisOrderDelayQueue#dequeue()</code>进行改造：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisOrderDelayQueue</span> <span class="keyword">implements</span> <span class="title">OrderDelayQueue</span>, <span class="title">InitializingBean</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... 省略没有改动的代码</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> OrderDelayQueueMonitor orderDelayQueueMonitor;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略没有改动的代码</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;OrderMessage&gt; <span class="title">dequeue</span><span class="params">(String min, String max, String offset, String limit, <span class="keyword">long</span> index)</span> </span>&#123;</span><br><span class="line">        List&lt;String&gt; args = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        args.add(min);</span><br><span class="line">        args.add(max);</span><br><span class="line">        args.add(offset);</span><br><span class="line">        args.add(limit);</span><br><span class="line">        List&lt;OrderMessage&gt; result = Lists.newArrayList();</span><br><span class="line">        List&lt;String&gt; keys = Lists.newArrayList();</span><br><span class="line">        keys.add(ORDER_QUEUE);</span><br><span class="line">        keys.add(ORDER_DETAIL_QUEUE);</span><br><span class="line">        <span class="keyword">try</span> (Jedis jedis = jedisProvider.provide(index)) &#123;</span><br><span class="line">            <span class="keyword">long</span> start = System.nanoTime();</span><br><span class="line">            List&lt;String&gt; eval = (List&lt;String&gt;) jedis.evalsha(DEQUEUE_LUA_SHA.get(index), keys, args);</span><br><span class="line">            <span class="keyword">long</span> end = System.nanoTime();</span><br><span class="line">            <span class="comment">// 添加dequeue的耗时监控-单位微秒</span></span><br><span class="line">            orderDelayQueueMonitor.recordLuaCost(index, TimeUnit.NANOSECONDS.toMicros(end - start));</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != eval) &#123;</span><br><span class="line">                <span class="keyword">for</span> (String e : eval) &#123;</span><br><span class="line">                    result.add(JSON.parseObject(e, OrderMessage<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略没有改动的代码</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他配置这里简单说一下。</p>
+<p><code>application.yaml</code>要开放<code>prometheus</code>端点的访问权限：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">9091</span></span><br><span class="line"><span class="attr">management:</span></span><br><span class="line">  <span class="attr">endpoints:</span></span><br><span class="line">    <span class="attr">web:</span></span><br><span class="line">      <span class="attr">exposure:</span></span><br><span class="line">        <span class="attr">include:</span> <span class="string">'prometheus'</span></span><br></pre></td></tr></table></figure>
+<p><code>Prometheus</code>服务配置尽量减少查询的间隔时间，暂定为5秒：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my global config</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">scrape_interval:</span>     <span class="string">5s</span> <span class="comment"># Set the scrape interval to every 15 seconds. Default is every 1 minute.</span></span><br><span class="line">  <span class="attr">evaluation_interval:</span> <span class="string">15s</span> <span class="comment"># Evaluate rules every 15 seconds. The default is every 1 minute.</span></span><br><span class="line">  <span class="comment"># scrape_timeout is set to the global default (10s).</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Alertmanager configuration</span></span><br><span class="line"><span class="attr">alerting:</span></span><br><span class="line">  <span class="attr">alertmanagers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">static_configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">targets:</span></span><br><span class="line">      <span class="comment"># - alertmanager:9093</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load rules once and periodically evaluate them according to the global 'evaluation_interval'.</span></span><br><span class="line"><span class="attr">rule_files:</span></span><br><span class="line">  <span class="comment"># - "first_rules.yml"</span></span><br><span class="line">  <span class="comment"># - "second_rules.yml"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A scrape configuration containing exactly one endpoint to scrape:</span></span><br><span class="line"><span class="comment"># Here it's Prometheus itself.</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="comment"># The job name is added as a label `job=&lt;job_name&gt;` to any timeseries scraped from this config.</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">'prometheus'</span></span><br><span class="line">    <span class="attr">metrics_path:</span> <span class="string">'/actuator/prometheus'</span></span><br><span class="line">    <span class="comment"># metrics_path defaults to '/metrics'</span></span><br><span class="line">    <span class="comment"># scheme defaults to 'http'.</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">targets:</span> <span class="string">['localhost:9091']</span></span><br></pre></td></tr></table></figure>
+<p><code>Grafana</code>的基本配置项如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">出队耗时 order_delay_queue_lua_cost 分片编号-&#123;&#123;index&#125;&#125;</span><br><span class="line">订单延时队列积压量 order_delay_queue_remain 分片编号-&#123;&#123;index&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>最终可以在<code>Grafana</code>配置每5秒刷新，见效果如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201909/r-d-t-2nd-5.png" alt="r-d-t-2nd-5"></p>
+<p>这里的监控项更多时候应该按需定制，说实话，监控的工作往往是最复杂和繁琐的。</p>
+<h2 id="小结">小结</h2>
+<p>全文相对详细地介绍了基于<code>Redis</code>实现延时任务的分片和监控的具体实施过程，核心代码仅供参考，还有一些具体的细节例如<code>Prometheus</code>、<code>Grafana</code>的一些应用，这里限于篇幅不会详细地展开。说实话，基于实际场景做一次中间件和架构的选型并不是一件简单的事，而且往往初期的实施并不是最大的难点，更大的难题在后面的优化以及监控。</p>
+<h2 id="附件">附件</h2>
+<ul>
+<li><code>Markdown</code>原件：<a href="https://github.com/zjcscut/blog-article-file/tree/master/20190901/redis-delay-task-second" target="_blank" rel="noopener">https://github.com/zjcscut/blog-article-file/tree/master/20190901/redis-delay-task-second</a></li>
+</ul>
+<p>（本文完 c-3-d 20190901 身体不适，拖了一下）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/09/01/redis-delay-task-second/>http://throwable.club/2019/09/01/redis-delay-task-second/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Redis/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Redis</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/09/01/redis-delay-task-second/&title=使用Redis实现延时任务(二) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前一篇文章通过Redis的有序集合Sorted Set和调度框架Quartz实例一版简单的延时任务，但是有两个相对重要的问题没有解决：
+
+分片。
+监控。
+
+这篇文章的内容就是要完善这两个方面的功能。前置文章：使用Redis实现延时任务(一)。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/09/01/redis-delay-task-second/&title=使用Redis实现延时任务(二) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前一篇文章通过Redis的有序集合Sorted Set和调度框架Quartz实例一版简单的延时任务，但是有两个相对重要的问题没有解决：
+
+分片。
+监控。
+
+这篇文章的内容就是要完善这两个方面的功能。前置文章：使用Redis实现延时任务(一)。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aQW7jMBAEQP//01lgr4Ht7iEncYDSKRAUicUDh+7h4xFfX/+v9s7rJ79f7RiuXXh4eHijob/+ZPLM9ydfD7F9z2w8eHh4eHu8u0PJl/VZgcnfhoeHh/e7vGTot4abFAY8PDy8v8hLSsWzAnNSQvDw8PA+gZeEEbeCidd37oYjeHh4eBu8tgH2CX8v9vfw8PDwDrrqyaJ/skzPNuLFaPHw8PAWeMlL27KRRLH5lj0fSfGLAQ8PD++Aly/BbVMqj27bJ4uSg4eHh7fAO1nor7X2DwpPO0F4eHh4d3l5GWiDieQr7STmQQkeHh7eXd5skzoLKdot9YUyg4eHh7fMa5tbxQ79ZHdfjvlpfw8PDw9vmZcs6/lWOy8qbYz7ZuR4eHh4C7wE05aE9jBWfnzqJC7Bw8PD2+Aly+vdT54Htfl9PDw8vLu8y520uA1268jCmx8AeHh4eFd5+ednU9DiZw2zp4UBDw8Pb4GXbIKTz7eHD5KpzI8IvHkeDw8Pb5nXBgf5xvckxp0VKjw8PLw9XnvQ6vyQwWN0tY0xPDw8vJ/hzaKEk/9qt9TJROPh4eHt8fKg4bwpdTfAxcPDw/tdXrK4J8j26EDyX0n8UQS4eHh4eMe82Rb57p0k6p1NCh4eHt4GL287zdpXUQoSP5Mfw8LDw8P7Sd4sbjhf3PNjBEV0goeHh7fAm8UHbVTRDigpIckhBjw8PLwN3ld5zZpS50cT2uZZ8YsBDw8Pr+TNFtwkUGhJbaDcli48PDy8u7zzGDfh3Qog8jgYDw8Pb5t3Ugy2t8jtd/Hw8PA+h5cAbsW+bcDxdIR4eHh4H8abtc3aaUo262/CCDw8PLwFXh4EzNpaJ42xtgmHh4eHt82bNcDyJbsdSvv+2fEsPDw8vBHvH9uGu2Ah250EAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/09/01/redis-delay-task-second/&title=使用Redis实现延时任务(二) | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+前一篇文章通过Redis的有序集合Sorted Set和调度框架Quartz实例一版简单的延时任务，但是有两个相对重要的问题没有解决：
+
+分片。
+监控。
+
+这篇文章的内容就是要完善这两个方面的功能。前置文章：使用Redis实现延时任务(一)。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aQW7jMBAEQP//01lgr4Ht7iEncYDSKRAUicUDh+7h4xFfX/+v9s7rJ79f7RiuXXh4eHijob/+ZPLM9ydfD7F9z2w8eHh4eHu8u0PJl/VZgcnfhoeHh/e7vGTot4abFAY8PDy8v8hLSsWzAnNSQvDw8PA+gZeEEbeCidd37oYjeHh4eBu8tgH2CX8v9vfw8PDwDrrqyaJ/skzPNuLFaPHw8PAWeMlL27KRRLH5lj0fSfGLAQ8PD++Aly/BbVMqj27bJ4uSg4eHh7fAO1nor7X2DwpPO0F4eHh4d3l5GWiDieQr7STmQQkeHh7eXd5skzoLKdot9YUyg4eHh7fMa5tbxQ79ZHdfjvlpfw8PDw9vmZcs6/lWOy8qbYz7ZuR4eHh4C7wE05aE9jBWfnzqJC7Bw8PD2+Aly+vdT54Htfl9PDw8vLu8y520uA1268jCmx8AeHh4eFd5+ednU9DiZw2zp4UBDw8Pb4GXbIKTz7eHD5KpzI8IvHkeDw8Pb5nXBgf5xvckxp0VKjw8PLw9XnvQ6vyQwWN0tY0xPDw8vJ/hzaKEk/9qt9TJROPh4eHt8fKg4bwpdTfAxcPDw/tdXrK4J8j26EDyX0n8UQS4eHh4eMe82Rb57p0k6p1NCh4eHt4GL287zdpXUQoSP5Mfw8LDw8P7Sd4sbjhf3PNjBEV0goeHh7fAm8UHbVTRDigpIckhBjw8PLwN3ld5zZpS50cT2uZZ8YsBDw8Pr+TNFtwkUGhJbaDcli48PDy8u7zzGDfh3Qog8jgYDw8Pb5t3Ugy2t8jtd/Hw8PA+h5cAbsW+bcDxdIR4eHh4H8abtc3aaUo262/CCDw8PLwFXh4EzNpaJ42xtgmHh4eHt82bNcDyJbsdSvv+2fEsPDw8vBHvH9uGu2Ah250EAAAAAElFTkSuQmCC'>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/09/28/redis-client-driver-lettuce-usage/" rel="prev" title="Redis高级客户端Lettuce详解">
+                                  
+                                      Redis高级客户端Lettuce详解
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/08/21/redis-delay-task-first/" rel="prev" title="使用Redis实现延时任务(一)">
+                                    
+                                        使用Redis实现延时任务(一)
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '使用Redis实现延时任务(二)',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么需要分片"><span class="toc-text">为什么需要分片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分片"><span class="toc-text">分片</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单Redis实例分片"><span class="toc-text">单Redis实例分片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多Redis实例分片"><span class="toc-text">多Redis实例分片</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要什么监控项"><span class="toc-text">需要什么监控项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#监控"><span class="toc-text">监控</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附件"><span class="toc-text">附件</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

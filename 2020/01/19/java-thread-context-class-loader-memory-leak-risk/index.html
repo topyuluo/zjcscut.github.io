@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>线程上下文类加载器ContextClassLoader内存泄漏隐患 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2020/01/19/java-thread-context-class-loader-memory-leak-risk/">
+        线程上下文类加载器ContextClassLoader内存泄漏隐患
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2020年1月19日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-01-20T08:32:17+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年1月20日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.8k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：11分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>今天（<code>2020-01-18</code>）在编写<code>Netty</code>相关代码的时候，从<code>Netty</code>源码中的<code>ThreadDeathWatcher</code>和<code>GlobalEventExecutor</code>追溯到两个和线程上下文类加载器<code>ContextClassLoader</code>内存泄漏相关的<code>Issue</code>：</p>
+<ul>
+<li><a href="https://github.com/netty/netty/issues/7290" target="_blank" rel="noopener">ThreadDeathWatcher causes custom classLoader script memory leaks</a></li>
+<li><a href="https://github.com/netty/netty/pull/7493" target="_blank" rel="noopener">Ensure ThreadDeathWatcher and GlobalEventExecutor will not cause clas…</a></li>
+</ul>
+<p>两个<code>Issue</code>分别是两位前辈在<code>2017-12</code>的时候提出的，描述的是同一类问题，最后被<code>Netty</code>的负责人采纳，并且修复了对应的问题从而关闭了<code>Issue</code>。这里基于这两个<code>Issue</code>描述的内容，对<code>ContextClassLoader</code>内存泄漏隐患做一次复盘。</p>
+<a id="more"></a>
+<h2 id="ClassLoader相关的内容">ClassLoader相关的内容</h2>
+<ul>
+<li>一个<code>JVM</code>实例（<code>Java</code>应用程序）里面的所有类都是通过<code>ClassLoader</code>加载的。</li>
+<li>不同的<code>ClassLoader</code>在<code>JVM</code>中有不同的命名空间，一个类实例（<code>Class</code>）的唯一标识是全类名 + <code>ClassLoader</code>，也就是不同的<code>ClassLoader</code>加载同一个类文件，也会得到不相同的<code>Class</code>实例。</li>
+<li><code>JVM</code>不提供类卸载的功能，从目前参考到的资料来看，类卸载需要满足下面几点：
+<ul>
+<li>条件一：<code>Class</code>的所有实例不被强引用（不可达）。</li>
+<li>条件二：<code>Class</code>本身不被强引用（不可达）。</li>
+<li><font color=red>条件三</font>：加载该<code>Class</code>的<code>ClassLoader</code>实例不被强引用（不可达）。</li>
+</ul>
+</li>
+</ul>
+<p>有些场景下需要实现类的热部署和卸载，例如定义一个接口，然后由外部动态传入代码的实现。</p>
+<blockquote>
+<p>这一点很常见，最典型的就是在线编程，代码传到服务端再进行编译和运行。</p>
+</blockquote>
+<p>由于应用启动期所有非<code>JDK</code>类库的类都是由<code>AppClassLoader</code>加载，我们没有办法通过<code>AppClassLoader</code>去加载非类路径下的已存在同名的类文件（对于一个<code>ClassLoader</code>而言，每个类文件只能加载一次，生成唯一的<code>Class</code>），所以为了动态加载类，每次必须使用完全不同的自定义<code>ClassLoader</code>实例加载同一个类文件或者使用同一个自定义的<code>ClassLoader</code>实例加载不同的类文件。类的热部署这里举个简单例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 此文件在项目类路径</span></span><br><span class="line"><span class="keyword">package</span> club.throwable.loader;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultHelloService</span> <span class="keyword">implements</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"default say hello!"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面两个文件编译后放在I盘根目录</span></span><br><span class="line"><span class="comment">// I:\\DefaultHelloService1.class</span></span><br><span class="line"><span class="keyword">package</span> club.throwable.loader;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultHelloService1</span> <span class="keyword">implements</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"1 say hello!"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// I:\\DefaultHelloService2.class</span></span><br><span class="line"><span class="keyword">package</span> club.throwable.loader;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultHelloService2</span> <span class="keyword">implements</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">sayHello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"2 say hello!"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接口和运行方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        HelloService helloService = <span class="keyword">new</span> DefaultHelloService();</span><br><span class="line">        System.out.println(helloService.sayHello());</span><br><span class="line">        ClassLoader loader = <span class="keyword">new</span> ClassLoader() &#123;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">                String location = <span class="string">"I:\\DefaultHelloService1.class"</span>;</span><br><span class="line">                <span class="keyword">if</span> (name.contains(<span class="string">"DefaultHelloService2"</span>)) &#123;</span><br><span class="line">                    location = <span class="string">"I:\\DefaultHelloService2.class"</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                File classFile = <span class="keyword">new</span> File(location);</span><br><span class="line">                ByteArrayOutputStream outputStream = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    InputStream stream = <span class="keyword">new</span> FileInputStream(classFile);</span><br><span class="line">                    <span class="keyword">int</span> b;</span><br><span class="line">                    <span class="keyword">while</span> ((b = stream.read()) != -<span class="number">1</span>) &#123;</span><br><span class="line">                        outputStream.write(b);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = outputStream.toByteArray();</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">super</span>.defineClass(name, bytes, <span class="number">0</span>, bytes.length);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Class&lt;?&gt; klass = loader.loadClass(<span class="string">"club.throwable.loader.DefaultHelloService1"</span>);</span><br><span class="line">        helloService = (HelloService) klass.newInstance();</span><br><span class="line">        System.out.println(helloService.sayHello());</span><br><span class="line">        klass = loader.loadClass(<span class="string">"club.throwable.loader.DefaultHelloService2"</span>);</span><br><span class="line">        helloService = (HelloService) klass.newInstance();</span><br><span class="line">        System.out.println(helloService.sayHello());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 控制台输出</span></span><br><span class="line"><span class="keyword">default</span> say hello!</span><br><span class="line"><span class="number">1</span> say hello!</span><br><span class="line"><span class="number">2</span> say hello!</span><br></pre></td></tr></table></figure>
+<p>如果新建过多的<code>ClassLoader</code>实例和<code>Class</code>实例，会占用大量的内存，如果由于上面几个条件无法全部满足，也就是这些<code>ClassLoader</code>实例和<code>Class</code>实例一直堆积无法卸载，那么就会导致内存泄漏（<code>memory leak</code>，后果很严重，有可能耗尽服务器的物理内存，因为<code>JDK1.8+</code>类相关元信息存在在元空间<code>metaspace</code>，而元空间使用的是<code>native memory</code>）。</p>
+<h2 id="线程中的ContextClassLoader">线程中的ContextClassLoader</h2>
+<p><code>ContextClassLoader</code>其实指的是线程类<code>java.lang.Thread</code>中的<code>contextClassLoader</code>属性，它是<code>ClassLoader</code>类型，也就是类加载器实例。有些场景下，<code>JDK</code>提供了一些标准接口需要第三方提供商去实现（最常见的就是<code>SPI</code>，<code>Service Provider Interface</code>，例如<code>java.sql.Driver</code>），这些标准接口类是由启动类加载器(<code>Bootstrap ClassLoader</code>)加载，但是这些接口的实现类需要从外部引入，本身不属于<code>JDK</code>的原生类库，无法用启动类加载器加载。为了解决此困境，引入了线程上下文类加载器<code>Thread Context ClassLoader</code>。线程<code>java.lang.Thread</code>实例在初始化的时候会调用<code>Thread#init()</code>方法，<code>Thread</code>类和<code>contextClassLoader</code>相关的核心代码块如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 线程实例的初始化方法,new Thread()的时候一定会调用</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ThreadGroup g, Runnable target, String name,</span></span></span><br><span class="line"><span class="function"><span class="params">                      <span class="keyword">long</span> stackSize, AccessControlContext acc,</span></span></span><br><span class="line"><span class="function"><span class="params">                      <span class="keyword">boolean</span> inheritThreadLocals)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">    Thread parent = currentThread();</span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">    <span class="keyword">if</span> (security == <span class="keyword">null</span> || isCCLOverridden(parent.getClass()))</span><br><span class="line">        <span class="keyword">this</span>.contextClassLoader = parent.getContextClassLoader();</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">this</span>.contextClassLoader = parent.contextClassLoader;</span><br><span class="line">    <span class="comment">// 省略其他代码</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContextClassLoader</span><span class="params">(ClassLoader cl)</span> </span>&#123;</span><br><span class="line">    SecurityManager sm = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (sm != <span class="keyword">null</span>) &#123;</span><br><span class="line">        sm.checkPermission(<span class="keyword">new</span> RuntimePermission(<span class="string">"setContextClassLoader"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    contextClassLoader = cl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ClassLoader <span class="title">getContextClassLoader</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (contextClassLoader == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    SecurityManager sm = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (sm != <span class="keyword">null</span>) &#123;</span><br><span class="line">        ClassLoader.checkClassLoaderPermission(contextClassLoader, Reflection.getCallerClass());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> contextClassLoader;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先明确两点：</p>
+<ul>
+<li><code>Thread</code>实例允许手动设置<code>contextClassLoader</code>属性，覆盖当前的线程上下文类加载器实例。</li>
+<li><code>Thread</code>在初始化实例（调用<code>new Thread()</code>）的时候一定会调用<code>Thread#init()</code>方法，新建的子线程实例会继承父线程的<code>contextClassLoader</code>属性，而应用主线程<code>[main]</code>的<code>contextClassLoader</code>一般是应用类加载器（<code>Application ClassLoader</code>，有时也称为系统类加载器），其他用户线程都是主线程派生出来的后代线程，如果不覆盖<code>contextClassLoader</code>，那么新建的后代线程的<code>contextClassLoader</code>就是应用类加载器。</li>
+</ul>
+<p>分析到这里，笔者只想说明一个结论：后代线程的线程上下文类加载器会继承父线程的线程上下文类加载器，其实这里用继承这个词语也不是太准确，准确来说应该是<strong>后代线程的线程上下文类加载器和父线程的上下文类加载器完全相同，如果都派生自主线程，那么都是应用类加载器</strong>。对于这个结论可以验证一下（下面例子在<code>JDK8</code>中运行）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadContextClassLoaderMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        AtomicReference&lt;Thread&gt; grandSonThreadReference = <span class="keyword">new</span> AtomicReference&lt;&gt;();</span><br><span class="line">        Thread sonThread = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            Thread thread = <span class="keyword">new</span> Thread(()-&gt; &#123;&#125;,<span class="string">"grand-son-thread"</span>);</span><br><span class="line">            grandSonThreadReference.set(thread);</span><br><span class="line">        &#125;, <span class="string">"son-thread"</span>);</span><br><span class="line">        sonThread.start();</span><br><span class="line">        Thread.sleep(<span class="number">100</span>);</span><br><span class="line">        Thread main = Thread.currentThread();</span><br><span class="line">        Thread grandSonThread = grandSonThreadReference.get();</span><br><span class="line">        System.out.println(String.format(<span class="string">"ContextClassLoader of [main]:%s"</span>, main.getContextClassLoader()));</span><br><span class="line">        System.out.println(String.format(<span class="string">"ContextClassLoader of [%s]:%s"</span>,sonThread.getName(), sonThread.getContextClassLoader()));</span><br><span class="line">        System.out.println(String.format(<span class="string">"ContextClassLoader of [%s]:%s"</span>, grandSonThread.getName(), grandSonThread.getContextClassLoader()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ContextClassLoader of [main]:sun.misc.Launcher$AppClassLoader@18b4aac2</span><br><span class="line">ContextClassLoader of [son-thread]:sun.misc.Launcher$AppClassLoader@18b4aac2</span><br><span class="line">ContextClassLoader of [grand-son-thread]:sun.misc.Launcher$AppClassLoader@18b4aac2</span><br></pre></td></tr></table></figure>
+<p>印证了前面的结论，主线程、子线程、孙子线程的线程上下文类加载器都是<code>AppClassLoader</code>类型，并且指向同一个实例<code>sun.misc.Launcher$AppClassLoader@18b4aac2</code>。</p>
+<h2 id="ContextClassLoader设置不当导致内存泄漏的隐患">ContextClassLoader设置不当导致内存泄漏的隐患</h2>
+<p>只要有大量热加载和卸载动态类的场景，就需要警惕后代线程<code>ContextClassLoader</code>设置不当导致内存泄漏。画个图就能比较清楚：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202001/j-c-t-c-1.png" alt=""></p>
+<p>父线程中设置了一个自定义类加载器，用于加载动态类，<strong>子线程新建的时候直接使用了父线程的自定义类加载器，导致该自定义类加载器一直被子线程强引用</strong>，结合前面的类卸载条件分析，所有由该自定义类加载器加载出来的动态类都不能被卸载，导致了内存泄漏。这里还是基于文章前面的那个例子做改造：</p>
+<ul>
+<li>新增一个线程<code>X</code>用于进行类加载，新建一个自定义类加载器，设置线程<code>X</code>的上下文类加载器为该自定义类加载器。</li>
+<li>线程<code>X</code>运行方法中创建一个新线程<code>Y</code>，用于接收类加载成功的事件并且进行打印。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HelloService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    BlockingQueue&lt;String&gt; CLASSES = <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    BlockingQueue&lt;String&gt; EVENTS = <span class="keyword">new</span> LinkedBlockingQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    AtomicBoolean START = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Thread thread = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            ClassLoader loader = <span class="keyword">new</span> ClassLoader() &#123;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">                    String location = <span class="string">"I:\\DefaultHelloService1.class"</span>;</span><br><span class="line">                    <span class="keyword">if</span> (name.contains(<span class="string">"DefaultHelloService2"</span>)) &#123;</span><br><span class="line">                        location = <span class="string">"I:\\DefaultHelloService2.class"</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    File classFile = <span class="keyword">new</span> File(location);</span><br><span class="line">                    ByteArrayOutputStream outputStream = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        InputStream stream = <span class="keyword">new</span> FileInputStream(classFile);</span><br><span class="line">                        <span class="keyword">int</span> b;</span><br><span class="line">                        <span class="keyword">while</span> ((b = stream.read()) != -<span class="number">1</span>) &#123;</span><br><span class="line">                            outputStream.write(b);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(e);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">byte</span>[] bytes = outputStream.toByteArray();</span><br><span class="line">                    Class&lt;?&gt; defineClass = <span class="keyword">super</span>.defineClass(name, bytes, <span class="number">0</span>, bytes.length);</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        EVENTS.put(String.format(<span class="string">"加载类成功,类名:%s"</span>, defineClass.getName()));</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (Exception ignore) &#123;</span><br><span class="line"></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> defineClass;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">            Thread x = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (START.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</span><br><span class="line">                        Thread y = <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                            <span class="keyword">try</span> &#123;</span><br><span class="line">                                <span class="keyword">for</span> (; ; ) &#123;</span><br><span class="line">                                    String event = EVENTS.take();</span><br><span class="line">                                    System.out.println(<span class="string">"接收到事件,事件内容:"</span> + event);</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (Exception ignore) &#123;</span><br><span class="line"></span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;, <span class="string">"Y"</span>);</span><br><span class="line">                        y.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">                        y.start();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">for</span> (; ; ) &#123;</span><br><span class="line">                        String take = CLASSES.take();</span><br><span class="line">                        Class&lt;?&gt; klass = loader.loadClass(take);</span><br><span class="line">                        HelloService helloService = (HelloService) klass.newInstance();</span><br><span class="line">                        System.out.println(helloService.sayHello());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception ignore) &#123;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="string">"X"</span>);</span><br><span class="line">            x.setContextClassLoader(loader);</span><br><span class="line">            x.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">            x.start();</span><br><span class="line">        &#125;);</span><br><span class="line">        thread.start();</span><br><span class="line">        CLASSES.put(<span class="string">"club.throwable.loader.DefaultHelloService1"</span>);</span><br><span class="line">        CLASSES.put(<span class="string">"club.throwable.loader.DefaultHelloService2"</span>);</span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        System.gc();</span><br><span class="line">        Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">        System.gc();</span><br><span class="line">        Thread.sleep(Long.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">接收到事件,事件内容:加载类成功,类名:club.throwable.loader.DefaultHelloService1</span><br><span class="line">1 say hello!</span><br><span class="line">接收到事件,事件内容:加载类成功,类名:club.throwable.loader.DefaultHelloService2</span><br><span class="line">2 say hello!</span><br></pre></td></tr></table></figure>
+<p>打开<code>VisualVM</code>，<code>Dump</code>对应进程的内存快照，多执行几次<code>GC</code>，发现了所有动态类都没有被卸载（这里除非主动终止线程<code>Y</code>释放自定义<code>ClassLoader</code>，否则永远都不可能释放该强引用），验证了前面的结论。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202001/j-c-t-c-2.png" alt=""></p>
+<p>当然，这里只是加载了两个动态类，如果在特殊场景之下，例如在线编码和运行代码，那么有可能极度频繁动态编译和动态类加载，如果出现了上面类似的内存泄漏，那么很容易导致服务器内存耗尽。</p>
+<h2 id="解决方案">解决方案</h2>
+<p>参考那两个<code>Issue</code>，解决方案（或者说预防手段）基本上有两个：</p>
+<ol>
+<li>不需要使用自定义类加载器的线程（如事件派发线程等）优先初始化，那么一般它的线程上下文类加载器是应用类加载器。</li>
+<li>新建后代线程的时候，手动覆盖它的线程上下文类加载器，参考<code>Netty</code>的做法，在线程初始化的时候做如下的操作：</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ThreadDeathWatcher || GlobalEventExecutor</span></span><br><span class="line">AccessController.doPrivileged(<span class="keyword">new</span> PrivilegedAction&lt;Void&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Void <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        watcherThread.setContextClassLoader(<span class="keyword">null</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p>这篇文章算是近期研究得比较深入的一篇文章，<code>ContextClassLoader</code>内存泄漏的隐患归根到底是引用使用不当导致一些本来在方法栈退出之后需要释放的引用无法释放导致的。这种问题有些时候隐藏得很深，而一旦命中了同样的问题并且在并发的场景之下，那么内存泄漏的问题会恶化得十分快。这类问题归类为性能优化，而性能优化是十分大的专题，以后应该也会遇到类似的各类问题，这些经验希望能对未来产生正向的作用。</p>
+<p>参考资料：</p>
+<ul>
+<li>《深入理解Java虚拟机 - 3rd》</li>
+</ul>
+<p>（本文完 c-2-d e-a-20200119）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2020/01/19/java-thread-context-class-loader-memory-leak-risk/>http://throwable.club/2020/01/19/java-thread-context-class-loader-memory-leak-risk/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Thread/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Thread</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2020/01/19/java-thread-context-class-loader-memory-leak-risk/&title=线程上下文类加载器ContextClassLoader内存泄漏隐患 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+今天（2020-01-18）在编写Netty相关代码的时候，从Netty源码中的ThreadDeathWatcher和GlobalEventExecutor追溯到两个和线程上下文类加载器ContextClassLoader内存泄漏相关的Issue：
+
+ThreadDeathWatcher causes custom classLoader script memory leaks
+Ensure ThreadDeathWatcher and GlobalEventExecutor will not cause clas…
+
+两个Issue分别是两位前辈在2017-12的时候提出的，描述的是同一类问题，最后被Netty的负责人采纳，并且修复了对应的问题从而关闭了Issue。这里基于这两个Issue描述的内容，对ContextClassLoader内存泄漏隐患做一次复盘。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2020/01/19/java-thread-context-class-loader-memory-leak-risk/&title=线程上下文类加载器ContextClassLoader内存泄漏隐患 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+今天（2020-01-18）在编写Netty相关代码的时候，从Netty源码中的ThreadDeathWatcher和GlobalEventExecutor追溯到两个和线程上下文类加载器ContextClassLoader内存泄漏相关的Issue：
+
+ThreadDeathWatcher causes custom classLoader script memory leaks
+Ensure ThreadDeathWatcher and GlobalEventExecutor will not cause clas…
+
+两个Issue分别是两位前辈在2017-12的时候提出的，描述的是同一类问题，最后被Netty的负责人采纳，并且修复了对应的问题从而关闭了Issue。这里基于这两个Issue描述的内容，对ContextClassLoader内存泄漏隐患做一次复盘。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADMklEQVR42u3a227bQAwE0Pz/T7tAnwq0tmdIpbA2R0+GL5LOCsiE5H59xcfj9/Hn62fv/P1pcrZn33l9ntdnuODAxsbGvgn78fJ4faMJdbZAyT3kD+AfV8HGxsY+jt3e7iaQ9keyNG+M2NjY2D+SPYulPN7y6ybhio2NjY09i4pZI2nWZvqvuY2NjY398ew8hNqGfvJ+2zBqoxQbGxv7bPYmfj7t9bfPt7GxsbE/jD1ryufbZWbRkm8PGiqwsbGxD2InLZ48xvK2UY7Mk6hufmFjY2MfxG7/Y29h+209+aJcUJlhY2Nj34rdbnNs//XPhwSbZlY9TsbGxsY+iP3649mg9DE6Zu2kTR5hY2Njn8HOt9EkrZxZA+g7xgxv4g0bGxv7IPa+WZ80gNpW1H7wUD8YbGxs7IPYeZzMtuC0N5d8uolGbGxs7LuzZ03/qwYJyUK04ZqEKDY2NvZJ7Fl0zZapbffkRVE+YI6aStjY2Ng3Z7eD3vZW2oFxOwCeFUXY2NjYd2e3UdHebtLumZUZm6tjY2Njn8Fuf5zn4eyb7bWGkxBsbGzsg9jtLW6Cpy0eNluFoseMjY2NfQR7tjUnv/ymLdWWScWZsbGxsQ9lXzXi3YTNbHichOXTAMPGxsY+gj3bdpNvhZltppnho4IKGxsb+1D2VYPezUac9le54k0XDRsbG/u27M2PZ7HUFg+zTTnF48HGxsa+ObuNq/aSbaGSFySzyMTGxsY+j70PtjzSNtfKH9I+ULGxsbHvy54Fz/52Z0PfWWlUM7CxsbE/np0UIbNNM8V6ByXHtZ9iY2Njn8TeNG6Gg9U4rvL2U978wsbGxj6PPWvT5NSkbMijKG8hvbkfbGxs7OPY7XA0OXXe4mnDb3NgY2Njn8rOj1lZ0pY0STNrM3jGxsbGPold/+kfDQ/2xcYmUFdLgI2NjX0TdnvrbWnRDoCT92ctqiK9sbGxsW/Inm3caRciX45kc8+mssDGxsb+mey8fZ8XJLNyYras2NjY2Nj5MCBvA816YMkivnk82NjY2Mex22HqrAnVRl0eYMmCDscD2NjY2B/P3gx621bUVWduUwkbGxv7UPYva/QwE+lya/QAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2020/01/19/java-thread-context-class-loader-memory-leak-risk/&title=线程上下文类加载器ContextClassLoader内存泄漏隐患 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+今天（2020-01-18）在编写Netty相关代码的时候，从Netty源码中的ThreadDeathWatcher和GlobalEventExecutor追溯到两个和线程上下文类加载器ContextClassLoader内存泄漏相关的Issue：
+
+ThreadDeathWatcher causes custom classLoader script memory leaks
+Ensure ThreadDeathWatcher and GlobalEventExecutor will not cause clas…
+
+两个Issue分别是两位前辈在2017-12的时候提出的，描述的是同一类问题，最后被Netty的负责人采纳，并且修复了对应的问题从而关闭了Issue。这里基于这两个Issue描述的内容，对ContextClassLoader内存泄漏隐患做一次复盘。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADMklEQVR42u3a227bQAwE0Pz/T7tAnwq0tmdIpbA2R0+GL5LOCsiE5H59xcfj9/Hn62fv/P1pcrZn33l9ntdnuODAxsbGvgn78fJ4faMJdbZAyT3kD+AfV8HGxsY+jt3e7iaQ9keyNG+M2NjY2D+SPYulPN7y6ybhio2NjY09i4pZI2nWZvqvuY2NjY398ew8hNqGfvJ+2zBqoxQbGxv7bPYmfj7t9bfPt7GxsbE/jD1ryufbZWbRkm8PGiqwsbGxD2InLZ48xvK2UY7Mk6hufmFjY2MfxG7/Y29h+209+aJcUJlhY2Nj34rdbnNs//XPhwSbZlY9TsbGxsY+iP3649mg9DE6Zu2kTR5hY2Njn8HOt9EkrZxZA+g7xgxv4g0bGxv7IPa+WZ80gNpW1H7wUD8YbGxs7IPYeZzMtuC0N5d8uolGbGxs7LuzZ03/qwYJyUK04ZqEKDY2NvZJ7Fl0zZapbffkRVE+YI6aStjY2Ng3Z7eD3vZW2oFxOwCeFUXY2NjYd2e3UdHebtLumZUZm6tjY2Njn8Fuf5zn4eyb7bWGkxBsbGzsg9jtLW6Cpy0eNluFoseMjY2NfQR7tjUnv/ymLdWWScWZsbGxsQ9lXzXi3YTNbHichOXTAMPGxsY+gj3bdpNvhZltppnho4IKGxsb+1D2VYPezUac9le54k0XDRsbG/u27M2PZ7HUFg+zTTnF48HGxsa+ObuNq/aSbaGSFySzyMTGxsY+j70PtjzSNtfKH9I+ULGxsbHvy54Fz/52Z0PfWWlUM7CxsbE/np0UIbNNM8V6ByXHtZ9iY2Njn8TeNG6Gg9U4rvL2U978wsbGxj6PPWvT5NSkbMijKG8hvbkfbGxs7OPY7XA0OXXe4mnDb3NgY2Njn8rOj1lZ0pY0STNrM3jGxsbGPold/+kfDQ/2xcYmUFdLgI2NjX0TdnvrbWnRDoCT92ctqiK9sbGxsW/Inm3caRciX45kc8+mssDGxsb+mey8fZ8XJLNyYras2NjY2Nj5MCBvA816YMkivnk82NjY2Mex22HqrAnVRl0eYMmCDscD2NjY2B/P3gx621bUVWduUwkbGxv7UPYva/QwE+lya/QAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2020/01/23/netty-common-promise-source-code-usage/" rel="prev" title="从源码上理解Netty并发工具-Promise">
+                                  
+                                      从源码上理解Netty并发工具-Promise
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Netty/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Netty</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2020/01/18/netty-custom-rpc-framework-client-sync/" rel="prev" title="基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理">
+                                    
+                                        基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/Netty/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Netty</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '线程上下文类加载器ContextClassLoader内存泄漏隐患',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ClassLoader相关的内容"><span class="toc-text">ClassLoader相关的内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程中的ContextClassLoader"><span class="toc-text">线程中的ContextClassLoader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ContextClassLoader设置不当导致内存泄漏的隐患"><span class="toc-text">ContextClassLoader设置不当导致内存泄漏的隐患</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方案"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

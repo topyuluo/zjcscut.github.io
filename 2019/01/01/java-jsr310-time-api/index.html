@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>JSR310新日期API(二)-日期时间API | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/01/01/java-jsr310-time-api/">
+        JSR310新日期API(二)-日期时间API
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年1月1日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-01-01T22:04:22+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年1月1日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.7k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：29分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>JSR310新日期API(二)-日期时间API</h1>
+<h2 id="前提">前提</h2>
+<p>这篇文章主要介绍一下日期时间API中最常用的类库，分别是：</p>
+<ul>
+<li><code>java.time.Clock</code>：时钟。</li>
+<li><code>java.time.Instant</code>：瞬时时间，时间戳<code>java.sql.Timestamp</code>的替代类。</li>
+<li><code>java.time.LocalDate</code>：本地日期，ISO-8601日历系统下的日期表示，不包含时区的概念，只能表示年月日。</li>
+<li><code>java.time.LocalDateTime</code>：本地日期时间，ISO-8601日历系统下的日期时间表示，不包含时区的概念，只能表示年月日时分秒。</li>
+<li><code>java.time.LocalTime</code>：本地时间，ISO-8601日历系统下的时间表示，不包含时区的概念，只能表示时分秒。</li>
+<li><code>java.time.OffsetTime</code>：带有时间偏移量的时间，ISO-8601日历系统下的带有UTC/GMT时间偏移量的时间表示。</li>
+<li><code>java.time.OffsetDateTime</code>：带有时间偏移量的日期时间，ISO-8601日历系统下的带有UTC/GMT时间偏移量(不包含基于ZoneRegion的时间偏移量)的日期时间表示。</li>
+<li><code>java.time.ZonedDateTime</code>：带有时间偏移量的日期时间，ISO-8601日历系统下的带有UTC/GMT时间偏移量(包含基于ZoneRegion的时间偏移量)的日期时间表示。</li>
+</ul>
+<p>其他的类库还有<code>Year</code>、<code>Month</code>、<code>DayOfWeek</code>、<code>MonthDay</code>、<code>YearMonth</code>等。值得注意的是：JSR-310增加的日期API是严格区分年月日-时分秒格式的日期表示类，例如XXXDateTime一定表示为年月日时分秒，XXXTime只能表示时分秒，XXXDate只能表示年月日。</p>
+<p><strong>值得注意的是</strong>：这些新增的日期时间类都是不可变类，每次通过其方法更变或者修改都是返回一个全新的对象，因此它们都是<strong>线程安全</strong>的。</p>
+<h2 id="Clock">Clock</h2>
+<p><code>java.time.Clock</code>是一个抽象类，它表示时钟，一般情况下，它需要结合时区使用，提供获取当前时刻的功能。<code>Clock</code>主要提供下面四个方法，其他方法都是静态工厂方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取用于创建时钟的时区。</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ZoneId	<span class="title">getZone</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取时钟的当前瞬时对象。</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Instant <span class="title">instant</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取时钟的当前毫秒数值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">millis</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回当前时钟实例的一个新的拷贝时钟实例，并且使用入参作为新时钟实例的时区</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Clock <span class="title">withZone</span><span class="params">(ZoneId zone)</span></span></span><br></pre></td></tr></table></figure>
+<p>静态工厂方法如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">方法</th>
+<th style="text-align:center">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">public static Clock systemUTC()</td>
+<td style="text-align:center">获取可以返回当前时刻的系统时钟，使用UTC(零)时区进行进行时间转换[SystemClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock systemDefaultZone()</td>
+<td style="text-align:center">获取可以返回当前时刻的系统时钟，使用默认时区进行时间转换[SystemClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock system(ZoneId zone)</td>
+<td style="text-align:center">获取可以返回当前时刻的系统时钟，使用指定时区ID进行时间转换[SystemClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock tickMillis(ZoneId zone)</td>
+<td style="text-align:center">获取以整数毫秒返回当前时刻的时钟，使用指定时区ID进行时间转换[TickClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock tickSeconds(ZoneId zone)</td>
+<td style="text-align:center">获取以整数秒返回当前时刻的时钟，使用指定时区ID进行时间转换[TickClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock tickMinutes(ZoneId zone)</td>
+<td style="text-align:center">获取以整数分钟返回当前时刻的时钟，使用指定时区ID进行时间转换[TickClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock tick(Clock baseClock, Duration tickDuration)</td>
+<td style="text-align:center">返回一个以基础时钟和时钟记录基础单位为构造的时钟[TickClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">public static Clock fixed(Instant fixedInstant, ZoneId zone)</td>
+<td style="text-align:center">获得一个始终返回同一时刻的时钟，使用指定时区ID进行时间转换[FixedClock]</td>
+</tr>
+<tr>
+<td style="text-align:center">offset​(Clock baseClock, Duration offsetDuration)</td>
+<td style="text-align:center">返回一个以基础时钟和固定时间偏移量为构造的时钟[OffsetClock]</td>
+</tr>
+</tbody>
+</table>
+<p><code>java.time.Clock</code>主要有四个实现，它们都是<code>java.time.Clock</code>的内部类，上面的工厂方法创建的实例一定是这四个实现之一：</p>
+<ul>
+<li><code>SystemClock</code>：总是基于<code>System#currentTimeMillis()</code>返回最新的时间<code>SystemClock.UTC</code>是典型的实现。</li>
+<li><code>FixedClock</code>：总是返回相同的瞬时时间，可以认为是一个固定时刻的时钟，通常使用于测试。</li>
+<li><code>OffsetClock</code>：基于一个确定的Clock实现，为它添加一个时间偏移量，时间偏移量的单位是<code>Duration</code>。</li>
+<li><code>TickClock</code>：基于一个确定的Clock实现，为它添加一个时间偏移量，时间偏移量的单位是纳秒。</li>
+</ul>
+<p>上面比较难理解的是<code>TickClock</code>，这里举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TickClockMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		Clock tickMillis = Clock.tickMillis(ZoneId.systemDefault());</span><br><span class="line">		Clock tickSeconds = Clock.tickSeconds(ZoneId.systemDefault());</span><br><span class="line">		System.out.println(tickMillis.millis());</span><br><span class="line">		System.out.println(tickSeconds.millis());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出结果</span></span><br><span class="line"><span class="number">1546010945575</span></span><br><span class="line"><span class="number">1546010945000</span></span><br></pre></td></tr></table></figure>
+<p>简单来说，<code>Clock#tickMillis()</code>构造的时钟的计时单位是毫秒，而<code>Clock#tickSeconds()</code>构造的时钟的计时单位是秒(毫秒部分会被截断)，以此类推。</p>
+<p><code>FixedClock</code>是一个固定时刻的时钟，<strong>一般用于测试</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FixedClockMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Clock fixed = Clock.fixed(Instant.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(fixed.millis());</span><br><span class="line">		System.out.println(fixed.millis());</span><br><span class="line">		System.out.println(fixed.millis());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//输出结果</span></span><br><span class="line"><span class="number">1546011492590</span></span><br><span class="line"><span class="number">1546011492590</span></span><br><span class="line"><span class="number">1546011492590</span></span><br></pre></td></tr></table></figure>
+<p>最常用的是默认ZoneId下的系统时钟<code>SystemClock</code>和UTC系统时钟：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SystemClockMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Clock clock = Clock.systemDefaultZone();</span><br><span class="line">		System.out.println(clock.millis());</span><br><span class="line">		Clock utc = Clock.systemUTC();</span><br><span class="line">		System.out.println(utc.millis());</span><br><span class="line">		System.out.println(System.currentTimeMillis());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//某个时刻的输出结果</span></span><br><span class="line"><span class="number">1546011686413</span></span><br><span class="line"><span class="number">1546011686413</span></span><br><span class="line"><span class="number">1546011686413</span></span><br></pre></td></tr></table></figure>
+<h2 id="Instant">Instant</h2>
+<p><code>java.time.Instant</code>字面意思是瞬时时间，它是<code>java.sql.Timestamp</code>的对应类，代表时间线(time-line)上的一个瞬时时间点，准确来说，它内部持有一个long类型的纪元秒属性(seconds)和一个int类型的纳秒属性(nanos，nanos的取值范围是[0,999_999_999])，纪元秒如果为正数，表示该瞬时时间点位于格林威治新纪元<code>1970-01-01T00:00:00Z</code>之后，而纪元秒如果为负数，则表示该瞬时时间点位于格林威治新纪元之前。因此<code>Instant</code>能表示的时间点其实是有上下界的，逻辑上的界限就是<code>1970-01-01T00:00:00Z - 31557014167219200秒</code>到<code>1970-01-01T00:00:00Z + 31556889864403199秒 + 999_999_999纳秒</code>或者表示为<code>Instant#MIN</code>到<code>Instant#MAX</code>，这个范围很大，因此暂时不需要考虑超限的问题。<code>Instant</code>中已经提供了一个公有静态实例用于表示格林威治新纪元，它就是<code>Instant#EPOCH</code>，代表1970-01-01T00:00:00Z这个瞬时时间点。先看一下<code>Instant</code>的常用静态工厂方法(<code>Instant</code>没有公有构造器，必须通过工厂方法构造实例)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 当前时刻的瞬时时间点</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于时钟实例获取瞬时时间点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于距离新纪元的秒数创建瞬时时间点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">ofEpochSecond</span><span class="params">(<span class="keyword">long</span> epochSecond)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于距离新纪元的秒数和纳秒创建瞬时时间点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">ofEpochSecond</span><span class="params">(<span class="keyword">long</span> epochSecond, <span class="keyword">long</span> nanoAdjustment)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于毫秒数创建瞬时时间点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">ofEpochMilli</span><span class="params">(<span class="keyword">long</span> epochMilli)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于其他日期时间API创建瞬时时间点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">from</span><span class="params">(TemporalAccessor temporal)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于特定格式字符串创建瞬时时间点，如2007-12-03T10:15:30.00Z</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Instant <span class="title">parse</span><span class="params">(<span class="keyword">final</span> CharSequence text)</span></span></span><br></pre></td></tr></table></figure>
+<p>当然还有其他常用的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取当前Instant实例对于不同计时单位的值，见ChronoField</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getLong</span><span class="params">(TemporalField field)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取当前Instant实例的纪元秒属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getEpochSecond</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取当前Instant实例的纳秒属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNano</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取当前Instant实例的毫秒值</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toEpochMilli</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于TemporalField实例(TemporalField)和新的值调整并且创建一个新的Instant</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Instant <span class="title">with</span><span class="params">(TemporalField field, <span class="keyword">long</span> newValue)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 当前Instant实例基于TemporalUnit(ChronoUnit)截断并且返回一个新的Instant</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Instant <span class="title">truncatedTo</span><span class="params">(TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 顾名思义，基于一个时间基准单位进行时间量增加，返回一个新的Instant</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Instant <span class="title">plus</span><span class="params">(<span class="keyword">long</span> amountToAdd, TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 顾名思义，基于一个时间基准单位进行时间量减少，返回一个新的Instant</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Instant <span class="title">minus</span><span class="params">(<span class="keyword">long</span> amountToSubtract, TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 计算当前Instant实例和入参endExclusive基于时间基准单位unit之间的时间量</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">until</span><span class="params">(Temporal endExclusive, TemporalUnit unit)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InstantMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Instant instant = Instant.now();</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">		instant = Instant.now(Clock.systemDefaultZone());</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">		instant = Instant.ofEpochSecond(<span class="keyword">new</span> Date().toInstant().getEpochSecond());</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">		instant = Instant.ofEpochMilli(System.currentTimeMillis());</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">		instant = Instant.from(Instant.now());</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">		instant = Instant.parse(<span class="string">"2018-12-31T10:15:30.00Z"</span>);</span><br><span class="line">		System.out.println(String.format(<span class="string">"Second:%d,Nano:%d"</span>, instant.getEpochSecond(), instant.getNano()));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出</span></span><br><span class="line">Second:<span class="number">1546187685</span>,Nano:<span class="number">261861900</span></span><br><span class="line">Second:<span class="number">1546187685</span>,Nano:<span class="number">291941900</span></span><br><span class="line">Second:<span class="number">1546187685</span>,Nano:<span class="number">0</span></span><br><span class="line">Second:<span class="number">1546187685</span>,Nano:<span class="number">292000000</span></span><br><span class="line">Second:<span class="number">1546187685</span>,Nano:<span class="number">292946400</span></span><br><span class="line">Second:<span class="number">1546251330</span>,Nano:<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h2 id="LocalDate">LocalDate</h2>
+<p><code>java.time.LocalDate</code>代表ISO-8601日历系统中<strong>不包含时区的日期(当然也不包含具体的时间)表示</strong>，例如2007-12-03。<code>LocalDate</code>是一个不可变的日期对象，也就是只能表示日期，通常的表示格式为年-月-日，同时提供其他日期字段的访问，例如一年中的第几日(day-of-year)、星期几(day-of-week)和一年中的第几周(week-of-year)等。不同的<code>LocalDate</code>之间的比较只能通过<code>LocalDate#equals()</code>方法，其他比较操作如<code>==</code>或者<code>hash()</code>方法会产生无法预知的结果。<code>LocalDate</code>提供的常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// -999999999-01-01</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDate MIN = LocalDate.of(Year.MIN_VALUE, <span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 999999999-12-31</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDate MAX = LocalDate.of(Year.MAX_VALUE, <span class="number">12</span>, <span class="number">31</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1970-01-01</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDate EPOCH = LocalDate.of(<span class="number">1970</span>, <span class="number">1</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p><code>LocalDate</code>的工厂方法比较多，这里只列举部分常用的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前日期获取LocalDate实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于当前日期和时区获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于当前日期和时钟获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年月(枚举)日获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, Month month, <span class="keyword">int</span> dayOfMonth)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年月日获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年和具体该年中的某一日获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">ofYearDay</span><span class="params">(<span class="keyword">int</span> year, <span class="keyword">int</span> dayOfYear)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于新纪元1970-01-01的偏移天数获取LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDate <span class="title">ofEpochDay</span><span class="params">(<span class="keyword">long</span> epochDay)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>LocalDate</code>的实例方法也比较多，这里也列举部分常用的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取年份值</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getYear</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取月份值，范围是1-12</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMonthValue</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 获取月份枚举</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Month <span class="title">getMonth</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回当前LocalDate实例的该年中具体的第几天</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getDayOfYear</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回当前LocalDate实例的具体是星期几</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> DayOfWeek <span class="title">getDayOfWeek</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 是否闰年</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isLeapYear</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回当前LocalDate实例月份长度</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">lengthOfMonth</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回当前LocalDate实例年份长度</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">lengthOfYear</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一个日期属性修改对应的值返回一个新的LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LocalDate <span class="title">with</span><span class="params">(TemporalField field, <span class="keyword">long</span> newValue)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一个日期时间基准单位增加对应的值返回一个新的LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LocalDate <span class="title">plus</span><span class="params">(<span class="keyword">long</span> amountToAdd, TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一个日期时间基准单位减去对应的值返回一个新的LocalDate实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LocalDate <span class="title">minus</span><span class="params">(<span class="keyword">long</span> amountToSubtract, TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一个日期时间基准单位计算以入参为endExclusive计算日期或者时间的间隔</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">until</span><span class="params">(Temporal endExclusive, TemporalUnit unit)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回基于新纪元年1970-1-1的偏移天数</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">toEpochDay</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 如果入参为LocalDate类型功能和equals一致，否则通过基于纪元年的偏移天数比较</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEqual</span><span class="params">(ChronoLocalDate other)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 只有年月日三个成员同时相等此方法才返回true</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LocalDate localDate = LocalDate.now();</span><br><span class="line">		System.out.println(localDate);</span><br><span class="line">		localDate = LocalDate.of(<span class="number">2018</span>, <span class="number">12</span>, <span class="number">31</span>);</span><br><span class="line">		System.out.println(localDate);</span><br><span class="line">		localDate = localDate.plus(<span class="number">1</span>, ChronoUnit.DAYS);</span><br><span class="line">		System.out.println(localDate);</span><br><span class="line">		System.out.println(localDate.equals(LocalDate.of(<span class="number">2019</span>,<span class="number">1</span>,<span class="number">1</span>)));</span><br><span class="line">		System.out.println(localDate.toEpochDay());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某天执行的输出结果</span></span><br><span class="line"><span class="number">2018</span>-<span class="number">12</span>-<span class="number">31</span></span><br><span class="line"><span class="number">2018</span>-<span class="number">12</span>-<span class="number">31</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span></span><br><span class="line"><span class="keyword">true</span></span><br><span class="line"><span class="number">17897</span></span><br></pre></td></tr></table></figure>
+<h2 id="LocalTime">LocalTime</h2>
+<p><code>java.time.LocalTime</code>代表ISO-8601日历系统中<strong>不包含时区的时间(当然也不包含具体的日期)表示</strong>，例如10:15:30。<code>LocalTime</code>是一个不可变的时间对象，也就是只能表示时间，通常的表示格式为时:分:秒，也可以包含一个纳秒属性(nano取值范围[0,999999999])，通俗来说，它表示的就是挂钟上所见的时间的描述。同样，不同的<code>LocalTime</code>实例必须通过<code>LocalTime#equals()</code>方法比较。<code>LocalTime</code>提供的静态实例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一天的起始时间 - 00:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalTime MIN</span><br><span class="line"></span><br><span class="line"><span class="comment">// 一天的结束时间 - 23:59:59.999999999</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalTime MAX</span><br><span class="line"></span><br><span class="line"><span class="comment">// 午夜 - 00:00 其实和MIN是一样的</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalTime MIDNIGHT</span><br><span class="line"></span><br><span class="line"><span class="comment">// 中午 - 12:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalTime NOON</span><br></pre></td></tr></table></figure>
+<p><code>LocalTime</code>常用的工厂方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前时间构造LocalTime实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于当前时间和时区ID构造LocalTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于当前时间和时钟实例构造LocalTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于小时、分钟(、秒和纳秒)构造LocalTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> hour, <span class="keyword">int</span> minute)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于瞬时时间实例和时区ID构造LocalTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">ofInstant</span><span class="params">(Instant instant, ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一天当中的具体秒数构造LocalTime实例,secondOfDay范围是[0,24 * 60 * 60 - 1]</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">ofSecondOfDay</span><span class="params">(<span class="keyword">long</span> secondOfDay)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于一天当中的具体纳秒数构造LocalTime实例,nanoOfDay[0,24 * 60 * 60 * 1,000,000,000 - 1]</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalTime <span class="title">ofNanoOfDay</span><span class="params">(<span class="keyword">long</span> nanoOfDay)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>LocalTime</code>常用的实例方法有很多，套路和上面章节提到过的方法类似，这里不啰嗦分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回小时值，范围[0,23]</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getHour</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回分钟值，范围[0,59]</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMinute</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回秒数值，范围[0,59]</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSecond</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 返回纳秒数值，范围[0,999_999_999]</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNano</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LocalTime localTime = LocalTime.now();</span><br><span class="line">		System.out.println(localTime);</span><br><span class="line">		localTime = LocalTime.of(<span class="number">23</span>, <span class="number">59</span>);</span><br><span class="line">		System.out.println(localTime);</span><br><span class="line">		localTime = LocalTime.MAX;</span><br><span class="line">		System.out.println(String.format(<span class="string">"Hour:%d,minute:%d,second:%d,nano:%d"</span>, localTime.getHour(),</span><br><span class="line">				localTime.getMinute(), localTime.getSecond(), localTime.getNano()));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻下的输出结果</span></span><br><span class="line"><span class="number">00</span>:<span class="number">46</span>:<span class="number">08.845848800</span></span><br><span class="line"><span class="number">23</span>:<span class="number">59</span></span><br><span class="line">Hour:<span class="number">23</span>,minute:<span class="number">59</span>,second:<span class="number">59</span>,nano:<span class="number">999999999</span></span><br></pre></td></tr></table></figure>
+<h2 id="LocalDateTime">LocalDateTime</h2>
+<p><code>java.time.LocalDateTime</code>实际上就是<code>LocalDate</code>和<code>LocalTime</code>的结合版本，代表ISO-8601日历系统中<strong>不包含时区(<code>LocalDateTime</code>不存储时区信息，但是可以使用时区ID构造<code>LocalDateTime</code>实例)的日期时间表示</strong>，例如2007-12-03T10:15:30。<code>LocalDateTime</code>是一个不可变的时间对象，也就是只能表示日期时间，通常的表示格式为年-月日 时:分:秒，也可以包含一个纳秒属性(nano取值范围[0,999999999])。不同的<code>LocalDateTime</code>实例必须通过<code>LocalDateTime#equals()</code>方法比较。<code>LocalDateTime</code>内部持有一个<code>LocalDate</code>实例和一个<code>LocalTime</code>实例。它定义了两个公有的静态常量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// LocalDateTime能够表示的最小日期时间，即-999999999-01-01T00:00:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDateTime MIN = LocalDateTime.of(LocalDate.MIN, LocalTime.MIN)</span><br><span class="line"></span><br><span class="line"><span class="comment">// LocalDateTime能够表示的最大日期时间，即999999999-12-31T23:59:59.999999999</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> LocalDateTime MAX = LocalDateTime.of(LocalDate.MAX, LocalTime.MAX)</span><br></pre></td></tr></table></figure>
+<p><code>LocalDateTime</code>常用的静态工厂方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前日期时间、时区ID、时钟创建LocalDateTime实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年月(枚举)日时分秒纳秒创建LocalDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, Month month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, Month month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, Month month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth, <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDate和LocalTime实例创建LocalDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">of</span><span class="params">(LocalDate date, LocalTime time)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于Instant实例和时区ID实例创建LocalDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">ofInstant</span><span class="params">(Instant instant, ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于新纪元偏移秒数、纳秒数和时间偏移量创建LocalDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LocalDateTime <span class="title">ofEpochSecond</span><span class="params">(<span class="keyword">long</span> epochSecond, <span class="keyword">int</span> nanoOfSecond, ZoneOffset offset)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>LocalDateTime</code>的实例方法和前面介绍过的类差不多，这里不做详细展开，举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault());</span><br><span class="line">		System.out.println(localDateTime);</span><br><span class="line">		localDateTime = LocalDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(localDateTime);</span><br><span class="line">		localDateTime = localDateTime.plus(<span class="number">1</span>, ChronoUnit.YEARS);</span><br><span class="line">		System.out.println(localDateTime);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出如下</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T17:<span class="number">43</span>:<span class="number">48.260517400</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T17:<span class="number">43</span>:<span class="number">48.260517400</span></span><br><span class="line"><span class="number">2020</span>-<span class="number">01</span>-<span class="number">01</span>T17:<span class="number">43</span>:<span class="number">48.260517400</span></span><br></pre></td></tr></table></figure>
+<h2 id="OffsetTime">OffsetTime</h2>
+<p><code>java.time.OffsetTime</code>表示ISO-8601日历系统中带有基于UTC/Greenwich时间偏移量的时间，例如10:15:30+01:00。<code>OffsetTime</code>也是一个不可变的时间对象，通常表示格式为时:分:秒-时间偏移量，当然它也可以包含一个纳秒属性(nano取值范围[0,999999999])。相比<code>LocalTime</code>，它多存储了一个时区时间偏移量(zone offset)属性。<code>OffsetTime</code>的公有静态实例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代表00:00:00+18:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> OffsetTime MIN = LocalTime.MIN.atOffset(ZoneOffset.MAX)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 代表23:59:59.999999999-18:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> OffsetTime MAX = LocalTime.MAX.atOffset(ZoneOffset.MIN)</span><br></pre></td></tr></table></figure>
+<p><code>OffsetTime</code>的常用工厂方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前时间、时区ID、时钟创建OffsetTime实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalTime实例和时间偏移量创建OffsetTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">of</span><span class="params">(LocalTime time, ZoneOffset offset)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于时分秒纳秒和时间偏移量创建OffsetTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">of</span><span class="params">(<span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond, ZoneOffset offset)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于Instant实例和时区ID实例创建OffsetTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetTime <span class="title">ofInstant</span><span class="params">(Instant instant, ZoneId zone)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OffsetTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		OffsetTime offsetTime = OffsetTime.now();</span><br><span class="line">		System.out.println(offsetTime);</span><br><span class="line">		offsetTime = OffsetTime.ofInstant(Instant.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(offsetTime);</span><br><span class="line">		offsetTime = OffsetTime.of(LocalTime.now(), ZoneOffset.UTC);</span><br><span class="line">		System.out.println(offsetTime);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//某个时刻下的输出结果如下</span></span><br><span class="line"><span class="number">18</span>:<span class="number">08</span>:<span class="number">26.263710800</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line"><span class="number">18</span>:<span class="number">08</span>:<span class="number">26.264713600</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line"><span class="number">18</span>:<span class="number">08</span>:<span class="number">26.264713600</span>Z</span><br></pre></td></tr></table></figure>
+<h2 id="OffsetDateTime">OffsetDateTime</h2>
+<p><code>java.time.OffsetDateTime</code>表示ISO-8601日历系统中带有基于UTC/Greenwich时间偏移量的日期时间，例如2007-12-03T10:15:30+01:00。<code>OffsetDateTime</code>也是一个不可变的日期时间对象，通常表示格式为年-月-日 时:分:秒-时间偏移量，当然它也可以包含一个纳秒属性(nano取值范围[0,999999999])。相比<code>LocalDateTime</code>，它多存储了一个时区时间偏移量(zone offset)属性。<code>OffsetDateTime</code>提供的公有静态实例常量如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// OffsetDateTime能表示的最小的日期时间-999999999-01-01T00:00:00+18:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> OffsetDateTime MIN = LocalDateTime.MIN.atOffset(ZoneOffset.MAX)</span><br><span class="line"></span><br><span class="line"><span class="comment">// OffsetDateTime能表示的最大的日期时间999999999-12-31T23:59:59.999999999-18:00</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> OffsetDateTime MAX = LocalDateTime.MAX.atOffset(ZoneOffset.MIN)</span><br></pre></td></tr></table></figure>
+<p><code>OffsetDateTime</code>的常用静态工厂方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于当前的日期时间、时区ID、时钟创建OffsetDateTime实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDate实例、LocalTime实例和时间偏移量创建OffsetDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">of</span><span class="params">(LocalDate date, LocalTime time, ZoneOffset offset)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDateTime实例和时间偏移量创建OffsetDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">of</span><span class="params">(LocalDateTime dateTime, ZoneOffset offset)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年月日时分秒纳秒和时间偏移量创建OffsetDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">of</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond, ZoneOffset offset)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于Instant实例和时区ID实例创建OffsetDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> OffsetDateTime <span class="title">ofInstant</span><span class="params">(Instant instant, ZoneId zone)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OffsetDateTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		OffsetDateTime offsetDateTime = OffsetDateTime.now();</span><br><span class="line">		System.out.println(offsetDateTime);</span><br><span class="line">		offsetDateTime = OffsetDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(offsetDateTime);</span><br><span class="line">		offsetDateTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.ofHours(<span class="number">8</span>));</span><br><span class="line">		System.out.println(offsetDateTime);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出如下</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T20:<span class="number">38</span>:<span class="number">03.388846400</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T20:<span class="number">38</span>:<span class="number">03.388846400</span>+<span class="number">08</span>:<span class="number">00</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T20:<span class="number">38</span>:<span class="number">03.388846400</span>+<span class="number">08</span>:<span class="number">00</span></span><br></pre></td></tr></table></figure>
+<h2 id="ZonedDateTime">ZonedDateTime</h2>
+<p><code>java.time.ZonedDateTime</code>应该是JSR-310中最复杂但是最全面的日期时间类(它的API文档中注释也是最多的，从这点也可以看出它的复杂性)。<code>ZonedDateTime</code>可以简单理解为<code>LocalDateTime</code>，时区ID和一个可处理的<code>ZoneOffset</code>三者的共同实现，或者更简单理解为日期时间、时间偏移量、区域时区等时区规则的多重实现。<code>ZonedDateTime</code>也是一个不可变的日期时间对象，常用的格式为：年-月-日 时:分:秒-时区偏移量-区域，例如2007-12-03T10:15:30+01:00 Europe/Paris。除了包含所有的日期时间属性之外，<code>ZonedDateTime</code>还包含一个纳秒属性(nano取值范围[0,999999999])。<code>ZonedDateTime</code>的常用静态工厂方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据当前的日期时间、时区ID和时钟创建ZonedDateTime实例</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">now</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">now</span><span class="params">(ZoneId zone)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">now</span><span class="params">(Clock clock)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDate实例、LocalTime实例和时区ID创建ZonedDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">of</span><span class="params">(LocalDate date, LocalTime time, ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDateTime实例和时区ID创建ZonedDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">of</span><span class="params">(LocalDateTime localDateTime, ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于年月日时分秒纳秒和时区ID创建ZonedDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">of</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> year, <span class="keyword">int</span> month, <span class="keyword">int</span> dayOfMonth,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> hour, <span class="keyword">int</span> minute, <span class="keyword">int</span> second, <span class="keyword">int</span> nanoOfSecond, ZoneId zone)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">// 基于LocalDateTime实例、时区ID和候选偏好的时间偏移量创建ZonedDateTime实例</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ZonedDateTime <span class="title">ofLocal</span><span class="params">(LocalDateTime localDateTime, ZoneId zone, ZoneOffset preferredOffset)</span></span></span><br></pre></td></tr></table></figure>
+<p>举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZonedDateTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ZonedDateTime zonedDateTime = ZonedDateTime.now();</span><br><span class="line">		System.out.println(zonedDateTime);</span><br><span class="line">		zonedDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(zonedDateTime);</span><br><span class="line">		zonedDateTime = ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(zonedDateTime);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的执行结果</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T21:<span class="number">00</span>:<span class="number">03.193242200</span>+<span class="number">08</span>:<span class="number">00</span>[Asia/Shanghai]</span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T21:<span class="number">00</span>:<span class="number">03.193242200</span>+<span class="number">08</span>:<span class="number">00</span>[Asia/Shanghai]</span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T21:<span class="number">00</span>:<span class="number">03.193242200</span>+<span class="number">08</span>:<span class="number">00</span>[Asia/Shanghai]</span><br></pre></td></tr></table></figure>
+<h2 id="其他">其他</h2>
+<h3 id="Year">Year</h3>
+<p><code>java.time.Year</code>基于ISO-8601日期系统下表示年份，支持的范围是[-999_999_999,999_999_999]。举个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">YearMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		Year year = Year.now();</span><br><span class="line">		System.out.println(year);</span><br><span class="line">		System.out.println(year.isLeap());</span><br><span class="line">		year = Year.of(<span class="number">2016</span>);</span><br><span class="line">		System.out.println(year);</span><br><span class="line">		System.out.println(year.isLeap());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">2019</span></span><br><span class="line"><span class="keyword">false</span></span><br><span class="line"><span class="number">2016</span></span><br><span class="line"><span class="keyword">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="Month">Month</h3>
+<p><code>java.time.Month</code>是一个枚举，代表ISO-8601日期系统中的月份。枚举的成员一共有12个，就是JANUARY到DECEMBER一共12个月份的英文大写表示。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MonthMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Month month = Month.of(<span class="number">12</span>);</span><br><span class="line">		System.out.println(month);</span><br><span class="line">		month = Month.JANUARY;</span><br><span class="line">		System.out.println(month);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">DECEMBER</span><br><span class="line">JANUARY</span><br></pre></td></tr></table></figure>
+<h3 id="DayOfWeek">DayOfWeek</h3>
+<p><code>java.time.DayOfWeek</code>是一个枚举，表示一个星期中具体是星期几。枚举成员一共有7个，就是从MONDAY到SUNDAY一共7个指代具体星期几的英文大写表示。举个简单的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DayOfWeekMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		DayOfWeek dayOfWeek = DayOfWeek.of(<span class="number">1</span>);</span><br><span class="line">		System.out.println(dayOfWeek);</span><br><span class="line">		dayOfWeek = DayOfWeek.SUNDAY;</span><br><span class="line">		System.out.println(dayOfWeek);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">MONDAY</span><br><span class="line">SUNDAY</span><br></pre></td></tr></table></figure>
+<h3 id="MonthDay">MonthDay</h3>
+<p><code>java.time.MonthDay</code>代表月份和对应月份一共存在的天数，内部维护着整型的属性month和整型的属性day。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MonthDayMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		MonthDay monthDay = MonthDay.now();</span><br><span class="line">		System.out.println(monthDay);</span><br><span class="line">		monthDay = MonthDay.of(<span class="number">2</span>, <span class="number">29</span>);</span><br><span class="line">		System.out.println(monthDay);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//某个时刻的输出结果</span></span><br><span class="line">--<span class="number">01</span>-<span class="number">01</span></span><br><span class="line">--<span class="number">02</span>-<span class="number">29</span></span><br></pre></td></tr></table></figure>
+<p><code>MonthDay</code>通过静态工厂方法构建实例的时候会判断月份或者天数是否超过实际的限制，如果超限会抛异常。</p>
+<h3 id="YearMonth">YearMonth</h3>
+<p><code>java.time.YearMonth</code>代表年份和月份，内部维护着整型的属性month和整型的属性month。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">YearMonthMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		YearMonth yearMonth = YearMonth.now();</span><br><span class="line">		System.out.println(yearMonth);</span><br><span class="line">		yearMonth = YearMonth.of(<span class="number">2019</span>, <span class="number">12</span>);</span><br><span class="line">		System.out.println(yearMonth);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">12</span></span><br></pre></td></tr></table></figure>
+<h2 id="类型转换">类型转换</h2>
+<p>这里主要总结一下JSR-310的日期时间类之间的转换以及JSR-310的日期时间类和已经存在的旧Java日期时间类之间的转换关系。</p>
+<h3 id="Instant和其他日期时间类互转">Instant和其他日期时间类互转</h3>
+<p>如果有注意到上面介绍日期时间类的时候会发现每个类的工厂方法都包含<code>ofInstant()</code>方法，也就是<code>Instant</code>实例可以转化为其他日期时间类实例，这里总结一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InstantConvertTo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Instant instant = Instant.now();</span><br><span class="line">		ZoneId zoneId = ZoneId.systemDefault();</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zoneId);</span><br><span class="line">		LocalDate localDate = LocalDate.ofInstant(instant, zoneId);</span><br><span class="line">		LocalTime localTime = LocalTime.ofInstant(instant, zoneId);</span><br><span class="line">		OffsetTime offsetTime = OffsetTime.ofInstant(instant, zoneId);</span><br><span class="line">		OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(instant,zoneId);</span><br><span class="line">		ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(instant, zoneId);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实很好理解，即使在旧的Java日期时间API中，长整型的时间戳毫秒也可以通过各种日期时间类的构造或者静态工厂方法创建对应的实例。值得注意的是，只有同时包含日期和时间的类才能转换为<code>Instant</code>实例，这一点也很好理解，只包含时间或者只包含日期的类转换成瞬时时间会丢失部分时间值。这里举个简单例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InstantConvertFrom</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		<span class="comment">// 这里只以LocalDateTime为例,其他类似</span></span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">		Instant instant = localDateTime.toInstant(ZoneOffset.UTC);</span><br><span class="line">		<span class="comment">// 或者</span></span><br><span class="line">		instant = Instant.ofEpochMilli(localDateTime.toEpochSecond(ZoneOffset.UTC) * <span class="number">1000</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JSR-310日期时间类之间互相转换">JSR-310日期时间类之间互相转换</h3>
+<p>日期时间类本身就包含日期和时间的维度，一般它们直接保存时间类实例作为成员属性，所以转换也十分方便：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateTimeToTime</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">		LocalDate localDate = localDateTime.toLocalDate();</span><br><span class="line">		LocalTime localTime = localDateTime.toLocalTime();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>日期类不包含时间部分，所以日期类转换为日期时间类的时候，时间部分会取最小，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateToDateTime</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		LocalDate localDate = LocalDate.now();</span><br><span class="line">		System.out.println(localDate);</span><br><span class="line">		LocalDateTime localDateTime = localDate.atStartOfDay();</span><br><span class="line">		System.out.println(localDateTime);</span><br><span class="line">		ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());</span><br><span class="line">		System.out.println(zonedDateTime);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 某个时刻的输出如下</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T00:<span class="number">00</span></span><br><span class="line"><span class="number">2019</span>-<span class="number">01</span>-<span class="number">01</span>T00:<span class="number">00</span>+<span class="number">08</span>:<span class="number">00</span>[Asia/Shanghai]</span><br></pre></td></tr></table></figure>
+<p>带有时区ID(时间偏移量或者地区)的类型可以轻易转变为不带有时区ID的类型，如果要反过来，则需要添加对应的时区ID属性，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZoneIdDateTimeMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault());</span><br><span class="line">		System.out.println(zonedDateTime);</span><br><span class="line">		LocalDateTime localDateTime = zonedDateTime.toLocalDateTime();</span><br><span class="line">		LocalDate localDate = zonedDateTime.toLocalDate();</span><br><span class="line">		LocalTime localTime = zonedDateTime.toLocalTime();</span><br><span class="line">		zonedDateTime = ZonedDateTime.of(localDateTime, ZoneId.systemDefault());</span><br><span class="line"></span><br><span class="line">		OffsetDateTime offsetDateTime = OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC);</span><br><span class="line">		localDateTime = offsetDateTime.toLocalDateTime();</span><br><span class="line">		localDate = offsetDateTime.toLocalDate();</span><br><span class="line">		localTime = offsetDateTime.toLocalTime();</span><br><span class="line">		offsetDateTime = OffsetDateTime.of(localDateTime, ZoneOffset.UTC);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JSR-310中的类和旧的日期时间相关类之间的转换">JSR-310中的类和旧的日期时间相关类之间的转换</h3>
+<p><code>java.sql.Timestamp</code>和<code>java.time.LocalDateTime</code>之间的转换：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TimestampLocalDateTime</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		LocalDateTime localDateTime = LocalDateTime.now();</span><br><span class="line">		Timestamp timestamp = Timestamp.valueOf(localDateTime);</span><br><span class="line">		LocalDateTime ldt = timestamp.toLocalDateTime();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>java.sql.Date</code>和<code>java.time.LocalDate</code>之间的转换：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateLocalDate</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Date date = <span class="keyword">new</span> Date(<span class="number">2018</span>, <span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">		LocalDate localDate = date.toLocalDate();</span><br><span class="line">		date = <span class="keyword">new</span> Date(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只要是能使用毫秒表示的旧的日期时间类，都可以和<code>java.time.Instant</code>相互转换，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ToInstant</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">		Timestamp timestamp = <span class="keyword">new</span> Timestamp(System.currentTimeMillis());</span><br><span class="line">		Instant instant = timestamp.toInstant();</span><br><span class="line">		java.util.Date date = <span class="keyword">new</span> Date(System.currentTimeMillis());</span><br><span class="line">		instant = date.toInstant();</span><br><span class="line">		timestamp = <span class="keyword">new</span> Timestamp(instant.toEpochMilli());</span><br><span class="line">		date = <span class="keyword">new</span> Date(instant.toEpochMilli());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p>JSR-310的新时间日期类库的设计相比已经存在的旧的日期时间类库来说，个人认为有以下的优点：</p>
+<ul>
+<li>线程安全。</li>
+<li>类的职责更加分明，时间、日期、日期时间需要使用明确的类去表示。</li>
+<li>API封装更加合理，使得易用性提高。</li>
+</ul>
+<p>不过会存在一些问题，最明显的是已有的旧类库存在兼容性问题，例如JDBC模块里面处理日期时间需要进行新的日期时间类和<code>java.sql.Timestamp</code>进行转换的问题，不过转换成本并不高。</p>
+<p>(本文完 c-3-d e-a-20181230)</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/01/01/java-jsr310-time-api/>http://throwable.club/2019/01/01/java-jsr310-time-api/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/JSR-310/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>JSR-310</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/01/01/java-jsr310-time-api/&title=JSR310新日期API(二)-日期时间API | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/01/01/java-jsr310-time-api/&title=JSR310新日期API(二)-日期时间API | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACyUlEQVR42u3aQW7jMBAEQP//01lgTws4kro5ZJwFSqfAUGTWHMRxD1+v+Pr6e73//e8n759fPeH9v96fcHX/68SFh4eHt7T05MsSxto33t9zVeL7NePh4eGd5iWbwT37fgtZe0J+z+XneHh4eB/l3TfQLaZtoPHw8PD+X97aK7ttpifrwcPDw/sZXh6qzpvgKEQoN5gNWQseHh5ezJsMwD719w/N9/Dw8PDKqfr9C3fXK3stwohWi4eHh3eA10arawcC5oVIVlL8YsDDw8Mb89qRfz7+z5e7FgQnPwDw8PDwzvHaZney6F2pSVJoPDw8vL28fOy0oaldKuKo0Hh4eHgHePnu0TbQyWGCNqIdtc54eHh4W3mnQ4dJI55vPw/lwMPDw9vKS7KKSUS7tv20Y7aHlhoPDw9vEy9/TSeBbP7Fu44R1FkLHh4e3ibeJKJtGW3Y0YYRDwEuHh4e3lZeG5WuhbxrLXLbyn+zMeDh4eFt4uVB6trgqm3Bk2Di/p6HGBcPDw9vE69d7lok0Q7V8qY/avTx8PDwNvHaEVQeLrQteFKCNg7Gw8PDO8fLjwi0gUXbEK9Fw5flwMPDwzvGmxyHaqOBNq5ty4eHh4d3mtdGtHnC0ca1+VGquunHw8PD28rLD10lW0IbxSafT0qMh4eHd4LXhqT5q3ztCZNyjPY9PDw8vJiXv3Dbr8mHXpMBWz3fw8PDw9vKm2wAa8OwXeWLDl3h4eHhbeKttbl5iLA23GojkmhUhoeHh7eJ91Ve9dg+r25ciGJzwsPDwzvAm4+7di0335z2FhEPDw9vjZdsBvOAoC1ZO1SLYgg8PDy8rbz8R357KKpti9uN52HHw8PDw/soLwkC8oAgf9pa8IGHh4f3e3iTtGPyos/L/U0YgYeHh3eA14YRa5HB2viqDSDw8PDwTvMmA7D2VZ4vbnL8q77w8PDwUt4fgUOccf3lv8UAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/01/01/java-jsr310-time-api/&title=JSR310新日期API(二)-日期时间API | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACyUlEQVR42u3aQW7jMBAEQP//01lgTws4kro5ZJwFSqfAUGTWHMRxD1+v+Pr6e73//e8n759fPeH9v96fcHX/68SFh4eHt7T05MsSxto33t9zVeL7NePh4eGd5iWbwT37fgtZe0J+z+XneHh4eB/l3TfQLaZtoPHw8PD+X97aK7ttpifrwcPDw/sZXh6qzpvgKEQoN5gNWQseHh5ezJsMwD719w/N9/Dw8PDKqfr9C3fXK3stwohWi4eHh3eA10arawcC5oVIVlL8YsDDw8Mb89qRfz7+z5e7FgQnPwDw8PDwzvHaZney6F2pSVJoPDw8vL28fOy0oaldKuKo0Hh4eHgHePnu0TbQyWGCNqIdtc54eHh4W3mnQ4dJI55vPw/lwMPDw9vKS7KKSUS7tv20Y7aHlhoPDw9vEy9/TSeBbP7Fu44R1FkLHh4e3ibeJKJtGW3Y0YYRDwEuHh4e3lZeG5WuhbxrLXLbyn+zMeDh4eFt4uVB6trgqm3Bk2Di/p6HGBcPDw9vE69d7lok0Q7V8qY/avTx8PDwNvHaEVQeLrQteFKCNg7Gw8PDO8fLjwi0gUXbEK9Fw5flwMPDwzvGmxyHaqOBNq5ty4eHh4d3mtdGtHnC0ca1+VGquunHw8PD28rLD10lW0IbxSafT0qMh4eHd4LXhqT5q3ztCZNyjPY9PDw8vJiXv3Dbr8mHXpMBWz3fw8PDw9vKm2wAa8OwXeWLDl3h4eHhbeKttbl5iLA23GojkmhUhoeHh7eJ91Ve9dg+r25ciGJzwsPDwzvAm4+7di0335z2FhEPDw9vjZdsBvOAoC1ZO1SLYgg8PDy8rbz8R357KKpti9uN52HHw8PDw/soLwkC8oAgf9pa8IGHh4f3e3iTtGPyos/L/U0YgYeHh3eA14YRa5HB2viqDSDw8PDwTvMmA7D2VZ4vbnL8q77w8PDwUt4fgUOccf3lv8UAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/01/05/java-jsr310-date-time-format-parse/" rel="prev" title="JSR310新日期API(三)-日期时间格式化与解析">
+                                  
+                                      JSR310新日期API(三)-日期时间格式化与解析
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/12/23/java-jsr310-zone-id/" rel="prev" title="JSR310新日期API(一)-时区与时间偏移量">
+                                    
+                                        JSR310新日期API(一)-时区与时间偏移量
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Java/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Java</a> <a class="tag" href="/blog/tags/JSR-310/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> JSR-310</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'JSR310新日期API(二)-日期时间API',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Clock"><span class="toc-text">Clock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Instant"><span class="toc-text">Instant</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LocalDate"><span class="toc-text">LocalDate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LocalTime"><span class="toc-text">LocalTime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LocalDateTime"><span class="toc-text">LocalDateTime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OffsetTime"><span class="toc-text">OffsetTime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OffsetDateTime"><span class="toc-text">OffsetDateTime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZonedDateTime"><span class="toc-text">ZonedDateTime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Year"><span class="toc-text">Year</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Month"><span class="toc-text">Month</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DayOfWeek"><span class="toc-text">DayOfWeek</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MonthDay"><span class="toc-text">MonthDay</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YearMonth"><span class="toc-text">YearMonth</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类型转换"><span class="toc-text">类型转换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Instant和其他日期时间类互转"><span class="toc-text">Instant和其他日期时间类互转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JSR-310日期时间类之间互相转换"><span class="toc-text">JSR-310日期时间类之间互相转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JSR-310中的类和旧的日期时间相关类之间的转换"><span class="toc-text">JSR-310中的类和旧的日期时间相关类之间的转换</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

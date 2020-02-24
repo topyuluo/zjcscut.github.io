@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>理解和运用Java中的Lambda | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2020/02/09/java-understand-and-use-lambda/">
+        理解和运用Java中的Lambda
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Lambda/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Lambda</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2020年2月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-02-09T22:45:48+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年2月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：7.4k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：32分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>回想一下，<code>JDK8</code>是2014年发布正式版的，到现在为（<code>2020-02-08</code>）止已经过去了5年多。<code>JDK8</code>引入的两个比较强大的新特性是<code>Lambda</code>表达式（下文的<code>Lambda</code>特指<code>JDK</code>提供的<code>Lambda</code>）和<code>Stream</code>，这两个强大的特性让函数式编程在<code>Java</code>开发中发扬光大。这篇文章会从基本概念、使用方式、实现原理和实战场景等角度介绍<code>Lambda</code>的全貌，其中还会涉及一些函数式编程概念、<code>JVM</code>一些知识等等。</p>
+<a id="more"></a>
+<h2 id="基本概念">基本概念</h2>
+<p>下面介绍一些基本概念，一步一步引出<code>Lambda</code>的概念。</p>
+<h3 id="函数式接口">函数式接口</h3>
+<p>函数式接口和接口默认方法都是<code>JDK8</code>引入的新特性。函数式接口的概念可以从<code>java.lang.FunctionalInterface</code>注解的<code>API</code>注释中得知：</p>
+<blockquote>
+<p>An informative annotation type used to indicate that an interface type declaration is intended to be a functional interface as defined by the Java Language Specification.</p>
+</blockquote>
+<blockquote>
+<p>Conceptually, a functional interface has exactly one abstract method.  Since {@linkplain java.lang.reflect.Method#isDefault() default methods} have an implementation, they are not abstract.</p>
+</blockquote>
+<p>简单来说就是：<code>@FunctionalInterface</code>是一个提供信息的接口（其实就是<strong>标识接口</strong>），用于表明对应的接口类型声明是一个<code>Java</code>语言规范定义的函数式接口。从概念上说，一个函数式接口有且仅有一个抽象方法，因为接口默认方法必须予以实现，它们不是抽象方法。</p>
+<p>所以可以这样给函数式接口定义：如果一个接口声明的时候<strong>有且仅有一个抽象方法</strong>，那么它就是函数式接口，可以使用<code>@FunctionalInterface</code>注解标识。</p>
+<p><code>JDK</code>中已经定义了很多内置的函数式接口，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// java.lang.Runnable</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="comment">// java.util.function.Supplier</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Supplier</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">get</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也可以自定义函数式接口，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CustomFunctionalInterface</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 可以缩写为void process();  接口方法定义的时候，默认使用public abstract修饰</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="接口默认方法">接口默认方法</h3>
+<p>接口默认方法的含义可以见<code>Java</code>官方教程中对应的章节，在文末的参考资料可以查看具体的链接：</p>
+<blockquote>
+<p>Default methods enable you to add new functionality to the interfaces of your libraries and ensure binary compatibility with code written for older versions of those interfaces.</p>
+</blockquote>
+<p>简单来说就是：默认方法允许你在你的类库中向接口添加新的功能，并确保新增的默认方法与这些接口的较早版本编写的代码<strong>二进制兼容</strong>。</p>
+<p>接口默认方法（下称默认方法）通过<code>default</code>关键字声明，可以直接在接口中编写方法体。<strong>也就是默认方法既声明了方法，也实现了方法</strong>。这一点很重要，在默认方法特性出现之前，<code>Java</code>编程语言规范中，接口的本质就是方法声明的集合体，而自默认方法特性出现之后，接口的本质也改变了。默认方法的一个例子如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DefaultMethod</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">defaultVoidMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> String.format(<span class="string">"%s say hello!"</span>, name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">Impl</span> <span class="keyword">implements</span> <span class="title">DefaultMethod</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        DefaultMethod defaultMethod = <span class="keyword">new</span> Impl();</span><br><span class="line">        System.out.println(defaultMethod.sayHello(<span class="string">"throwable"</span>));  <span class="comment">// throwable say hello!</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果继承一个定义了默认方法的接口，那么可以有如下的做法：</p>
+<ul>
+<li>完全忽略父接口的默认方法，那么相当于直接继承父接口的默认方法的实现（<strong>方法继承</strong>）。</li>
+<li>重新声明默认方法，这里特指去掉<code>default</code>关键字，用<code>public abstract</code>关键字重新声明对应的方法，相当于让默认方法转变为抽象方法，子类需要进行实现（<strong>方法抽象</strong>）。</li>
+<li>重新定义默认方法，也就是直接覆盖父接口中的实现（<strong>方法覆盖</strong>）。</li>
+</ul>
+<p>结合前面一节提到的函数式接口，这里可以综合得出一个结论：<strong>函数式接口，也就是有且仅有一个抽象方法的接口，可以定义0个或者N（N &gt;= 1）个默认方法</strong>。这一点正是<code>Stream</code>特性引入的理论基础。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CustomFunctionalInterface</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">defaultVoidMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> String <span class="title">sayHello</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> String.format(<span class="string">"%s say hello!"</span>, name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里说点题外话。</p>
+<p>在写这篇文章的时候，笔者想起了一个前同事说过的话，大意如下：<strong>在软件工程中，如果从零做起，任何新功能的开发都是十分简单的，困难的是在兼容所有历史功能的前提下进行新功能的迭代</strong>。试想一下，<code>Java</code>迭代到今天已经过去十多年了，<code>Hotspot VM</code>源码工程已经十分庞大（手动编译过<code>OpenJDK Hotspot VM</code>源码的人都知道过程的痛苦），任何新增的特性都要向前兼容，否则很多用了历史版本的<code>Java</code>应用会无法升级新的<code>JDK</code>版本。既要二进制向前兼容，又要迭代出新的特性，<code>Java</code>需要进行舍夺，默认方法就是一个例子，必须舍去接口只能定义抽象方法这个延续了多年在<code>Java</code>开发者中根深蒂固的概念，夺取了基于默认方法实现构筑出来的流式编程体系。笔者有时候也在思考：如果要我去开发<code>Stream</code>这个新特性，我会怎么做或者我能怎么做？</p>
+<h3 id="嵌套类-Nested-Classes">嵌套类(Nested Classes)</h3>
+<p>嵌套类（<code>Nested Classes</code>），简单来说就是：在一个类中定义另一个类，那么在类内<strong>被定义</strong>的那个类就是嵌套类，最外层的类一般称为封闭类（<code>Enclosing Class</code>）。嵌套类主要分为两种：静态嵌套类和非静态嵌套类，而<strong>非静态嵌套类又称为内部类（<code>Inner Classes</code>）</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 封闭类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OuterClass</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 静态嵌套类</span></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticNestedClass</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 内部类</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">InnerClass</span> </span>&#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>静态嵌套类可以直接使用封闭的类名称去访问例如：<code>OuterClass.StaticNestedClass x = new OuterClass.StaticNestedClass();</code>，这种使用形式和一般类实例化基本没有区别。</p>
+<p>内部类实例的存在必须依赖于封闭类实例的存在，并且内部类可以直接访问封闭类的任意属性和方法，简单来说就是内部类的实例化必须在封闭类实例化之后，并且依赖于封闭类的实例，声明的语法有点奇特：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OuterClass</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticNestedClass</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">InnerClass</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 内部类可以访问封闭类的属性</span></span><br><span class="line">        <span class="keyword">int</span> y = x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        OuterClass outerClass = <span class="keyword">new</span> OuterClass();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 必须这样实例化内部类 - 声明的语法相对奇特</span></span><br><span class="line">        OuterClass.InnerClass innerClass = outerClass.<span class="keyword">new</span> InnerClass();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 静态嵌套类可以一般实例化,形式为:封闭类.静态嵌套类</span></span><br><span class="line">        OuterClass.StaticNestedClass staticNestedClass = <span class="keyword">new</span> OuterClass.StaticNestedClass();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 如果main方法在封闭类内,可以直接使用静态嵌套类进行实例化</span></span><br><span class="line">        StaticNestedClass x = <span class="keyword">new</span> StaticNestedClass();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内部类中有两种特殊的类型：本地类(<code>Local Classes</code>)和匿名类(<code>Anonymous Classes</code>)。</p>
+<p>本地类是一种声明在任意块（<code>block</code>）的类，例如声明在代码块、静态代码块、实例方法或者静态方法中，它可以访问封闭类的所有成员属性和方法，它的作用域就是块内，不能在块外使用。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OuterClass</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> y = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    &#123;    </span><br><span class="line">        <span class="comment">// 本地类A</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">            <span class="keyword">int</span> z = y;</span><br><span class="line">        &#125;</span><br><span class="line">        A a = <span class="keyword">new</span> A();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 本地类B</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">B</span></span>&#123;</span><br><span class="line">            <span class="keyword">int</span> z = y;</span><br><span class="line">        &#125;</span><br><span class="line">        B b = <span class="keyword">new</span> B();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 本地类C</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line">            <span class="keyword">int</span> z = y;</span><br><span class="line">        &#125;</span><br><span class="line">        C c = <span class="keyword">new</span> C();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>匿名类可以让代码更加简明，允许使用者在<strong>定义类的同时予以实现</strong>，匿名类和其他内部类不同的地方是：它是一种<strong>表达式</strong>，而不是类声明。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OuterClass</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">In</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">method</span><span class="params">(String value)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 本地类 - 类声明</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">LocalClass</span></span>&#123;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 匿名类 - 是一个表达式</span></span><br><span class="line">        In in = <span class="keyword">new</span> In() &#123;</span><br><span class="line">            </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果用<code>Java</code>做过<code>GUI</code>开发，匿名类在<code>Swing</code>或者<code>JavaFx</code>的事件回调中大量使用，经常会看到类似这样的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">JButton button = <span class="keyword">new</span> JButton();</span><br><span class="line">button.addActionListener(<span class="keyword">new</span> AbstractAction() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">actionPerformed</span><span class="params">(ActionEvent e)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"按钮事件被触发..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>嵌套类的类型关系图如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Nested Classes</span><br><span class="line">  - Static Nested Classes</span><br><span class="line">  - None Nested Classes</span><br><span class="line">    - Local Classes</span><br><span class="line">    - Anonymous Classes</span><br><span class="line">    - Other Inner Classes</span><br></pre></td></tr></table></figure>
+<h2 id="Lambda表达式">Lambda表达式</h2>
+<p>下面是来自某搜索引擎百科关于<code>Lambda</code>表达式的定义：</p>
+<p><code>Lambda</code>表达式（<code>Lambda Expression</code>）是一个匿名函数，<code>Lambda</code>表达式基于数学中的<code>λ</code>演算得名，直接对应于其中的<code>Lambda</code>抽象（<code>Lambda Abstraction</code>），是一个匿名函数，即没有函数名的函数。<code>Lambda</code>表达式可以表示闭包（注意和数学传统意义上的不同）。</p>
+<p><code>Java</code>中的<code>Lambda</code>表达式（下面称<code>Lambda</code>）表面上和上面的定义类似，本质也是匿名函数，但其实现原理区别于一般的匿名类中的匿名函数实现，她是<code>JDK8</code>引入的一颗新的语法糖。</p>
+<h3 id="引入Lambda表达式的初衷">引入Lambda表达式的初衷</h3>
+<p>如果一个接口只包含一个方法，那么匿名类的语法会变得十分笨拙和不清楚，产生大量的模板代码，归结一下就是：代码冗余是匿名类的最大弊端。在编程的时候，我们很多时候希望把功能作为参数传递到另一个方法，<code>Lambda</code>就是为此而生，<code>Lambda</code>允许使用者将功能视为方法参数，将代码视为数据。引入<code>Lambda</code>带来了如下优势：</p>
+<ul>
+<li>简化代码，引入了强大的类型推断和方法引用特性，简单的功能甚至可以一行代码解决，解放匿名类的束缚。</li>
+<li>把功能作为参数向下传递，为函数式编程提供了支持。</li>
+</ul>
+<p>至此还得出一个结论：<strong><code>Lambda</code>只适用于函数式接口对应唯一抽象方法的实现</strong>。</p>
+<h3 id="Lambda表达式的语法定义">Lambda表达式的语法定义</h3>
+<p><code>Lambda</code>语法的详细定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// en_US</span></span><br><span class="line">InterfaceType interfaceObject = [Method Argument List] -&gt; Method Body</span><br><span class="line"></span><br><span class="line"><span class="comment">// zh_CN</span></span><br><span class="line">接口类型 接口实例 = [方法参数列表] -&gt; 方法体</span><br></pre></td></tr></table></figure>
+<p>更具体的描述应该是：</p>
+<p><code>接口类型 接口实例临时变量 = (方法参数类型X 方法参数类型X临时变量 , 方法参数类型Y 方法参数类型Y临时变量...) -&gt; { 方法体... return 接口抽象方法返回值对应类型类型实例;}</code></p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/202002/j-l-u-u-1.png" alt=""></p>
+<p>一个<code>Lambda</code>表达式由五个部分组成：</p>
+<ul>
+<li>返回值：接口类型以及接口类型对应的临时实例变量。</li>
+<li>等号：<code>=</code>。</li>
+<li>方法参数列表：一般由中括号<code>()</code>包裹，格式是<code>(类型1 类型1的临时变量,...,类型N 类型N的临时变量)</code>，在方法没有重载可以明确推断参数类型的时候，参数类型可以省略，只留下临时变量列表。特殊地，空参数列表用<code>()</code>表示，如果参数只有一个，可以省略<code>()</code>。</li>
+<li>箭头：<code>-&gt;</code>。</li>
+<li>方法体：一般由花括号<code>{}</code>包裹，格式是<code>{方法逻辑... return 函数式接口方法返回值类型的值;}</code>，有几点需要注意：
+<ul>
+<li>如果方法体是空实现，用<code>{}</code>表示，如<code>Runnable runnable = () -&gt; {};</code>。</li>
+<li>如果函数式接口抽象方法的返回值为<code>void</code>类型，则不需要<code>return</code>关键字语句，如<code>Runnable runnable = () -&gt; {int i=0; i++;};</code>。</li>
+<li>如果函数式接口抽象方法的方法体仅仅包含一个表达式，则不需要使用<code>{}</code>包裹，如<code>Runnable runnable = () -&gt; System.out.println(&quot;Hello World!&quot;);</code>。</li>
+</ul>
+</li>
+</ul>
+<p>举一些例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Function - 具体</span></span><br><span class="line">java.util.function.Function&lt;String, Integer&gt; functionY = (String string) -&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> Integer.parseInt(string);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// Function - 简化</span></span><br><span class="line">java.util.function.Function&lt;String, Integer&gt; functionX = string -&gt; Integer.parseInt(string);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Runnable - 具体</span></span><br><span class="line">Runnable runnableX = () -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// Runnable - 简化</span></span><br><span class="line">Runnable runnableY = () -&gt; System.out.println(<span class="string">"Hello World!"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 整数1-100的和 - 具体</span></span><br><span class="line"><span class="keyword">int</span> reduceX = IntStream.range(<span class="number">1</span>, <span class="number">101</span>).reduce(<span class="number">0</span>, (<span class="keyword">int</span> addend, <span class="keyword">int</span> augend) -&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> addend + augend;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 整数1-100的和 - 简化</span></span><br><span class="line"><span class="keyword">int</span> reduceY = IntStream.range(<span class="number">1</span>, <span class="number">101</span>).reduce(<span class="number">0</span>, Integer::sum);</span><br></pre></td></tr></table></figure>
+<h3 id="目标类型与类型推断">目标类型与类型推断</h3>
+<p>先引入下面的一个场景：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// club.throwable.Runnable</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        java.lang.Runnable langRunnable = () -&gt; &#123;&#125;;</span><br><span class="line">        club.throwable.Runnable customRunnable = () -&gt; &#123;&#125;;</span><br><span class="line">        langRunnable.run();</span><br><span class="line">        customRunnable.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>笔者定义了一个和<code>java.lang.Runnable</code>完全一致的函数式接口<code>club.throwable.Runnable</code>，上面<code>main()</code>方法中，可以看到两个接口对应的<code>Lambda</code>表达式的方法体实现也是完全一致，但是很明显最终可以使用不同类型的接口去接收返回值，也就是这两个<code>Lambda</code>的类型是不相同的。而这两个<code>Lambda</code>表达式返回值的类型是我们最终期待的返回值类型（<code>expecting a data type of XX</code>），那么<code>Lambda</code>表达式就是对应的<strong>被期待的类型</strong>，这个被期待的类型就是<code>Lambda</code>表达式的<strong>目标类型</strong>。</p>
+<p>为了确定<code>Lambda</code>表达式的目标类型，<code>Java</code>编译器会基于对应的<code>Lambda</code>表达式，使用<strong>上下文</strong>或者场景进行综合推导，判断的一个因素就是上下文中对该<code>Lambda</code>表达式所期待的类型。因此，<strong>只能在<code>Java</code>编译器能够正确推断<code>Lambda</code>表达式目标类型的场景下才能使用<code>Lambda</code>表达式</strong>，这些场景包括：</p>
+<ul>
+<li>变量声明。</li>
+<li>赋值。</li>
+<li>返回语句。</li>
+<li>数组初始化器。</li>
+<li><code>Lambda</code>表达式函数体。</li>
+<li>条件表达式（<code>condition ? processIfTrue() : processIfFalse()</code>）。</li>
+<li>类型转换（Cast）表达式。</li>
+</ul>
+<p><code>Lambda</code>表达式除了目标类型，还包含参数列表和方法体，而方法体需要依赖于参数列表进行实现，所以方法参数也是决定目标类型的一个因素。</p>
+<p>方法参数的类型推导的过程主要依赖于两个语言特性：重载解析（<code>Overload Resolution</code>）和参数类型推导（<code>Type Argument Inference</code>）。</p>
+<blockquote>
+<p>原文：For method arguments, the Java compiler determines the target type with two other language features: overload resolution and type argument inference</p>
+</blockquote>
+<p>重载解析会为一个给定的方法调用（<code>Method Invocation</code>）寻找最合适的方法声明（<code>Method Declaration</code>）。由于不同的声明具有不同的签名，当<code>Lambda</code>表达式作为方法参数时，重载解析就会影响到<code>Lambda</code>表达式的目标类型。编译器会根据它对该<code>Lambda</code>表达式的所提供的信息的理解做出决定。如果<code>Lambda</code>表达式具有显式类型（参数类型被显式指定），编译器就可以直接使用<code>Lambda</code>表达式的返回类型；如果<code>Lambda</code>表达式具有隐式类型（参数类型被推导而知），重载解析则会忽略<code>Lambda</code>表达式函数体而只依赖<code>Lambda</code>表达式参数的数量。</p>
+<p>举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 显式类型</span></span><br><span class="line">Function&lt;String, String&gt; functionX = (String x) -&gt; x;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 隐式类型</span></span><br><span class="line">Function&lt;String, Integer&gt; functionY = x -&gt; Integer.parseInt(x);</span><br></pre></td></tr></table></figure>
+<p>如果依赖于方法参数的类型推导最佳方法声明时存在二义性（<code>Ambiguous</code>），我们就需要利用转型（<code>Cast</code>）或显式<code>Lambda</code>表达式来提供更多的类型信息，从而<code>Lambda</code>表达式的目标类型。举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 编译不通过</span></span><br><span class="line">Object runnableX = () -&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 编译通过 - Cast</span></span><br><span class="line">Object runnableY = (Runnable) () -&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 静态方法入参类型是函数式接口</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">function</span><span class="params">(java.util.function.Function function)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function((Function&lt;String, Long&gt;) (x) -&gt; Long.parseLong(x));</span><br></pre></td></tr></table></figure>
+<h3 id="作用域">作用域</h3>
+<p>关于作用域的问题记住几点即可：</p>
+<ul>
+<li><code>&lt;1&gt;</code>：<code>Lambda</code>表达式内的<code>this</code>引用和封闭类的<code>this</code>引用相同。</li>
+<li><code>&lt;2&gt;</code>：<code>Lambda</code>表达式基于词法作用域，它不会从超类中继承任何变量，方法体里面的变量和它外部环境的变量具有相同的语义。</li>
+<li><code>&lt;3&gt;</code>：<code>Lambda expressions close over values, not variables</code>，也就是<code>Lambda</code>表达式对值类型封闭，对变量（引用）类型开放（这一点正好解释了<code>Lambda</code>表达式内部引用外部的属性的时候，该属性必须定义为<code>final</code>）。</li>
+</ul>
+<p>对于第<code>&lt;1&gt;</code>点举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LambdaThis</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Runnable runnable = () -&gt; &#123;</span><br><span class="line">            <span class="keyword">int</span> y = <span class="keyword">this</span>.x;</span><br><span class="line">            y++;</span><br><span class="line">            System.out.println(y);</span><br><span class="line">        &#125;;</span><br><span class="line">        runnable.run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        LambdaThis lambdaThis = <span class="keyword">new</span> LambdaThis();</span><br><span class="line">        lambdaThis.method();   <span class="comment">// 2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于第<code>&lt;2&gt;</code>点举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LambdaScope</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line">        Runnable runnable = () -&gt; &#123;</span><br><span class="line">            <span class="comment">// 编译不通过 - Lambda方法体外部已经定义了同名变量</span></span><br><span class="line">            <span class="keyword">int</span> x = <span class="number">2</span>;</span><br><span class="line">        &#125;;</span><br><span class="line">        runnable.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于第<code>&lt;3&gt;</code>点举个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LambdaValue</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        (<span class="keyword">final</span>) <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line">        Runnable runnable = () -&gt; &#123;</span><br><span class="line">            <span class="comment">// 编译不通过 - 外部值类型使用了final</span></span><br><span class="line">            x ++;</span><br><span class="line">        &#125;;</span><br><span class="line">        runnable.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LambdaValue</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        (<span class="keyword">final</span>) IntHolder holder = <span class="keyword">new</span> IntHolder();</span><br><span class="line">        Runnable runnable = () -&gt; &#123;</span><br><span class="line">            <span class="comment">// 编译通过 - 使用了引用类型</span></span><br><span class="line">            holder.x++;</span><br><span class="line">        &#125;;</span><br><span class="line">        runnable.run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntHolder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> x = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="方法引用">方法引用</h3>
+<p>方法引用（<code>Method Reference</code>）是一种功能和<code>Lambda</code>表达式类似的表达式，需要目标类型和实现函数式接口，但是这个实现形式并不是通过方法体，而是通过方法名称（或者关键字）关联到一个已经存在的方法，本质是编译层面的技术，旨在进一步简化<code>Lambda</code>表达式方法体和一些特定表达式的实现。方法引用的类型归结如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">静态方法引用</td>
+<td style="text-align:center"><code>ClassName::methodName</code></td>
+</tr>
+<tr>
+<td style="text-align:center">指定对象实例方法引用</td>
+<td style="text-align:center"><code>instanceRef::methodName</code></td>
+</tr>
+<tr>
+<td style="text-align:center">特定类型任意对象方法引用</td>
+<td style="text-align:center"><code>ContainingType::methodName</code></td>
+</tr>
+<tr>
+<td style="text-align:center">超类方法引用</td>
+<td style="text-align:center"><code>supper::methodName</code></td>
+</tr>
+<tr>
+<td style="text-align:center">构造器方法引用</td>
+<td style="text-align:center"><code>ClassName::new</code></td>
+</tr>
+<tr>
+<td style="text-align:center">数组构造器方法引用</td>
+<td style="text-align:center"><code>TypeName[]::new</code></td>
+</tr>
+</tbody>
+</table>
+<p>可见其基本形式是：<code>方法容器::方法名称或者关键字</code>。</p>
+<p>举一些基本的使用例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 静态方法引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticMethodRef</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Function&lt;String, Integer&gt; function = StaticMethodRef::staticMethod;</span><br><span class="line">        Integer result = function.apply(<span class="string">"10086"</span>);</span><br><span class="line">        System.out.println(result);  <span class="comment">// 10086</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">staticMethod</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Integer.parseInt(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 指定对象实例方法引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ParticularInstanceRef</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">refMethod</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Integer.parseInt(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        ParticularInstanceRef ref = <span class="keyword">new</span> ParticularInstanceRef();</span><br><span class="line">        Function&lt;String, Integer&gt; function = ref::refMethod;</span><br><span class="line">        Integer result = function.apply(<span class="string">"10086"</span>);</span><br><span class="line">        System.out.println(result);  <span class="comment">// 10086</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 特定类型任意对象方法引用</span></span><br><span class="line">String[] stringArray = &#123;<span class="string">"C"</span>, <span class="string">"a"</span>, <span class="string">"B"</span>&#125;;</span><br><span class="line">Arrays.sort(stringArray, String::compareToIgnoreCase);</span><br><span class="line">System.out.println(Arrays.toString(stringArray)); <span class="comment">// [a, B, C]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 超类方法引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SupperRef</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Sub sub = <span class="keyword">new</span> Sub();</span><br><span class="line">        System.out.println(sub.refMethod(<span class="string">"10086"</span>)); <span class="comment">// 10086</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Supper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> Integer <span class="title">supperRefMethod</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> Integer.parseInt(value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Supper</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> Integer <span class="title">refMethod</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">            Function&lt;String, Integer&gt; function = <span class="keyword">super</span>::supperRefMethod;</span><br><span class="line">            <span class="keyword">return</span> function.apply(value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造器方法引用</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConstructorRef</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Function&lt;String, Person&gt; function = Person::<span class="keyword">new</span>;</span><br><span class="line">        Person person = function.apply(<span class="string">"doge"</span>);</span><br><span class="line">        System.out.println(person.getName()); <span class="comment">// doge</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> name;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组构造器方法引用</span></span><br><span class="line">Function&lt;Integer, Integer[]&gt; function = Integer[]::<span class="keyword">new</span>;</span><br><span class="line">Integer[] array = function.apply(<span class="number">10</span>);</span><br><span class="line">System.out.println(array.length); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+<h2 id="Java中Lambda的底层实现原理">Java中Lambda的底层实现原理</h2>
+<p>重点要说三次：</p>
+<ul>
+<li><code>Lambda</code>表达式底层<strong>不是</strong>匿名类实现。</li>
+<li><code>Lambda</code>表达式底层<strong>不是</strong>匿名类实现。</li>
+<li><code>Lambda</code>表达式底层<strong>不是</strong>匿名类实现。</li>
+</ul>
+<p>在深入学习<code>Lambda</code>表达式之前，笔者也曾经认为<code>Lambda</code>就是匿名类的语法糖：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Lambda</span></span><br><span class="line">Function&lt;String, String&gt; functionX = (String x) -&gt; x;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误认知</span></span><br><span class="line">Function&lt;String, String&gt; functionX = <span class="keyword">new</span> Function&lt;String, String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> Void <span class="title">apply</span><span class="params">(String x)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><code>Lambda</code>就是匿名类的语法糖这个认知是错误的</strong>。下面举一个例子，从源码和字节码的角度分析一下<code>Lambda</code>表达式编译和执行的整个流程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Runnable runnable = () -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">"Hello World!"</span>);</span><br><span class="line">        &#125;;</span><br><span class="line">        runnable.run();</span><br><span class="line">        String hello = <span class="string">"Hello "</span>;</span><br><span class="line">        Function&lt;String, String&gt; function = string -&gt; hello + string;</span><br><span class="line">        function.apply(<span class="string">"Doge"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>添加<code>VM</code>参数<code>-Djdk.internal.lambda.dumpProxyClasses=.</code>运行上面的<code>Sample#main()</code>方法，项目根目录动态生成了两个类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.invoke.LambdaForm.Hidden;</span><br><span class="line"></span><br><span class="line"><span class="comment">// $FF: synthetic class</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Sample</span>$$<span class="title">Lambda</span>$14 <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Sample$$Lambda$<span class="number">14</span>() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Hidden</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Sample.lambda$main$<span class="number">0</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.invoke.LambdaForm.Hidden;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Function;</span><br><span class="line"></span><br><span class="line"><span class="comment">// $FF: synthetic class</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Sample</span>$$<span class="title">Lambda</span>$15 <span class="keyword">implements</span> <span class="title">Function</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String arg$<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Sample$$Lambda$<span class="number">15</span>(String var1) &#123;</span><br><span class="line">        <span class="keyword">this</span>.arg$<span class="number">1</span> = var1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Function get$Lambda(String var0) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Sample$$Lambda$<span class="number">15</span>(var0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Hidden</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">apply</span><span class="params">(Object var1)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Sample.lambda$main$<span class="number">1</span>(<span class="keyword">this</span>.arg$<span class="number">1</span>, (String)var1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>反查两个类的字节码，发现了类修饰符为<code>final synthetic</code>。接着直接看封闭类<code>Sample</code>的字节码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">club</span>/<span class="title">throwable</span>/<span class="title">Sample</span> </span>&#123;</span><br><span class="line">     &lt;ClassVersion=<span class="number">52</span>&gt;</span><br><span class="line">     &lt;SourceFile=Sample.java&gt;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">Sample</span><span class="params">()</span> </span>&#123; <span class="comment">// &lt;init&gt; //()V</span></span><br><span class="line">         &lt;localVar:index=<span class="number">0</span> , name=<span class="keyword">this</span> , desc=Lclub/throwable/Sample;, sig=<span class="keyword">null</span>, start=L1, end=L2&gt;</span><br><span class="line"></span><br><span class="line">         L1 &#123;</span><br><span class="line">             aload0 <span class="comment">// reference to self</span></span><br><span class="line">             invokespecial java/lang/Object.&lt;init&gt;()V</span><br><span class="line">             <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">         L2 &#123;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="title">main</span><span class="params">(java.lang.String[] arg0)</span> <span class="keyword">throws</span> java/lang/Exception </span>&#123; <span class="comment">//([Ljava/lang/String;)V</span></span><br><span class="line">         &lt;localVar:index=<span class="number">0</span> , name=args , desc=[Ljava/lang/String;, sig=<span class="keyword">null</span>, start=L1, end=L2&gt;</span><br><span class="line">         &lt;localVar:index=<span class="number">1</span> , name=runnable , desc=Lclub/throwable/Runnable;, sig=<span class="keyword">null</span>, start=L3, end=L2&gt;</span><br><span class="line">         &lt;localVar:index=<span class="number">2</span> , name=hello , desc=Ljava/lang/String;, sig=<span class="keyword">null</span>, start=L4, end=L2&gt;</span><br><span class="line">         &lt;localVar:index=<span class="number">3</span> , name=function , desc=Ljava/util/function/Function;, sig=Ljava/util/function/Function&lt;Ljava/lang/String;Ljava/lang/String;&gt;;, start=L5, end=L2&gt;</span><br><span class="line"></span><br><span class="line">         L1 &#123;</span><br><span class="line">             invokedynamic java/lang/invoke/LambdaMetafactory.metafactory(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite; : run()Lclub/throwable/Runnable; ()V club/throwable/Sample.lambda$main$<span class="number">0</span>()V (<span class="number">6</span>) ()V</span><br><span class="line">             astore1</span><br><span class="line">         &#125;</span><br><span class="line">         L3 &#123;</span><br><span class="line">             aload1</span><br><span class="line">             invokeinterface club/throwable/Runnable.run()V</span><br><span class="line">         &#125;</span><br><span class="line">         L6 &#123;</span><br><span class="line">             ldc <span class="string">"Hello "</span> (java.lang.String)</span><br><span class="line">             astore2</span><br><span class="line">         &#125;</span><br><span class="line">         L4 &#123;</span><br><span class="line">             aload2</span><br><span class="line">             invokedynamic java/lang/invoke/LambdaMetafactory.metafactory(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite; : apply(Ljava/lang/String;)Ljava/util/function/Function; (Ljava/lang/Object;)Ljava/lang/Object; club/throwable/Sample.lambda$main$<span class="number">1</span>(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String; (<span class="number">6</span>) (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line">             astore3</span><br><span class="line">         &#125;</span><br><span class="line">         L5 &#123;</span><br><span class="line">             aload3</span><br><span class="line">             ldc <span class="string">"Doge"</span> (java.lang.String)</span><br><span class="line">             invokeinterface java/util/function/Function.apply(Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line">             pop</span><br><span class="line">         &#125;</span><br><span class="line">         L7 &#123;</span><br><span class="line">             <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">         L2 &#123;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> synthetic lambda$main$<span class="number">1</span>(java.lang.String arg0, java.lang.String arg1) &#123; <span class="comment">//(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;</span></span><br><span class="line">         &lt;localVar:index=<span class="number">0</span> , name=hello , desc=Ljava/lang/String;, sig=<span class="keyword">null</span>, start=L1, end=L2&gt;</span><br><span class="line">         &lt;localVar:index=<span class="number">1</span> , name=string , desc=Ljava/lang/String;, sig=<span class="keyword">null</span>, start=L1, end=L2&gt;</span><br><span class="line"></span><br><span class="line">         L1 &#123;</span><br><span class="line">             <span class="keyword">new</span> java/lang/StringBuilder</span><br><span class="line">             dup</span><br><span class="line">             invokespecial java/lang/StringBuilder.&lt;init&gt;()V</span><br><span class="line">             aload0 <span class="comment">// reference to arg0</span></span><br><span class="line">             invokevirtual java/lang/StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">             aload1</span><br><span class="line">             invokevirtual java/lang/StringBuilder.append(Ljava/lang/String;)Ljava/lang/StringBuilder;</span><br><span class="line">             invokevirtual java/lang/StringBuilder.toString()Ljava/lang/String;</span><br><span class="line">             areturn</span><br><span class="line">         &#125;</span><br><span class="line">         L2 &#123;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> synthetic lambda$main$<span class="number">0</span>() &#123; <span class="comment">//()V</span></span><br><span class="line">         L1 &#123;</span><br><span class="line">             getstatic java/lang/System.out:java.io.PrintStream</span><br><span class="line">             ldc <span class="string">"Hello World!"</span> (java.lang.String)</span><br><span class="line">             invokevirtual java/io/PrintStream.println(Ljava/lang/String;)V</span><br><span class="line">         &#125;</span><br><span class="line">         L2 &#123;</span><br><span class="line">             <span class="keyword">return</span></span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"><span class="comment">// The following inner classes couldn't be decompiled: java/lang/invoke/MethodHandles$Lookup </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的字节码已经被<code>Bytecode-Viewer</code>工具格式化过，符合于人的阅读习惯，从字节码的阅读，结合前面的分析大概可以得出下面的结论：</p>
+<ul>
+<li><code>&lt;1&gt;</code>：<code>Lambda</code>表达式在编译期通过字节码增强技术新增一个模板类实现对应的接口类型，这个<strong>模板类</strong>的所有属性都使用<code>final</code>修饰，模板类由关键字<code>final synthetic</code>修饰。</li>
+<li><code>&lt;2&gt;</code>：封闭类会基于类内的<code>Lambda</code>表达式类型生成<code>private static synthetic</code>修饰的静态方法，该静态方法的方法体就是来源于<code>Lambda</code>方法体，这些静态方法的名称是<code>lambda$封闭类方法名$递增数字</code>。</li>
+<li><code>&lt;3&gt;</code>：<code>Lambda</code>表达式调用最终通过字节码指令<code>invokedynamic</code>，忽略中间过程，最后调用到第<code>&lt;2&gt;</code>步中对应的方法。</li>
+</ul>
+<p>限于篇幅问题，这里把<code>Lambda</code>表达式的底层原理做了简单的梳理（这个推导过程仅限于个人理解，依据尚未充分）：</p>
+<ul>
+<li><code>&lt;1&gt;</code>：封闭类会基于类内的<code>Lambda</code>表达式类型生成<code>private static synthetic</code>修饰的静态方法，该静态方法的方法体就是来源于<code>Lambda</code>方法体，这些静态方法的名称是<code>lambda$封闭类方法名$递增数字</code>。</li>
+<li><code>&lt;2&gt;</code>：<code>Lambda</code>表达式会通过<code>LambdaMetafactory#metafactory()</code>方法，生成一个对应函数式接口的模板类，模板类的接口方法实现引用了第<code>&lt;1&gt;</code>步中定义的静态方法，同时创建一个调用点<code>ConstantCallSite</code>实例，后面会通过<code>Unsafe#defineAnonymousClass()</code>实例化模板类。。</li>
+<li><code>&lt;3&gt;</code>：调用点<code>ConstantCallSite</code>实例中的方法句柄<code>MethodHandle</code>会根据不同场景选取不同的实现，<code>MethodHandle</code>的子类很多，这里无法一一展开。</li>
+<li><code>&lt;4&gt;</code>：通过<code>invokedynamice</code>指令，基于第<code>&lt;1&gt;</code>步中的模板类实例、第<code>&lt;3&gt;</code>步中的方法句柄以及方法入参进行方法句柄的调用，实际上最终委托到第<code>&lt;1&gt;</code>步中定义的静态方法中执行。</li>
+</ul>
+<p>如果想要跟踪<code>Lambda</code>表达式的整个调用生命周期，可以以<code>LambdaMetafactory#metafactory()</code>方法为入口开始<code>DEBUG</code>，调用链路十分庞大，需要有足够的耐心。总的来说就是：<code>Lambda</code>表达式是基于<code>JSR-292</code>引入的动态语言调用包<code>java.lang.invoke</code>和<code>Unsafe#defineAnonymousClass()</code>定义的轻量级模板类实现的，主要用到了<code>invokedynamice</code>字节码指令，关联到方法句柄<code>MethodHandle</code>、调用点<code>CallSite</code>等相对复杂的知识点，这里不再详细展开。</p>
+<h2 id="实战">实战</h2>
+<h3 id="基于JdbcTemplate进行轻量级DAO封装">基于JdbcTemplate进行轻量级DAO封装</h3>
+<p>假设订单表的<code>DDL</code>如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t_order`</span><br><span class="line">(</span><br><span class="line">    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,</span><br><span class="line">    create_time DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,</span><br><span class="line">    edit_time   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,</span><br><span class="line">    user_id     BIGINT UNSIGNED NOT NULL COMMENT <span class="string">'用户ID'</span>,</span><br><span class="line">    <span class="function">order_id    <span class="title">VARCHAR</span><span class="params">(<span class="number">64</span>)</span>     NOT NULL COMMENT '订单ID',</span></span><br><span class="line"><span class="function">    amount      <span class="title">DECIMAL</span><span class="params">(<span class="number">12</span>, <span class="number">2</span>)</span>  NOT NULL DEFAULT 0 COMMENT '订单金额',</span></span><br><span class="line"><span class="function">    INDEX <span class="title">idx_user_id</span> <span class="params">(user_id)</span>,</span></span><br><span class="line"><span class="function">    UNIQUE <span class="title">uniq_order_id</span> <span class="params">(order_id)</span></span></span><br><span class="line"><span class="function">) COMMENT '订单表'</span>;</span><br></pre></td></tr></table></figure>
+<p>下面基于<code>JdbcTemplate</code>封装一个轻量级的<code>OrderDao</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 辅助接口</span></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PreparedStatementProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">process</span><span class="params">(PreparedStatement ps)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ResultSetConverter</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">convert</span><span class="params">(ResultSet resultSet)</span> <span class="keyword">throws</span> SQLException</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// OrderDao接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">insertSelective</span><span class="params">(Order record)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">updateSelective</span><span class="params">(Order record)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">Order <span class="title">selectOneByOrderId</span><span class="params">(String orderId)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;Order&gt; <span class="title">selectByUserId</span><span class="params">(Long userId)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// OrderDao实现</span></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySqlOrderDao</span> <span class="keyword">implements</span> <span class="title">OrderDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> JdbcTemplate jdbcTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ResultSetConverter&lt;Order&gt; CONVERTER = r -&gt; &#123;</span><br><span class="line">        Order order = <span class="keyword">new</span> Order();</span><br><span class="line">        order.setId(r.getLong(<span class="string">"id"</span>));</span><br><span class="line">        order.setCreateTime(r.getTimestamp(<span class="string">"create_time"</span>).toLocalDateTime());</span><br><span class="line">        order.setEditTime(r.getTimestamp(<span class="string">"edit_time"</span>).toLocalDateTime());</span><br><span class="line">        order.setUserId(r.getLong(<span class="string">"user_id"</span>));</span><br><span class="line">        order.setAmount(r.getBigDecimal(<span class="string">"amount"</span>));</span><br><span class="line">        order.setOrderId(r.getString(<span class="string">"order_id"</span>));</span><br><span class="line">        <span class="keyword">return</span> order;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ResultSetExtractor&lt;List&lt;Order&gt;&gt; MULTI = r -&gt; &#123;</span><br><span class="line">        List&lt;Order&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span> (r.next()) &#123;</span><br><span class="line">            list.add(CONVERTER.convert(r));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ResultSetExtractor&lt;Order&gt; SINGLE = r -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (r.next()) &#123;</span><br><span class="line">            <span class="keyword">return</span> CONVERTER.convert(r);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">insertSelective</span><span class="params">(Order record)</span> </span>&#123;</span><br><span class="line">        List&lt;PreparedStatementProcessor&gt; processors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        StringBuilder sql = <span class="keyword">new</span> StringBuilder(<span class="string">"INSERT INTO t_order("</span>);</span><br><span class="line">        Cursor cursor = <span class="keyword">new</span> Cursor();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getId()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"id,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setLong(idx, record.getId()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getOrderId()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"order_id,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setString(idx, record.getOrderId()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getUserId()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"user_id,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setLong(idx, record.getUserId()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getAmount()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"amount,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setBigDecimal(idx, record.getAmount()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getCreateTime()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"create_time,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setTimestamp(idx, Timestamp.valueOf(record.getCreateTime())));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getEditTime()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"edit_time,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setTimestamp(idx, Timestamp.valueOf(record.getEditTime())));</span><br><span class="line">        &#125;</span><br><span class="line">        StringBuilder realSql = <span class="keyword">new</span> StringBuilder(sql.substring(<span class="number">0</span>, sql.lastIndexOf(<span class="string">","</span>)));</span><br><span class="line">        realSql.append(<span class="string">") VALUES ("</span>);</span><br><span class="line">        <span class="keyword">int</span> idx = cursor.idx();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; idx; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i != idx - <span class="number">1</span>) &#123;</span><br><span class="line">                realSql.append(<span class="string">"?,"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                realSql.append(<span class="string">"?"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        realSql.append(<span class="string">")"</span>);</span><br><span class="line">        <span class="comment">// 传入主键的情况</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getId()) &#123;</span><br><span class="line">            <span class="keyword">return</span> jdbcTemplate.update(realSql.toString(), p -&gt; &#123;</span><br><span class="line">                <span class="keyword">for</span> (PreparedStatementProcessor processor : processors) &#123;</span><br><span class="line">                    processor.process(p);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 自增主键的情况</span></span><br><span class="line">            KeyHolder keyHolder = <span class="keyword">new</span> GeneratedKeyHolder();</span><br><span class="line">            <span class="keyword">int</span> count = jdbcTemplate.update(p -&gt; &#123;</span><br><span class="line">                PreparedStatement ps = p.prepareStatement(realSql.toString(), Statement.RETURN_GENERATED_KEYS);</span><br><span class="line">                <span class="keyword">for</span> (PreparedStatementProcessor processor : processors) &#123;</span><br><span class="line">                    processor.process(ps);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> ps;</span><br><span class="line">            &#125;, keyHolder);</span><br><span class="line">            record.setId(Objects.requireNonNull(keyHolder.getKey()).longValue());</span><br><span class="line">            <span class="keyword">return</span> count;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">updateSelective</span><span class="params">(Order record)</span> </span>&#123;</span><br><span class="line">        List&lt;PreparedStatementProcessor&gt; processors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        StringBuilder sql = <span class="keyword">new</span> StringBuilder(<span class="string">"UPDATE t_order SET "</span>);</span><br><span class="line">        Cursor cursor = <span class="keyword">new</span> Cursor();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getOrderId()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"order_id = ?,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setString(idx, record.getOrderId()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getUserId()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"user_id = ?,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setLong(idx, record.getUserId()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getAmount()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"amount = ?,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setBigDecimal(idx, record.getAmount()));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getCreateTime()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"create_time = ?,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setTimestamp(idx, Timestamp.valueOf(record.getCreateTime())));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != record.getEditTime()) &#123;</span><br><span class="line">            <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">            sql.append(<span class="string">"edit_time = ?,"</span>);</span><br><span class="line">            processors.add(p -&gt; p.setTimestamp(idx, Timestamp.valueOf(record.getEditTime())));</span><br><span class="line">        &#125;</span><br><span class="line">        StringBuilder realSql = <span class="keyword">new</span> StringBuilder(sql.substring(<span class="number">0</span>, sql.lastIndexOf(<span class="string">","</span>)));</span><br><span class="line">        <span class="keyword">int</span> idx = cursor.add();</span><br><span class="line">        processors.add(p -&gt; p.setLong(idx, record.getId()));</span><br><span class="line">        realSql.append(<span class="string">" WHERE id = ?"</span>);</span><br><span class="line">        <span class="keyword">return</span> jdbcTemplate.update(realSql.toString(), p -&gt; &#123;</span><br><span class="line">            <span class="keyword">for</span> (PreparedStatementProcessor processor : processors) &#123;</span><br><span class="line">                processor.process(p);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Order <span class="title">selectOneByOrderId</span><span class="params">(String orderId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> jdbcTemplate.query(<span class="string">"SELECT * FROM t_order WHERE order_id = ?"</span>, p -&gt; p.setString(<span class="number">1</span>, orderId), SINGLE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Order&gt; <span class="title">selectByUserId</span><span class="params">(Long userId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> jdbcTemplate.query(<span class="string">"SELECT * FROM t_order WHERE order_id = ?"</span>, p -&gt; p.setLong(<span class="number">1</span>, userId), MULTI);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Cursor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> idx;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            idx++;</span><br><span class="line">            <span class="keyword">return</span> idx;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">idx</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> idx;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>类似于<code>Mybatis Generator</code>，上面的<code>DAO</code>实现笔者已经做了一个简单的生成器，只要配置好数据源的连接属性和表过滤规则就可以生成对应的实体类和<code>DAO</code>类。</p>
+<h3 id="基于Optional进行VO设置值">基于Optional进行VO设置值</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设VO有多个层级，每个层级都不知道父节点是否为NULL，如下</span></span><br><span class="line"><span class="comment">// - OrderInfoVo</span></span><br><span class="line"><span class="comment">//   - UserInfoVo</span></span><br><span class="line"><span class="comment">//     - AddressInfoVo</span></span><br><span class="line"><span class="comment">//        - address(属性)</span></span><br><span class="line"><span class="comment">// 假设我要为address属性赋值，那么就会产生箭头型代码。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 常规方法</span></span><br><span class="line">String address = <span class="string">"xxx"</span>;</span><br><span class="line">OrderInfoVo o = ...;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">null</span> != o)&#123;</span><br><span class="line">    UserInfoVo uiv = o.getUserInfoVo();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> != uiv)&#123;</span><br><span class="line">        AddressInfoVo aiv = uiv.getAddressInfoVo();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != aiv)&#123;</span><br><span class="line">            aiv.setAddress(address);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用Optional和Lambda</span></span><br><span class="line">String address = <span class="string">"xxx"</span>;</span><br><span class="line">OrderInfoVo o = ...;</span><br><span class="line">Optional.ofNullable(o).map(OrderInfoVo::getUserInfoVo).map(UserInfoVo::getAddressInfoVo).ifPresent(a -&gt; a.setAddress(address));</span><br></pre></td></tr></table></figure>
+<h2 id="小结">小结</h2>
+<p><code>Lambda</code>是<code>Java</code>中一个香甜的语法糖，拥抱<code>Lambda</code>，拥抱函数式编程，笔者也经历过抗拒、不看好、上手和真香的过程，目前也大量使用<code>Stream</code>和<code>Lambda</code>，能在保证性能的前提下，尽可能简化代码，解放劳动力。时代在进步，<code>Java</code>也在进步，这是很多人活着和坚持编程事业的信念。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html" target="_blank" rel="noopener">Lambda Expressions</a></li>
+<li><a href="https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html" target="_blank" rel="noopener">Default Methods</a></li>
+<li><a href="http://cr.openjdk.java.net/~briangoetz/lambda/lambda-state-final.html" target="_blank" rel="noopener">State of the Lambda</a></li>
+<li>JDK11部分源码</li>
+</ul>
+<p>（本文完 e-a-20200208 c-5-d）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2020/02/09/java-understand-and-use-lambda/>http://throwable.club/2020/02/09/java-understand-and-use-lambda/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Lambda/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Lambda</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2020/02/09/java-understand-and-use-lambda/&title=理解和运用Java中的Lambda | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+回想一下，JDK8是2014年发布正式版的，到现在为（2020-02-08）止已经过去了5年多。JDK8引入的两个比较强大的新特性是Lambda表达式（下文的Lambda特指JDK提供的Lambda）和Stream，这两个强大的特性让函数式编程在Java开发中发扬光大。这篇文章会从基本概念、使用方式、实现原理和实战场景等角度介绍Lambda的全貌，其中还会涉及一些函数式编程概念、JVM一些知识等等。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2020/02/09/java-understand-and-use-lambda/&title=理解和运用Java中的Lambda | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+回想一下，JDK8是2014年发布正式版的，到现在为（2020-02-08）止已经过去了5年多。JDK8引入的两个比较强大的新特性是Lambda表达式（下文的Lambda特指JDK提供的Lambda）和Stream，这两个强大的特性让函数式编程在Java开发中发扬光大。这篇文章会从基本概念、使用方式、实现原理和实战场景等角度介绍Lambda的全貌，其中还会涉及一些函数式编程概念、JVM一些知识等等。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpUlEQVR42u3aQXIiQQwEQP//097zxi7jKqkb2xE5JwIGUHJoCUkfH/H1+c+VP5/c+eqeV3cevvDw8PDWoW/CTb4rB+ff/jISPDw8vGu8JJTne55DaQM9FQ8eHh7eb+Hl5XJerOPh4eH9dl5bTJ9qfODh4eH9HF5+EL+CJUki/ylnhTgeHh7ee3iz9uv3Pr4y38PDw8NbT9XbAdUmoLxcLqLFw8PDu8DLg3guo9tium3L5uUyHh4e3m3eqUF+C8vTw2zxCw8PD+89vGfSpozetHfzJDHsT+Ph4eEd4uVJIh+VtYkkAjy/Cw8PD+8Cr10dmOFzxqzZsRqD4eHh4ZW8zdHfwmYJI//kohmBh4eHt+Al7dTk1VnB3d7TvgsPDw/vBm/WYN03C9oVriSSl3kPDw8P74282QpU+wMlA7CkWfyf+PHw8PAu85LWbbIo0LaJkzZHklS+SAx4eHh4h3j5P/f8mi0i7FsSdesWDw8Pb8Rri922CM4TSX5Pnjbw8PDw7vHaFsPssN7M6PIU9ddn4uHh4V3gzUZQ7TgqCqIsyo/1qvHw8PAOtXGTD9oMw2bNiPp5PDw8vGu8tq1w6tDPV6xmYzY8PDy8e7z28J0F1y5a5cO54r8CHh4e3pqXvDwbgG1q2uf31otieHh4eG/ntQdxfoi3rY082uFWAh4eHl7Jmy0HbFq3s2Fb/QPh4eHhXea1CaBNA23B3V54eHh4t3mf5ZXA2qN81kSOym48PDy8C7zZgbtZh0qo7ePD+QQPDw9vFPr+cD/VR83Hby8jwcPDw7vGmw29Zu2G2ULqKqfh4eHhfSvvbMG9/7Qv7sfDw8P7kbykND/VMs6Lfjw8PLzbvFNf0x7c7cpC3fLAw8PDu8Br/9HvB13JGuuBoPHw8PDO8/4AfcJ9gmQ14wgAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2020/02/09/java-understand-and-use-lambda/&title=理解和运用Java中的Lambda | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+回想一下，JDK8是2014年发布正式版的，到现在为（2020-02-08）止已经过去了5年多。JDK8引入的两个比较强大的新特性是Lambda表达式（下文的Lambda特指JDK提供的Lambda）和Stream，这两个强大的特性让函数式编程在Java开发中发扬光大。这篇文章会从基本概念、使用方式、实现原理和实战场景等角度介绍Lambda的全貌，其中还会涉及一些函数式编程概念、JVM一些知识等等。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpUlEQVR42u3aQXIiQQwEQP//097zxi7jKqkb2xE5JwIGUHJoCUkfH/H1+c+VP5/c+eqeV3cevvDw8PDWoW/CTb4rB+ff/jISPDw8vGu8JJTne55DaQM9FQ8eHh7eb+Hl5XJerOPh4eH9dl5bTJ9qfODh4eH9HF5+EL+CJUki/ylnhTgeHh7ee3iz9uv3Pr4y38PDw8NbT9XbAdUmoLxcLqLFw8PDu8DLg3guo9tium3L5uUyHh4e3m3eqUF+C8vTw2zxCw8PD+89vGfSpozetHfzJDHsT+Ph4eEd4uVJIh+VtYkkAjy/Cw8PD+8Cr10dmOFzxqzZsRqD4eHh4ZW8zdHfwmYJI//kohmBh4eHt+Al7dTk1VnB3d7TvgsPDw/vBm/WYN03C9oVriSSl3kPDw8P74282QpU+wMlA7CkWfyf+PHw8PAu85LWbbIo0LaJkzZHklS+SAx4eHh4h3j5P/f8mi0i7FsSdesWDw8Pb8Rri922CM4TSX5Pnjbw8PDw7vHaFsPssN7M6PIU9ddn4uHh4V3gzUZQ7TgqCqIsyo/1qvHw8PAOtXGTD9oMw2bNiPp5PDw8vGu8tq1w6tDPV6xmYzY8PDy8e7z28J0F1y5a5cO54r8CHh4e3pqXvDwbgG1q2uf31otieHh4eG/ntQdxfoi3rY082uFWAh4eHl7Jmy0HbFq3s2Fb/QPh4eHhXea1CaBNA23B3V54eHh4t3mf5ZXA2qN81kSOym48PDy8C7zZgbtZh0qo7ePD+QQPDw9vFPr+cD/VR83Hby8jwcPDw7vGmw29Zu2G2ULqKqfh4eHhfSvvbMG9/7Qv7sfDw8P7kbykND/VMs6Lfjw8PLzbvFNf0x7c7cpC3fLAw8PDu8Br/9HvB13JGuuBoPHw8PDO8/4AfcJ9gmQ14wgAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2020/02/05/j-action-transactional-message-by-rabbit/" rel="prev" title="一个基于RabbitMQ的可复用的事务消息方案">
+                                    
+                                        一个基于RabbitMQ的可复用的事务消息方案
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/In-Action/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> In Action</a> <a class="tag" href="/blog/tags/Distributed-Transaction/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Distributed Transaction</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '理解和运用Java中的Lambda',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本概念"><span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#函数式接口"><span class="toc-text">函数式接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接口默认方法"><span class="toc-text">接口默认方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#嵌套类-Nested-Classes"><span class="toc-text">嵌套类(Nested Classes)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lambda表达式"><span class="toc-text">Lambda表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#引入Lambda表达式的初衷"><span class="toc-text">引入Lambda表达式的初衷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lambda表达式的语法定义"><span class="toc-text">Lambda表达式的语法定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#目标类型与类型推断"><span class="toc-text">目标类型与类型推断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#作用域"><span class="toc-text">作用域</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法引用"><span class="toc-text">方法引用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java中Lambda的底层实现原理"><span class="toc-text">Java中Lambda的底层实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实战"><span class="toc-text">实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基于JdbcTemplate进行轻量级DAO封装"><span class="toc-text">基于JdbcTemplate进行轻量级DAO封装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于Optional进行VO设置值"><span class="toc-text">基于Optional进行VO设置值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

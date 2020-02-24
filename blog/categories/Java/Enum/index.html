@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Category: Enum | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover  half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      
+<div class='l_main'>
+  
+    
+      
+  <section class="post-list ">
+    
+      
+        
+          
+        
+      
+    
+    
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2018/11/04/enum-implementation/">
+      JDK中枚举的底层实现
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年11月4日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Enum/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Enum</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：12分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2018-11-17T15:52:01+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2018年11月17日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <h1>前提</h1>
+<p>上一篇文章复习介绍了JDK中注解的底层实现，跟注解一样比较常用，但是底层实现比较神秘的还有枚举类型。趁着国庆假期的最后两天，把JDK中枚举的底层实现也进行一次探究。</p>
+<h1>通过例子查找本质</h1>
+<p>在探究JDK注解的底层实现的时候，因为预先参考了不少资料，所以整个过程有点&quot;未卜先知&quot;的意味，这里尝试用未知的角度去看注解的底层实现。先定义一个手机操作系统类型枚举PhoneOsEnum：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> club.throwable.enumeration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> PhoneOsEnum &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 安卓</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	ANDROID(<span class="number">1</span>, <span class="string">"android"</span>),</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * ios</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	IOS(<span class="number">2</span>, <span class="string">"ios"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Integer type;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String typeName;</span><br><span class="line"></span><br><span class="line">	PhoneOsEnum(Integer type, String typeName) &#123;</span><br><span class="line">		<span class="keyword">this</span>.type = type;</span><br><span class="line">		<span class="keyword">this</span>.typeName = typeName;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> type;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> typeName;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个很简单的枚举，接着使用JDK的反编译工具反编译出其字节码，执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap -c -v D:\Projects\rxjava-seed\target\classes\club\throwable\enumeration\PhoneOsEnum.class</span><br></pre></td></tr></table></figure>
+<p>然后就得到了关于PhoneOsEnum.class的很长的字节码，这里全部贴出来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br></pre></td><td class="code"><pre><span class="line">Classfile /D:/Projects/rxjava-seed/target/classes/club/throwable/enumeration/PhoneOsEnum<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class">  <span class="title">Last</span> <span class="title">modified</span> 2018-10-6</span>; size <span class="number">1561</span> bytes</span><br><span class="line">  MD5 checksum <span class="number">6</span>d3186042f54233219000927a2f196aa</span><br><span class="line">  Compiled from <span class="string">"PhoneOsEnum.java"</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">club</span>.<span class="title">throwable</span>.<span class="title">enumeration</span>.<span class="title">PhoneOsEnum</span> <span class="keyword">extends</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">Enum</span>&lt;<span class="title">club</span>.<span class="title">throwable</span>.<span class="title">enumeration</span>.<span class="title">PhoneOsEnum</span>&gt;</span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_FINAL, ACC_SUPER, ACC_ENUM</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Fieldref           #4.#49         // club/throwable/enumeration/PhoneOsEnum.$VALUES:[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">   #2 = Methodref          #50.#51        // "[Lclub/throwable/enumeration/PhoneOsEnum;".clone:()Ljava/lang/Object;</span><br><span class="line">   #3 = Class              #26            // "[Lclub/throwable/enumeration/PhoneOsEnum;"</span><br><span class="line">   #4 = Class              #52            // club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">   #5 = Methodref          #17.#53        // java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;</span><br><span class="line">   #6 = Methodref          #17.#54        // java/lang/Enum."&lt;init&gt;":(Ljava/lang/String;I)V</span><br><span class="line">   #7 = Fieldref           #4.#55         // club/throwable/enumeration/PhoneOsEnum.type:Ljava/lang/Integer;</span><br><span class="line">   #8 = Fieldref           #4.#56         // club/throwable/enumeration/PhoneOsEnum.typeName:Ljava/lang/String;</span><br><span class="line">   #9 = String             #18            // ANDROID</span><br><span class="line">  #10 = Methodref          #57.#58        // java/lang/Integer.valueOf:(I)Ljava/lang/Integer;</span><br><span class="line">  #11 = String             #59            // android</span><br><span class="line">  #12 = Methodref          #4.#60         // club/throwable/enumeration/PhoneOsEnum."&lt;init&gt;":(Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">  #13 = Fieldref           #4.#61         // club/throwable/enumeration/PhoneOsEnum.ANDROID:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #14 = String             #20            // IOS</span><br><span class="line">  #15 = String             #62            // ios</span><br><span class="line">  #16 = Fieldref           #4.#63         // club/throwable/enumeration/PhoneOsEnum.IOS:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #17 = Class              #64            // java/lang/Enum</span><br><span class="line">  #18 = Utf8               ANDROID</span><br><span class="line">  #19 = Utf8               Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #20 = Utf8               IOS</span><br><span class="line">  #21 = Utf8               type</span><br><span class="line">  #22 = Utf8               Ljava/lang/Integer;</span><br><span class="line">  #23 = Utf8               typeName</span><br><span class="line">  #24 = Utf8               Ljava/lang/String;</span><br><span class="line">  #25 = Utf8               $VALUES</span><br><span class="line">  #26 = Utf8               [Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #27 = Utf8               values</span><br><span class="line">  #28 = Utf8               ()[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #29 = Utf8               Code</span><br><span class="line">  #30 = Utf8               LineNumberTable</span><br><span class="line">  #31 = Utf8               valueOf</span><br><span class="line">  #32 = Utf8               (Ljava/lang/String;)Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #33 = Utf8               LocalVariableTable</span><br><span class="line">  #34 = Utf8               name</span><br><span class="line">  #35 = Utf8               &lt;init&gt;</span><br><span class="line">  #36 = Utf8               (Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">  #37 = Utf8               this</span><br><span class="line">  #38 = Utf8               Signature</span><br><span class="line">  #39 = Utf8               (Ljava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">  #40 = Utf8               getType</span><br><span class="line">  #41 = Utf8               ()Ljava/lang/Integer;</span><br><span class="line">  #42 = Utf8               getTypeName</span><br><span class="line">  #43 = Utf8               ()Ljava/lang/String;</span><br><span class="line">  #44 = Utf8               &lt;clinit&gt;</span><br><span class="line">  #45 = Utf8               ()V</span><br><span class="line">  #46 = Utf8               Ljava/lang/Enum&lt;Lclub/throwable/enumeration/PhoneOsEnum;&gt;;</span><br><span class="line">  #47 = Utf8               SourceFile</span><br><span class="line">  #48 = Utf8               PhoneOsEnum.java</span><br><span class="line">  #49 = NameAndType        #25:#26        // $VALUES:[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #50 = Class              #26            // "[Lclub/throwable/enumeration/PhoneOsEnum;"</span><br><span class="line">  #51 = NameAndType        #65:#66        // clone:()Ljava/lang/Object;</span><br><span class="line">  #52 = Utf8               club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">  #53 = NameAndType        #31:#67        // valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;</span><br><span class="line">  #54 = NameAndType        #35:#68        // "&lt;init&gt;":(Ljava/lang/String;I)V</span><br><span class="line">  #55 = NameAndType        #21:#22        // type:Ljava/lang/Integer;</span><br><span class="line">  #56 = NameAndType        #23:#24        // typeName:Ljava/lang/String;</span><br><span class="line">  #57 = Class              #69            // java/lang/Integer</span><br><span class="line">  #58 = NameAndType        #31:#70        // valueOf:(I)Ljava/lang/Integer;</span><br><span class="line">  #59 = Utf8               android</span><br><span class="line">  #60 = NameAndType        #35:#36        // "&lt;init&gt;":(Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">  #61 = NameAndType        #18:#19        // ANDROID:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #62 = Utf8               ios</span><br><span class="line">  #63 = NameAndType        #20:#19        // IOS:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">  #64 = Utf8               java/lang/Enum</span><br><span class="line">  #65 = Utf8               clone</span><br><span class="line">  #66 = Utf8               ()Ljava/lang/Object;</span><br><span class="line">  #67 = Utf8               (Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;</span><br><span class="line">  #68 = Utf8               (Ljava/lang/String;I)V</span><br><span class="line">  #69 = Utf8               java/lang/Integer</span><br><span class="line">  #70 = Utf8               (I)Ljava/lang/Integer;</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> club.throwable.enumeration.PhoneOsEnum ANDROID;</span><br><span class="line">    descriptor: Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL, ACC_ENUM</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> club.throwable.enumeration.PhoneOsEnum IOS;</span><br><span class="line">    descriptor: Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL, ACC_ENUM</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> club.throwable.enumeration.PhoneOsEnum[] values();</span><br><span class="line">    descriptor: ()[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         0: getstatic     #1                  // Field $VALUES:[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">         3: invokevirtual #2                  // Method "[Lclub/throwable/enumeration/PhoneOsEnum;".clone:()Ljava/lang/Object;</span><br><span class="line">         6: checkcast     #3                  // class "[Lclub/throwable/enumeration/PhoneOsEnum;"</span><br><span class="line">         <span class="number">9</span>: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">9</span>: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> club.throwable.enumeration.<span class="function">PhoneOsEnum <span class="title">valueOf</span><span class="params">(java.lang.String)</span></span>;</span><br><span class="line">    descriptor: (Ljava/lang/String;)Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         0: ldc           #4                  // class club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">         <span class="number">2</span>: aload_0</span><br><span class="line">         3: invokestatic  #5                  // Method java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;</span><br><span class="line">         6: checkcast     #4                  // class club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">         <span class="number">9</span>: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">9</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">10</span>     <span class="number">0</span>  name   Ljava/lang/String;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.lang.<span class="function">Integer <span class="title">getType</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()Ljava/lang/Integer;</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: getfield      #7                  // Field type:Ljava/lang/Integer;</span><br><span class="line">         <span class="number">4</span>: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">31</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">getTypeName</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()Ljava/lang/String;</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: getfield      #8                  // Field typeName:Ljava/lang/String;</span><br><span class="line">         <span class="number">4</span>: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">35</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">6</span>, locals=<span class="number">0</span>, args_size=<span class="number">0</span></span><br><span class="line">         0: new           #4                  // class club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">         <span class="number">3</span>: dup</span><br><span class="line">         4: ldc           #9                  // String ANDROID</span><br><span class="line">         <span class="number">6</span>: iconst_0</span><br><span class="line">         <span class="number">7</span>: iconst_1</span><br><span class="line">         8: invokestatic  #10                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;</span><br><span class="line">        11: ldc           #11                 // String android</span><br><span class="line">        13: invokespecial #12                 // Method "&lt;init&gt;":(Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">        16: putstatic     #13                 // Field ANDROID:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">        19: new           #4                  // class club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">        <span class="number">22</span>: dup</span><br><span class="line">        23: ldc           #14                 // String IOS</span><br><span class="line">        <span class="number">25</span>: iconst_1</span><br><span class="line">        <span class="number">26</span>: iconst_2</span><br><span class="line">        27: invokestatic  #10                 // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;</span><br><span class="line">        30: ldc           #15                 // String ios</span><br><span class="line">        32: invokespecial #12                 // Method "&lt;init&gt;":(Ljava/lang/String;ILjava/lang/Integer;Ljava/lang/String;)V</span><br><span class="line">        35: putstatic     #16                 // Field IOS:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">        <span class="number">38</span>: iconst_2</span><br><span class="line">        39: anewarray     #4                  // class club/throwable/enumeration/PhoneOsEnum</span><br><span class="line">        <span class="number">42</span>: dup</span><br><span class="line">        <span class="number">43</span>: iconst_0</span><br><span class="line">        44: getstatic     #13                 // Field ANDROID:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">        <span class="number">47</span>: aastore</span><br><span class="line">        <span class="number">48</span>: dup</span><br><span class="line">        <span class="number">49</span>: iconst_1</span><br><span class="line">        50: getstatic     #16                 // Field IOS:Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">        <span class="number">53</span>: aastore</span><br><span class="line">        54: putstatic     #1                  // Field $VALUES:[Lclub/throwable/enumeration/PhoneOsEnum;</span><br><span class="line">        <span class="number">57</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">14</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">19</span>: <span class="number">19</span></span><br><span class="line">        line <span class="number">9</span>: <span class="number">38</span></span><br><span class="line">&#125;</span><br><span class="line">Signature: #46                          // Ljava/lang/Enum&lt;Lclub/throwable/enumeration/PhoneOsEnum;&gt;;</span><br><span class="line">SourceFile: <span class="string">"PhoneOsEnum.java"</span></span><br></pre></td></tr></table></figure>
+<p>先看类的签名是<code>public final class club.throwable.enumeration.PhoneOsEnum extends java.lang.Enum&lt;club.throwable.enumeration.PhoneOsEnum&gt;</code>，它的父类是java.lang.Enum，父类的泛型就是自身club.throwable.enumeration.PhoneOsEnum。上面的字节码的可读性相对比较低，直接翻译为Java代码(当然我们不能声明一个类直接继承java.lang.Enum，这里仅仅为了说明反编译后的枚举类的原型)如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">PhoneOsEnumeration</span> <span class="keyword">extends</span> <span class="title">Enum</span>&lt;<span class="title">PhoneOsEnumeration</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">PhoneOsEnumeration</span><span class="params">(String name, <span class="keyword">int</span> ordinal, Integer type, String typeName)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(name, ordinal);</span><br><span class="line">		<span class="keyword">this</span>.type = type;</span><br><span class="line">		<span class="keyword">this</span>.typeName = typeName;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> type;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getTypeName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> typeName;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> PhoneOsEnumeration[] values() &#123;</span><br><span class="line">		<span class="keyword">return</span> $VALUES.clone();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> PhoneOsEnumeration <span class="title">valueOf</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Enum.valueOf(PhoneOsEnumeration<span class="class">.<span class="keyword">class</span>, <span class="title">name</span>)</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Integer type;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String typeName;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> PhoneOsEnumeration ANDROID;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> PhoneOsEnumeration IOS;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> PhoneOsEnumeration[] $VALUES;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> &#123;</span><br><span class="line">		ANDROID = <span class="keyword">new</span> PhoneOsEnumeration(<span class="string">"ANDROID"</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="string">"android"</span>);</span><br><span class="line">		IOS = <span class="keyword">new</span> PhoneOsEnumeration(<span class="string">"IOS"</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="string">"ios"</span>);</span><br><span class="line">		$VALUES = <span class="keyword">new</span> PhoneOsEnumeration[]&#123;ANDROID, IOS&#125;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>概括来说就是成员变量都是通过静态代码块声明，这里注意一点父类Enum实例化的时候需要覆盖父类构造器<code>protected Enum(String name, int ordinal)</code>，其他方法的实现都是十分简单。</p>
+<h1>JDK的枚举描述</h1>
+<p>国际惯例，先看一下JavaSE-8的语言规范中<a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.9" target="_blank" rel="noopener">JLS-8.9</a>对枚举类型的定义和描述：</p>
+<p><img src="http://pazkqls86.bkt.clouddn.com/enum-1.png" alt="enum-1"></p>
+<p>感觉有点似曾相识，总结一下重要内容有以下几点：</p>
+<ul>
+<li>枚举的声明格式是：<code>{ClassModifier} enum Identifier [Superinterfaces] EnumBody</code>，ClassModifier是修饰符，Identifier是枚举的名称可以类比为类名，枚举类型可以实现接口。</li>
+<li>枚举类型不能使用abstract或者final修饰，否则会产生编译错误。</li>
+<li>枚举类型的直接超类是java.lang.Enum。</li>
+<li>枚举类型除了枚举常量定义之外没有其他实例，也就是枚举类型不能实例化。</li>
+<li>枚举类型禁用反射操作进行实例化(这个特性就是Effetive Java中推荐使用枚举实现单例的原因)。</li>
+</ul>
+<p>枚举的公共父类java.lang.Enum的源码如下(已经去掉全部注释)：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Enum</span>&lt;<span class="title">E</span> <span class="keyword">extends</span> <span class="title">Enum</span>&lt;<span class="title">E</span>&gt;&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">Comparable</span>&lt;<span class="title">E</span>&gt;, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name; </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> String <span class="title">name</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> ordinal;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">ordinal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ordinal;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Enum</span><span class="params">(String name, <span class="keyword">int</span> ordinal)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.ordinal = ordinal;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object other)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>==other;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.hashCode();</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> CloneNotSupportedException();</span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(E o)</span> </span>&#123;</span><br><span class="line">        Enum&lt;?&gt; other = (Enum&lt;?&gt;)o;</span><br><span class="line">        Enum&lt;E&gt; self = <span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">if</span> (self.getClass() != other.getClass() &amp;&amp; <span class="comment">// optimization</span></span><br><span class="line">            self.getDeclaringClass() != other.getDeclaringClass())</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ClassCastException();</span><br><span class="line">        <span class="keyword">return</span> self.ordinal - other.ordinal;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Class&lt;E&gt; <span class="title">getDeclaringClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = getClass();</span><br><span class="line">        Class&lt;?&gt; zuper = clazz.getSuperclass();</span><br><span class="line">        return (zuper == Enum.class) ? (Class&lt;E&gt;)clazz : (Class&lt;E&gt;)zuper;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T extends Enum&lt;T&gt;&gt; <span class="function">T <span class="title">valueOf</span><span class="params">(Class&lt;T&gt; enumType,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                String name)</span> </span>&#123;</span><br><span class="line">        T result = enumType.enumConstantDirectory().get(name);</span><br><span class="line">        <span class="keyword">if</span> (result != <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        <span class="keyword">if</span> (name == <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"Name is null"</span>);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">            <span class="string">"No enum constant "</span> + enumType.getCanonicalName() + <span class="string">"."</span> + name);</span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException,</span></span><br><span class="line"><span class="function">        ClassNotFoundException </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidObjectException(<span class="string">"can't deserialize enum"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObjectNoData</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidObjectException(<span class="string">"can't deserialize enum"</span>);</span><br><span class="line">    &#125;                              </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大部分方法都比较简单，值得注意的几点是：</p>
+<ul>
+<li>1、<code>valueOf</code>方法依赖到的<code>Class&lt;?&gt;#enumConstantDirectory()</code>，这个方法首次调用完成之后，结果会缓存在<code>Class&lt;?&gt;#enumConstantDirectory</code>变量中。</li>
+<li>2、Enum实现了Serializable接口，但是<code>readObject</code>和<code>readObjectNoData</code>直接抛出了InvalidObjectException异常，注释说到是&quot;防止默认的反序列化&quot;，这一点有点不明不白，既然禁用反序列化为何要实现Serializable接口，这里可能考虑到是否实现Serializable接口应该交给开发者决定。</li>
+<li>3、Enum禁用克隆。</li>
+</ul>
+<h1>小结</h1>
+<p>JDK中枚举的底层实现就是使用了enum关键字声明的枚举类编译后最终会变成public final修饰同时实现了泛型接口java.lang.Enum并且指定泛型参数为自身的普通Java类，而成员属性和方法实现相关都是在编译完成后就已经成型的，枚举类型的成员变量都是通过静态代码块声明的。</p>
+<p>(本文完 c-1-d e-20181006)</p>
+
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/Enum/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Enum</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+    
+  </section>
+  
+    
+    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+    
+    
+
+  
+
+
+    
+  
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+          <section class='widget card-shadow  blogger'>
+  <div class='content'>
+    
+      <div class='avatar'>
+        <img class='avatar' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg'/>
+      </div>
+    
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="/atom.xml"
+              class="social fas fa-rss fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="mailto:739805340@qq.com"
+              class="social fas fa-envelope fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/zjcscut"
+              class="social fab fa-github fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  category'>
+    <header>
+  <div>
+    
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i><span class='name'>文章分类</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/categories/"
+    title="categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <ul class="entry navigation">
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Framework/" href="/blog/categories/Framework/"
+            id="blogcategoriesFramework"
+            ><div class='name'>Framework</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Archunit/" href="/blog/categories/Framework/Archunit/"
+            id="blogcategoriesFrameworkArchunit"
+            ><div class='name'>Archunit</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Cglib/" href="/blog/categories/Framework/Cglib/"
+            id="blogcategoriesFrameworkCglib"
+            ><div class='name'>Cglib</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Hystrix/" href="/blog/categories/Framework/Hystrix/"
+            id="blogcategoriesFrameworkHystrix"
+            ><div class='name'>Hystrix</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Micrometer/" href="/blog/categories/Framework/Micrometer/"
+            id="blogcategoriesFrameworkMicrometer"
+            ><div class='name'>Micrometer</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Mybatis/" href="/blog/categories/Framework/Mybatis/"
+            id="blogcategoriesFrameworkMybatis"
+            ><div class='name'>Mybatis</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Zuul/" href="/blog/categories/Framework/Zuul/"
+            id="blogcategoriesFrameworkZuul"
+            ><div class='name'>Zuul</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Go/" href="/blog/categories/Go/"
+            id="blogcategoriesGo"
+            ><div class='name'>Go</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Go/Golang/" href="/blog/categories/Go/Golang/"
+            id="blogcategoriesGoGolang"
+            ><div class='name'>Golang</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/In-Action/" href="/blog/categories/In-Action/"
+            id="blogcategoriesIn-Action"
+            ><div class='name'>In Action</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/In-Action/Distributed-Transaction/" href="/blog/categories/In-Action/Distributed-Transaction/"
+            id="blogcategoriesIn-ActionDistributed-Transaction"
+            ><div class='name'>Distributed Transaction</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Java/" href="/blog/categories/Java/"
+            id="blogcategoriesJava"
+            ><div class='name'>Java</div><div class='badge'>(37)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Algorithm/" href="/blog/categories/Java/Algorithm/"
+            id="blogcategoriesJavaAlgorithm"
+            ><div class='name'>Algorithm</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Annotation/" href="/blog/categories/Java/Annotation/"
+            id="blogcategoriesJavaAnnotation"
+            ><div class='name'>Annotation</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Concurrency/" href="/blog/categories/Java/Concurrency/"
+            id="blogcategoriesJavaConcurrency"
+            ><div class='name'>Concurrency</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Design-Pattern/" href="/blog/categories/Java/Design-Pattern/"
+            id="blogcategoriesJavaDesign-Pattern"
+            ><div class='name'>Design Pattern</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Enum/" href="/blog/categories/Java/Enum/"
+            id="blogcategoriesJavaEnum"
+            ><div class='name'>Enum</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Functional-Programming/" href="/blog/categories/Java/Functional-Programming/"
+            id="blogcategoriesJavaFunctional-Programming"
+            ><div class='name'>Functional Programming</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Instrument/" href="/blog/categories/Java/Instrument/"
+            id="blogcategoriesJavaInstrument"
+            ><div class='name'>Instrument</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Introspector/" href="/blog/categories/Java/Introspector/"
+            id="blogcategoriesJavaIntrospector"
+            ><div class='name'>Introspector</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/JVM/" href="/blog/categories/Java/JVM/"
+            id="blogcategoriesJavaJVM"
+            ><div class='name'>JVM</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Lambda/" href="/blog/categories/Java/Lambda/"
+            id="blogcategoriesJavaLambda"
+            ><div class='name'>Lambda</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Netty/" href="/blog/categories/Java/Netty/"
+            id="blogcategoriesJavaNetty"
+            ><div class='name'>Netty</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Reflection/" href="/blog/categories/Java/Reflection/"
+            id="blogcategoriesJavaReflection"
+            ><div class='name'>Reflection</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Life/" href="/blog/categories/Life/"
+            id="blogcategoriesLife"
+            ><div class='name'>Life</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Middleware/" href="/blog/categories/Middleware/"
+            id="blogcategoriesMiddleware"
+            ><div class='name'>Middleware</div><div class='badge'>(34)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Quartz/" href="/blog/categories/Middleware/Quartz/"
+            id="blogcategoriesMiddlewareQuartz"
+            ><div class='name'>Quartz</div><div class='badge'>(14)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/RabbitMQ/" href="/blog/categories/Middleware/RabbitMQ/"
+            id="blogcategoriesMiddlewareRabbitMQ"
+            ><div class='name'>RabbitMQ</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Redis/" href="/blog/categories/Middleware/Redis/"
+            id="blogcategoriesMiddlewareRedis"
+            ><div class='name'>Redis</div><div class='badge'>(10)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Zookeeper/" href="/blog/categories/Middleware/Zookeeper/"
+            id="blogcategoriesMiddlewareZookeeper"
+            ><div class='name'>Zookeeper</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/MySQL/" href="/blog/categories/MySQL/"
+            id="blogcategoriesMySQL"
+            ><div class='name'>MySQL</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Netty/" href="/blog/categories/Netty/"
+            id="blogcategoriesNetty"
+            ><div class='name'>Netty</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Netty/Java/" href="/blog/categories/Netty/Java/"
+            id="blogcategoriesNettyJava"
+            ><div class='name'>Java</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SOFAStack/" href="/blog/categories/SOFAStack/"
+            id="blogcategoriesSOFAStack"
+            ><div class='name'>SOFAStack</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SOFAStack/Nacos/" href="/blog/categories/SOFAStack/Nacos/"
+            id="blogcategoriesSOFAStackNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring-Cloud/" href="/blog/categories/Spring-Cloud/"
+            id="blogcategoriesSpring-Cloud"
+            ><div class='name'>Spring Cloud</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/" href="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/"
+            id="blogcategoriesSpring-CloudSpring-Cloud-Gateway"
+            ><div class='name'>Spring Cloud Gateway</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring/" href="/blog/categories/Spring/"
+            id="blogcategoriesSpring"
+            ><div class='name'>Spring</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/Prometheus/" href="/blog/categories/Spring/Prometheus/"
+            id="blogcategoriesSpringPrometheus"
+            ><div class='name'>Prometheus</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringBoot/" href="/blog/categories/Spring/SpringBoot/"
+            id="blogcategoriesSpringSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringMVC/" href="/blog/categories/Spring/SpringMVC/"
+            id="blogcategoriesSpringSpringMVC"
+            ><div class='name'>SpringMVC</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SpringBoot/" href="/blog/categories/SpringBoot/"
+            id="blogcategoriesSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SpringBoot/Nacos/" href="/blog/categories/SpringBoot/Nacos/"
+            id="blogcategoriesSpringBootNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/hexo/" href="/blog/categories/hexo/"
+            id="blogcategorieshexo"
+            ><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  tagcloud'>
+    <header>
+  <div>
+    
+      <i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/tags/"
+    title="tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <a href="/blog/tags/AQS/" style="font-size: 14px; color: #999">AQS</a> <a href="/blog/tags/Algorithm/" style="font-size: 14px; color: #999">Algorithm</a> <a href="/blog/tags/Annotation/" style="font-size: 14px; color: #999">Annotation</a> <a href="/blog/tags/Archunit/" style="font-size: 14px; color: #999">Archunit</a> <a href="/blog/tags/Cglib/" style="font-size: 14.83px; color: #939393">Cglib</a> <a href="/blog/tags/Concurrency/" style="font-size: 14.83px; color: #939393">Concurrency</a> <a href="/blog/tags/Design-Pattern/" style="font-size: 14px; color: #999">Design Pattern</a> <a href="/blog/tags/Distributed-Transaction/" style="font-size: 14.83px; color: #939393">Distributed Transaction</a> <a href="/blog/tags/Enum/" style="font-size: 14px; color: #999">Enum</a> <a href="/blog/tags/ExecutorService/" style="font-size: 14px; color: #999">ExecutorService</a> <a href="/blog/tags/Framework/" style="font-size: 17.33px; color: #828282">Framework</a> <a href="/blog/tags/Go/" style="font-size: 14px; color: #999">Go</a> <a href="/blog/tags/Golang/" style="font-size: 14px; color: #999">Golang</a> <a href="/blog/tags/Hystrix/" style="font-size: 14px; color: #999">Hystrix</a> <a href="/blog/tags/In-Action/" style="font-size: 16.5px; color: #888">In Action</a> <a href="/blog/tags/Instrument/" style="font-size: 14px; color: #999">Instrument</a> <a href="/blog/tags/Introspector/" style="font-size: 14px; color: #999">Introspector</a> <a href="/blog/tags/JSR-310/" style="font-size: 17.33px; color: #828282">JSR-310</a> <a href="/blog/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/blog/tags/Java/" style="font-size: 24px; color: #555">Java</a> <a href="/blog/tags/Lambda/" style="font-size: 14px; color: #999">Lambda</a> <a href="/blog/tags/Life/" style="font-size: 14px; color: #999">Life</a> <a href="/blog/tags/ListenableFuture/" style="font-size: 14px; color: #999">ListenableFuture</a> <a href="/blog/tags/Micrometer/" style="font-size: 14.83px; color: #939393">Micrometer</a> <a href="/blog/tags/Middleware/" style="font-size: 23.17px; color: #5b5b5b">Middleware</a> <a href="/blog/tags/MySQL/" style="font-size: 14px; color: #999">MySQL</a> <a href="/blog/tags/Mybatis/" style="font-size: 14px; color: #999">Mybatis</a> <a href="/blog/tags/Nacos/" style="font-size: 14.83px; color: #939393">Nacos</a> <a href="/blog/tags/Netty/" style="font-size: 18.17px; color: #7d7d7d">Netty</a> <a href="/blog/tags/Object/" style="font-size: 14px; color: #999">Object</a> <a href="/blog/tags/Optional/" style="font-size: 14px; color: #999">Optional</a> <a href="/blog/tags/Quartz/" style="font-size: 22.33px; color: #606060">Quartz</a> <a href="/blog/tags/RabbitMQ/" style="font-size: 20.67px; color: #6c6c6c">RabbitMQ</a> <a href="/blog/tags/Redis/" style="font-size: 21.5px; color: #666">Redis</a> <a href="/blog/tags/Reference/" style="font-size: 14px; color: #999">Reference</a> <a href="/blog/tags/Reflection/" style="font-size: 19.83px; color: #717171">Reflection</a> <a href="/blog/tags/SOFAStack/" style="font-size: 14px; color: #999">SOFAStack</a> <a href="/blog/tags/Security/" style="font-size: 14px; color: #999">Security</a> <a href="/blog/tags/Spring/" style="font-size: 17.33px; color: #828282">Spring</a> <a href="/blog/tags/Spring-Cloud/" style="font-size: 18.17px; color: #7d7d7d">Spring Cloud</a> <a href="/blog/tags/Spring-Cloud-Gateway/" style="font-size: 19px; color: #777">Spring Cloud Gateway</a> <a href="/blog/tags/SpringBoot/" style="font-size: 15.67px; color: #8e8e8e">SpringBoot</a> <a href="/blog/tags/SpringCloud/" style="font-size: 14px; color: #999">SpringCloud</a> <a href="/blog/tags/SpringMVC/" style="font-size: 14.83px; color: #939393">SpringMVC</a> <a href="/blog/tags/Thread/" style="font-size: 14.83px; color: #939393">Thread</a> <a href="/blog/tags/ThreadLocal/" style="font-size: 14px; color: #999">ThreadLocal</a> <a href="/blog/tags/ThreadPoolExecutor/" style="font-size: 14px; color: #999">ThreadPoolExecutor</a> <a href="/blog/tags/Zookeeper/" style="font-size: 14px; color: #999">Zookeeper</a> <a href="/blog/tags/Zuul/" style="font-size: 14px; color: #999">Zuul</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/hexo-theme/" style="font-size: 14px; color: #999">hexo theme</a>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

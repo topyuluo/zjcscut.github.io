@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Category: Concurrency | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover  half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      
+<div class='l_main'>
+  
+    
+      
+  <section class="post-list ">
+    
+      
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+    
+    
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2020/01/19/java-thread-context-class-loader-memory-leak-risk/">
+      线程上下文类加载器ContextClassLoader内存泄漏隐患
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2020年1月19日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：2.8k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：11分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-01-20T08:32:17+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2020年1月20日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <h2 id="前提">前提</h2>
+<p>今天（<code>2020-01-18</code>）在编写<code>Netty</code>相关代码的时候，从<code>Netty</code>源码中的<code>ThreadDeathWatcher</code>和<code>GlobalEventExecutor</code>追溯到两个和线程上下文类加载器<code>ContextClassLoader</code>内存泄漏相关的<code>Issue</code>：</p>
+<ul>
+<li><a href="https://github.com/netty/netty/issues/7290" target="_blank" rel="noopener">ThreadDeathWatcher causes custom classLoader script memory leaks</a></li>
+<li><a href="https://github.com/netty/netty/pull/7493" target="_blank" rel="noopener">Ensure ThreadDeathWatcher and GlobalEventExecutor will not cause clas…</a></li>
+</ul>
+<p>两个<code>Issue</code>分别是两位前辈在<code>2017-12</code>的时候提出的，描述的是同一类问题，最后被<code>Netty</code>的负责人采纳，并且修复了对应的问题从而关闭了<code>Issue</code>。这里基于这两个<code>Issue</code>描述的内容，对<code>ContextClassLoader</code>内存泄漏隐患做一次复盘。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2020/01/19/java-thread-context-class-loader-memory-leak-risk/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/Thread/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Thread</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/07/27/java-concurrency-executor-service/">
+      JUC线程池服务ExecutorService接口实现源码分析
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年7月27日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：9.3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：39分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-07-27T10:10:11+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年7月27日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201908/j-u-c-e-s-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>之前的一篇文章<a href="http://www.throwable.club/2019/07/15/java-concurrency-thread-pool-executor" target="_blank" rel="noopener">JUC线程池ThreadPoolExecutor源码分析</a>深入分析了JUC线程池的源码实现，特别对<code>Executor#execute()</code>接口的实现做了行级别的源码分析。这篇文章主要分析一下线程池扩展服务<code>ExecutorService</code>接口的实现源码，同时会重点分析<code>Future</code>的底层实现。<code>ThreadPoolExecutor</code>和其抽象父类<code>AbstractExecutorService</code>的源码从JDK8到JDK11基本没有变化，本文编写的时候使用的是JDK11，由于<code>ExecutorService</code>接口的定义在JDK[8,11]都没有变化，本文的分析适用于这个JDK版本范围的任意版本。最近尝试找<code>Hexo</code>可以渲染<code>Asciidoc</code>的插件，但是没有找到，于是就先移植了<code>Asciidoc</code>中的五种<code>Tip</code>。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/07/27/java-concurrency-executor-service/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/ExecutorService/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> ExecutorService</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/07/15/java-concurrency-thread-pool-executor/">
+      JUC线程池ThreadPoolExecutor源码分析
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年7月15日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：12.2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：48分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-07-21T23:56:36+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年7月21日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201907/j-u-c-t-p-e-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>很早之前就打算看一次JUC线程池<code>ThreadPoolExecutor</code>的源码实现，由于近段时间比较忙，一直没有时间整理出源码分析的文章。之前在分析扩展线程池实现可回调的<code>Future</code>时候曾经提到并发大师<code>Doug Lea</code>在设计线程池<code>ThreadPoolExecutor</code>的提交任务的顶层接口<code>Executor</code>只有一个无状态的执行方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>ExecutorService</code>提供了很多扩展方法底层基本上是基于<code>Executor#execute()</code>方法进行扩展。本文着重分析<code>ThreadPoolExecutor#execute()</code>的实现，笔者会从实现原理、源码实现等角度结合简化例子进行详细的分析。<code>ThreadPoolExecutor</code>的源码从JDK8到JDK11基本没有变化，本文编写的时候使用的是JDK11。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/07/15/java-concurrency-thread-pool-executor/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/ThreadPoolExecutor/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> ThreadPoolExecutor</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/07/02/java-concurrency-listenable-future/">
+      JUC线程池扩展可回调的Future
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年7月2日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：13分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-07-07T15:00:41+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年7月7日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201907/j-u-c-l-f-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近在看JUC线程池<code>java.util.concurrent.ThreadPoolExecutor</code>的源码实现，其中了解到<code>java.util.concurrent.Future</code>的实现原理。从目前<code>java.util.concurrent.Future</code>的实现来看，虽然实现了异步提交任务，但是任务结果的获取过程需要主动调用<code>Future#get()</code>或者<code>Future#get(long timeout, TimeUnit unit)</code>，而前者是阻塞的，后者在异步任务执行时间不确定的情况下有可能需要进行轮询，这两种情况和异步调用的初衷有点相违背。于是笔者想结合目前了解到的<code>Future</code>实现原理的前提下扩展出支持（监听）回调的<code>Future</code>，思路上参考了<code>Guava</code>增强的<code>ListenableFuture</code>。本文编写的时候使用的JDK是JDK11，代码可以在JDK[8,12]版本上运行，其他版本可能不适合。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/07/02/java-concurrency-listenable-future/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/ListenableFuture/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> ListenableFuture</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/06/23/java-concurrency-thread-state/">
+      Java线程生命周期与状态切换
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年6月23日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：4.6k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：19分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-10-04T10:33:57+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年10月4日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <h1>Java线程生命周期与状态切换</h1>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/j-t-l-s-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近有点懒散，没什么比较有深度的产出。刚好想重新研读一下JUC线程池的源码实现，在此之前先深入了解一下Java中的线程实现，包括线程的生命周期、状态切换以及线程的上下文切换等等。编写本文的时候，使用的JDK版本是11。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/06/23/java-concurrency-thread-state/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/Thread/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Thread</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/05/20/interview-problem-double-thread-print-odd-even-alternately/">
+      经典面试题-两个线程交替打印奇数和偶数
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年5月20日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：968字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：4分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-09T11:48:05+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201906/i-p-d-t-p-o-e-logo.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>今天下班时候和同事聊天偶然听到面试题“两个线程交替打印奇数和偶数”的实现，这里做一个复盘。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/05/20/interview-problem-double-thread-print-odd-even-alternately/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/Concurrency/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Concurrency</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/04/30/java-object-wait-notify/">
+      深入理解Object提供的阻塞和唤醒API
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年4月30日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：5.2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：22分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-05-01T17:27:19+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年5月1日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <h1>深入理解Object提供的阻塞和唤醒API</h1>
+<h2 id="前提">前提</h2>
+<p>前段时间花了大量时间去研读JUC中同步器<code>AbstractQueuedSynchronizer</code>的源码实现，再结合很久之前看过的一篇关于<code>Object</code>提供的等待和唤醒机制的JVM实现，发现两者有不少的关联，于是决定重新研读一下<code>Object</code>中提供的阻塞和唤醒方法。本文阅读JDK类库源码使用的JDK版本是JDK11，因为本文内容可能不适合于其他版本。</p>
+<h2 id="Object提供的阻塞和唤醒API">Object提供的阻塞和唤醒API</h2>
+<p><code>java.lang.Object</code>作为所有非基本类型的基类，也就是说所有<code>java.lang.Object</code>的子类都具备阻塞和唤醒的功能。下面详细分析<code>Object</code>提供的阻塞和唤醒API。</p>
+<h3 id="阻塞等待-wait">阻塞等待-wait</h3>
+<p>等待-<code>wait()</code>方法提供了阻塞的功能，分超时和永久阻塞的版本，实际上，底层只提供了一个JNI方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个是底层提供的JNI方法，带超时的阻塞等待，响应中断，其他两个只是变体</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeoutMillis)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 变体方法1，永久阻塞，响应中断</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    wait(<span class="number">0L</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 变体方法2，带超时的阻塞，超时时间分两段：毫秒和纳秒，实际上纳秒大于0直接毫秒加1(这么暴力...)，响应中断</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeoutMillis, <span class="keyword">int</span> nanos)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (timeoutMillis &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"timeoutMillis value is negative"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (nanos &lt; <span class="number">0</span> || nanos &gt; <span class="number">999999</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"nanosecond timeout value out of range"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (nanos &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        timeoutMillis++;</span><br><span class="line">    &#125;</span><br><span class="line">    wait(timeoutMillis);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是只有一个<code>wait(long timeoutMillis)</code>方法是JNI接口，其他两个方法相当于：</p>
+<ul>
+<li><code>wait()</code>等价于<code>wait(0L)</code>。</li>
+<li><code>wait(long timeoutMillis, int nanos)</code>在参数合法的情况下等价于<code>wait(timeoutMillis + 1L)</code>。</li>
+</ul>
+<p>由于<code>wait(long timeoutMillis, int nanos)</code>是参数最完整的方法，它的API注释特别长，这里直接翻译和摘取它注释中的核心要素：</p>
+<ol>
+<li>当前线程阻塞等待直到被唤醒，唤醒的情况一般有三种：notify(All)被调用、线程被中断或者在指定了超时阻塞的情况下超过了指定的阻塞时间。</li>
+<li>当前线程必须获取此对象的监视器锁(<strong>monitor lock</strong>)，也就是<strong>调用阻塞等待方法之前一个线程必须成为此对象的监视器锁的拥有者</strong>。</li>
+<li>调用了<code>wait()</code>方法之后，当前线程会把自身放到当前对象的等待集合(wait-set)，然后释放所有在此对象上的同步声明(then to relinquish any nd all synchronization claims on this object)，谨记只有当前对象上的同步声明会被释放，当前线程在其他对象上的同步锁只有在调用其<code>wait()</code>方法之后才会释放。</li>
+<li><strong>Warning</strong>：线程被唤醒之后(<code>notify()</code>或者中断)就会从等待集合(wait-set)中移除并且重新允许被线程调度器调度。通常情况下，这个被唤醒的线程会与其他线程竞争对象上的同步权(锁)，一旦线程重新<strong>控制了对象(regained control of the object)</strong>，它对对象的所有同步声明都恢复到以前的状态，即恢复到调用<code>wait()</code>方法时(笔者认为，其实准确来说，是调用<code>wait()</code>方法前)的状态。</li>
+<li>如果任意线程在它调用了<code>wait()</code>之前，或者调用过<code>wait()</code>方法之后处于阻塞等待状态，一旦线程调用了<code>Thread#interrupt()</code>，线程就会中断并且抛出<code>InterruptedException</code>异常，线程的中断状态会被清除。<code>InterruptedException</code>异常会延迟到在第4点提到&quot;它对对象的所有同步声明都恢复到以前的状态&quot;的时候抛出。</li>
+</ol>
+<p>值得注意的还有：</p>
+<p><strong>一个线程必须成为此对象的监视器锁的拥有者才能正常调用<code>wait()</code>系列方法，也就是<code>wait()</code>系列方法必须在同步代码块(<code>synchronized</code>代码块)中调用，否则会抛出<code>IllegalMonitorStateException</code>异常</strong>，这一点是初学者或者不了解<code>wait()</code>的机制的开发者经常会犯的问题。</p>
+<p>上面的五点描述可以写个简单的同步代码块伪代码时序总结一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line"><span class="keyword">synchronized</span>(lock)&#123;</span><br><span class="line">    <span class="number">1</span>、线程进入同步代码块，意味着获取对象监视器锁成功</span><br><span class="line">    <span class="keyword">while</span>(!condition)&#123;</span><br><span class="line">        lock.wait();   <span class="number">2</span>.线程调用wait()进行阻塞等待</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">3</span>.线程从wait()的阻塞等待中被唤醒，恢复到第<span class="number">1</span>步之后的同步状态</span><br><span class="line">    <span class="number">4</span>.继续执行后面的代码，直到离开同步代码块</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="唤醒-notify">唤醒-notify</h3>
+<p><code>notify()</code>方法的方法签名如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>下面按照惯例翻译一下其API注释：</p>
+<ol>
+<li>唤醒一个阻塞等待在此对象监视器上的线程，(如果存在多个阻塞线程)至于选择哪一个线程进行唤醒是任意的，取决于具体的现实，一个线程通过调用<code>wait()</code>方法才能阻塞在对象监视器上。</li>
+<li>被唤醒的线程并不会马上继续执行，直到当前线程(也就是当前调用了<code>notify()</code>方法的线程)释放对象上的锁。被唤醒的线程会与其他线程竞争在对象上进行同步(换言之只有获得对象的同步控制权才能继续执行)，在成为下一个锁定此对象的线程时，被唤醒的线程没有可靠的特权或劣势。</li>
+<li>此方法只有在一个线程获取了此对象监视器的所有权(the owner)的时候才能调用，具体就是：同步方法中、同步代码块中或者静态同步方法中。否则，会抛出<code>IllegalMonitorStateException</code>异常。</li>
+</ol>
+<h3 id="唤醒所有-notifyAll">唤醒所有-notifyAll</h3>
+<p><code>notifyAll()</code>方法的方法签名如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@HotSpotIntrinsicCandidate</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notifyAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>唤醒所有阻塞等待在此对象监视器上的线程，一个线程通过调用<code>wait()</code>方法才能阻塞在对象监视器上。</li>
+</ol>
+<p>其他注释的描述和<code>notify()</code>方法类似。</p>
+<h3 id="小结">小结</h3>
+<p>我们经常看到的资料中提到<code>synchronized</code>关键字的用法：</p>
+<ul>
+<li>普通同步方法，同步或者说锁定的是当前实例对象。</li>
+<li>静态同步方法，同步或者说锁定的是当前实例对象的<code>Class</code>对象。</li>
+<li>同步代码块，同步或者说锁定的是括号里面的实例对象。</li>
+</ul>
+<p>对于同步代码块而言，<code>synchronized</code>关键字抽象到字节码层面就是同步代码块中的字节码执行在<code>monitorenter</code>和<code>monitorexit</code>指令之间：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(xxxx)&#123;</span><br><span class="line"></span><br><span class="line">    ...coding block</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">↓↓↓↓↓↓↓↓↓↓</span><br><span class="line"></span><br><span class="line">monitorenter;</span><br><span class="line">...coding block - bytecode</span><br><span class="line">monitorexit;</span><br></pre></td></tr></table></figure>
+<p>JVM需要保证每一个monitorenter都有一个monitorexit与之相对应。任何对象都有一个monitor(实际上是<code>ObjectMonitor</code>)与之相关联，当且一个monitor被持有之后，它将处于锁定状态。线程执行到monitorenter指令时，将会尝试获取对象所对应的monitor所有权，即尝试获取对象的锁。</p>
+<p>对于同步(静态)方法而言，<code>synchronized</code>方法则会被翻译成普通的方法调用和返回指令，如：<code>invokevirtual</code>等等，在JVM字节码层面并没有任何特别的指令来实现被<code>synchronized</code>修饰的方法，而是在<code>Class</code>文件的方法表中将该方法的<code>access_flags</code>字段中的<code>synchronized</code>标志位置1，表示该方法是同步方法并使用调用该方法的对象或该方法所属的<code>Class</code>在JVM的内部对象表示<code>Klass</code>做为锁对象。</p>
+<p>其实从开发者角度简单理解，<strong>这两种方式只是在获取锁的时机有所不同</strong>。</p>
+<p>下面重复阐述<strong>几个第一眼看起来不合理却是事实的问题</strong>(其实前文已经提及过)：</p>
+<ol>
+<li>在线程进入<code>synchronized</code>方法或者代码块，相当于获取监视器锁成功，如果此时成功调用<code>wait()</code>系列方法，那么它会立即释放监视器锁，并且添加到等待集合(Wait Set)中进行阻塞等待。</li>
+<li>由于已经有线程释放了监视器锁，那么在另一个线程进入<code>synchronized</code>方法或者代码块之后，它可以调用<code>notify(All)</code>方法唤醒等待集合中正在阻塞的线程，但是这个唤醒操作并不是调用<code>notify(All)</code>方法后立即生效，而是在该线程退出<code>synchronized</code>方法或者代码块之后才生效。</li>
+<li>从<code>wait()</code>方法阻塞过程中被唤醒的线程会竞争监视器目标对象的控制权，一旦重新控制了对象，那么线程的同步状态就会恢复到步入<code>synchronized</code>方法或者代码块时候的状态(也就是成功获取到对象监视器锁时候的状态)，这个时候线程才能够继续执行。</li>
+</ol>
+<p>为了验证这三点，可以写个简单的Demo：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Lock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Getter</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WaitMain</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DateTimeFormatter F = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss.SSS"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Lock lock = <span class="keyword">new</span> Lock();</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span>  WaitRunnable(lock), <span class="string">"WaitThread-1"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span>  WaitRunnable(lock), <span class="string">"WaitThread-2"</span>).start();</span><br><span class="line">        Thread.sleep(<span class="number">50</span>);</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span>  NotifyRunnable(lock), <span class="string">"NotifyThread"</span>).start();</span><br><span class="line">        Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WaitRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Lock lock;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-线程[%s]获取锁成功,准备执行wait方法"</span>, F.format(LocalDateTime.now()),</span><br><span class="line">                        Thread.currentThread().getName()));</span><br><span class="line">                <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        lock.wait();</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        <span class="comment">//ignore</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    System.out.println(String.format(<span class="string">"[%s]-线程[%s]从wait中唤醒,准备exit"</span>, F.format(LocalDateTime.now()),</span><br><span class="line">                            Thread.currentThread().getName()));</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">500</span>);</span><br><span class="line">                    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                        <span class="comment">//ignore</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequiredArgsConstructor</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">NotifyRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Lock lock;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-线程[%s]获取锁成功,准备执行notifyAll方法"</span>, F.format(LocalDateTime.now()),</span><br><span class="line">                        Thread.currentThread().getName()));</span><br><span class="line">                lock.notifyAll();</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-线程[%s]先休眠3000ms"</span>, F.format(LocalDateTime.now()),</span><br><span class="line">                        Thread.currentThread().getName()));</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="comment">//ignore</span></span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-线程[%s]准备exit"</span>, F.format(LocalDateTime.now()),</span><br><span class="line">                        Thread.currentThread().getName()));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>某个时刻的执行结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">17.617</span>]-线程[WaitThread-<span class="number">1</span>]获取锁成功,准备执行wait方法</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">17.631</span>]-线程[WaitThread-<span class="number">2</span>]获取锁成功,准备执行wait方法</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">17.657</span>]-线程[NotifyThread]获取锁成功,准备执行notifyAll方法 &lt;-------- 这一步执行完说明WaitThread已经释放了锁</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">17.657</span>]-线程[NotifyThread]先休眠<span class="number">3000</span>ms</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">20.658</span>]-线程[NotifyThread]准备exit &lt;------- 这一步后NotifyThread离开同步代码块</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">20.658</span>]-线程[WaitThread-<span class="number">1</span>]从wait中唤醒,准备exit &lt;------- 这一步WaitThread-<span class="number">1</span>解除阻塞</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">27</span> <span class="number">23</span>:<span class="number">28</span>:<span class="number">21.160</span>]-线程[WaitThread-<span class="number">2</span>]从wait中唤醒,准备exit &lt;------- 这一步WaitThread-<span class="number">2</span>解除阻塞，注意发生时间在WaitThread-<span class="number">1</span>解除阻塞<span class="number">500</span>ms之后，符合我们前面提到的第<span class="number">3</span>点</span><br></pre></td></tr></table></figure>
+<p>如果结合<code>wait()</code>和<code>notify()</code>可以简单总结出一个同步代码块的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待</span></span><br><span class="line"><span class="keyword">synchronized</span>(lock)&#123;</span><br><span class="line">    <span class="number">1</span>、线程进入同步代码块，意味着获取对象监视器锁成功</span><br><span class="line">    <span class="keyword">while</span>(!condition)&#123;</span><br><span class="line">        lock.wait();   <span class="number">2</span>.线程调用wait()进行阻塞等待</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="number">3</span>.线程从wait()的阻塞等待中被唤醒，尝试恢复第<span class="number">1</span>步之后的同步状态，并不会马上生效，直到notify被调用并且调用notify方法的线程已经释放锁，同时当前线程需要竞争成功</span><br><span class="line">    <span class="number">4</span>.继续执行后面的代码，直到离开同步代码块</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 唤醒</span></span><br><span class="line"><span class="keyword">synchronized</span>(lock)&#123;</span><br><span class="line">    <span class="number">1</span>、线程进入同步代码块，意味着获取对象监视器锁成功</span><br><span class="line">    lock.notify();  <span class="number">2</span>.唤醒其中一个在对象监视器上等待的线程</span><br><span class="line">    <span class="number">3</span>.准备推出同步代码块释放锁，只有释放锁之后第<span class="number">2</span>步才会生效</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="图解Object提供的阻塞和唤醒机制">图解Object提供的阻塞和唤醒机制</h2>
+<p>结合前面分析过的知识点以及参考资料中的文章，重新画一个图理解一下对象监视器以及相应阻塞和唤醒API的工作示意过程：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201904/j-u-c-o-w-n-1.png" alt="j-u-c-o-w-n-1.png"></p>
+<ul>
+<li>Entry Set(实际上是<code>ObjectMonitor</code>中的_EntryList属性)：存放等待锁并且处于阻塞状态的线程。</li>
+<li>Wait Set(实际上是<code>ObjectMonitor</code>中的_WaitSet属性)：存放处于等待阻塞状态的线程。</li>
+<li>The Owner(实际上是<code>ObjectMonitor</code>中的_owner属性)：指向获得对象监视器的线程，在同一个时刻只能有一个线程被The Owner持有，通俗来看，它就是监视器的控制权。</li>
+</ul>
+<h2 id="使用例子">使用例子</h2>
+<p>通过<code>Object</code>提供的阻塞和唤醒机制举几个简单的使用例子。</p>
+<h3 id="维修厕所的例子">维修厕所的例子</h3>
+<p>假设有以下场景：厕所只有一个卡位，厕所维修工修厕所的时候，任何人不能上厕所。当厕所维修工修完厕所的时候，上厕所的人需要&quot;得到厕所的控制权&quot;才能上厕所。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 厕所类</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Toilet</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 厕所的锁</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> available;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> lock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAvailable</span><span class="params">(<span class="keyword">boolean</span> available)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.available = available;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getAvailable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> available;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 厕所维修工</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ToiletRepairer</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DateTimeFormatter F = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss.SSS"</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Toilet toilet;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (toilet.getLock()) &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"[%s]-厕所维修员得到了厕所的锁,维修厕所要用5000ms..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="comment">// ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">            toilet.setAvailable(<span class="keyword">true</span>);</span><br><span class="line">            toilet.getLock().notifyAll();</span><br><span class="line">            System.out.println(String.format(<span class="string">"[%s]-厕所维修员维修完毕..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//上厕所的任务</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ToiletTask</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DateTimeFormatter F = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss.SSS"</span>);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Toilet toilet;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random random;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (toilet.getLock()) &#123;</span><br><span class="line">            System.out.println(String.format(<span class="string">"[%s]-%s得到了厕所的锁..."</span>, LocalDateTime.now().format(F), name));</span><br><span class="line">            <span class="keyword">while</span> (!toilet.getAvailable()) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    toilet.getLock().wait();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="comment">//ignore</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">int</span> time = random.nextInt(<span class="number">3</span>) + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// 模拟上厕所用时</span></span><br><span class="line">                    TimeUnit.SECONDS.sleep(time);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="comment">//ignore</span></span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-%s上厕所用了%s秒..."</span>, LocalDateTime.now().format(F), name, time));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 场景入口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Toilet toilet = <span class="keyword">new</span> Toilet();</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        Thread toiletRepairer = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ToiletRepairer(toilet), <span class="string">"ToiletRepairer"</span>);</span><br><span class="line">        Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ToiletTask(toilet, <span class="string">"张三"</span>, random), <span class="string">"thread-1"</span>);</span><br><span class="line">        Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ToiletTask(toilet, <span class="string">"李四"</span>, random), <span class="string">"thread-2"</span>);</span><br><span class="line">        Thread thread3 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ToiletTask(toilet, <span class="string">"王五"</span>, random), <span class="string">"thread-3"</span>);</span><br><span class="line">        thread1.start();</span><br><span class="line">        thread2.start();</span><br><span class="line">        thread3.start();</span><br><span class="line">        Thread.sleep(<span class="number">50</span>);</span><br><span class="line">        toiletRepairer.start();</span><br><span class="line">        Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>某次执行的结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">25.914</span>]-张三得到了厕所的锁...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">25.931</span>]-李四得到了厕所的锁...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">25.931</span>]-王五得到了厕所的锁...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">25.951</span>]-厕所维修员得到了厕所的锁,维修厕所要用<span class="number">5000</span>ms...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">30.951</span>]-厕所维修员维修完毕...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">32.952</span>]-张三上厕所用了<span class="number">2</span>秒...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">35.952</span>]-王五上厕所用了<span class="number">3</span>秒...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">01</span>:<span class="number">07</span>:<span class="number">37.953</span>]-李四上厕所用了<span class="number">2</span>秒...</span><br></pre></td></tr></table></figure>
+<h3 id="阻塞队列实现">阻塞队列实现</h3>
+<p>实现一个简单固定容量的阻塞队列，接口如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BlockingQueue</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">put</span><span class="params">(T value)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>put(T value)</code>会阻塞直到队列中有可用的容量，而<code>take()</code>方法会阻塞直到有元素投放到队列中。实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultBlockingQueue</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">BlockingQueue</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object[] elements;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object notEmpty = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object notFull = <span class="keyword">new</span> Object();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> count;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> takeIndex;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> putIndex;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DefaultBlockingQueue</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.elements = <span class="keyword">new</span> Object[capacity];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(T value)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (notFull) &#123;</span><br><span class="line">            <span class="keyword">while</span> (count == elements.length) &#123;</span><br><span class="line">                notFull.wait();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> Object[] items = <span class="keyword">this</span>.elements;</span><br><span class="line">        items[putIndex] = value;</span><br><span class="line">        <span class="keyword">if</span> (++putIndex == items.length) &#123;</span><br><span class="line">            putIndex = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">synchronized</span> (notEmpty) &#123;</span><br><span class="line">            notEmpty.notify();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (notEmpty) &#123;</span><br><span class="line">            <span class="keyword">while</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                notEmpty.wait();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> Object[] items = <span class="keyword">this</span>.elements;</span><br><span class="line">        T value = (T) items[takeIndex];</span><br><span class="line">        items[takeIndex] = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (++takeIndex == items.length) &#123;</span><br><span class="line">            takeIndex = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        count--;</span><br><span class="line">        <span class="keyword">synchronized</span> (notFull) &#123;</span><br><span class="line">            notFull.notify();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>场景入口类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        BlockingQueue&lt;String&gt; queue = <span class="keyword">new</span> DefaultBlockingQueue&lt;&gt;(<span class="number">5</span>);</span><br><span class="line">        Runnable r = () -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    String take = queue.take();</span><br><span class="line">                    System.out.println(String.format(<span class="string">"线程%s消费消息-%s"</span>, Thread.currentThread().getName(), take));</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">new</span> Thread(r, <span class="string">"thread-1"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(r, <span class="string">"thread-2"</span>).start();</span><br><span class="line"></span><br><span class="line">        IntStream.range(<span class="number">0</span>, <span class="number">10</span>).forEach(i -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                queue.put(String.valueOf(i));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>某次执行结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">线程thread-<span class="number">1</span>消费消息-<span class="number">0</span></span><br><span class="line">线程thread-<span class="number">2</span>消费消息-<span class="number">1</span></span><br><span class="line">线程thread-<span class="number">1</span>消费消息-<span class="number">2</span></span><br><span class="line">线程thread-<span class="number">2</span>消费消息-<span class="number">3</span></span><br><span class="line">线程thread-<span class="number">1</span>消费消息-<span class="number">4</span></span><br><span class="line">线程thread-<span class="number">2</span>消费消息-<span class="number">5</span></span><br><span class="line">线程thread-<span class="number">1</span>消费消息-<span class="number">6</span></span><br><span class="line">线程thread-<span class="number">2</span>消费消息-<span class="number">7</span></span><br><span class="line">线程thread-<span class="number">1</span>消费消息-<span class="number">8</span></span><br><span class="line">线程thread-<span class="number">2</span>消费消息-<span class="number">9</span></span><br></pre></td></tr></table></figure>
+<p>上面这个例子就是简单的单生产者-多消费者的模型。</p>
+<h3 id="线程池实现">线程池实现</h3>
+<p>这里实现一个极度简陋的固定容量的线程池，功能是：初始化固定数量的活跃线程，阻塞直到有可用的线程用于提交任务。它只有一个接口方法，接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ThreadPool</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable runnable)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultThreadPool</span> <span class="keyword">implements</span> <span class="title">ThreadPool</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> capacity;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Worker&gt; initWorkers;</span><br><span class="line">    <span class="keyword">private</span> Deque&lt;Worker&gt; availableWorkers;</span><br><span class="line">    <span class="keyword">private</span> Deque&lt;Worker&gt; busyWorkers;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object nextLock = <span class="keyword">new</span> Object();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DefaultThreadPool</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.capacity = capacity;</span><br><span class="line">        init(capacity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        initWorkers = <span class="keyword">new</span> ArrayList&lt;&gt;(capacity);</span><br><span class="line">        availableWorkers = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        busyWorkers = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; capacity; i++) &#123;</span><br><span class="line">            Worker worker = <span class="keyword">new</span> Worker();</span><br><span class="line">            worker.setName(<span class="string">"Worker-"</span> + (i + <span class="number">1</span>));</span><br><span class="line">            worker.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">            initWorkers.add(worker);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (Worker w : initWorkers) &#123;</span><br><span class="line">            w.start();</span><br><span class="line">            availableWorkers.add(w);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == runnable) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">synchronized</span> (nextLock) &#123;</span><br><span class="line">            <span class="keyword">while</span> (availableWorkers.size() &lt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    nextLock.wait(<span class="number">500</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="comment">//ignore</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            Worker worker = availableWorkers.removeFirst();</span><br><span class="line">            busyWorkers.add(worker);</span><br><span class="line">            worker.run(runnable);</span><br><span class="line">            nextLock.notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">makeAvailable</span><span class="params">(Worker worker)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (nextLock) &#123;</span><br><span class="line">            availableWorkers.add(worker);</span><br><span class="line">            busyWorkers.remove(worker);</span><br><span class="line">            nextLock.notifyAll();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Worker</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> Object lock = <span class="keyword">new</span> Object();</span><br><span class="line">        <span class="keyword">private</span> Runnable runnable;</span><br><span class="line">        <span class="keyword">private</span> AtomicBoolean run = <span class="keyword">new</span> AtomicBoolean(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(Runnable runnable)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">null</span> != <span class="keyword">this</span>.runnable) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Already running a Runnable!"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">this</span>.runnable = runnable;</span><br><span class="line">                lock.notifyAll();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">boolean</span> ran = <span class="keyword">false</span>;</span><br><span class="line">            <span class="keyword">while</span> (run.get()) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                        <span class="keyword">while</span> (runnable == <span class="keyword">null</span> &amp;&amp; run.get()) &#123;</span><br><span class="line">                            lock.wait(<span class="number">500</span>);</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">if</span> (runnable != <span class="keyword">null</span>) &#123;</span><br><span class="line">                            ran = <span class="keyword">true</span>;</span><br><span class="line">                            runnable.run();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                    <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">                        runnable = <span class="keyword">null</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (ran) &#123;</span><br><span class="line">                        ran = <span class="keyword">false</span>;</span><br><span class="line">                        makeAvailable(<span class="keyword">this</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>场景类入口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> DateTimeFormatter F = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd HH:mm:ss.SSS"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        ThreadPool threadPool = <span class="keyword">new</span> DefaultThreadPool(<span class="number">2</span>);</span><br><span class="line">        threadPool.execute(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务一开始执行持续3秒..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">                Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务一执行结束..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadPool.execute(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务二开始执行持续4秒..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">                Thread.sleep(<span class="number">4000</span>);</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务二执行结束..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        threadPool.execute(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务三开始执行持续5秒..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                System.out.println(String.format(<span class="string">"[%s]-任务三执行结束..."</span>, LocalDateTime.now().format(F)));</span><br><span class="line">            &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                <span class="comment">//ignore</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>某次执行结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">25.465</span>]-任务二开始执行持续<span class="number">4</span>秒...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">25.465</span>]-任务一开始执行持续<span class="number">3</span>秒...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">28.486</span>]-任务一执行结束...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">28.486</span>]-任务三开始执行持续<span class="number">5</span>秒...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">29.486</span>]-任务二执行结束...</span><br><span class="line">[<span class="number">2019</span>-<span class="number">04</span>-<span class="number">29</span> <span class="number">02</span>:<span class="number">07</span>:<span class="number">33.487</span>]-任务三执行结束...</span><br></pre></td></tr></table></figure>
+<h2 id="小结-2">小结</h2>
+<p>鉴于笔者C语言学得不好，这里就无法深入分析JVM源码的实现，只能结合一些现有的资料和自己的理解重新梳理一下<code>Object</code>提供的阻塞和唤醒机制这些知识点。结合之前看过JUC同步器的源码，一时醒悟过来，JUC同步器只是在数据结构和算法层面使用Java语言对原来JVM中C语言的阻塞和唤醒机制即<code>Object</code>提供的那几个JNI方法进行了一次实现而已。</p>
+<p>最后，<code>Object</code>提供的阻塞等待唤醒机制是JVM实现的(如果特别熟悉C语言可以通过JVM源码研究其实现，对于大部分开发者来说是黑箱)，除非是特别熟练或者是JDK版本太低尚未引入JUC包，一般情况下不应该优先选择<code>Object</code>，而应该考虑专门为并发设计的JUC包中的类库。</p>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://www.jianshu.com/p/f4454164c017" target="_blank" rel="noopener">JVM源码分析之Object.wait/notify实现-By占小狼</a></li>
+<li><a href="http://cmsblogs.com/?p=2071" target="_blank" rel="noopener">死磕Java并发-深入分析synchronized的实现原理</a></li>
+<li>JDK11相关源码</li>
+</ul>
+<p>(本文完 c-7-d e-a-20190430)</p>
+
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/Object/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Object</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/04/07/java-juc-aqs-source-code/">
+      JUC同步器框架AbstractQueuedSynchronizer源码图文分析
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年4月7日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：14.2k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：58分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-09T11:54:33+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月9日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201905/j-a-q-s-9.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>Doug Lea大神在编写JUC(<code>java.util.concurrent</code>)包的时候引入了<code>java.util.concurrent.locks.AbstractQueuedSynchronizer</code>，Abstract Queued Synchronizer，也就是&quot;基于队列实现的抽象同步器&quot;，一般我们称之为AQS。其实Doug Lea大神编写AQS是有严谨的理论基础的，他的个人博客上有一篇论文《<a href="http://gee.cs.oswego.edu/dl/papers/aqs.pdf" target="_blank" rel="noopener">The java.util.concurrent Synchronizer Framework</a>》，文章在<a href="http://ifeve.com" target="_blank" rel="noopener">http://ifeve.com</a>上可以找到相关的译文(《JUC同步器框架》)，如果想要深入研究AQS必须要理解一下该论文的内容，然后详细分析一下AQS的源码实现。本文在阅读AQS源码的时候选用的JDK版本是JDK11。</p>
+<h2 id="AQS的主要功能">AQS的主要功能</h2>
+<p>AQS是JUC包中用于构建锁或者其他同步组件(信号量、事件等)的基础框架类。AQS从它的实现上看主要提供了下面的功能：</p>
+<ul>
+<li>同步状态的原子性管理。</li>
+<li>线程的阻塞和解除阻塞。</li>
+<li>提供阻塞线程的存储队列。</li>
+</ul>
+<p>基于这三大功能，衍生出下面的附加功能：</p>
+<ul>
+<li>通过中断实现的任务取消，基于线程中断实现。</li>
+<li>可选的超时设置，也就是调用者可以选择放弃等待。</li>
+<li>定义了<code>Condition接口</code>，用于支持管程形式的await/signal/signalAll操作，代替了<code>Object</code>类基于JNI提供的wait/notify/notifyAll。</li>
+</ul>
+<p><code>AQS</code>还根据同步状态的不同管理方式区分为两种不同的实现：<strong>独占状态的同步器</strong>和<strong>共享状态的同步器</strong>。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/04/07/java-juc-aqs-source-code/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/AQS/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> AQS</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+        
+          <div class='post-wrapper'>
+            <article class="post white-box card-shadow  reveal ">
+  
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  <h2 class="title">
+    <a href="/2019/02/17/java-concurrency-threadlocal-source-code/">
+      ThreadLocal源码分析-黄金分割数的使用
+    </a>
+  </h2>
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年2月17日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Java/Concurrency/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Java&nbsp;/&nbsp;Concurrency</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：6.4k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：27分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-06-23T23:25:45+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年6月23日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      <p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/201901/g-t-2.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>最近接触到的一个项目要兼容新老系统，最终采用了<code>ThreadLocal</code>(实际上用的是<code>InheritableThreadLocal</code>)用于在子线程获取父线程中共享的变量。问题是解决了，但是后来发现对<code>ThreadLocal</code>的理解不够深入，于是顺便把它的源码阅读理解了一遍。在谈到<code>ThreadLocal</code>之前先买个关子，先谈谈黄金分割数。本文在阅读<code>ThreadLocal</code>源码的时候是使用JDK8(1.8.0_181)。</p>
+      
+        
+          <div class="button readmore">
+            <a href="/2019/02/17/java-concurrency-threadlocal-source-code/" class="flat-box">
+              <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
+              阅读全文
+            </a>
+          </div>
+        
+      
+    </div>
+    <!-- 
+      <div class="full-width auto-padding tags">
+        
+          <a href="/blog/tags/Java/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Java</a>
+        
+          <a href="/blog/tags/ThreadLocal/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> ThreadLocal</a>
+        
+      </div>
+     -->
+  </section>
+</article>
+
+          </div>
+        
+      
+    
+  </section>
+  
+    
+    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+    
+    
+
+  
+
+
+    
+  
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+          <section class='widget card-shadow  blogger'>
+  <div class='content'>
+    
+      <div class='avatar'>
+        <img class='avatar' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg'/>
+      </div>
+    
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="/atom.xml"
+              class="social fas fa-rss fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="mailto:739805340@qq.com"
+              class="social fas fa-envelope fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/zjcscut"
+              class="social fab fa-github fa-lg flat-btn"
+              target="_blank"
+              rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  category'>
+    <header>
+  <div>
+    
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i><span class='name'>文章分类</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/categories/"
+    title="categories/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <ul class="entry navigation">
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Framework/" href="/blog/categories/Framework/"
+            id="blogcategoriesFramework"
+            ><div class='name'>Framework</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Archunit/" href="/blog/categories/Framework/Archunit/"
+            id="blogcategoriesFrameworkArchunit"
+            ><div class='name'>Archunit</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Cglib/" href="/blog/categories/Framework/Cglib/"
+            id="blogcategoriesFrameworkCglib"
+            ><div class='name'>Cglib</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Hystrix/" href="/blog/categories/Framework/Hystrix/"
+            id="blogcategoriesFrameworkHystrix"
+            ><div class='name'>Hystrix</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Micrometer/" href="/blog/categories/Framework/Micrometer/"
+            id="blogcategoriesFrameworkMicrometer"
+            ><div class='name'>Micrometer</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Mybatis/" href="/blog/categories/Framework/Mybatis/"
+            id="blogcategoriesFrameworkMybatis"
+            ><div class='name'>Mybatis</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Framework/Zuul/" href="/blog/categories/Framework/Zuul/"
+            id="blogcategoriesFrameworkZuul"
+            ><div class='name'>Zuul</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Go/" href="/blog/categories/Go/"
+            id="blogcategoriesGo"
+            ><div class='name'>Go</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Go/Golang/" href="/blog/categories/Go/Golang/"
+            id="blogcategoriesGoGolang"
+            ><div class='name'>Golang</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/In-Action/" href="/blog/categories/In-Action/"
+            id="blogcategoriesIn-Action"
+            ><div class='name'>In Action</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/In-Action/Distributed-Transaction/" href="/blog/categories/In-Action/Distributed-Transaction/"
+            id="blogcategoriesIn-ActionDistributed-Transaction"
+            ><div class='name'>Distributed Transaction</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Java/" href="/blog/categories/Java/"
+            id="blogcategoriesJava"
+            ><div class='name'>Java</div><div class='badge'>(37)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Algorithm/" href="/blog/categories/Java/Algorithm/"
+            id="blogcategoriesJavaAlgorithm"
+            ><div class='name'>Algorithm</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Annotation/" href="/blog/categories/Java/Annotation/"
+            id="blogcategoriesJavaAnnotation"
+            ><div class='name'>Annotation</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Concurrency/" href="/blog/categories/Java/Concurrency/"
+            id="blogcategoriesJavaConcurrency"
+            ><div class='name'>Concurrency</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Design-Pattern/" href="/blog/categories/Java/Design-Pattern/"
+            id="blogcategoriesJavaDesign-Pattern"
+            ><div class='name'>Design Pattern</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Enum/" href="/blog/categories/Java/Enum/"
+            id="blogcategoriesJavaEnum"
+            ><div class='name'>Enum</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Functional-Programming/" href="/blog/categories/Java/Functional-Programming/"
+            id="blogcategoriesJavaFunctional-Programming"
+            ><div class='name'>Functional Programming</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Instrument/" href="/blog/categories/Java/Instrument/"
+            id="blogcategoriesJavaInstrument"
+            ><div class='name'>Instrument</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Introspector/" href="/blog/categories/Java/Introspector/"
+            id="blogcategoriesJavaIntrospector"
+            ><div class='name'>Introspector</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/JVM/" href="/blog/categories/Java/JVM/"
+            id="blogcategoriesJavaJVM"
+            ><div class='name'>JVM</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Lambda/" href="/blog/categories/Java/Lambda/"
+            id="blogcategoriesJavaLambda"
+            ><div class='name'>Lambda</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Netty/" href="/blog/categories/Java/Netty/"
+            id="blogcategoriesJavaNetty"
+            ><div class='name'>Netty</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Java/Reflection/" href="/blog/categories/Java/Reflection/"
+            id="blogcategoriesJavaReflection"
+            ><div class='name'>Reflection</div><div class='badge'>(8)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Life/" href="/blog/categories/Life/"
+            id="blogcategoriesLife"
+            ><div class='name'>Life</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Middleware/" href="/blog/categories/Middleware/"
+            id="blogcategoriesMiddleware"
+            ><div class='name'>Middleware</div><div class='badge'>(34)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Quartz/" href="/blog/categories/Middleware/Quartz/"
+            id="blogcategoriesMiddlewareQuartz"
+            ><div class='name'>Quartz</div><div class='badge'>(14)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/RabbitMQ/" href="/blog/categories/Middleware/RabbitMQ/"
+            id="blogcategoriesMiddlewareRabbitMQ"
+            ><div class='name'>RabbitMQ</div><div class='badge'>(9)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Redis/" href="/blog/categories/Middleware/Redis/"
+            id="blogcategoriesMiddlewareRedis"
+            ><div class='name'>Redis</div><div class='badge'>(10)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Middleware/Zookeeper/" href="/blog/categories/Middleware/Zookeeper/"
+            id="blogcategoriesMiddlewareZookeeper"
+            ><div class='name'>Zookeeper</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/MySQL/" href="/blog/categories/MySQL/"
+            id="blogcategoriesMySQL"
+            ><div class='name'>MySQL</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Netty/" href="/blog/categories/Netty/"
+            id="blogcategoriesNetty"
+            ><div class='name'>Netty</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Netty/Java/" href="/blog/categories/Netty/Java/"
+            id="blogcategoriesNettyJava"
+            ><div class='name'>Java</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SOFAStack/" href="/blog/categories/SOFAStack/"
+            id="blogcategoriesSOFAStack"
+            ><div class='name'>SOFAStack</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SOFAStack/Nacos/" href="/blog/categories/SOFAStack/Nacos/"
+            id="blogcategoriesSOFAStackNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring-Cloud/" href="/blog/categories/Spring-Cloud/"
+            id="blogcategoriesSpring-Cloud"
+            ><div class='name'>Spring Cloud</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/" href="/blog/categories/Spring-Cloud/Spring-Cloud-Gateway/"
+            id="blogcategoriesSpring-CloudSpring-Cloud-Gateway"
+            ><div class='name'>Spring Cloud Gateway</div><div class='badge'>(6)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/Spring/" href="/blog/categories/Spring/"
+            id="blogcategoriesSpring"
+            ><div class='name'>Spring</div><div class='badge'>(5)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/Prometheus/" href="/blog/categories/Spring/Prometheus/"
+            id="blogcategoriesSpringPrometheus"
+            ><div class='name'>Prometheus</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringBoot/" href="/blog/categories/Spring/SpringBoot/"
+            id="blogcategoriesSpringSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/Spring/SpringMVC/" href="/blog/categories/Spring/SpringMVC/"
+            id="blogcategoriesSpringSpringMVC"
+            ><div class='name'>SpringMVC</div><div class='badge'>(2)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/SpringBoot/" href="/blog/categories/SpringBoot/"
+            id="blogcategoriesSpringBoot"
+            ><div class='name'>SpringBoot</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box child"
+            title="/blog/categories/SpringBoot/Nacos/" href="/blog/categories/SpringBoot/Nacos/"
+            id="blogcategoriesSpringBootNacos"
+            ><div class='name'>Nacos</div><div class='badge'>(1)</div></a></li>
+        
+          <li><a class="flat-box"
+            title="/blog/categories/hexo/" href="/blog/categories/hexo/"
+            id="blogcategorieshexo"
+            ><div class='name'>hexo</div><div class='badge'>(1)</div></a></li>
+        
+      </ul>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+      
+        
+      
+        
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  tagcloud'>
+    <header>
+  <div>
+    
+      <i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span>
+    
+
+  </div>
+  
+    <a class="rightBtn"
+    
+      rel="external nofollow noopener noreferrer"
+    
+    
+      target="_self"
+    
+    href="/tags/"
+    title="tags/">
+    <i class="fas fa-expand-arrows-alt fa-fw"></i></a>
+  
+</header>
+
+    <div class='content'>
+      <a href="/blog/tags/AQS/" style="font-size: 14px; color: #999">AQS</a> <a href="/blog/tags/Algorithm/" style="font-size: 14px; color: #999">Algorithm</a> <a href="/blog/tags/Annotation/" style="font-size: 14px; color: #999">Annotation</a> <a href="/blog/tags/Archunit/" style="font-size: 14px; color: #999">Archunit</a> <a href="/blog/tags/Cglib/" style="font-size: 14.83px; color: #939393">Cglib</a> <a href="/blog/tags/Concurrency/" style="font-size: 14.83px; color: #939393">Concurrency</a> <a href="/blog/tags/Design-Pattern/" style="font-size: 14px; color: #999">Design Pattern</a> <a href="/blog/tags/Distributed-Transaction/" style="font-size: 14.83px; color: #939393">Distributed Transaction</a> <a href="/blog/tags/Enum/" style="font-size: 14px; color: #999">Enum</a> <a href="/blog/tags/ExecutorService/" style="font-size: 14px; color: #999">ExecutorService</a> <a href="/blog/tags/Framework/" style="font-size: 17.33px; color: #828282">Framework</a> <a href="/blog/tags/Go/" style="font-size: 14px; color: #999">Go</a> <a href="/blog/tags/Golang/" style="font-size: 14px; color: #999">Golang</a> <a href="/blog/tags/Hystrix/" style="font-size: 14px; color: #999">Hystrix</a> <a href="/blog/tags/In-Action/" style="font-size: 16.5px; color: #888">In Action</a> <a href="/blog/tags/Instrument/" style="font-size: 14px; color: #999">Instrument</a> <a href="/blog/tags/Introspector/" style="font-size: 14px; color: #999">Introspector</a> <a href="/blog/tags/JSR-310/" style="font-size: 17.33px; color: #828282">JSR-310</a> <a href="/blog/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/blog/tags/Java/" style="font-size: 24px; color: #555">Java</a> <a href="/blog/tags/Lambda/" style="font-size: 14px; color: #999">Lambda</a> <a href="/blog/tags/Life/" style="font-size: 14px; color: #999">Life</a> <a href="/blog/tags/ListenableFuture/" style="font-size: 14px; color: #999">ListenableFuture</a> <a href="/blog/tags/Micrometer/" style="font-size: 14.83px; color: #939393">Micrometer</a> <a href="/blog/tags/Middleware/" style="font-size: 23.17px; color: #5b5b5b">Middleware</a> <a href="/blog/tags/MySQL/" style="font-size: 14px; color: #999">MySQL</a> <a href="/blog/tags/Mybatis/" style="font-size: 14px; color: #999">Mybatis</a> <a href="/blog/tags/Nacos/" style="font-size: 14.83px; color: #939393">Nacos</a> <a href="/blog/tags/Netty/" style="font-size: 18.17px; color: #7d7d7d">Netty</a> <a href="/blog/tags/Object/" style="font-size: 14px; color: #999">Object</a> <a href="/blog/tags/Optional/" style="font-size: 14px; color: #999">Optional</a> <a href="/blog/tags/Quartz/" style="font-size: 22.33px; color: #606060">Quartz</a> <a href="/blog/tags/RabbitMQ/" style="font-size: 20.67px; color: #6c6c6c">RabbitMQ</a> <a href="/blog/tags/Redis/" style="font-size: 21.5px; color: #666">Redis</a> <a href="/blog/tags/Reference/" style="font-size: 14px; color: #999">Reference</a> <a href="/blog/tags/Reflection/" style="font-size: 19.83px; color: #717171">Reflection</a> <a href="/blog/tags/SOFAStack/" style="font-size: 14px; color: #999">SOFAStack</a> <a href="/blog/tags/Security/" style="font-size: 14px; color: #999">Security</a> <a href="/blog/tags/Spring/" style="font-size: 17.33px; color: #828282">Spring</a> <a href="/blog/tags/Spring-Cloud/" style="font-size: 18.17px; color: #7d7d7d">Spring Cloud</a> <a href="/blog/tags/Spring-Cloud-Gateway/" style="font-size: 19px; color: #777">Spring Cloud Gateway</a> <a href="/blog/tags/SpringBoot/" style="font-size: 15.67px; color: #8e8e8e">SpringBoot</a> <a href="/blog/tags/SpringCloud/" style="font-size: 14px; color: #999">SpringCloud</a> <a href="/blog/tags/SpringMVC/" style="font-size: 14.83px; color: #939393">SpringMVC</a> <a href="/blog/tags/Thread/" style="font-size: 14.83px; color: #939393">Thread</a> <a href="/blog/tags/ThreadLocal/" style="font-size: 14px; color: #999">ThreadLocal</a> <a href="/blog/tags/ThreadPoolExecutor/" style="font-size: 14px; color: #999">ThreadPoolExecutor</a> <a href="/blog/tags/Zookeeper/" style="font-size: 14px; color: #999">Zookeeper</a> <a href="/blog/tags/Zuul/" style="font-size: 14px; color: #999">Zuul</a> <a href="/blog/tags/hexo/" style="font-size: 14px; color: #999">hexo</a> <a href="/blog/tags/hexo-theme/" style="font-size: 14px; color: #999">hexo theme</a>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

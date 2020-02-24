@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>理解RabbitMQ中的AMQP-0-9-1模型 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2018/11/21/rabbitmq-amqp-model/">
+        理解RabbitMQ中的AMQP-0-9-1模型
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/RabbitMQ/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;RabbitMQ</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2018年11月21日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2018-11-22T23:38:56+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2018年11月22日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：5.8k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：20分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1>前提</h1>
+<p>之前有个打算在学习RabbitMQ之前，把AMQP详细阅读一次，挑出里面的重点内容。后来找了下RabbitMQ的官方文档，发现了有一篇文档专门介绍了RabbitMQ中实现的AMQP模型部分，于是直接基于此文档和个人理解写下这篇文章。</p>
+<h2 id="AMQP协议">AMQP协议</h2>
+<p><a href="http://www.amqp.org/" target="_blank" rel="noopener">AMQP</a>全称是Advanced Message Queuing Protocol，它是一个(分布式)消息传递协议，使用和符合此协议的客户端能够基于使用和符合此协议的消息传递中间件代理(Broker，也就是经纪人，个人感觉叫代理合口一些)进行通信。AMQP目前已经推出协议1.0，实现此协议的比较知名的产品有StormMQ、RabbitMQ、Apache Qpid等。RabbitMQ实现的AMQP版本是0.9.1，官方文档中也提供了该协议pdf文本下载，有兴趣可以翻阅一下。</p>
+<h2 id="消息中间件代理的职责">消息中间件代理的职责</h2>
+<p>Messaging Broker，这里称为消息中间件代理。它的职责是从发布者(Publisher，或者有些时候称为Producer，生产者)接收消息，然后把消息路由到消费者(Consumer，或者有些时候称为Listener，监听者)。</p>
+<p>因为消息中间件代理、发布者客户端和消费者客户端都是基于AMQP这一网络消息协议，所以消息中间件代理、发布者客户端和消费者客户端可以在不同的机器上，从而实现分布式通讯和服务解耦。</p>
+<p>消息中间件代理不仅仅提供了消息接收和消息路由这两个基本功能，还有其他高级的特性如消息持久化功能、监控功能等等。</p>
+<h2 id="AMQP-0-9-1在RabbitMQ中的基本模型">AMQP-0-9-1在RabbitMQ中的基本模型</h2>
+<p>AMQP-0-9-1模型的基本视图是：消息发布者将消息发布到交换器(Exchange)中，交换器的角色有点类似于日常见到的邮局或者信箱。然后，交换器把<strong>消息的副本</strong>分发到队列(Queue)中，分发消息的时候遵循的规则叫做绑定(Binding)。接着，消息中间件代理向订阅队列的消费者发送消息(push模式)，或者消费者也可以主动从队列中拉取消息(fetch/pull模式)。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-1.png" alt="r-a-m-1.png"></p>
+<p>发布者在发布消息的时候可以指定消息属性(消息元数据)，某些消息元数据可能由消息中间件代理使用，其他消息元数据对于消息中间件代理而言是不透明的，仅供消息消费者使用。</p>
+<p>由于网络是不可靠的，客户端可能无法接收消息或者处理消息失败，这个时候消息中间件代理无法感知消息是否正确传递到消费者中，因此AMQP模型提供了消息确认(Message Acknowledgement)的概念：当消息传递到消费者，消费者可以自动向消息中间件代理确认消息已经接收成功或者由应用程序开发者选择手动确认消息已经接收成功并且向消息中间件代理确认消息，消息中间件代理只有在接收到该消息(或者消息组)的确认通知后才会从队列中完全删除该消息。</p>
+<p>在某些情况下，交换器无法正确路由到队列中，那么该消息就会返回给发布者，或者丢弃，或者如果消息中间件代理实现了&quot;死信队列(Dead Letter Queue)&quot;扩展，消息会被放置到死信队列中。消息发布者可以选择使用对应的参数控制路由失败的处理策略。</p>
+<h2 id="交换器和交换器类型">交换器和交换器类型</h2>
+<p>交互器(Exchange)是消息发送的第一站目的地，它的作用就是就收消息并且将其路由到零个或者多个队列。路由消息的算法取决于交互器的类型和路由规则(也就是Binding)。RabbitMQ消息中间件代理支持四种类型的交互器，分别是：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">交换器类型</th>
+<th style="text-align:center">Broker默认预声明的交换器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Direct</td>
+<td style="text-align:center">(空字符串[(AMQP default)])和amq.direct</td>
+</tr>
+<tr>
+<td style="text-align:center">Fanout</td>
+<td style="text-align:center">amq.fanout</td>
+</tr>
+<tr>
+<td style="text-align:center">Topic</td>
+<td style="text-align:center">amq.topic</td>
+</tr>
+<tr>
+<td style="text-align:center">Headers</td>
+<td style="text-align:center">amq.match (和RabbitMQ中的amq.headers)</td>
+</tr>
+</tbody>
+</table>
+<p>声明交互器的时候需要提供一些列的属性，其中比较重要的属性如下：</p>
+<ul>
+<li>Name：交互器的名称。</li>
+<li>Type：交换器的类型。</li>
+<li>Durability：(交换器)持久化特性，如果启动此特性，则Broker重启后交换器依然存在，否则交换器会被删除。</li>
+<li>Auto-delete：是否自动删除，如果启用此特性，当最后一个队列解除与交换器的绑定关系，交换器会被删除。</li>
+<li>Arguments：可选参数，一般配合插件或者Broker的特性使用。</li>
+</ul>
+<p>之所以存在Durability和Auto-delete特性是因为并发所有的场景和用例都要求交互器是持久化的。</p>
+<h3 id="Direct交换器">Direct交换器</h3>
+<p>Direct类型的交换器基于消息路由键(RoutingKey)把消息传递到队列中。Direct交换器是消息单播路由的理想实现(当然，用于多播路由也可以)，它的工作原理如下：</p>
+<ul>
+<li>队列使用路由键K绑定到交换器。</li>
+<li>当具有路由键R的新消息到达交换器的时候，如果K = R，那么交换器会把消息传递到队列中。</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-4.png" alt="direct-exchange"></p>
+<h3 id="默认交换器">默认交换器</h3>
+<p>默认交换器(Default Exchange)是一种特殊的Direct交互器，它的名称是空字符串(也就是&quot;&quot;)，它由消息中间件代理预声明，在RabbitMQ Broker中，它在Web管理界面中的名称是<code>(AMQP default)</code>。每个新创建的队列都会绑定到默认交换器，路由键就是该队列的队列名，也就是所有的队列都可以通过默认交换器进行消息投递，只需要指定路由键为相应的队列名即可。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-5.png" alt="default-exchange"></p>
+<h3 id="Fanout交换器">Fanout交换器</h3>
+<p>Fanout其实是一个组合单词，fan也就是扇形，out就是向外发散的意思，Fanout交换器可以想象为&quot;扇形&quot;交换器。Fanout交换器会忽略路由键，它会路由消息到所有绑定到它的队列。也就是说，如果有N个队列绑定到一个Fanout交换器，当一个新的消息发布到该Fanout交换器，那么这条新消息的一个副本会分发到这N个队列中。Fanout交换器是消息广播路由的理想实现。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-6.png" alt="fanout-exchange"></p>
+<h3 id="Topic交换器">Topic交换器</h3>
+<p>Topic交换器基于路由键和绑定队列和交换器的模式进行匹配从而把消息路由到一个或者多个队列。绑定队列和交换器的Topic模式(这个模式串其实就是声明绑定时候的路由键，和消息发布的路由键并非同一个)一般使用点号(dot，也就是’.’)分隔，例如<code>source.target.key</code>，绑定模式支持通配符：</p>
+<ul>
+<li>符号<code>#</code>匹配一个或者多个词，例如：<code>source.target.#</code>可以匹配<code>source.target.doge</code>、<code>source.target.doge.throwable</code>等等。</li>
+<li>符号<code>*</code>只能匹配一个词，例如：<code>source.target.*</code>可以匹配<code>source.target.doge</code>、<code>source.target.throwable</code>等等。</li>
+</ul>
+<p>对每一条消息，Topic交换器会遍历所有的绑定关系，检查消息指定的路由键是否匹配绑定关系中的路由键，如果匹配，则将消息推送到相应队列。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-7.png" alt="topic-exchange"></p>
+<p>Topic交换器是消息多播路由的理想实现。</p>
+<h3 id="Headers交换器">Headers交换器</h3>
+<p>Headers交换器是一种不常用的交换器，它使用多个属性进行路由，这些属性一般称为消息头，它不使用路由键进行消息路由。消息头(Message Headers)是消息属性(消息元数据)部分，因此，使用Headers交换器在建立队列和交换器的绑定关系的时候需要指定一组键值对，发送消息到Headers交换器时候，需要在消息属性中携带一组键值对作为消息头。消息头属性支持匹配规则x-match如下：</p>
+<ul>
+<li>x-match = all：表示所有的键值对都匹配才能接受到消息。</li>
+<li>x-match = any：表示只要存在键值对匹配就能接受到消息。</li>
+</ul>
+<p>Headers交换器也是忽略路由键的，只依赖于消息属性中的消息头进行消息路由。</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-8.png" alt="headers-exchange"></p>
+<h2 id="队列">队列</h2>
+<p>AMQP 0-9-1模型中的队列与其他消息或者任务队列系统中的队列非常相似：它们存储应用程序所使用的消息。队列和交换器的基本属性有类似的地方：</p>
+<ul>
+<li>Name：队列名称。</li>
+<li>Durable：是否持久化，开启持久化意味着消息中间件代理重启后队列依然存在，否则队列会被删除。</li>
+<li>Exclusive：是否独占的，开启队列独占特性意味着队列只能被一个连接使用并且连接关闭之后队列会被删除。</li>
+<li>Auto-delete：是否自动删除，开启自动删除特性意味着队列至少有一个消费者并且最后一个消费者解除订阅状态(一般是消费者对应的通道关闭)后队列会自动删除。</li>
+<li>Arguments：队列参数，一般和消息中间件代理或者插件的特性相关，如消息的过期时间(Message TTL)和队列长度等。</li>
+</ul>
+<p>一个队列只有被声明(Declare)了才能使用，也就是队列的第一次声明就是队列的创建操作(因为第一次声明的时候队列并不存在)。如果使用相同的参数再次声明已经存在的队列，那么此次声明会不生效(当然也不会出现异常)。但是如果使用不相同的参数再次声明已经存在的队列，那么会抛出通道级别的异常，异常代码是406(PRECONDITION_FAILED)。</p>
+<h3 id="队列名称">队列名称</h3>
+<p>队列名必须由255字节(bytes)长度以内的UTF-8编码字符组成。实现AMQP 0-9-1规范的消息中间件代理具备自动生成随机队列名的功能，也就是在声明队列的时候，队列名指定为空字符串，那么消息中间件代理会自动生成一个队列名，并且在队列声明的返回结果中带上对应的队列名。</p>
+<p>以&quot;amq.&quot;开头的队列是由消息中间件代理内部生成的，有其特殊的作用，因此不能声明此类名称的新队列，否则会导致通道级别的异常，异常代码为403(ACCESS_REFUSED)。</p>
+<h3 id="队列的持久化特性">队列的持久化特性</h3>
+<p>持久化的队列会持久化到磁盘中，这种队列在消息中间件代理重启后不会被删除。不开启持久化特性的队列称为瞬时(transient)队列，并非所有的场景都需要开启队列的持久化特性。</p>
+<p>队列的持久化特性并不意味着路由到它上面的消息是持久化的，也就是<strong>队列的持久化跟消息的持久化是两回事</strong>。如果息中间件代理挂了，它重启后会重新声明开启了持久化特性的队列，这些队列中只有使用了消息持久化特性的消息会被恢复。</p>
+<h2 id="绑定">绑定</h2>
+<p>绑定(Binding)是交换器路由消息到队列的规则。例如交换器E可以路由消息到队列Q，那么Q必须通过一定的规则绑定到E。绑定中使用的某些交换器的类型决定了它可以使用可选的路由键(RoutingKey)。路由键的作用类似于过滤器，可以筛选某些发布到交换器的消息路由到目标队列。</p>
+<p>如果发布的消息没有路由到任意一个目标队列，例如，消息已经发布到交换器，交换器中没有任何绑定，这个时候消息会被丢弃或者返回给发布者，取决于消息发布者发布消息时候使用的参数。</p>
+<h2 id="消费者">消费者</h2>
+<p>如果队列只有发布者生产消息，那么是没有意义的，必须有消费者对消息进行使用，或者叫这个操作为消息消费，消息消费的方式有两种：</p>
+<ul>
+<li>消息代理中间件向消费者推送消息(推模式，代表方法是<code>basic.consume</code>)。</li>
+<li>消费者主动向消息代理中间件拉取消息(拉模式，代表方法是<code>basic.get</code>)。</li>
+</ul>
+<p>使用推模式的情况下，消费者必须指定需要订阅的队列。每个队列可以存在多个消费者，或者仅仅注册一个独占的消费者。</p>
+<p>每个消费者(订阅者)都有一个称为消费者标签(consumer tag)的标识符，消费者标签是一个字符串。通过消费者标签可以实现取消订阅的操作。</p>
+<h2 id="消息确认">消息确认</h2>
+<p>消费者应用程序有可能在接收和处理消息的时候崩溃，也有可能因为网络原因导致消息中间件代理投递消息到消费者的时候失败了，这样就会催生一个问题：AMQP消息中间件代理应该在什么时候从队列中删除消息？因此，AMQP 0-9-1规范提供了两种选择：</p>
+<ul>
+<li>消息中间件代理向应用程序发送消息(使用AMQP方法<code>basic.deliver</code>或<code>basic.get-ok</code>)。</li>
+<li>应用程序收到消息后向消息中间件代理发送确认(使用AMQP方法<code>basic.ack</code> &lt;= 个人感觉这个地方少写了<code>basic.nack</code>和<code>basic.reject</code>)</li>
+</ul>
+<p>前一种称为自动确认模型(动作触发的同时进行了消息确认)，后一种称为显式确认模型。显式确认模型中，需要消费者主动向消息中间件代理进行消息主动确认，这个消息主动确认动作的执行时机完全由应用程序控制。消息主动确认有三种方式：积极确认(ack)、消极确认(nack)和拒绝(reject)。</p>
+<h2 id="预取消息">预取消息</h2>
+<p>预取消息(Prefetching Messages)是一个特性。对于多个消费者共享同一个队列的情况，能够告知消息中间件代理在发送下一个确认之前指定每个消费者一次可以接收消息的消息量。这个特性可以理解为简单的负载均衡技术，在批量发布消息的场景下能够提高吞吐量。</p>
+<h2 id="消息属性和有效负载">消息属性和有效负载</h2>
+<p>AMQP模型中，消息具有属性值。AMQP 0-9-1规范定义了一些常见的属性，一般开发人员不需要太关注这些属性：</p>
+<ul>
+<li>Content type</li>
+<li>Content encoding</li>
+<li>Routing key</li>
+<li>Delivery mode (persistent or not)</li>
+<li>Message priority</li>
+<li>Message publishing timestamp</li>
+<li>Expiration period</li>
+<li>Publisher application id</li>
+</ul>
+<p>这些通用的属性一般是消息中间件代理使用的，还有可以定制的可选属性header，形式是键值对，类似于HTTP中的请求头。消息属性是在发布消息的时候设置的。</p>
+<p>AMQP消息还有一个有效载荷(payload，其实就是消息数据体)，AMQP代理将其视为不透明的字节数组，也就是AMQP代理不会检查或者修改消息的有效载荷。有些消息可能只包含属性而没有有效负载。通常使用序列化格式(如JSON，Thrift，Protocol Buffers和MessagePack)来序列化和结构化数据，以便将其作为消息有效负载发布。在一般约定下，消息属性中的<code>Content type</code>和<code>Content encoding</code>一般可以表明其序列化的方式。</p>
+<p>消息发布支持消息的持久化特性，消息持久化特性开启后，消息中间件代理会把消息保存到磁盘中，如果重启代理消息也不会丢失。开启消息持久化特性将会影响性能，主要是因为涉及到刷盘操作。</p>
+<h2 id="AMQP-0-9-1方法">AMQP-0-9-1方法</h2>
+<p>AMQP 0-9-1定义了一些方法，对应了客户端和消息中间件代理之间交互的一些操作方法，这些操作方法的设计跟面向对象编程语言中的方法没有任何共同之处。常用的交换器相关的操作方法有：</p>
+<ul>
+<li>exchange.declare</li>
+<li>exchange.declare-OK</li>
+<li>exchange.delete</li>
+<li>exchange.delete-OK</li>
+</ul>
+<p>在逻辑上，上面几个操作方法在客户端和消息中间件代理之间的交互如下：</p>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-2.png" alt="r-a-m-2.png"></p>
+<p>对于队列，也有类似的操作方法：</p>
+<ul>
+<li>queue.declare</li>
+<li>queue.declare-OK</li>
+<li>queue.delete</li>
+<li>queue.delete-OK</li>
+</ul>
+<p><img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/r-a-m/r-a-m-3.png" alt="r-a-m-3.png"></p>
+<p>并非所有的AMQP操作方法都有响应结果操作方法，像消息发布方法<code>basic.publish</code>的使用是最广泛的，此操作方法没有对应的响应结果操作方法。有些操作方法可能有多个响应结果(操作方法)，例如<code>basic.get</code>。</p>
+<h2 id="连接-Connection">连接(Connection)</h2>
+<p>AMQP的连接(Connection)通常是长期存在的。AMQP是一种使用TCP进行可靠传递的应用程序级协议。AMQP连接使用用户身份验证，可以使用TLS(SSL)进行保护。当应用程序不再需要连接到AMQP代理时，它应该正常关闭AMQP连接，而不是突然关闭底层TCP连接。</p>
+<h2 id="通道-Channel">通道(Channel)</h2>
+<p>某些应用程序需要与AMQP代理程序建立多个连接。但是，不希望同时打开许多TCP连接，因为这样做会消耗系统资源并使配置防火墙变得十分困难。通道(Channel)可以认为是&quot;共享一个单独的TCP连接的轻量级连接&quot;，一个AMQP连接可以拥有多个通道。</p>
+<p>对于使用了多线程处理的应用程序，有一种使用场景十分普遍：每个线程开启一个新的通道使用，这些通道是线程间隔离的。</p>
+<p>另外，每个特定的通道和其他通道是相互隔离的，每个执行的AMQP操作方法(包括响应)都携带一个通道的唯一标识，这样客户端就能通过该通道的唯一标识得知操作方法是对应哪个通道发生的。</p>
+<h2 id="虚拟主机-Virtual-Host">虚拟主机(Virtual Host)</h2>
+<p>为了使单个消息中间件代理可以托管多个完全隔离的&quot;环境&quot;(这里的隔离指的是用户组、交互器、队列等)，AMQP提供了虚拟主机(Virtual Host)的概念。多个虚拟主机类似于许多主流的Web服务器的虚拟主机，提供了AMQP组件完全隔离的环境。AMQP客户端可以在连接消息中间件代理时指定需要连接的虚拟主机。</p>
+<h2 id="个人理解">个人理解</h2>
+<h3 id="关于Exchange、Queue和Binding">关于Exchange、Queue和Binding</h3>
+<p>理解RabbitMQ中的AMQP模型，其实从开发者的角度来看，最重要的是Exchange、Queue、Binding三者的关系，这里谈谈个人的见解。消息的发布第一站总是Exchange，从模型上看，消息发布无法直接发送到队列中。Exchange本身不存储消息，它在接收到消息之后，会基于路由规则也就是Binding，把消息路由到目标Queue中。从实际操作来看，声明路由规则总是在发布消息和消费消息之前，也就是一般步骤如下：</p>
+<ul>
+<li>1、声明Exchange。</li>
+<li>2、声明Queue。</li>
+<li>3、基于Exchange和Queue声明Binding，这个过程有可能自定义一个RoutingKey。</li>
+<li>4、通过Exchange消息发布，这个过程有可能使用到上一步定义的RoutingKey。</li>
+<li>5、通过Queue消费消息。</li>
+</ul>
+<p>我们最关注的两个阶段，消息发布和消息消费中，<strong>消息发布实际上只跟Exchange有关，而消息消费实际上只跟Queue有关</strong>。Binding实际上就是Exchange和Queue的契约关系，会直接影响消息发布阶段的消息路由。那么，路由失败一般是什么情况导致的？路由失败，其实就是消息已经发布到Exchange，而Exchange中从既有的Binding中无法找到存在的目标Queue用于传递消息副本(一般而言，很少人会发送消息到一个不存在的Exchange)。消息路由失败，从理解AMQP的模型来看，可以从根本上避免的，除非是消息发布者故意胡乱使用或者人为错误使用了未存在的RoutingKey、Exchange或者说是Binding关系而导致的。</p>
+<h3 id="关于Exchange的类型">关于Exchange的类型</h3>
+<p>AMQP-0-9-1模型中支持了四种交换器direct(单播)、fanout(广播)、topic(多播)、headers，实际上，从使用者角度来看，四种交换器的功能是可以相互取代的。例如可以使用fanout类型交换器实现广播，其实使用direct类型交换器也是可以实现广播的，只是对应的direct类型交换器需要通过多个路由键绑定到多个目标队列中。在面对生产环境的技术选型的时候，我们需要考虑性能、维护难度、合理性等角度去考虑选择什么类型的交换器，就上面的广播消息的例子，显然使用fanout类型交换器可以避免声明多个绑定关系，这样在性能、合理性上是更优的选择。</p>
+<h3 id="关于负载均衡">关于负载均衡</h3>
+<p>在AMQP-0-9-1模型中，负载均衡的实现是基于消费者而不是基于队列(准确来说应该是消息传递到队列的方式)。实际上，出现消息生产速度大大超过消费者的消费速度的时候，队列中有可能会出现消息积压。AMQP-0-9-1模型中没有提供基于队列负载均衡的特性，也就是出现消息生产速度大大超过消费者的消费速度时候，并不会把消息路由到多个队列中，而是通过预取消息(Prefetching Messages)的特性，确定消息者的消费能力，从而调整消息中间件代理推送消息到对应消费者的数量，这样就能够实现消费速度快的消费者能够消费更多的消息，减少产生有消费者处于饥饿状态和有消费者长期处于忙碌状态的问题。</p>
+<h3 id="关于消息确认机制">关于消息确认机制</h3>
+<p>AMQP中提供的消息确认机制主要包括积极确认(一般叫ack，Acknowledgement)、消极确认(一般叫nack，Negative Acknowledgement)和拒绝(reject)。消息确认机制是保证消息不丢失的重要措施，当消费者接收到消息中间件代理推送的消息时候，需要主动通知消息中间件代理消息已经确认投递成功，然后消息中间件代理才会从队列中删除对应的消息。没有主动确认的消息就会变为&quot;nack&quot;状态，可以想象为暂存在队列的&quot;nack区&quot;中，这些消息不会投递到消费者，直到消费者重启后，&quot;nack区&quot;中的消息会重新变为&quot;ready&quot;状态，可以重新投递给消费者。关于消息确认机制其实场景比较复杂，后面再做一篇文章专门分析。</p>
+<h2 id="小结">小结</h2>
+<p>参考资料：</p>
+<ul>
+<li><a href="https://www.rabbitmq.com/tutorials/amqp-concepts.html" target="_blank" rel="noopener">AMQP 0-9-1 Model Explained</a></li>
+</ul>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2018/11/21/rabbitmq-amqp-model/>http://throwable.club/2018/11/21/rabbitmq-amqp-model/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/RabbitMQ/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>RabbitMQ</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2018/11/21/rabbitmq-amqp-model/&title=理解RabbitMQ中的AMQP-0-9-1模型 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2018/11/21/rabbitmq-amqp-model/&title=理解RabbitMQ中的AMQP-0-9-1模型 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3awY4aMRAEUP7/p4mUU5SEoap7DHt4c0IsO/gZye7p8uMRX8/f15+v/31nc7f9J1cXHh4e3mjor67rz7y6Tz5B15PVjuc/346Hh4d3jJcvyntksty/unP7X3h4eHjf5V1/wazUvp6m/aTg4eHh/Rxeu5S35XtSUuPh4eF9l5d/5WyxbkvtL/Ra8PDw8GLeJrL61uvj+R4eHh7eKFXflL9JyZ6PYTZaPDw8vBO8WbiVD30WgM3AUa8FDw8Pb83LY6e8oZAfO2i3k7xVgYeHh/cZXl74bg5FtdM6+yseHh7eZ3jtA38bbl3fvw29oocBPDw8vAO8dlnfNAhm5fvsCFeR4OHh4eGteZ9sTxTFcXmgAQ8PD+8cb1+87hmb8OxNmwMPDw/vGG8WX+WHou5tQxRjxsPDw/sIL1922/ZBXiInI4lKfDw8PLwDvDbU328heYM4H1s+HXh4eHj38vIGbttabZsas1bFm+0HDw8P7ybeZrht06GN1pKivHhiwMPDwzvA2xx7mn19WyLXIRweHh7eAV5Saz/jK4/8Zy2JfPqKRwk8PDy8BW/TmMgbrzl7X6bj4eHhneAlLdR9HHVXIV5PEx4eHt4B3j49ux7cJiSbldSPzYWHh4cX8GalcxtW3VX71+/g4eHhHeDNmrl5o+HegeYHF/Dw8PDO8fKDU7OGRbsZ5EV59MPg4eHhHeDVyditgVledudjKBoTeHh4eCPes7w2gdOmUZsHbG9Kajw8PLw1b7b0t0dXN9ORM1YpHx4eHl7Jm20GmyV+9gsMNyo8PDy8Y7zNZjBrSeRbwqrXgoeHh/cDeG20P2vd3haP4eHh4X2VlwRa7XGrthlR3xMPDw/vGG+2rG/i/6RFmzd/35TUeHh4eLfyNgFYvoVs/qvdnG7L9/Dw8PD+fucX38EDJ20M7lMAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2018/11/21/rabbitmq-amqp-model/&title=理解RabbitMQ中的AMQP-0-9-1模型 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3awY4aMRAEUP7/p4mUU5SEoap7DHt4c0IsO/gZye7p8uMRX8/f15+v/31nc7f9J1cXHh4e3mjor67rz7y6Tz5B15PVjuc/346Hh4d3jJcvyntksty/unP7X3h4eHjf5V1/wazUvp6m/aTg4eHh/Rxeu5S35XtSUuPh4eF9l5d/5WyxbkvtL/Ra8PDw8GLeJrL61uvj+R4eHh7eKFXflL9JyZ6PYTZaPDw8vBO8WbiVD30WgM3AUa8FDw8Pb83LY6e8oZAfO2i3k7xVgYeHh/cZXl74bg5FtdM6+yseHh7eZ3jtA38bbl3fvw29oocBPDw8vAO8dlnfNAhm5fvsCFeR4OHh4eGteZ9sTxTFcXmgAQ8PD+8cb1+87hmb8OxNmwMPDw/vGG8WX+WHou5tQxRjxsPDw/sIL1922/ZBXiInI4lKfDw8PLwDvDbU328heYM4H1s+HXh4eHj38vIGbttabZsas1bFm+0HDw8P7ybeZrht06GN1pKivHhiwMPDwzvA2xx7mn19WyLXIRweHh7eAV5Saz/jK4/8Zy2JfPqKRwk8PDy8BW/TmMgbrzl7X6bj4eHhneAlLdR9HHVXIV5PEx4eHt4B3j49ux7cJiSbldSPzYWHh4cX8GalcxtW3VX71+/g4eHhHeDNmrl5o+HegeYHF/Dw8PDO8fKDU7OGRbsZ5EV59MPg4eHhHeDVyditgVledudjKBoTeHh4eCPes7w2gdOmUZsHbG9Kajw8PLw1b7b0t0dXN9ORM1YpHx4eHl7Jm20GmyV+9gsMNyo8PDy8Y7zNZjBrSeRbwqrXgoeHh/cDeG20P2vd3haP4eHh4X2VlwRa7XGrthlR3xMPDw/vGG+2rG/i/6RFmzd/35TUeHh4eLfyNgFYvoVs/qvdnG7L9/Dw8PD+fucX38EDJ20M7lMAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2018/11/25/rabbitmq-component-operation/" rel="prev" title="RabbitMQ队列、交换器和绑定的操作">
+                                  
+                                      RabbitMQ队列、交换器和绑定的操作
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2018/11/18/rabbitmq-installation/" rel="prev" title="RabbitMQ服务端的安装和使用">
+                                    
+                                        RabbitMQ服务端的安装和使用
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/RabbitMQ/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> RabbitMQ</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '理解RabbitMQ中的AMQP-0-9-1模型',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AMQP协议"><span class="toc-text">AMQP协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息中间件代理的职责"><span class="toc-text">消息中间件代理的职责</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AMQP-0-9-1在RabbitMQ中的基本模型"><span class="toc-text">AMQP-0-9-1在RabbitMQ中的基本模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#交换器和交换器类型"><span class="toc-text">交换器和交换器类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Direct交换器"><span class="toc-text">Direct交换器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认交换器"><span class="toc-text">默认交换器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Fanout交换器"><span class="toc-text">Fanout交换器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Topic交换器"><span class="toc-text">Topic交换器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Headers交换器"><span class="toc-text">Headers交换器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#队列"><span class="toc-text">队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#队列名称"><span class="toc-text">队列名称</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#队列的持久化特性"><span class="toc-text">队列的持久化特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#绑定"><span class="toc-text">绑定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消费者"><span class="toc-text">消费者</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息确认"><span class="toc-text">消息确认</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#预取消息"><span class="toc-text">预取消息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消息属性和有效负载"><span class="toc-text">消息属性和有效负载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AMQP-0-9-1方法"><span class="toc-text">AMQP-0-9-1方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接-Connection"><span class="toc-text">连接(Connection)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通道-Channel"><span class="toc-text">通道(Channel)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟主机-Virtual-Host"><span class="toc-text">虚拟主机(Virtual Host)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#个人理解"><span class="toc-text">个人理解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#关于Exchange、Queue和Binding"><span class="toc-text">关于Exchange、Queue和Binding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于Exchange的类型"><span class="toc-text">关于Exchange的类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于负载均衡"><span class="toc-text">关于负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关于消息确认机制"><span class="toc-text">关于消息确认机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>

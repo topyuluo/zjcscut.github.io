@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme='Volantis' version='1.5.2' docs='https://xaoxuu.com/wiki/volantis/'>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  <title>Redis的复合SET命令和简易的分布式锁优化 | Throwable&#39;s Blog</title>
+  
+  <meta name="keywords" content="thorwable,doge,Thorwable">
+  
+  
+  <meta name="description" content="一棵还在尝试努力生存的90后韭菜Doge">
+  
+
+  
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- meta -->
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.10.1/css/all.min.css">
+  
+  
+  <link rel='stylesheet' href='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/gb.css'>
+  
+
+  
+  <link rel="shortcut icon" type='image/x-icon' href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_favicon.ico">
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/css/throwable.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+    <!-- ba -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?4df6907aebab752244c3ca1432b4ff57";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+  
+</head>
+
+<body>
+  
+  
+  <div class="cover-wrapper">
+    <cover class='cover post half'>
+      
+        
+  <img class='logo' src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/blog-logo.png'/>
+
+
+  <div class="m_search">
+    <form name="searchform" class="form u-search-form">
+      <i class="icon fas fa-search fa-fw"></i>
+      <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+    </form>
+  </div>
+
+<div class='menu navigation'>
+  <ul class='h-list'>
+    
+      
+        <li>
+          <a class="nav home "
+            href="/"
+            
+            
+            id="home">
+            <i class='fas fa-home fa-fw'></i>&nbsp;主页
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/projects/"
+            
+            
+            id="projects">
+            <i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/friends/"
+            
+              rel="nofollow"
+            
+            
+            id="friends">
+            <i class='fas fa-link fa-fw'></i>&nbsp;友链
+          </a>
+        </li>
+      
+        <li>
+          <a class="nav home "
+            href="/about/"
+            
+              rel="nofollow"
+            
+            
+            id="about">
+            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+          </a>
+        </li>
+      
+    
+  </ul>
+</div>
+<div style="text-align: center;margin-top: 5px;" id="rollingColorfulFont"></div>
+      
+    </cover>
+    <header class="l_header ">
+  <div id="loading-bar-wrapper">
+    <div id="loading-bar"></div>
+  </div>
+
+	<div class='wrapper'>
+		<div class="nav-main container container--flex">
+      <a class="logo flat-box" target="_self" href='/' >
+        
+          
+          
+            Throwable
+          
+        
+      </a>
+			<div class='menu navigation'>
+				<ul class='h-list'>
+          
+  					
+  						<li>
+								<a class="nav flat-box" href="/"
+                  
+                  
+                    target="_self"
+                  
+                  id="home">
+									<i class='fas fa-hourglass-half fa-fw'></i>&nbsp;近期
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/categories/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="categories">
+									<i class='fas fa-folder-open fa-fw'></i>&nbsp;分类
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/tags/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="tags">
+									<i class='fas fa-hashtag fa-fw'></i>&nbsp;标签
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/friends/"
+                  
+                    rel="nofollow"
+                  
+                  
+                  id="friends">
+									<i class='fas fa-link fa-fw'></i>&nbsp;友接
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/blog/archives/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="blogarchives">
+									<i class='fas fa-archive fa-fw'></i>&nbsp;归档
+								</a>
+							</li>
+      			
+  						<li>
+								<a class="nav flat-box" href="/about/"
+                  
+                    rel="nofollow"
+                  
+                  
+                    target="_self"
+                  
+                  id="about">
+									<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
+								</a>
+							</li>
+      			
+      		
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="(゜-゜)つロ搜一搜有没有想看的" />
+        </form>
+      </div>
+
+			<ul class='switcher h-list'>
+				
+					<li class='s-search'><a class="fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li class='s-menu'><a class="fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a></li>
+			</ul>
+		</div>
+
+		<div class='nav-sub container container--flex'>
+			<a class="logo flat-box"></a>
+			<ul class='switcher h-list'>
+				<li class='s-comment'><a class="flat-btn fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li class='s-toc'><a class="flat-btn fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+			</ul>
+		</div>
+	</div>
+</header>
+	<aside class="menu-phone white-box">
+    <header>
+		<nav class="menu navigation">
+      <ul>
+        
+          
+            <li>
+							<a class="nav flat-box" href="/"
+                
+                
+                id="home">
+								<i class='fas fa-clock fa-fw'></i>&nbsp;近期文章
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/blog/archives/"
+                
+                  rel="nofollow"
+                
+                
+                id="blogarchives">
+								<i class='fas fa-archive fa-fw'></i>&nbsp;文章归档
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/projects/"
+                
+                
+                id="projects">
+								<i class='fas fa-code-branch fa-fw'></i>&nbsp;开源项目
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/friends/"
+                
+                  rel="nofollow"
+                
+                
+                id="friends">
+								<i class='fas fa-link fa-fw'></i>&nbsp;我的友链
+							</a>
+            </li>
+          
+            <li>
+							<a class="nav flat-box" href="/about/"
+                
+                  rel="nofollow"
+                
+                
+                id="about">
+								<i class='fas fa-info-circle fa-fw'></i>&nbsp;关于小站
+							</a>
+            </li>
+          
+       
+      </ul>
+		</nav>
+    </header>
+	</aside>
+<script>setLoadingBarProgress(40);</script>
+
+  </div>
+
+
+  <div class="l_body">
+    <div class='body-wrapper'>
+      <div class='l_main'>
+  
+
+  
+    <article id="post" class="post white-box card-shadow  article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class='meta'>
+    
+    
+    <div class="meta" id="header-meta">
+      
+        
+  
+    <h1 class="title">
+      <a href="/2019/08/15/middleware-redis-set-command-distributed-lock/">
+        Redis的复合SET命令和简易的分布式锁优化
+      </a>
+    </h1>
+  
+
+
+      
+      <div class='new-meta-box'>
+        
+          
+        
+          
+            
+  <div class='new-meta-item author'>
+    
+      <a href="http://throwable.club" rel="nofollow">
+        
+          <img src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg">
+        
+        <p>Throwable</p>
+      </a>
+    
+  </div>
+
+
+          
+        
+          
+            
+  
+  <div class='new-meta-item category'>
+    <a href='/blog/categories/Middleware/Redis/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>Middleware&nbsp;/&nbsp;Redis</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-edit" aria-hidden="true"></i>
+    <p>发布于：2019年8月15日</p>
+  </a>
+</div>
+
+          
+        
+          
+            <div class="new-meta-item date" itemprop="dateUpdated" datetime="2019-08-15T00:42:42+08:00">
+  <a class='notlink'>
+    <i class="fas fa-save" aria-hidden="true"></i>
+    <p>更新于：2019年8月15日</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class='notlink'>
+        <i class="fas fa-eye" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv">
+            <i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i>
+          </span>
+        </p>
+      </a>
+    </div>
+  
+
+
+          
+        
+          
+            
+  <div class="new-meta-item wordcount">
+    <a class='notlink'>
+      <i class="fas fa-keyboard" aria-hidden="true"></i>
+      <p>字数：1.7k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class='notlink'>
+      <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+      <p>时长：6分钟</p>
+    </a>
+  </div>
+
+
+          
+        
+          
+            
+
+          
+        
+      </div>
+      
+        <hr>
+      
+    </div>
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h2 id="前提">前提</h2>
+<p>最近在跟进一个比较老的系统的时候，发现了所有调度任务使用了<code>spring-context</code>里面的<code>@Scheduled</code>注解和自行基于<code>Redis</code>封装的简易分布式锁控制任务不并发执行。为了不引入其他框架的情况下做一些简单优化，笔者花点时间去研读了一下<code>Redis</code>的<code>SET</code>命令的相关文档。</p>
+<a id="more"></a>
+<h2 id="场景还原">场景还原</h2>
+<p>使用<code>@Scheduled</code>注解实现定时任务，使用<code>spring-data-redis</code>提供的API实现简易的<code>Redis</code>分布式锁的伪代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 每30分钟跑一次</span></span><br><span class="line"><span class="meta">@Scheduled</span>(cron = <span class="string">"* */30 * * * ? "</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scheduledMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 判断KEY存在性并且设置KEY，带超时时间5分钟</span></span><br><span class="line">    if (StringRedisTemplate#opsForValue()#hasKey("定时任务唯一字符串标识"))&#123;</span><br><span class="line">        StringRedisTemplate#opsForValue()#set("定时任务唯一字符串标识", "1[这里暂时可以使用任何值]", 5 , TimeUnit.MINUTES);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里做调度正常业务逻辑</span></span><br><span class="line">    doBusiness();</span><br><span class="line">    <span class="comment">// 删除KEY</span></span><br><span class="line">    StringRedisTemplate#opsForValue()#delete("定时任务唯一字符串标识");</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码存在如下显然的缺陷：</p>
+<ol>
+<li>如果应用部署多个节点，由于判断KEY的存在性和SET操作是两个操作（非原子操作），该定时任务有可能在同一个时刻并发执行多次。</li>
+<li>如果业务逻辑执行方法<code>doBusiness()</code>抛出了异常，会导致删除KEY的操作无法执行，KEY会到达超时时间后被删除，这个时候相当于加锁时间长达5分钟，显然是无法接受的。</li>
+</ol>
+<p>但是实际上，以上两个问题在生产环境中并没有出现过，分析一下具体原因是：</p>
+<ul>
+<li>对于第1点，该应用在生产环境只部署了2个节点，节点的重启时间并不相同，所以从天然上避免了重复执行的问题，如果CRON表达式设计为<code>0 */30 * * * ? </code>（0秒开始每30分钟执行一次）就有可能出现并发问题。</li>
+<li>对于第2点，开发者在处理业务方法里面全局捕获异常并且没有外抛，所以调度方法总是会执行到删除KEY的逻辑。</li>
+</ul>
+<p>以上仅仅是巧合的情况下规避了问题出现的因子，但是从编码规范的角度来看显然是存在问题。基于<code>Redis</code>实现的分布式锁的方案在<code>Redis</code>官方文档中有一篇文章做了详细的分析-<a href="https://redis.io/topics/distlock" target="_blank" rel="noopener">Distributed locks with Redis</a>，对于Java语言来说，有现成的类库<code>Redisson</code>提供对应的实现。但是在解决这个问题的时候，为了简易起见并没有引入<code>Redisson</code>，而是想办法通过原来的<code>SET</code>和<code>DEL</code>两个操作的相关思路进行优化。</p>
+<h2 id="SET复合命令">SET复合命令</h2>
+<p>自从<code>Redis</code>的<strong>2.6.12</strong>版本起，<code>SET</code>命令已经提供了可选的复合操作符：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [expiration EX seconds|PX milliseconds] [NX|XX]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>时间复杂度：<code>O(1)</code>。</li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li><code>EX</code>：设置超时时间，单位是秒。</li>
+<li><code>PX</code>：设置超时时间，单位是毫秒。</li>
+<li><code>NX</code>：<code>IF NOT EXIST</code>的缩写，只有<strong>KEY不存在的前提下</strong>才会设置值。</li>
+<li><code>XX</code>：<code>IF EXIST</code>的缩写，只有在<strong>KEY存在的前提下</strong>才会设置值。</li>
+</ul>
+<p>列举一些等价的命令：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">原始命令</th>
+<th style="text-align:center">等价命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><code>SETEX KEY_1 1</code></td>
+<td style="text-align:center"><code>SET KEY_1 EX 1</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SETNX KEY_1</code></td>
+<td style="text-align:center"><code>SET KEY_1 NX</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SETNX KEY_1</code> &amp;&amp; <code>EXPIRE KEY_1 1</code></td>
+<td style="text-align:center"><code>SET KEY_1 EX 1 NX</code></td>
+</tr>
+<tr>
+<td style="text-align:center"><code>SETNX KEY_1</code> &amp;&amp; <code>PEXPIRE KEY_1 1000</code></td>
+<td style="text-align:center"><code>SET KEY_1 PX 1000 NX</code></td>
+</tr>
+</tbody>
+</table>
+<p>对比一下，发现<code>SET</code>复合命令十分简便，可以把两个命令合并成一个原子命令。不过注意一下，<code>spring-data-redis</code>里面的封装做得不太好，<code>ValueOperations</code>并没有提供相关的方法，因此最好还是使用<code>Redis</code>的Java客户端<code>Jedis</code>。</p>
+<h2 id="简易的分布式锁实现">简易的分布式锁实现</h2>
+<p>其实官方文档里面已经有很详细的<code>Redis</code>分布式锁方案（尽管这个方案在某些论文里面被热烈讨论它存在的问题，但是生产中它已经被广泛使用），获取锁的伪代码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET RESOURCE_NAME RANDOM_VALUE NX PX 30000</span><br></pre></td></tr></table></figure>
+<p>释放锁的伪代码（<code>Lua</code>脚本）如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.call(<span class="string">"get"</span>,KEYS[<span class="number">1</span>]) == ARGV[<span class="number">1</span>] <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">"del"</span>,KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>改造前文中提及到的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 每30分钟跑一次</span></span><br><span class="line"><span class="meta">@Scheduled</span>(cron = <span class="string">"* */30 * * * ? "</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scheduledMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> (Jedis jedis = getJedis())&#123;</span><br><span class="line">        SetParams params = <span class="keyword">new</span> SetParams().ex(<span class="number">300</span>).nx();</span><br><span class="line">        String code = jedis.set(<span class="string">"定时任务唯一字符串标识"</span>, <span class="string">"1"</span>, params);</span><br><span class="line">        <span class="comment">// 加锁成功</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"OK"</span>.equals(code))&#123; </span><br><span class="line">           <span class="comment">// 这里做调度正常业务逻辑</span></span><br><span class="line">           doBusiness();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        jedis.del(<span class="string">"定时任务唯一字符串标识"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里直接在<code>finally</code>代码块中进行KEY的删除，实际上，我们不需要关注这个删除动作是否成功（假如在最后阶段删除KEY出现<code>Redis</code>服务故障，无论使用<code>Lua</code>还是直接删除导致的结果都是一样的）。为了避免多余的<code>DEL</code>操作，可以简单优化为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 每30分钟跑一次</span></span><br><span class="line"><span class="meta">@Scheduled</span>(cron = <span class="string">"* */30 * * * ? "</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scheduledMethod</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">boolean</span> lock = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">try</span> (Jedis jedis = getJedis())&#123;</span><br><span class="line">        SetParams params = <span class="keyword">new</span> SetParams().ex(<span class="number">300</span>).nx();</span><br><span class="line">        String code = jedis.set(<span class="string">"定时任务唯一字符串标识"</span>, <span class="string">"1"</span>, params);</span><br><span class="line">        <span class="comment">// 加锁成功</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">"OK"</span>.equals(code))&#123; </span><br><span class="line">            lock = <span class="keyword">true</span>;</span><br><span class="line">           <span class="comment">// 这里做调度正常业务逻辑</span></span><br><span class="line">           doBusiness();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (lock)&#123;</span><br><span class="line">           jedis.del(<span class="string">"定时任务唯一字符串标识"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>SET RESOURCE_NAME RANDOM_VALUE NX PX 30000</code>和<code>Redis</code>单线程处理的特性，就能避免定时任务重复执行。其实这里还存在一些隐患：</p>
+<ul>
+<li>如果一个线程加锁时候指定的超时时间很长，并且在跑到<code>finally</code>代码块之前由于不可抗因素（例如很多人喜欢提到的断电）中断导致锁没有释放，那么这个锁就相当于一个僵尸锁。</li>
+<li>锁的持有和锁的释放应该由同一个操作者进行，否则操作者A进行了加锁，如果有恶意操作者B进行解锁，那么会导致锁并不安全。</li>
+</ul>
+<p>上面这些隐患在<code>Redisson</code>中都有对应的解决方案，迟点分析一下<code>Redisson</code>的源码实现。</p>
+<h2 id="小结">小结</h2>
+<p>本文在改造一个老系统的时候尝试使用改动最小的方式进行简易的基于<code>Redis</code>实现的分布式锁优化，实际生产环境中应该尽量使用主流的可靠的类库，如<code>Redisson</code>（编写本文的时候Github的星星数已经超过10200，提交和Issue都比较活跃，遇到坑了比较容易找到解决方案，值得信赖）。如果需要造轮子，那么就需要熟练使用中间件提供的API，同时注意一下编码规范，尽可能避免因为规范和使用方式不当带来的问题。</p>
+<h2 id="附件">附件</h2>
+<ul>
+<li>Markdown文件：<a href="https://github.com/zjcscut/blog-article-file/tree/master/20190815/middleware-redis-set-command-distributed-lock" target="_blank" rel="noopener">https://github.com/zjcscut/blog-article-file/tree/master/20190815/middleware-redis-set-command-distributed-lock</a></li>
+</ul>
+<p>（本文完 c-1-d e-a-20190815）</p>
+
+          
+            <br>
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  copyright'>
+  <div class='content'>
+    
+      <blockquote>
+        
+          
+            <p>作者：<a href="http://www.throwable.club" target="_blank" rel="noopener">Throwable</a></p>
+
+          
+        
+          
+            <p>版权：博客内容遵循<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a>，转载请在文章明显位置注明作者及出处</p>
+
+          
+        
+          
+            <p>本文永久链接是：<a href=http://throwable.club/2019/08/15/middleware-redis-set-command-distributed-lock/>http://throwable.club/2019/08/15/middleware-redis-set-command-distributed-lock/</a></p>
+          
+        
+      </blockquote>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  <section class='widget card-shadow  text'>
+  <header>
+  <div>
+    
+      <i class=" fa-fw" aria-hidden="true"></i><span class='name'>打赏</span>
+    
+
+  </div>
+  
+</header>
+
+  <div class='content'>
+    
+      <p>
+        <iframe src="https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/simple-mine/index.html" style="overflow-x:hidden;overflow-y:hidden; border:0xp none #fff; min-height:240px; width:100%;"  frameborder="0" scrolling="no"></iframe>
+      </p>
+    
+  </div>
+</section>
+
+                
+              
+                
+              
+                
+              
+                
+              
+            
+          
+        </div>
+        
+          <br>
+          
+
+
+  <section class='meta' id="footer-meta">
+    <div class='new-meta-box'>
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Middleware/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Middleware</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/blog/tags/Redis/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Redis</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
+          
+          href="http://connect.qq.com/widget/shareqq/index.html?url=http://throwable.club/2019/08/15/middleware-redis-set-command-distributed-lock/&title=Redis的复合SET命令和简易的分布式锁优化 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近在跟进一个比较老的系统的时候，发现了所有调度任务使用了spring-context里面的@Scheduled注解和自行基于Redis封装的简易分布式锁控制任务不并发执行。为了不引入其他框架的情况下做一些简单优化，笔者花点时间去研读了一下Redis的SET命令的相关文档。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
+          
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://throwable.club/2019/08/15/middleware-redis-set-command-distributed-lock/&title=Redis的复合SET命令和简易的分布式锁优化 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近在跟进一个比较老的系统的时候，发现了所有调度任务使用了spring-context里面的@Scheduled注解和自行基于Redis封装的简易分布式锁控制任务不并发执行。为了不引入其他框架的情况下做一些简单优化，笔者花点时间去研读了一下Redis的SET命令的相关文档。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADJklEQVR42u3awXLiQAwEUP7/p9lr9hDolpwqPDyfUgGbeeODSq15POLr+eNK/v/z0+TJv/3dPuHiCxsbG/sm7OfL67fv5E/LN+719r1+cm7BxsbGPpWdl5bX927uSgBJ2YuKHDY2NvYXs/OGJCkkr0ltI4SNjY2N3cY9m9Zltk1XFVpsbGzs89ib4GZT/JKWJn/mn2Rp2NjY2B/Pzqein//3n8y3sbGxsT+Y/Syv/JhOG0jlo+LZyv97GjY2NvZB7LwA5Id19kVxFm/V68fGxsY+iL0Zu+6PS7Z35ZtbvAZsbGzsm7OTR7ejgrxRyUe8bfRftCLY2NjYN2e3yXkbHuWbkpTMTeuyGhhgY2NjfzA7KVrJIvJAfzOsbQ8Y/fp8bGxs7IPYbZOwiezzLWuHE8PhATY2NvYR7DxIyscGdSFZvIC21GFjY2OfxN4voo2E2nalDZWSA5rY2NjYJ7GT9iApHpfV0vIgTh5RRVkaNjY29g3ZsyYkLy37gGk2En7zqrCxsbGPY88im7b9aMtP8ulwm7CxsbEPYrch0WwYnN+1H+jWbRI2Njb2zdlXBff70UKCT1abWLCxsbFPYuctQd5UXNWQ5L+Sx0zY2NjY38meIWdHbWatyHDYgI2NjX0ou13EbNS6aUVmhRYbGxv7VHZeitpSkcf67SD5gjEDNjY29kHsTSSUDwbaUKmI+EfHibCxsbHPY187oJ0FRlf9VtveYGNjY5/HzgtVfsQnB28KWL4SbGxs7PPY+YA2Lz+zDc23ph0/PPL3ho2NjX1z9uzYTdtI7EOrfFOwsbGxv439GF3tRuyPTiaHe968MGxsbOxD2fuDkgmpjZbaxgMbGxv7O9mzmGZ/NGczWl7FWNjY2NhHsJ/l1Q6AZ4u7qrDVKRo2Njb2DdltbJQzZsOAvF3JN64dSGNjY2PfkZ0Xrby/aQ/35OOBPEJ68yk2Njb2cexZk5APD1pw+526SmNjY2N/PXs/WmibmXyQELU62NjY2Nij4rFpNi7eRGxsbOzj2LPhbt5ytOFRO3jIwy9sbGzs89htQdoETDk1L2bt+BkbGxv7IPY/DeoWEU9IWYEAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/wechat.png">
+        
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
+          
+          href="http://service.weibo.com/share/share.php?url=http://throwable.club/2019/08/15/middleware-redis-set-command-distributed-lock/&title=Redis的复合SET命令和简易的分布式锁优化 | Throwable's Blog&pics=https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/mine/doge_avatar.jpg&summary=前提
+最近在跟进一个比较老的系统的时候，发现了所有调度任务使用了spring-context里面的@Scheduled注解和自行基于Redis封装的简易分布式锁控制任务不并发执行。为了不引入其他框架的情况下做一些简单优化，笔者花点时间去研读了一下Redis的SET命令的相关文档。"
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        <a class='qrcode' rel="external nofollow noopener noreferrer" href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADJklEQVR42u3awXLiQAwEUP7/p9lr9hDolpwqPDyfUgGbeeODSq15POLr+eNK/v/z0+TJv/3dPuHiCxsbG/sm7OfL67fv5E/LN+719r1+cm7BxsbGPpWdl5bX927uSgBJ2YuKHDY2NvYXs/OGJCkkr0ltI4SNjY2N3cY9m9Zltk1XFVpsbGzs89ib4GZT/JKWJn/mn2Rp2NjY2B/Pzqein//3n8y3sbGxsT+Y/Syv/JhOG0jlo+LZyv97GjY2NvZB7LwA5Id19kVxFm/V68fGxsY+iL0Zu+6PS7Z35ZtbvAZsbGzsm7OTR7ejgrxRyUe8bfRftCLY2NjYN2e3yXkbHuWbkpTMTeuyGhhgY2NjfzA7KVrJIvJAfzOsbQ8Y/fp8bGxs7IPYbZOwiezzLWuHE8PhATY2NvYR7DxIyscGdSFZvIC21GFjY2OfxN4voo2E2nalDZWSA5rY2NjYJ7GT9iApHpfV0vIgTh5RRVkaNjY29g3ZsyYkLy37gGk2En7zqrCxsbGPY88im7b9aMtP8ulwm7CxsbEPYrch0WwYnN+1H+jWbRI2Njb2zdlXBff70UKCT1abWLCxsbFPYuctQd5UXNWQ5L+Sx0zY2NjY38meIWdHbWatyHDYgI2NjX0ou13EbNS6aUVmhRYbGxv7VHZeitpSkcf67SD5gjEDNjY29kHsTSSUDwbaUKmI+EfHibCxsbHPY187oJ0FRlf9VtveYGNjY5/HzgtVfsQnB28KWL4SbGxs7PPY+YA2Lz+zDc23ph0/PPL3ho2NjX1z9uzYTdtI7EOrfFOwsbGxv439GF3tRuyPTiaHe968MGxsbOxD2fuDkgmpjZbaxgMbGxv7O9mzmGZ/NGczWl7FWNjY2NhHsJ/l1Q6AZ4u7qrDVKRo2Njb2DdltbJQzZsOAvF3JN64dSGNjY2PfkZ0Xrby/aQ/35OOBPEJ68yk2Njb2cexZk5APD1pw+526SmNjY2N/PXs/WmibmXyQELU62NjY2Nij4rFpNi7eRGxsbOzj2LPhbt5ytOFRO3jIwy9sbGzs89htQdoETDk1L2bt+BkbGxv7IPY/DeoWEU9IWYEAAAAASUVORK5CYII='>
+        
+          <img src="https://cdn.jsdelivr.net/gh/xaoxuu/assets@19.1.9/logo/128/qrcode.png">
+        
+        </a>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+            <div class="prev-next">
+                
+                    <section class="prev">
+                        <span class="art-item-left">
+                            <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                            <h4>
+                                <a href="/2019/08/21/redis-delay-task-first/" rel="prev" title="使用Redis实现延时任务(一)">
+                                  
+                                      使用Redis实现延时任务(一)
+                                  
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+                
+                    <section class="next">
+                        <span class="art-item-right" aria-hidden="true">
+                            <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
+                            <h4>
+                                <a href="/2019/08/12/middleware-redis-hash-problem-first/" rel="prev" title="使用Redis的HSCAN命令遇到的一个问题">
+                                    
+                                        使用Redis的HSCAN命令遇到的一个问题
+                                    
+                                </a>
+                            </h4>
+                            
+                                
+                                <h6 class="tags">
+                                    <a class="tag" href="/blog/tags/Middleware/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Middleware</a> <a class="tag" href="/blog/tags/Redis/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Redis</a>
+                                </h6>
+                            
+                        </span>
+                    </section>
+                
+            </div>
+        
+      </section>
+    </article>
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box comments card-shadow ">
+    <section class="article typo">
+      <h4><i class="fas fa-comments fa-fw" aria-hidden="true"></i>&nbsp;评论</h4>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="valine_container" class="valine_thread">
+            <i class="fas fa-spinner fa-spin fa-fw"></i>
+          </div>
+        </section>
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'Redis的复合SET命令和简易的分布式锁优化',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class='l_side'>
+  
+    
+    
+      
+        
+      
+        
+          
+  <section class='widget card-shadow  toc-wrapper'>
+    <header>
+  <div>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+
+  </div>
+  
+    <!-- <div class='wrapper'><a class="s-toc rightBtn" rel="external nofollow noopener noreferrer" href="javascript:void(0)"><i class="fas fa-thumbtack fa-fw"></i></a></div> -->
+  
+</header>
+
+    <div class='content'>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前提"><span class="toc-text">前提</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#场景还原"><span class="toc-text">场景还原</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SET复合命令"><span class="toc-text">SET复合命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简易的分布式锁实现"><span class="toc-text">简易的分布式锁实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小结"><span class="toc-text">小结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#附件"><span class="toc-text">附件</span></a></li></ol>
+    </div>
+  </section>
+
+
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+  
+</aside>
+
+<footer class="clearfix ">
+  <br><br>
+  
+    <div class="social-wrapper">
+      
+        
+          <a href="/atom.xml"
+            class="social fas fa-rss fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="mailto:739805340@qq.com"
+            class="social fas fa-envelope fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+        
+          <a href="https://github.com/zjcscut"
+            class="social fab fa-github fa-lg flat-btn"
+            target="_blank"
+            rel="external nofollow noopener noreferrer">
+          </a>
+        
+      
+    </div>
+  
+  
+  <br>
+  <div><p>博客内容遵循 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener">署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</a></p>
+</div>
+  <div>
+    本站使用
+    <a href="https://xaoxuu.com/wiki/volantis/" target="_blank" class="codename">Volantis</a>
+    作为主题
+    
+      ，
+      总访问量为
+      <span id="busuanzi_value_site_pv"><i class="fas fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span>
+      次
+    
+    。
+  </div>
+  
+    <div class='copyright'>
+    <p><a href="http://throwable.club">Copyright © 2017-2020 Throwable</a></p>
+
+    </div>
+  
+</footer>
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href='javascript:void(0)'></a>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+<script async src="//instant.page/3.0.0" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.5/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      const $reveal = $('.reveal');
+      if ($reveal.length === 0) return;
+      const sr = ScrollReveal({ distance: 0 });
+      sr.reveal('.reveal');
+    });
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+    
+      
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/volantis@1.0.6/js/volantis.min.js"></script>
+
+    
+  
+  <script>
+  var GUEST_INFO = ['nick','mail','link'];
+  var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+    return GUEST_INFO.indexOf(item) > -1
+  });
+  var notify = 'true' == true;
+  var verify = 'true' == true;
+  var valine = new Valine();
+  valine.init({
+    el: '#valine_container',
+    notify: notify,
+    verify: verify,
+    guest_info: guest_info,
+    
+    appId: "2rSnXSt7hr4528jSF4ifr2lJ-gzGzoHsz",
+    appKey: "n5fe705fSsz4JHfwwtym1Fus",
+    placeholder: "(゜-゜)つロ 干杯~-bilibili",
+    pageSize:'10',
+    avatar:'mp',
+    lang:'zh-cn',
+    highlight:'true'
+  })
+  </script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/search.js"></script>
+
+
+
+  
+    
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@20.2.30/js/commentTyping.js"></script>
+
+  
+
+
+
+
+
+<!-- 复制 -->
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  let COPY_SUCCESS = "复制成功";
+  let COPY_FAILURE = "复制失败";
+  /*页面载入完成后，创建复制按钮*/
+  !function (e, t, a) {
+    /* code */
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '  <i class="fa fa-copy"></i><span>复制</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+
+      clipboard.on('success', function(e) {
+        //您可以加入成功提示
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        success_prompt(COPY_SUCCESS);
+        e.clearSelection();
+      });
+      clipboard.on('error', function(e) {
+        //您可以加入失败提示
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+        fail_prompt(COPY_FAILURE);
+      });
+    }
+    initCopyCode();
+
+  }(window, document);
+
+  /**
+   * 弹出式提示框，默认1.5秒自动消失
+   * @param message 提示信息
+   * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+   * @param time 消失时间
+   */
+  var prompt = function (message, style, time)
+  {
+      style = (style === undefined) ? 'alert-success' : style;
+      time = (time === undefined) ? 1500 : time*1000;
+      $('<div>')
+          .appendTo('body')
+          .addClass('alert ' + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+  };
+
+  // 成功提示
+  var success_prompt = function(message, time)
+  {
+      prompt(message, 'alert-success', time);
+  };
+
+  // 失败提示
+  var fail_prompt = function(message, time)
+  {
+      prompt(message, 'alert-danger', time);
+  };
+
+  // 提醒
+  var warning_prompt = function(message, time)
+  {
+      prompt(message, 'alert-warning', time);
+  };
+
+  // 信息提示
+  var info_prompt = function(message, time)
+  {
+      prompt(message, 'alert-info', time);
+  };
+
+</script>
+
+
+<!-- fancybox -->
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+<script src='https://throwable-blog-1256189093.cos.ap-guangzhou.myqcloud.com/static/js/roll.js'></script>
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>
